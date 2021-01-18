@@ -1,4 +1,4 @@
-package gov.va.api.health.flashfhir.service;
+package gov.va.api.health.vistafhirquery.service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

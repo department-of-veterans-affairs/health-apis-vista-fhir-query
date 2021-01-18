@@ -101,16 +101,16 @@ makeConfig() {
 }
 
 populateConfig() {
-  makeConfig flash-fhir $PROFILE
-  configValue flash-fhir $PROFILE vistalink.api.url "$VISTALINK_URL"
-  comment flash-fhir $PROFILE <<EOF
+  makeConfig vista-fhir-query $PROFILE
+  configValue vista-fhir-query $PROFILE vistalink.api.url "$VISTALINK_URL"
+  comment vista-fhir-query $PROFILE <<EOF
 # To populate vistalink.api.client-key, use the VISTALINK_CLIENT_KEY value in
 # the secrets files used with make-configs.sh
 EOF
-  configValue flash-fhir $PROFILE vistalink.api.client-key "$VISTALINK_CLIENT_KEY"
-  configValue flash-fhir $PROFILE vistalink.api.access-code "$VISTALINK_ACCESS_CODE"
-  configValue flash-fhir $PROFILE vistalink.api.verify-code "$VISTALINK_VERIFY_CODE"
-  checkForUnsetValues flash-fhir $PROFILE
+  configValue vista-fhir-query $PROFILE vistalink.api.client-key "$VISTALINK_CLIENT_KEY"
+  configValue vista-fhir-query $PROFILE vistalink.api.access-code "$VISTALINK_ACCESS_CODE"
+  configValue vista-fhir-query $PROFILE vistalink.api.verify-code "$VISTALINK_VERIFY_CODE"
+  checkForUnsetValues vista-fhir-query $PROFILE
 }
 
 requiredParam() {

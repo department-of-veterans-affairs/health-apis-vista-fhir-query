@@ -1,6 +1,6 @@
-package gov.va.api.health.flashfhir.service.controller;
+package gov.va.api.health.vistafhirquery.service.controller;
 
-import gov.va.api.health.flashfhir.service.config.VistalinkApiConfig;
+import gov.va.api.health.vistafhirquery.service.config.VistalinkApiConfig;
 import gov.va.api.lighthouse.vistalink.api.RpcDetails;
 import gov.va.api.lighthouse.vistalink.api.RpcInvocationResult;
 import gov.va.api.lighthouse.vistalink.api.RpcResponse;

@@ -1,4 +1,4 @@
-package gov.va.api.health.flashfhir.service.config;
+package gov.va.api.health.vistafhirquery.service.config;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

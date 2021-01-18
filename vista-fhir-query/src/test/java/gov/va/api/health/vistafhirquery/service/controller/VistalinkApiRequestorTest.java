@@ -1,4 +1,4 @@
-package gov.va.api.health.flashfhir.service.controller;
+package gov.va.api.health.vistafhirquery.service.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -7,7 +7,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import gov.va.api.health.flashfhir.service.config.VistalinkApiConfig;
+import gov.va.api.health.vistafhirquery.service.config.VistalinkApiConfig;
 import gov.va.api.lighthouse.vistalink.api.RpcDetails;
 import gov.va.api.lighthouse.vistalink.api.RpcInvocationResult;
 import gov.va.api.lighthouse.vistalink.api.RpcResponse;
