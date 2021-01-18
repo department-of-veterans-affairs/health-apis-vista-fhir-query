@@ -20,7 +20,7 @@ import org.springframework.web.client.RestTemplate;
 @RestController
 @RequestMapping(value = {"/ping"})
 @AllArgsConstructor(onConstructor_ = @Autowired)
-public class FlashFhirController {
+public class VistaFhirQueryController {
 
   private final VistalinkApiConfig vlConfig;
 

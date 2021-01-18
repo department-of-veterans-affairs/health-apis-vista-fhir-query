@@ -1,6 +1,6 @@
 
 ====
 
-    ${Ansi.BLUE}Health-APIs ${Ansi.BOLD}${Ansi.YELLOW} Flash-Fhir ${Ansi.NORMAL}${Ansi.BLUE}${application.version}${Ansi.NORMAL}
+    ${Ansi.BLUE}Health-APIs ${Ansi.BOLD}${Ansi.YELLOW} Vista-Fhir-Query ${Ansi.NORMAL}${Ansi.BLUE}${application.version}${Ansi.NORMAL}
 
 ====
