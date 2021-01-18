@@ -35,6 +35,8 @@ jobs:
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v1
+      with:
+        languages: 'java'
 
     - name: Lighthouse maven build
       uses: department-of-veterans-affairs/lighthouse-actions-maven-build@v0
