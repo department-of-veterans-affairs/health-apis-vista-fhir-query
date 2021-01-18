@@ -11,5 +11,6 @@
   <packaging>pom</packaging>
   <modules>
     <module>vista-fhir-query</module>
+    <module>vista-fhir-query-mock-services</module>
   </modules>
 </project>

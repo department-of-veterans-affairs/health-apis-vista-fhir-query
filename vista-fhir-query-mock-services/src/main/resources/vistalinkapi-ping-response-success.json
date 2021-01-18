@@ -1,0 +1,10 @@
+{
+    "status" : "OK",
+    "results" : [
+        {
+            "vista" : "358",
+            "response" : "Ping Successful!",
+            "error" : null
+        }
+    ]
+}
