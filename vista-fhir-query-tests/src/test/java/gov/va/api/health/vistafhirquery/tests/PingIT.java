@@ -9,9 +9,8 @@ public class PingIT {
   @Test
   void ping() {
     var patientIcn = SystemDefinitions.systemDefinition().publicIds().patient();
-    log.info(
-        "Verify /ping/{} has status (200)",
-        SystemDefinitions.systemDefinition().publicIds().patient());
-    TestClients.internal().get("/ping/{icn}", patientIcn).expect(200);
+    var apiPath = SystemDefinitions.systemDefinition().internal().apiPath();
+    log.info("Verify {}ping/{} has status (200)", apiPath, patientIcn);
+    TestClients.internal().get(apiPath + "ping/{icn}", patientIcn).expect(200);
   }
 }
