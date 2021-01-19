@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-public class VistalinkApiRequestorTest {
+public class RestVistalinkApiClientTest {
   RestTemplate rt = mock(RestTemplate.class);
 
   VistalinkApiConfig config =
@@ -27,6 +27,10 @@ public class VistalinkApiRequestorTest {
           .verifyCode("vc")
           .clientKey("ck")
           .build();
+
+  private RestVistalinkApiClient client() {
+    return RestVistalinkApiClient.builder().config(config).restTemplate(rt).build();
+  }
 
   @Test
   void requestWithVistalink200Response() {
@@ -44,8 +48,9 @@ public class VistalinkApiRequestorTest {
                                     .build()))
                         .build()));
     assertThat(
-            requestor()
-                .request(RpcDetails.builder().name("FAUX RPC").context("FAUX CONTEXT").build()))
+            client()
+                .request(
+                    "p1", RpcDetails.builder().name("FAUX RPC").context("FAUX CONTEXT").build()))
         .isEqualTo(
             RpcResponse.builder()
                 .status(RpcResponse.Status.OK)
@@ -72,12 +77,9 @@ public class VistalinkApiRequestorTest {
     assertThatExceptionOfType(IllegalStateException.class)
         .isThrownBy(
             () ->
-                requestor()
+                client()
                     .request(
+                        "p1",
                         RpcDetails.builder().name("FAUX RPC").context("FAUX CONTEXT").build()));
-  }
-
-  private VistalinkApiRequestor requestor() {
-    return VistalinkApiRequestor.forPatient("p1").config(config).restTemplate(rt).build();
   }
 }

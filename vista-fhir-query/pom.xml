@@ -11,7 +11,8 @@
   <version>0.0.1-SNAPSHOT</version>
   <packaging>jar</packaging>
   <properties>
-    <jacoco.coverage>0.60</jacoco.coverage>
+    <!-- ToDo Increase Coverage -->
+    <jacoco.coverage>0.75</jacoco.coverage>
     <vistalink.api.version>2.0.0</vistalink.api.version>
   </properties>
   <dependencies>

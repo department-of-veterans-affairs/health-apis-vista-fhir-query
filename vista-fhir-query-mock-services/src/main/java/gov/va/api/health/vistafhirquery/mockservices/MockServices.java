@@ -45,7 +45,8 @@ public class MockServices {
         JacksonConfig.createMapper()
             .writeValueAsString(RpcRequest.builder().rpc(rpcDetails).build());
     log.info("With RPC Details like: {}", body);
-    supportedQueries.add("[POST] http://localhost:" + PORT + path + " with RPC Details like " + body);
+    supportedQueries.add(
+        "[POST] http://localhost:" + PORT + path + " with RPC Details like " + body);
     return request()
         .withMethod("POST")
         .withPath(url.getPath())

@@ -12,5 +12,6 @@
   <modules>
     <module>vista-fhir-query</module>
     <module>vista-fhir-query-mock-services</module>
+    <module>vista-fhir-query-tests</module>
   </modules>
 </project>

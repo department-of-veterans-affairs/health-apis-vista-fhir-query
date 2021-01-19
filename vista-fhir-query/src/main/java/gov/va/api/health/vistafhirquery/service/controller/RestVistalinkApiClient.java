@@ -7,30 +7,29 @@ import gov.va.api.lighthouse.vistalink.api.RpcRequest;
 import gov.va.api.lighthouse.vistalink.api.RpcResponse;
 import gov.va.api.lighthouse.vistalink.api.RpcVistaTargets;
 import java.net.URI;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Value
 @Builder
-public class VistalinkApiRequestor {
-  @NonNull String patient;
+@Component
+@AllArgsConstructor(onConstructor_ = @Autowired)
+public class RestVistalinkApiClient implements VistalinkApiClient {
 
-  @NonNull RestTemplate restTemplate;
+  private RestTemplate restTemplate;
 
-  @NonNull VistalinkApiConfig config;
-
-  static VistalinkApiRequestorBuilder forPatient(String patientIcn) {
-    return VistalinkApiRequestor.builder().patient(patientIcn);
-  }
+  private VistalinkApiConfig config;
 
   @SneakyThrows
-  private RequestEntity<RpcRequest> buildRequest(RpcRequest body) {
+  private RequestEntity<RpcRequest> buildRequestEntity(RpcRequest body) {
     var baseUrl = config().getUrl();
     if (baseUrl.endsWith("/")) {
       baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
@@ -41,8 +40,8 @@ public class VistalinkApiRequestor {
         .body(body);
   }
 
-  /** Make request to the Vistalink API with the given RPC Details. */
-  public RpcResponse request(RpcDetails rpcDetails) {
+  /** Request an RPC based on a patients ICN. */
+  public RpcResponse request(String forPatient, RpcDetails rpcDetails) {
     RpcRequest requestBody =
         RpcRequest.builder()
             .principal(
@@ -50,16 +49,16 @@ public class VistalinkApiRequestor {
                     .accessCode(config().getAccessCode())
                     .verifyCode(config().getVerifyCode())
                     .build())
-            .target(RpcVistaTargets.builder().forPatient(patient()).build())
+            .target(RpcVistaTargets.builder().forPatient(forPatient).build())
             .rpc(rpcDetails)
             .build();
-    RequestEntity<RpcRequest> request = buildRequest(requestBody);
+    RequestEntity<RpcRequest> request = buildRequestEntity(requestBody);
     ResponseEntity<RpcResponse> response = restTemplate.exchange(request, RpcResponse.class);
-    verifyResponse(response);
+    verifyVistalinkApiResponse(response);
     return response.getBody();
   }
 
-  private void verifyResponse(ResponseEntity<RpcResponse> response) {
+  private void verifyVistalinkApiResponse(ResponseEntity<RpcResponse> response) {
     if (!response.getStatusCode().is2xxSuccessful()) {
       // ToDo make this validation/error handling better
       throw new IllegalStateException("Vistalink didnt return 2xx.");
