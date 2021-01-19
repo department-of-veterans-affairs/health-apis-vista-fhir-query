@@ -29,7 +29,7 @@ public class ClientKeyProtectedEndpointConfig {
 
     if (isBlank(clientKeysCsv) || "unset".equals(clientKeysCsv)) {
       log.warn(
-          "RPC Request client-key is disabled. To enable, "
+          "Client-key protection is disabled. To enable, "
               + "set vista-fhir-query.internal.client-keys to a value other than unset.");
 
       registration.setEnabled(false);
