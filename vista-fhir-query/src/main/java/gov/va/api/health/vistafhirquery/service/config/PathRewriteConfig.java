@@ -8,11 +8,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class PathRewriteConfig {
   @Bean
-  FilterRegistrationBean<PathRewriteFilter> patientRegistrationFilter() {
+  FilterRegistrationBean<PathRewriteFilter> pathRewriteFilter() {
     var registration = new FilterRegistrationBean<PathRewriteFilter>();
     PathRewriteFilter filter =
         PathRewriteFilter.builder().removeLeadingPath("/vista-fhir-query/").build();
-    registration.setOrder(1);
     registration.setFilter(filter);
     registration.addUrlPatterns(filter.removeLeadingPathsAsUrlPatterns());
     return registration;

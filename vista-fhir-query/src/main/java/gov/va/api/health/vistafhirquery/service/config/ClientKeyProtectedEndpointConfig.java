@@ -23,7 +23,7 @@ public class ClientKeyProtectedEndpointConfig {
   @Bean
   FilterRegistrationBean<ClientKeyProtectedEndpointFilter> clientKeyProtectedEndpointFilter(
       @Value("${vista-fhir-query.internal.client-keys}") String clientKeysCsv) {
-    var rpcRequestFilter = new FilterRegistrationBean<ClientKeyProtectedEndpointFilter>();
+    var registration = new FilterRegistrationBean<ClientKeyProtectedEndpointFilter>();
 
     List<String> clientKeys;
 
@@ -32,22 +32,22 @@ public class ClientKeyProtectedEndpointConfig {
           "RPC Request client-key is disabled. To enable, "
               + "set vista-fhir-query.internal.client-keys to a value other than unset.");
 
-      rpcRequestFilter.setEnabled(false);
+      registration.setEnabled(false);
       clientKeys = List.of();
     } else {
       clientKeys = Arrays.stream(clientKeysCsv.split(",")).collect(Collectors.toList());
     }
 
-    rpcRequestFilter.setFilter(
+    registration.setFilter(
         ClientKeyProtectedEndpointFilter.builder()
             .clientKeys(clientKeys)
             .name("Internal Vista-Fhir-Query Request")
             .unauthorizedResponse(unauthorizedResponse())
             .build());
 
-    rpcRequestFilter.addUrlPatterns("/internal/*");
+    registration.addUrlPatterns("/internal/*");
 
-    return rpcRequestFilter;
+    return registration;
   }
 
   @SneakyThrows
