@@ -8,11 +8,16 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public final class SystemDefinitions {
+  private static Optional<String> clientKey() {
+    return Optional.ofNullable(System.getProperty("client-key"));
+  }
+
   private static SystemDefinition local() {
     String url = "http://localhost";
     return SystemDefinition.builder()
         .internal(serviceDefinition("internal", url, 8095, null, "/"))
         .publicIds(localIds())
+        .clientKey(Optional.empty())
         .build();
   }
 
@@ -24,8 +29,13 @@ public final class SystemDefinitions {
     String url = "https://blue.qa.lighthouse.va.gov";
     return SystemDefinition.builder()
         .internal(serviceDefinition("internal", url, 443, null, "/vista-fhir-query/"))
-        .publicIds(vistaDevIds())
+        .publicIds(qaIds())
+        .clientKey(clientKey())
         .build();
+  }
+
+  private static TestIds qaIds() {
+    return TestIds.builder().patient("1011537977V693883").build();
   }
 
   private static ServiceDefinition serviceDefinition(
@@ -40,6 +50,19 @@ public final class SystemDefinitions {
         .serviceDefinition();
   }
 
+  private static SystemDefinition staging() {
+    String url = "https://blue.qa.lighthouse.va.gov";
+    return SystemDefinition.builder()
+        .internal(serviceDefinition("internal", url, 443, null, "/vista-fhir-query/"))
+        .publicIds(stagingIds())
+        .clientKey(clientKey())
+        .build();
+  }
+
+  private static TestIds stagingIds() {
+    return TestIds.builder().patient("1011537977V693883").build();
+  }
+
   /** Return the applicable system definition for the current environment. */
   public static SystemDefinition systemDefinition() {
     switch (Environment.get()) {
@@ -47,12 +70,10 @@ public final class SystemDefinitions {
         return local();
       case QA:
         return qa();
+      case STAGING:
+        return staging();
       default:
         throw new IllegalArgumentException("Unknown sentinel environment: " + Environment.get());
     }
-  }
-
-  private static TestIds vistaDevIds() {
-    return TestIds.builder().patient("1011537977V693883").build();
   }
 }

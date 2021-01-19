@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Eventually, controllers will be split based on the fhir resources they represent.
  * Therefore, no tests are necessary for this class. */
 @RestController
-@RequestMapping(value = {"/ping"})
+@RequestMapping(value = {"/internal"})
 @AllArgsConstructor(onConstructor_ = @Autowired)
 public class VistaFhirQueryController {
 
@@ -24,7 +24,7 @@ public class VistaFhirQueryController {
 
   /** Ping All VistA sites for a given patient. */
   @SneakyThrows
-  @GetMapping(value = "/{icn}")
+  @GetMapping(value = "/ping/{icn}")
   public List<RpcInvocationResult> ping(@PathVariable("icn") String icn) {
     RpcResponse response =
         vistalinkApiClient.request(

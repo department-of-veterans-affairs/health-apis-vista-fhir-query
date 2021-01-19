@@ -13,6 +13,7 @@
   <properties>
     <!-- ToDo Increase Coverage -->
     <jacoco.coverage>0.80</jacoco.coverage>
+    <talos.version>0.0.1</talos.version>
     <vistalink.api.version>2.0.0</vistalink.api.version>
   </properties>
   <dependencies>
@@ -24,6 +25,11 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>gov.va.api.lighthouse</groupId>
+      <artifactId>talos</artifactId>
+      <version>${talos.version}</version>
     </dependency>
     <dependency>
       <groupId>gov.va.api.lighthouse</groupId>

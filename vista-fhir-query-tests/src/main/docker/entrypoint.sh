@@ -19,6 +19,7 @@ main() {
   if [ -n "${VFQ_API_PATH:-}" ]; then  addToSystemProperties "sentinel.internal.api-path" "${VFQ_API_PATH}"; fi
   if [ -n "${VFQ_PORT:-}" ]; then addToSystemProperties "sentinel.internal.port" "${VFQ_PORT}"; fi
   if [ -n "${MAGIC_ACCESS_TOKEN:-}" ]; then addToSystemProperties "access-token" "${MAGIC_ACCESS_TOKEN}"; fi
+  if [ -n "${VFQ_CLIENT_KEY:-}" ]; then addToSystemProperties "client-key" "${VFQ_CLIENT_KEY}"; fi
 
   java-tests \
     --module-name "vista-fhir-query-tests" \

@@ -12,6 +12,7 @@ public class PathRewriteConfig {
     var registration = new FilterRegistrationBean<PathRewriteFilter>();
     PathRewriteFilter filter =
         PathRewriteFilter.builder().removeLeadingPath("/vista-fhir-query/").build();
+    registration.setOrder(1);
     registration.setFilter(filter);
     registration.addUrlPatterns(filter.removeLeadingPathsAsUrlPatterns());
     return registration;
