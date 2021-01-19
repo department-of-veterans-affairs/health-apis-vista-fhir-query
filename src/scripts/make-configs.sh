@@ -110,6 +110,7 @@ EOF
   configValue vista-fhir-query $PROFILE vistalink.api.client-key "$VISTALINK_CLIENT_KEY"
   configValue vista-fhir-query $PROFILE vistalink.api.access-code "$VISTALINK_ACCESS_CODE"
   configValue vista-fhir-query $PROFILE vistalink.api.verify-code "$VISTALINK_VERIFY_CODE"
+  configValue vista-fhir-query $PROFILE vista-fhir-query.internal.client-keys "disabled"
   checkForUnsetValues vista-fhir-query $PROFILE
 }
 

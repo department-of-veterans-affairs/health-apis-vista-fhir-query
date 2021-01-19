@@ -27,10 +27,10 @@ public class ClientKeyProtectedEndpointConfig {
 
     List<String> clientKeys;
 
-    if (isBlank(clientKeysCsv) || "unset".equals(clientKeysCsv)) {
+    if (isBlank(clientKeysCsv) || "disabled".equals(clientKeysCsv)) {
       log.warn(
           "Client-key protection is disabled. To enable, "
-              + "set vista-fhir-query.internal.client-keys to a value other than unset.");
+              + "set vista-fhir-query.internal.client-keys to a value other than disabled.");
 
       registration.setEnabled(false);
       clientKeys = List.of();
