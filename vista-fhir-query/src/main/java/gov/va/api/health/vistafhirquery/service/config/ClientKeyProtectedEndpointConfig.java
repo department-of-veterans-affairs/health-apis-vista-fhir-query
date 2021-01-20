@@ -45,7 +45,7 @@ public class ClientKeyProtectedEndpointConfig {
             .unauthorizedResponse(unauthorizedResponse())
             .build());
 
-    registration.addUrlPatterns("/internal/*");
+    registration.addUrlPatterns("/internal/*", "/vista-fhir-query/internal/*");
 
     return registration;
   }
