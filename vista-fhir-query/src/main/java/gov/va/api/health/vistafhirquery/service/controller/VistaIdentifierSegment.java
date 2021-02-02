@@ -14,7 +14,7 @@ public class VistaIdentifierSegment {
 
   @NonNull String vistaId;
 
-  /** Parse a VistaIdentifer. */
+  /** Parse a VistaIdentifier. */
   public static VistaIdentifierSegment parse(String id) {
     String[] segmentParts = id.split("\\+", -1);
     if (segmentParts.length != 3) {
