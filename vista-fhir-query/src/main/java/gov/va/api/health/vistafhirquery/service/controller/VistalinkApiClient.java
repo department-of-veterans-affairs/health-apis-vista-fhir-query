@@ -5,5 +5,7 @@ import gov.va.api.lighthouse.vistalink.api.RpcResponse;
 
 public interface VistalinkApiClient {
 
-  public RpcResponse request(String forPatient, RpcDetails rpcDetails);
+  RpcResponse requestForPatient(String patient, RpcDetails rpcDetails);
+
+  RpcResponse requestForVistaSite(String vistaSite, RpcDetails rpcDetails);
 }

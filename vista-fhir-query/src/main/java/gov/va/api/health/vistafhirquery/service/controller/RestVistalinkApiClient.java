@@ -7,6 +7,7 @@ import gov.va.api.lighthouse.vistalink.api.RpcRequest;
 import gov.va.api.lighthouse.vistalink.api.RpcResponse;
 import gov.va.api.lighthouse.vistalink.api.RpcVistaTargets;
 import java.net.URI;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.SneakyThrows;
@@ -23,7 +24,6 @@ import org.springframework.web.client.RestTemplate;
 @Component
 @AllArgsConstructor(onConstructor_ = @Autowired)
 public class RestVistalinkApiClient implements VistalinkApiClient {
-
   private RestTemplate restTemplate;
 
   private VistalinkApiConfig config;
@@ -40,28 +40,49 @@ public class RestVistalinkApiClient implements VistalinkApiClient {
         .body(body);
   }
 
+  @SneakyThrows
+  private RpcResponse makeRequest(RpcRequest rpcRequest) {
+    RequestEntity<RpcRequest> request = buildRequestEntity(rpcRequest);
+    ResponseEntity<RpcResponse> response = restTemplate.exchange(request, RpcResponse.class);
+    verifyVistalinkApiResponse(response);
+    return response.getBody();
+  }
+
   /** Request an RPC based on a patients ICN. */
-  public RpcResponse request(String forPatient, RpcDetails rpcDetails) {
-    RpcRequest requestBody =
+  @Override
+  public RpcResponse requestForPatient(String patient, RpcDetails rpcDetails) {
+    RpcRequest rpcRequest =
         RpcRequest.builder()
             .principal(
                 RpcPrincipal.builder()
                     .accessCode(config().getAccessCode())
                     .verifyCode(config().getVerifyCode())
                     .build())
-            .target(RpcVistaTargets.builder().forPatient(forPatient).build())
+            .target(RpcVistaTargets.builder().forPatient(patient).build())
             .rpc(rpcDetails)
             .build();
-    RequestEntity<RpcRequest> request = buildRequestEntity(requestBody);
-    ResponseEntity<RpcResponse> response = restTemplate.exchange(request, RpcResponse.class);
-    verifyVistalinkApiResponse(response);
-    return response.getBody();
+    return makeRequest(rpcRequest);
+  }
+
+  /** Request an RPC at a specific VistA site. */
+  public RpcResponse requestForVistaSite(String vistaSite, RpcDetails rpcDetails) {
+    RpcRequest rpcRequest =
+        RpcRequest.builder()
+            .principal(
+                RpcPrincipal.builder()
+                    .accessCode(config().getAccessCode())
+                    .verifyCode(config().getVerifyCode())
+                    .build())
+            .target(RpcVistaTargets.builder().include(List.of(vistaSite)).build())
+            .rpc(rpcDetails)
+            .build();
+    return makeRequest(rpcRequest);
   }
 
   private void verifyVistalinkApiResponse(ResponseEntity<RpcResponse> response) {
     if (!response.getStatusCode().is2xxSuccessful()) {
       // ToDo make this validation/error handling better
-      throw new IllegalStateException("Vistalink didnt return 2xx.");
+      throw new IllegalStateException("Vistalink API didnt return 2xx HTTP status code.");
     }
   }
 }
