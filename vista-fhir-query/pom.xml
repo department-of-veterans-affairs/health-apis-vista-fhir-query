@@ -13,7 +13,7 @@
   <properties>
     <!-- ToDo Increase Coverage -->
     <jacoco.coverage>0.80</jacoco.coverage>
-    <talos.version>0.0.1</talos.version>
+    <talos.version>0.0.3</talos.version>
     <vistalink.api.version>2.0.0</vistalink.api.version>
   </properties>
   <dependencies>

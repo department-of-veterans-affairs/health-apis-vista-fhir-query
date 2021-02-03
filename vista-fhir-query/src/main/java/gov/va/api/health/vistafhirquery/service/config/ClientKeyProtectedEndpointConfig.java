@@ -45,6 +45,8 @@ public class ClientKeyProtectedEndpointConfig {
             .unauthorizedResponse(unauthorizedResponse())
             .build());
 
+    registration.setOrder(1);
+
     registration.addUrlPatterns("/internal/*");
 
     return registration;
