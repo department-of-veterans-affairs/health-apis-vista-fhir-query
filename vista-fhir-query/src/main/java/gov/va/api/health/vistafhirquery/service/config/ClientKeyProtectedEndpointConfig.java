@@ -25,6 +25,8 @@ public class ClientKeyProtectedEndpointConfig {
       @Value("${vista-fhir-query.internal.client-keys}") String clientKeysCsv) {
     var registration = new FilterRegistrationBean<ClientKeyProtectedEndpointFilter>();
 
+    registration.setOrder(1);
+
     List<String> clientKeys;
 
     if (isBlank(clientKeysCsv) || "disabled".equals(clientKeysCsv)) {
@@ -45,9 +47,9 @@ public class ClientKeyProtectedEndpointConfig {
             .unauthorizedResponse(unauthorizedResponse())
             .build());
 
-    registration.setOrder(1);
-
     registration.addUrlPatterns("/internal/*");
+
+    log.info("ClientKeyProtectedEndpointFilter enabled with priority {}", registration.getOrder());
 
     return registration;
   }
