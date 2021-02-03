@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<results version="1.13" timeZone="-0500">
+  <vitals total="11">
+    <vital>
+      <entered value="3110225.110428"/>
+      <facility code="673" name="TAMPA (JAH VAH)"/>
+      <location code="23" name="GENERAL MEDICINE"/>
+      <measurements>
+        <measurement id="32075" vuid="4688724" name="HEIGHT" value="73" units="in" metricValue="185.42" metricUnits="cm"/>
+      </measurements>
+      <taken value="3100406.14"/>
+    </vital>
+  </vitals>
+</results>

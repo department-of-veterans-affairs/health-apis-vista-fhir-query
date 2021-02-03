@@ -13,10 +13,6 @@ public class ResourceExceptions {
   }
 
   static class ResourceException extends RuntimeException {
-    ResourceException(String message, Throwable cause) {
-      super(message, cause);
-    }
-
     ResourceException(String message) {
       super(message);
     }
