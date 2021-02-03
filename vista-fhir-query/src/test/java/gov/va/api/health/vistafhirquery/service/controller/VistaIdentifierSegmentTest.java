@@ -10,17 +10,18 @@ import org.junit.jupiter.params.provider.ValueSource;
 public class VistaIdentifierSegmentTest {
   @Test
   void parseIdSuccessfully() {
-    assertThat(VistaIdentifierSegment.parse("icn+siteId+vistaId"))
+    assertThat(VistaIdentifierSegment.parse("nicn+icn+siteId+vistaId"))
         .isEqualTo(
             VistaIdentifierSegment.builder()
-                .icn("icn")
-                .vistaSite("siteId")
-                .vistaId("vistaId")
+                .patientIdentifierType(VistaIdentifierSegment.PatientIdentifierType.nicn)
+                .patientIdentifier("icn")
+                .vistaSiteId("siteId")
+                .vistaRecordId("vistaId")
                 .build());
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {1, 2, 4})
+  @ValueSource(ints = {1, 2, 3, 5})
   void parseIdWithInvalidSegmentThrows(Integer segmentFieldCount) {
     StringBuilder sb = new StringBuilder("" + 0);
     for (int i = 1; i < segmentFieldCount; i++) {
@@ -35,11 +36,12 @@ public class VistaIdentifierSegmentTest {
   void toIdentiferSegment() {
     assertThat(
             VistaIdentifierSegment.builder()
-                .icn("icn")
-                .vistaSite("siteId")
-                .vistaId("vistaId")
+                .patientIdentifierType(VistaIdentifierSegment.PatientIdentifierType.nicn)
+                .patientIdentifier("icn")
+                .vistaSiteId("siteId")
+                .vistaRecordId("vistaId")
                 .build()
                 .toIdentifierSegment())
-        .isEqualTo("icn+siteId+vistaId");
+        .isEqualTo("nicn+icn+siteId+vistaId");
   }
 }
