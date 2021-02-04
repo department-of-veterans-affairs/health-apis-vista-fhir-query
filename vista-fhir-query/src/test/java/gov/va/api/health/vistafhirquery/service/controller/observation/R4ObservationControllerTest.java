@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 
 import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
-import gov.va.api.health.vistafhirquery.service.controller.R4Bundler;
 import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions;
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
 import gov.va.api.lighthouse.vistalink.api.RpcDetails;
@@ -30,8 +29,7 @@ public class R4ObservationControllerTest {
             .maxPageSize(100)
             .publicUrl("http://fugazi.com")
             .publicR4BasePath("r4")
-            .build(),
-        new R4Bundler());
+            .build());
   }
 
   @Test

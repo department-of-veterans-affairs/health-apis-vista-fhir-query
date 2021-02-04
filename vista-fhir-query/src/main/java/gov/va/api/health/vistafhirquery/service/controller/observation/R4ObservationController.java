@@ -1,14 +1,13 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
-import static gov.va.api.health.vistafhirquery.service.controller.RpcResponseVerifier.verifyAndReturnResults;
-
 import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
 import gov.va.api.health.vistafhirquery.service.controller.R4Bundler;
-import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions.NotFound;
+import gov.va.api.health.vistafhirquery.service.controller.R4Bundling;
+import gov.va.api.health.vistafhirquery.service.controller.R4Transformation;
+import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions;
 import gov.va.api.health.vistafhirquery.service.controller.VistaIdentifierSegment;
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
-import gov.va.api.lighthouse.vistalink.api.RpcInvocationResult;
 import gov.va.api.lighthouse.vistalink.api.RpcResponse;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Vitals;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.VprGetPatientData;
@@ -47,37 +46,11 @@ public class R4ObservationController {
 
   private final LinkProperties linkProperties;
 
-  private final R4Bundler bundler;
-
-  private Observation.Bundle bundle(
-      Map<String, String> parameters, List<Observation> observations) {
-    return bundler.bundle(
-        "Observation",
-        parameters,
-        linkProperties,
-        observations,
-        Observation.Entry::new,
-        Observation.Bundle::new);
-  }
-
-  private Map<String, VprGetPatientData.Response.Results> filterForValidResults(
-      RpcResponse rpcResponse) {
-    List<RpcInvocationResult> invocationResults = verifyAndReturnResults(rpcResponse);
-    return VprGetPatientData.create()
-        .fromResults(invocationResults)
-        .resultsByStation()
-        .entrySet()
-        .stream()
-        .filter(entry -> entry.getValue().vitalStream().anyMatch(Vitals.Vital::isNotEmpty))
-        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-  }
-
   /** Read by publicId. */
   @SneakyThrows
   @GetMapping(value = {"/{publicId}"})
   public Observation read(@PathVariable("publicId") String publicId) {
     log.info("ToDo: Search By _id and identifier");
-    log.info("ToDo: PublicId to VistaIdentifier WitnessProtection");
     VistaIdentifierSegment ids = VistaIdentifierSegment.parse(publicId);
     RpcResponse rpcResponse =
         vistalinkApiClient.requestForVistaSite(
@@ -89,13 +62,13 @@ public class R4ObservationController {
                 .id(Optional.of(ids.vistaRecordId()))
                 .build()
                 .asDetails());
-    Map<String, VprGetPatientData.Response.Results> filteredResults =
-        filterForValidResults(rpcResponse);
-    if (filteredResults.isEmpty()) {
-      NotFound.because("Identifier not found in VistA: " + publicId);
+    VprGetPatientData.Response vprPatientData =
+        VprGetPatientData.create().fromResults(rpcResponse.results());
+    List<Observation> resources = transformation().toResource().apply(vprPatientData);
+    if (resources.isEmpty()) {
+      ResourceExceptions.NotFound.because("Identifier not found in VistA: " + publicId);
     }
-    log.info("ToDo: VistaIdentifier to PublicId WitnessProtection");
-    log.info("ToDo: Map to R4 Observation");
+    log.info("ToDo: Verify only one result was returned.");
     return Observation.builder().id(publicId).build();
   }
 
@@ -107,7 +80,6 @@ public class R4ObservationController {
       @RequestParam(name = "_count", required = false) @Min(0) Integer count) {
     int countValue = count == null ? linkProperties.getDefaultPageSize() : count;
     Map<String, String> parameters = Map.of("patient", patient, "_count", "" + countValue);
-    log.info("ToDo: Parameter Handling: page, patient, etc.");
     // Default .max() value is 9999
     RpcResponse rpcResponse =
         vistalinkApiClient.requestForPatient(
@@ -117,15 +89,41 @@ public class R4ObservationController {
                 .type(Set.of(VprGetPatientData.Domains.vitals))
                 .build()
                 .asDetails());
-    Map<String, VprGetPatientData.Response.Results> filteredResults =
-        filterForValidResults(rpcResponse);
-    if (filteredResults.isEmpty()) {
-      return bundle(parameters, List.of());
-    }
-    log.info("ToDo: sort Results so we can confidently do paging");
-    log.info("ToDo: VistA paging fanciness");
-    log.info("ToDo: FHIR References WitnessProtection");
-    log.info("ToDo: Map to R4 Observation");
-    return bundle(parameters, List.of(Observation.builder().id("myPublicId").build()));
+    VprGetPatientData.Response vprPatientData =
+        VprGetPatientData.create().fromResults(rpcResponse.results());
+    return toBundle(parameters).apply(vprPatientData);
+  }
+
+  private R4Bundler<VprGetPatientData.Response, Observation, Observation.Entry, Observation.Bundle>
+      toBundle(Map<String, String> parameters) {
+    return R4Bundler.forTransformation(transformation())
+        .bundling(
+            R4Bundling.newBundle(Observation.Bundle::new)
+                .newEntry(Observation.Entry::new)
+                .linkProperties(linkProperties)
+                .build())
+        .resourceType("Observation")
+        .parameters(parameters)
+        .build();
+  }
+
+  private R4Transformation<VprGetPatientData.Response, Observation> transformation() {
+    return R4Transformation.<VprGetPatientData.Response, Observation>builder()
+        .toResource(
+            rpcResponse -> {
+              // Filter out empty results
+              Map<String, VprGetPatientData.Response.Results> filteredResults =
+                  rpcResponse.resultsByStation().entrySet().stream()
+                      .filter(
+                          entry ->
+                              entry.getValue().vitalStream().anyMatch(Vitals.Vital::isNotEmpty))
+                      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+              if (filteredResults.isEmpty()) {
+                return List.of();
+              }
+              log.info("ToDo: Actual transformation.");
+              return List.of(Observation.builder().id("myPublicId").build());
+            })
+        .build();
   }
 }

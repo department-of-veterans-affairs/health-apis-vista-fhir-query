@@ -4,74 +4,84 @@ import gov.va.api.health.r4.api.bundle.AbstractBundle;
 import gov.va.api.health.r4.api.bundle.AbstractEntry;
 import gov.va.api.health.r4.api.bundle.BundleLink;
 import gov.va.api.health.r4.api.resources.Resource;
-import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
+import gov.va.api.lighthouse.vistalink.models.TypeSafeRpcResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
 
-/**
- * The bundler is capable of producing type specific bundles for resources. It leverages supporting
- * helper functions in a provided context to create new instances of specific bundle and entry
- * types. Paging links are supported via an injectable PageLinks.
- */
 @Slf4j
-@Service
-public class R4Bundler {
-  /**
-   * Return new bundle, filled with entries created from the resources.
-   *
-   * @param linkProperties Configurable link defaults and url creation methods
-   * @param resources The FHIR resources to compose the bundle
-   * @param newEntry Used to create new instances for entries, one for each resource
-   * @param newBundle Used to create a new instance of the bundle (called once)
-   */
-  public <R extends Resource, E extends AbstractEntry<R>, B extends AbstractBundle<E>> B bundle(
-      String resourceType,
-      Map<String, String> parameters,
-      LinkProperties linkProperties,
-      List<R> resources,
-      Supplier<E> newEntry,
-      Supplier<B> newBundle) {
+@Builder
+public class R4Bundler<
+        RpcResponseT extends TypeSafeRpcResponse,
+        ResourceT extends Resource,
+        EntryT extends AbstractEntry<ResourceT>,
+        BundleT extends AbstractBundle<EntryT>>
+    implements Function<RpcResponseT, BundleT> {
+  String resourceType;
+
+  Map<String, String> parameters;
+
+  R4Transformation<RpcResponseT, ResourceT> transformation;
+
+  R4Bundling<ResourceT, EntryT, BundleT> bundling;
+
+  public static <RpcResponseT extends TypeSafeRpcResponse, ResourceT extends Resource>
+      R4BundlerPart1<RpcResponseT, ResourceT> forTransformation(
+          R4Transformation<RpcResponseT, ResourceT> transformation) {
+    return R4BundlerPart1.<RpcResponseT, ResourceT>builder().transformation(transformation).build();
+  }
+
+  @Override
+  public BundleT apply(RpcResponseT rpcResult) {
     log.info("ToDo: Replace parameters map and resourceType with ParamMappings class");
-    B bundle = newBundle.get();
-    bundle.resourceType("Bundle");
     log.info("ToDo: Determine total results better");
+    log.info(
+        "ToDo: We'll have to do special paging logic here because "
+            + "vista gives us _ALL_ the results at once");
+    List<ResourceT> resources = transformation.toResource().apply(rpcResult);
+    BundleT bundle = bundling.newBundle().get();
+    bundle.resourceType("Bundle");
     bundle.total(resources.size());
-    log.info("ToDo: Build bundle links dynamically");
-    bundle.link(
-        List.of(
-            BundleLink.builder()
-                .relation(BundleLink.LinkRelation.self)
-                .url(
-                    linkProperties.r4().resourceUrl(resourceType)
-                        + "?"
-                        + parameters.entrySet().stream()
-                            .map(e -> String.join("=", e.getKey(), e.getValue()))
-                            .collect(Collectors.joining("&")))
-                .build()));
-    bundle.entry(
-        resources.stream()
-            .map(r -> entry(r, linkProperties, newEntry))
-            .collect(Collectors.toList()));
+    bundle.link(toLinks());
+    bundle.entry(resources.stream().map(this::toEntry).collect(Collectors.toList()));
     return bundle;
   }
 
-  /**
-   * Return new entry.
-   *
-   * @param resource The FHIR resources to compose the bundle
-   * @param linkProperties Configurable link defaults and url creation methods
-   * @param newEntry Used to create new instances for entries, one for each resource
-   */
-  public <R extends Resource, E extends AbstractEntry<R>> E entry(
-      R resource, LinkProperties linkProperties, Supplier<E> newEntry) {
-    E entry = newEntry.get();
-    entry.fullUrl(linkProperties.r4().readUrl(resource));
+  private EntryT toEntry(ResourceT resource) {
+    EntryT entry = bundling.newEntry().get();
+    entry.fullUrl(bundling.linkProperties().r4().readUrl(resource));
     entry.resource(resource);
     entry.search(AbstractEntry.Search.builder().mode(AbstractEntry.SearchMode.match).build());
     return entry;
+  }
+
+  private List<BundleLink> toLinks() {
+    log.info("ToDo: Build bundle links dynamically");
+    List<BundleLink> links = new ArrayList<>(5);
+    links.add(
+        BundleLink.builder()
+            .relation(BundleLink.LinkRelation.self)
+            .url(
+                bundling.linkProperties().r4().resourceUrl(resourceType)
+                    + "?"
+                    + parameters.entrySet().stream()
+                        .map(e -> String.join("=", e.getKey(), e.getValue()))
+                        .collect(Collectors.joining("&")))
+            .build());
+    return links;
+  }
+
+  @Builder
+  public static class R4BundlerPart1<V extends TypeSafeRpcResponse, R extends Resource> {
+    private final R4Transformation<V, R> transformation;
+
+    public <E extends AbstractEntry<R>, B extends AbstractBundle<E>>
+        R4BundlerBuilder<V, R, E, B> bundling(R4Bundling<R, E, B> bundling) {
+      return R4Bundler.<V, R, E, B>builder().transformation(transformation).bundling(bundling);
+    }
   }
 }

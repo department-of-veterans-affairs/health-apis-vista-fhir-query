@@ -20,7 +20,7 @@ import org.springframework.context.annotation.Configuration;
 @AllArgsConstructor
 @Builder
 public class LinkProperties {
-  // ToDo: should the base parts of this be moved to a common place as an interface?
+
   private String publicUrl;
   private String publicR4BasePath;
   private int defaultPageSize;
