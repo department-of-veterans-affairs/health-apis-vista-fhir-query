@@ -11,12 +11,18 @@
   <version>0.0.10-SNAPSHOT</version>
   <packaging>jar</packaging>
   <properties>
+    <fhir-resources.version>5.0.17</fhir-resources.version>
     <!-- ToDo Increase Coverage -->
-    <jacoco.coverage>0.80</jacoco.coverage>
+    <jacoco.coverage>0.55</jacoco.coverage>
     <talos.version>0.0.3</talos.version>
-    <vistalink.api.version>2.0.0</vistalink.api.version>
+    <vistalink.version>2.0.8</vistalink.version>
   </properties>
   <dependencies>
+    <dependency>
+      <groupId>gov.va.api.health</groupId>
+      <artifactId>us-core-r4</artifactId>
+      <version>${fhir-resources.version}</version>
+    </dependency>
     <dependency>
       <groupId>gov.va.api.health</groupId>
       <artifactId>service-auto-config</artifactId>
@@ -34,7 +40,12 @@
     <dependency>
       <groupId>gov.va.api.lighthouse</groupId>
       <artifactId>vistalink-api</artifactId>
-      <version>${vistalink.api.version}</version>
+      <version>${vistalink.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>gov.va.api.lighthouse</groupId>
+      <artifactId>vistalink-models</artifactId>
+      <version>${vistalink.version}</version>
     </dependency>
   </dependencies>
 </project>
