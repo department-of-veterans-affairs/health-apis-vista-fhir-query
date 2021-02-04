@@ -37,6 +37,8 @@ public class ClientKeyProtectedEndpointConfig {
       registration.setEnabled(false);
       clientKeys = List.of();
     } else {
+      log.info(
+          "ClientKeyProtectedEndpointFilter enabled with priority {}", registration.getOrder());
       clientKeys = Arrays.stream(clientKeysCsv.split(",")).collect(Collectors.toList());
     }
 
@@ -48,8 +50,6 @@ public class ClientKeyProtectedEndpointConfig {
             .build());
 
     registration.addUrlPatterns("/internal/*");
-
-    log.info("ClientKeyProtectedEndpointFilter enabled with priority {}", registration.getOrder());
 
     return registration;
   }
