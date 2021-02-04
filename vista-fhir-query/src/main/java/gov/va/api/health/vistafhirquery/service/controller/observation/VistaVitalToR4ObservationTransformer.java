@@ -11,10 +11,10 @@ import gov.va.api.lighthouse.vistalink.models.CodeAndNameXmlAttribute;
 import gov.va.api.lighthouse.vistalink.models.ValueOnlyXmlAttribute;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Vitals;
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.NonNull;
 
@@ -111,6 +111,13 @@ public class VistaVitalToR4ObservationTransformer {
             .build());
   }
 
+  static Observation.ObservationStatus status(List<ValueOnlyXmlAttribute> removed) {
+    if (removed == null || removed.isEmpty()) {
+      return Observation.ObservationStatus._final;
+    }
+    return Observation.ObservationStatus.entered_in_error;
+  }
+
   static String valueOf(ValueOnlyXmlAttribute valueOnlyXmlAttribute) {
     if (valueOnlyXmlAttribute == null) {
       return null;
@@ -126,34 +133,40 @@ public class VistaVitalToR4ObservationTransformer {
     return Quantity.builder().value(new BigDecimal(value)).unit(units).build();
   }
 
-  private Observation.ObservationStatus status(List<ValueOnlyXmlAttribute> removed) {
-    if (removed == null || removed.isEmpty()) {
-      return Observation.ObservationStatus._final;
+  Observation observationFromMeasurement(Vitals.Measurement measurement) {
+    if ("BLOOD PRESSURE".equals(measurement.name())) {
+      return Observation.builder()
+          .bodySite(bodySite(measurement.qualifiers()))
+          .category(category())
+          .code(code(measurement))
+          .component(component(measurement))
+          .effectiveDateTime(valueOf(vistaVital.taken()))
+          .issued(valueOf(vistaVital.entered()))
+          .id(measurement.id())
+          .performer(performer(vistaVital.facility()))
+          .status(status(vistaVital.removed()))
+          .build();
     }
-    return Observation.ObservationStatus.entered_in_error;
+    return Observation.builder()
+        .bodySite(bodySite(measurement.qualifiers()))
+        .category(category())
+        .code(code(measurement))
+        .effectiveDateTime(valueOf(vistaVital.taken()))
+        .issued(valueOf(vistaVital.entered()))
+        .id(measurement.id())
+        .performer(performer(vistaVital.facility()))
+        .referenceRange(referenceRange(measurement.high(), measurement.low()))
+        .status(status(vistaVital.removed()))
+        .valueQuantity(valueQuantity(measurement.value(), measurement.units()))
+        .build();
   }
 
-  List<Observation> toFhir() {
+  Stream<Observation> toFhir() {
     if (vistaVital.measurements() == null || vistaVital.measurements().isEmpty()) {
-      return Collections.emptyList();
+      return Stream.empty();
     }
     return vistaVital.measurements().stream()
         .filter(Objects::nonNull)
-        .map(
-            measurement ->
-                Observation.builder()
-                    .id(measurement.id())
-                    .bodySite(bodySite(measurement.qualifiers()))
-                    .code(code(measurement))
-                    .issued(valueOf(vistaVital.entered()))
-                    .performer(performer(vistaVital.facility()))
-                    .status(status(vistaVital.removed()))
-                    .effectiveDateTime(valueOf(vistaVital.taken()))
-                    .category(category())
-                    .component(component(measurement))
-                    .valueQuantity(valueQuantity(measurement.value(), measurement.units()))
-                    .referenceRange(referenceRange(measurement.high(), measurement.low()))
-                    .build())
-        .collect(Collectors.toList());
+        .map(this::observationFromMeasurement);
   }
 }

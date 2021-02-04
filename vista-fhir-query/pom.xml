@@ -12,11 +12,10 @@
   <packaging>jar</packaging>
   <properties>
     <!-- ToDo Increase Coverage -->
+    <fhir-resources.version>5.0.18</fhir-resources.version>
     <jacoco.coverage>0.80</jacoco.coverage>
     <talos.version>0.0.1</talos.version>
-    <vistalink.api.version>2.0.0</vistalink.api.version>
-    <fhir-resources.version>5.0.18</fhir-resources.version>
-    <vistalink.models.version>2.0.8</vistalink.models.version>
+    <vistalink.version>2.0.9</vistalink.version>
   </properties>
   <dependencies>
     <dependency>
@@ -34,19 +33,19 @@
       <version>${talos.version}</version>
     </dependency>
     <dependency>
+      <groupId>gov.va.api.health</groupId>
+      <artifactId>us-core-r4</artifactId>
+      <version>${fhir-resources.version}</version>
+    </dependency>
+    <dependency>
       <groupId>gov.va.api.lighthouse</groupId>
       <artifactId>vistalink-api</artifactId>
-      <version>${vistalink.api.version}</version>
+      <version>${vistalink.version}</version>
     </dependency>
     <dependency>
       <groupId>gov.va.api.lighthouse</groupId>
       <artifactId>vistalink-models</artifactId>
-      <version>${vistalink.models.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>gov.va.api.health</groupId>
-      <artifactId>us-core-r4</artifactId>
-      <version>${fhir-resources.version}</version>
+      <version>${vistalink.version}</version>
     </dependency>
   </dependencies>
 </project>
