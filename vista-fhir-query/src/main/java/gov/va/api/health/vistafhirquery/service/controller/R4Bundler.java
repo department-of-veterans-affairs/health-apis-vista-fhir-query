@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,9 +17,9 @@ import org.springframework.stereotype.Service;
  * helper functions in a provided context to create new instances of specific bundle and entry
  * types. Paging links are supported via an injectable PageLinks.
  */
+@Slf4j
 @Service
 public class R4Bundler {
-  // ToDo ParameterMapping fanciness will replace parameters map and resourceType
   /**
    * Return new bundle, filled with entries created from the resources.
    *
@@ -34,11 +35,12 @@ public class R4Bundler {
       List<R> resources,
       Supplier<E> newEntry,
       Supplier<B> newBundle) {
+    log.info("ToDo: Replace parameters map and resourceType with ParamMappings class");
     B bundle = newBundle.get();
     bundle.resourceType("Bundle");
-    // ToDo this needs to do better
+    log.info("ToDo: Determine total results better");
     bundle.total(resources.size());
-    // ToDo this needs to do waaay better
+    log.info("ToDo: Build bundle links dynamically");
     bundle.link(
         List.of(
             BundleLink.builder()

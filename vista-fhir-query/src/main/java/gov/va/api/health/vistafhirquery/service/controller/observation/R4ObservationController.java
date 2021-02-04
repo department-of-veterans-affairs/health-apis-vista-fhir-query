@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import javax.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @implSpec
  *     https://build.fhir.org/ig/HL7/US-Core-R4/StructureDefinition-us-core-observation-lab.html
  */
+@Slf4j
 @Validated
 @RestController
 @RequestMapping(
@@ -47,7 +49,6 @@ public class R4ObservationController {
 
   private final R4Bundler bundler;
 
-  // ToDo Search By _id and identifier
   private Observation.Bundle bundle(
       Map<String, String> parameters, List<Observation> observations) {
     return bundler.bundle(
@@ -75,7 +76,8 @@ public class R4ObservationController {
   @SneakyThrows
   @GetMapping(value = {"/{publicId}"})
   public Observation read(@PathVariable("publicId") String publicId) {
-    // ToDo WitnessProtection
+    log.info("ToDo: Search By _id and identifier");
+    log.info("ToDo: PublicId to VistaIdentifier WitnessProtection");
     VistaIdentifierSegment ids = VistaIdentifierSegment.parse(publicId);
     RpcResponse rpcResponse =
         vistalinkApiClient.requestForVistaSite(
@@ -92,8 +94,8 @@ public class R4ObservationController {
     if (filteredResults.isEmpty()) {
       NotFound.because("Identifier not found in VistA: " + publicId);
     }
-    // ToDo witnessProtection
-    // ToDo Map to FHIR
+    log.info("ToDo: VistaIdentifier to PublicId WitnessProtection");
+    log.info("ToDo: Map to R4 Observation");
     return Observation.builder().id(publicId).build();
   }
 
@@ -105,7 +107,7 @@ public class R4ObservationController {
       @RequestParam(name = "_count", required = false) @Min(0) Integer count) {
     int countValue = count == null ? linkProperties.getDefaultPageSize() : count;
     Map<String, String> parameters = Map.of("patient", patient, "_count", "" + countValue);
-    // ToDo Parameters Handling: page, patient
+    log.info("ToDo: Parameter Handling: page, patient, etc.");
     // Default .max() value is 9999
     RpcResponse rpcResponse =
         vistalinkApiClient.requestForPatient(
@@ -120,10 +122,10 @@ public class R4ObservationController {
     if (filteredResults.isEmpty()) {
       return bundle(parameters, List.of());
     }
-    // ToDo sort Results so we can confidently do paging
-    // ToDo paging fanciness
-    // ToDo witnessProtection
-    // ToDo map to FHIR
+    log.info("ToDo: sort Results so we can confidently do paging");
+    log.info("ToDo: VistA paging fanciness");
+    log.info("ToDo: FHIR References WitnessProtection");
+    log.info("ToDo: Map to R4 Observation");
     return bundle(parameters, List.of(Observation.builder().id("myPublicId").build()));
   }
 }
