@@ -111,6 +111,8 @@ EOF
   configValue vista-fhir-query $PROFILE vistalink.api.access-code "$VISTALINK_ACCESS_CODE"
   configValue vista-fhir-query $PROFILE vistalink.api.verify-code "$VISTALINK_VERIFY_CODE"
   configValue vista-fhir-query $PROFILE vista-fhir-query.internal.client-keys "disabled"
+  configValue vista-fhir-query $PROFILE vista-fhir-query.public-url "http://localhost:8095"
+  configValue vista-fhir-query $PROFILE vista-fhir-query.public-r4-base-path "r4"
   checkForUnsetValues vista-fhir-query $PROFILE
 }
 
