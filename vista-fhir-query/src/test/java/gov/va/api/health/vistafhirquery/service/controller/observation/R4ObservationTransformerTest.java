@@ -1,1 +1,18 @@
-package gov.va.api.health.vistafhirquery.service.controller.observation;  public class R4ObservationTransformerTest { }
+package gov.va.api.health.vistafhirquery.service.controller.observation;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.junit.jupiter.api.Test;
+
+public class R4ObservationTransformerTest {
+
+  @Test
+  public void ToFhir() {
+    assertThat(
+            R4ObservationTransformer.builder()
+                .resultsEntry(ObservationSamples.Vista.create().resultsByStation())
+                .build()
+                .toFhir())
+        .isEqualTo(ObservationSamples.Fhir.create().observations());
+  }
+}

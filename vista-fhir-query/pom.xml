@@ -13,9 +13,10 @@
   <properties>
     <!-- ToDo Increase Coverage -->
     <fhir-resources.version>5.0.18</fhir-resources.version>
-    <jacoco.coverage>0.80</jacoco.coverage>
+    <jacoco.coverage>0.92</jacoco.coverage>
     <talos.version>0.0.1</talos.version>
-    <vistalink.version>2.0.9</vistalink.version>
+    <!-- ToDo dont use snapshot -->
+    <vistalink.version>2.0.11-SNAPSHOT</vistalink.version>
   </properties>
   <dependencies>
     <dependency>
