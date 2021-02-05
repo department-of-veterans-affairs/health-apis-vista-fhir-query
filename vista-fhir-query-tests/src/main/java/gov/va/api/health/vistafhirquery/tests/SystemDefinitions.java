@@ -17,7 +17,7 @@ public final class SystemDefinitions {
     return SystemDefinition.builder()
         .internal(serviceDefinition("internal", url, 8095, null, "/"))
         .publicIds(localIds())
-        .clientKey(Optional.empty())
+        .clientKey(Optional.of(System.getProperty("client-key", "~shanktopus~")))
         .build();
   }
 
