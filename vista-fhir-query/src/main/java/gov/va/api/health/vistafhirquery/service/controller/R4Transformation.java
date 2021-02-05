@@ -8,9 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-/**
- * Transformation represents the path a RpcResponse takes to become a FHIR representation.
- */
+/** Transformation represents the path a RpcResponse takes to become a FHIR representation. */
 @Slf4j
 @Getter
 @Builder

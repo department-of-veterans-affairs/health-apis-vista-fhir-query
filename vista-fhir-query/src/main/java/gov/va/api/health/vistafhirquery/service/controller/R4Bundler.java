@@ -22,15 +22,15 @@ public class R4Bundler<
         EntryT extends AbstractEntry<ResourceT>,
         BundleT extends AbstractBundle<EntryT>>
     implements Function<RpcResponseT, BundleT> {
-  String resourceType;
+  private final String resourceType;
 
-  Map<String, String> parameters;
+  private final Map<String, String> parameters;
 
   /** The transformation process that will be applied to the results. */
-  R4Transformation<RpcResponseT, ResourceT> transformation;
+  private final R4Transformation<RpcResponseT, ResourceT> transformation;
 
   /** The bundling configuration that will be used to create the actual bundle. */
-  R4Bundling<ResourceT, EntryT, BundleT> bundling;
+  private final R4Bundling<ResourceT, EntryT, BundleT> bundling;
 
   /** Create a new instance for the given transformation. */
   public static <RpcResponseT extends TypeSafeRpcResponse, ResourceT extends Resource>
@@ -41,7 +41,6 @@ public class R4Bundler<
 
   @Override
   public BundleT apply(RpcResponseT rpcResult) {
-    log.info("ToDo: Replace parameters map and resourceType with ParamMappings class");
     log.info("ToDo: Determine total results better");
     log.info(
         "ToDo: We'll have to do special paging logic here because "
@@ -51,6 +50,13 @@ public class R4Bundler<
     bundle.resourceType("Bundle");
     bundle.total(resources.size());
     bundle.link(toLinks());
+    log.info("ToDo: better count handling");
+    String countParam =
+        parameters.getOrDefault("_count", "" + bundling.linkProperties().getDefaultPageSize());
+    int count = Integer.parseInt(countParam);
+    if (resources.size() > count) {
+      resources = resources.subList(0, count);
+    }
     bundle.entry(resources.stream().map(this::toEntry).collect(Collectors.toList()));
     return bundle;
   }

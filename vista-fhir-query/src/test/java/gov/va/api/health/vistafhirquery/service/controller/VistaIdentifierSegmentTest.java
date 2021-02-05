@@ -5,15 +5,16 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 public class VistaIdentifierSegmentTest {
   @Test
   void parseIdSuccessfully() {
-    assertThat(VistaIdentifierSegment.parse("nicn+icn+siteId+vistaId"))
+    assertThat(VistaIdentifierSegment.parse("Nicn+siteId+vistaId"))
         .isEqualTo(
             VistaIdentifierSegment.builder()
-                .patientIdentifierType(VistaIdentifierSegment.PatientIdentifierType.nicn)
+                .patientIdentifierType(VistaIdentifierSegment.PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("icn")
                 .vistaSiteId("siteId")
                 .vistaRecordId("vistaId")
@@ -21,7 +22,7 @@ public class VistaIdentifierSegmentTest {
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {1, 2, 3, 5})
+  @ValueSource(ints = {1, 2, 4})
   void parseIdWithInvalidSegmentThrows(Integer segmentFieldCount) {
     StringBuilder sb = new StringBuilder("" + 0);
     for (int i = 1; i < segmentFieldCount; i++) {
@@ -32,16 +33,24 @@ public class VistaIdentifierSegmentTest {
         .isThrownBy(() -> VistaIdentifierSegment.parse(sb.toString()));
   }
 
+  @ParameterizedTest
+  @EnumSource(value = VistaIdentifierSegment.PatientIdentifierType.class)
+  void patientIdentifierTypeRoundTrip(VistaIdentifierSegment.PatientIdentifierType value) {
+    var shortened = value.abbreviation();
+    var fullLength = VistaIdentifierSegment.PatientIdentifierType.fromAbbreviation(shortened);
+    assertThat(fullLength).isEqualTo(value);
+  }
+
   @Test
   void toIdentiferSegment() {
     assertThat(
             VistaIdentifierSegment.builder()
-                .patientIdentifierType(VistaIdentifierSegment.PatientIdentifierType.nicn)
+                .patientIdentifierType(VistaIdentifierSegment.PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("icn")
                 .vistaSiteId("siteId")
                 .vistaRecordId("vistaId")
                 .build()
                 .toIdentifierSegment())
-        .isEqualTo("nicn+icn+siteId+vistaId");
+        .isEqualTo("Nicn+siteId+vistaId");
   }
 }
