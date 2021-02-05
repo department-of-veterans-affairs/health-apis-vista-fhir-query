@@ -8,13 +8,12 @@
     <relativePath/>
   </parent>
   <artifactId>vista-fhir-query</artifactId>
-  <version>0.0.11-SNAPSHOT</version>
+  <version>0.0.12-SNAPSHOT</version>
   <packaging>jar</packaging>
   <properties>
     <fhir-resources.version>5.0.18</fhir-resources.version>
     <!-- ToDo Increase Coverage -->
-    <fhir-resources.version>5.0.18</fhir-resources.version>
-    <jacoco.coverage>0.75</jacoco.coverage>
+    <jacoco.coverage>0.90</jacoco.coverage>
     <talos.version>0.0.3</talos.version>
     <vistalink.version>2.0.12</vistalink.version>
   </properties>

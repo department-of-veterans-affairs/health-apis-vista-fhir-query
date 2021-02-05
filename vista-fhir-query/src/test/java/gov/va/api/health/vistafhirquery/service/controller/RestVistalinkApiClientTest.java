@@ -1,5 +1,6 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
+import static gov.va.api.lighthouse.vistalink.api.RpcResponse.Status.FAILED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
@@ -32,8 +33,7 @@ public class RestVistalinkApiClientTest {
     return RestVistalinkApiClient.builder().config(config).restTemplate(rt).build();
   }
 
-  @Test
-  void requestWithVistalink200Response() {
+  void mockVistalink200Response() {
     when(rt.exchange(any(), eq(RpcResponse.class)))
         .thenReturn(
             ResponseEntity.status(200)
@@ -47,9 +47,30 @@ public class RestVistalinkApiClientTest {
                                     .response("SUCCESS")
                                     .build()))
                         .build()));
+  }
+
+  void mockVistalink500Response() {
+    when(rt.exchange(any(), eq(RpcResponse.class)))
+        .thenReturn(
+            ResponseEntity.status(500)
+                .body(
+                    RpcResponse.builder()
+                        .status(FAILED)
+                        .results(
+                            List.of(
+                                RpcInvocationResult.builder()
+                                    .vista("1")
+                                    .error(Optional.of("OOF"))
+                                    .build()))
+                        .build()));
+  }
+
+  @Test
+  void requestForPatientWithVistalink200Response() {
+    mockVistalink200Response();
     assertThat(
             client()
-                .request(
+                .requestForPatient(
                     "p1", RpcDetails.builder().name("FAUX RPC").context("FAUX CONTEXT").build()))
         .isEqualTo(
             RpcResponse.builder()
@@ -60,26 +81,41 @@ public class RestVistalinkApiClientTest {
   }
 
   @Test
-  void requestWithVistalink500Response() {
-    when(rt.exchange(any(), eq(RpcResponse.class)))
-        .thenReturn(
-            ResponseEntity.status(500)
-                .body(
-                    RpcResponse.builder()
-                        .status(RpcResponse.Status.FAILED)
-                        .results(
-                            List.of(
-                                RpcInvocationResult.builder()
-                                    .vista("1")
-                                    .error(Optional.of("OOF"))
-                                    .build()))
-                        .build()));
+  void requestForPatientWithVistalink500Response() {
+    mockVistalink500Response();
     assertThatExceptionOfType(IllegalStateException.class)
         .isThrownBy(
             () ->
                 client()
-                    .request(
+                    .requestForPatient(
                         "p1",
+                        RpcDetails.builder().name("FAUX RPC").context("FAUX CONTEXT").build()));
+  }
+
+  @Test
+  void requestForVistaSiteWithVistalink200Response() {
+    mockVistalink200Response();
+    assertThat(
+            client()
+                .requestForVistaSite(
+                    "123", RpcDetails.builder().name("FAUX RPC").context("FAUX CONTEXT").build()))
+        .isEqualTo(
+            RpcResponse.builder()
+                .status(RpcResponse.Status.OK)
+                .results(
+                    List.of(RpcInvocationResult.builder().vista("1").response("SUCCESS").build()))
+                .build());
+  }
+
+  @Test
+  void requestForVistaSiteWithVistalink500Response() {
+    mockVistalink500Response();
+    assertThatExceptionOfType(IllegalStateException.class)
+        .isThrownBy(
+            () ->
+                client()
+                    .requestForVistaSite(
+                        "123",
                         RpcDetails.builder().name("FAUX RPC").context("FAUX CONTEXT").build()));
   }
 }

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<results version="1.13" timeZone="-0500">
+  <vitals total="11">
+    <vital/>
+    <vital>
+      <entered value="3110225.110428"/>
+      <facility code="673" name="TAMPA (JAH VAH)"/>
+      <location code="23" name="GENERAL MEDICINE"/>
+      <measurements>
+        <measurement id="32071" vuid="4500634" name="BLOOD PRESSURE" value="126/65" units="mm[Hg]" high="210/110" low="100/60"/>
+        <measurement id="32075" vuid="4688724" name="HEIGHT" value="73" units="in" metricValue="185.42" metricUnits="cm"/>
+        <measurement id="32074" vuid="4500636" name="PULSE" value="66" units="/min" high="120" low="60"/>
+        <measurement id="32077" vuid="4500637" name="PULSE OXIMETRY" value="95" units="%" high="100" low="50"/>
+        <measurement id="32073" vuid="4688725" name="RESPIRATION" value="16" units="/min" high="30" low="8"/>
+        <measurement id="32072" vuid="4500638" name="TEMPERATURE" value="98.6" units="F" metricValue="37.0" metricUnits="C" high="102" low="95"/>
+        <measurement id="32076" vuid="4500639" name="WEIGHT" value="190" units="lb" metricValue="86.18" metricUnits="kg" bmi="25"/>
+      </measurements>
+      <taken value="3100406.14"/>
+    </vital>
+    <vital>
+      <entered value="3110225.111819"/>
+      <facility code="673" name="TAMPA (JAH VAH)"/>
+      <location code="23" name="GENERAL MEDICINE"/>
+      <measurements>
+        <measurement id="32078" vuid="4500634" name="BLOOD PRESSURE" value="130/69" units="mm[Hg]" high="210/110" low="100/60"/>
+        <measurement id="32081" vuid="4500636" name="PULSE" value="66" units="/min" high="120" low="60"/>
+        <measurement id="32083" vuid="4500637" name="PULSE OXIMETRY" value="95" units="%" high="100" low="50"/>
+        <measurement id="32080" vuid="4688725" name="RESPIRATION" value="13" units="/min" high="30" low="8"/>
+        <measurement id="32079" vuid="4500638" name="TEMPERATURE" value="98.3" units="F" metricValue="36.8" metricUnits="C" high="102" low="95"/>
+        <measurement id="32082" vuid="4500639" name="WEIGHT" value="183" units="lb" metricValue="83.01" metricUnits="kg" bmi="24"/>
+      </measurements>
+      <taken value="3100309.14"/>
+    </vital>
+    <vital>
+      <entered value="3110225.113154"/>
+      <facility code="673" name="TAMPA (JAH VAH)"/>
+      <location code="23" name="GENERAL MEDICINE"/>
+      <measurements>
+        <measurement id="32084" vuid="4500634" name="BLOOD PRESSURE" value="132/73" units="mm[Hg]" high="210/110" low="100/60"/>
+        <measurement id="32087" vuid="4500636" name="PULSE" value="70" units="/min" high="120" low="60"/>
+        <measurement id="32089" vuid="4500637" name="PULSE OXIMETRY" value="94" units="%" high="100" low="50"/>
+        <measurement id="32086" vuid="4688725" name="RESPIRATION" value="16" units="/min" high="30" low="8"/>
+        <measurement id="32085" vuid="4500638" name="TEMPERATURE" value="97.9" units="F" metricValue="36.6" metricUnits="C" high="102" low="95"/>
+        <measurement id="32088" vuid="4500639" name="WEIGHT" value="183" units="lb" metricValue="83.01" metricUnits="kg" bmi="24"/>
+      </measurements>
+      <taken value="3100129.14"/>
+    </vital>
+    <vital>
+      <entered value="3110225.113418"/>
+      <facility code="673" name="TAMPA (JAH VAH)"/>
+      <location code="23" name="GENERAL MEDICINE"/>
+      <measurements>
+        <measurement id="32090" vuid="4500634" name="BLOOD PRESSURE" value="139/84" units="mm[Hg]" high="210/110" low="100/60"/>
+        <measurement id="32093" vuid="4500636" name="PULSE" value="64" units="/min" high="120" low="60"/>
+        <measurement id="32096" vuid="4500635" name="PAIN" value="3"/>
+        <measurement id="32095" vuid="4500637" name="PULSE OXIMETRY" value="94" units="%" high="100" low="50"/>
+        <measurement id="32092" vuid="4688725" name="RESPIRATION" value="15" units="/min" high="30" low="8"/>
+        <measurement id="32091" vuid="4500638" name="TEMPERATURE" value="97.9" units="F" metricValue="36.6" metricUnits="C" high="102" low="95"/>
+        <measurement id="32094" vuid="4500639" name="WEIGHT" value="188" units="lb" metricValue="85.28" metricUnits="kg" bmi="25"/>
+      </measurements>
+      <taken value="3100106.14"/>
+    </vital>
+    <vital>
+      <entered value="3110225.113933"/>
+      <facility code="673" name="TAMPA (JAH VAH)"/>
+      <location code="23" name="GENERAL MEDICINE"/>
+      <measurements>
+        <measurement id="32097" vuid="4500634" name="BLOOD PRESSURE" value="135/81" units="mm[Hg]" high="210/110" low="100/60"/>
+        <measurement id="32100" vuid="4500636" name="PULSE" value="60" units="/min" high="120" low="60"/>
+        <measurement id="32103" vuid="4500635" name="PAIN" value="6"/>
+        <measurement id="32102" vuid="4500637" name="PULSE OXIMETRY" value="96" units="%" high="100" low="50"/>
+        <measurement id="32099" vuid="4688725" name="RESPIRATION" value="16" units="/min" high="30" low="8"/>
+        <measurement id="32098" vuid="4500638" name="TEMPERATURE" value="98.1" units="F" metricValue="36.7" metricUnits="C" high="102" low="95"/>
+        <measurement id="32101" vuid="4500639" name="WEIGHT" value="183" units="lb" metricValue="83.01" metricUnits="kg" bmi="24"/>
+      </measurements>
+      <taken value="3091208.14"/>
+    </vital>
+    <vital>
+      <entered value="3110225.114107"/>
+      <facility code="673" name="TAMPA (JAH VAH)"/>
+      <location code="23" name="GENERAL MEDICINE"/>
+      <measurements>
+        <measurement id="32104" vuid="4500634" name="BLOOD PRESSURE" value="137/81" units="mm[Hg]" high="210/110" low="100/60"/>
+        <measurement id="32107" vuid="4500636" name="PULSE" value="76" units="/min" high="120" low="60"/>
+        <measurement id="32109" vuid="4500637" name="PULSE OXIMETRY" value="97" units="%" high="100" low="50"/>
+        <measurement id="32106" vuid="4688725" name="RESPIRATION" value="16" units="/min" high="30" low="8"/>
+        <measurement id="32105" vuid="4500638" name="TEMPERATURE" value="98.1" units="F" metricValue="36.7" metricUnits="C" high="102" low="95"/>
+        <measurement id="32108" vuid="4500639" name="WEIGHT" value="188" units="lb" metricValue="85.28" metricUnits="kg" bmi="25"/>
+      </measurements>
+      <taken value="3090630.14"/>
+    </vital>
+    <vital>
+      <entered value="3110225.114231"/>
+      <facility code="673" name="TAMPA (JAH VAH)"/>
+      <location code="23" name="GENERAL MEDICINE"/>
+      <measurements>
+        <measurement id="32110" vuid="4500634" name="BLOOD PRESSURE" value="137/76" units="mm[Hg]" high="210/110" low="100/60"/>
+        <measurement id="32113" vuid="4500636" name="PULSE" value="78" units="/min" high="120" low="60"/>
+        <measurement id="32116" vuid="4500635" name="PAIN" value="3"/>
+        <measurement id="32115" vuid="4500637" name="PULSE OXIMETRY" value="97" units="%" high="100" low="50"/>
+        <measurement id="32112" vuid="4688725" name="RESPIRATION" value="14" units="/min" high="30" low="8"/>
+        <measurement id="32111" vuid="4500638" name="TEMPERATURE" value="98.1" units="F" metricValue="36.7" metricUnits="C" high="102" low="95"/>
+        <measurement id="32114" vuid="4500639" name="WEIGHT" value="190" units="lb" metricValue="86.18" metricUnits="kg" bmi="25"/>
+      </measurements>
+      <taken value="3090520.14"/>
+    </vital>
+    <vital>
+      <entered value="3110225.114358"/>
+      <facility code="673" name="TAMPA (JAH VAH)"/>
+      <location code="23" name="GENERAL MEDICINE"/>
+      <measurements>
+        <measurement id="32117" vuid="4500634" name="BLOOD PRESSURE" value="139/83" units="mm[Hg]" high="210/110" low="100/60"/>
+        <measurement id="32120" vuid="4500636" name="PULSE" value="77" units="/min" high="120" low="60"/>
+        <measurement id="32122" vuid="4500637" name="PULSE OXIMETRY" value="94" units="%" high="100" low="50"/>
+        <measurement id="32119" vuid="4688725" name="RESPIRATION" value="16" units="/min" high="30" low="8"/>
+        <measurement id="32118" vuid="4500638" name="TEMPERATURE" value="97.8" units="F" metricValue="36.6" metricUnits="C" high="102" low="95"/>
+        <measurement id="32121" vuid="4500639" name="WEIGHT" value="190" units="lb" metricValue="86.18" metricUnits="kg" bmi="25"/>
+      </measurements>
+      <taken value="3081126.14"/>
+    </vital>
+    <vital>
+      <entered value="3110225.114552"/>
+      <facility code="673" name="TAMPA (JAH VAH)"/>
+      <location code="23" name="GENERAL MEDICINE"/>
+      <measurements>
+        <measurement id="32123" vuid="4500634" name="BLOOD PRESSURE" value="139/87" units="mm[Hg]" high="210/110" low="100/60"/>
+        <measurement id="32126" vuid="4500636" name="PULSE" value="70" units="/min" high="120" low="60"/>
+        <measurement id="32128" vuid="4500637" name="PULSE OXIMETRY" value="95" units="%" high="100" low="50"/>
+        <measurement id="32125" vuid="4688725" name="RESPIRATION" value="15" units="/min" high="30" low="8"/>
+        <measurement id="32124" vuid="4500638" name="TEMPERATURE" value="99" units="F" metricValue="37.2" metricUnits="C" high="102" low="95"/>
+        <measurement id="32127" vuid="4500639" name="WEIGHT" value="185" units="lb" metricValue="83.91" metricUnits="kg" bmi="24"/>
+      </measurements>
+      <taken value="3080826.14"/>
+    </vital>
+    <vital>
+      <entered value="3110225.114729"/>
+      <facility code="673" name="TAMPA (JAH VAH)"/>
+      <location code="23" name="GENERAL MEDICINE"/>
+      <measurements>
+        <measurement id="32129" vuid="4500634" name="BLOOD PRESSURE" value="139/83" units="mm[Hg]" high="210/110" low="100/60"/>
+        <measurement id="32133" vuid="4688724" name="HEIGHT" value="73" units="in" metricValue="185.42" metricUnits="cm"/>
+        <measurement id="32132" vuid="4500636" name="PULSE" value="79" units="/min" high="120" low="60"/>
+        <measurement id="32136" vuid="4500635" name="PAIN" value="3"/>
+        <measurement id="32135" vuid="4500637" name="PULSE OXIMETRY" value="95" units="%" high="100" low="50"/>
+        <measurement id="32131" vuid="4688725" name="RESPIRATION" value="13" units="/min" high="30" low="8"/>
+        <measurement id="32130" vuid="4500638" name="TEMPERATURE" value="99.2" units="F" metricValue="37.3" metricUnits="C" high="102" low="95"/>
+        <measurement id="32134" vuid="4500639" name="WEIGHT" value="180" units="lb" metricValue="81.65" metricUnits="kg" bmi="24"/>
+      </measurements>
+      <taken value="3080728.14"/>
+    </vital>
+  </vitals>
+</results>

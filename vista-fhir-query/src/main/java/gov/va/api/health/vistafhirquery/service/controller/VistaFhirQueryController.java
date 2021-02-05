@@ -27,7 +27,7 @@ public class VistaFhirQueryController {
   @GetMapping(value = "/ping/{icn}")
   public List<RpcInvocationResult> ping(@PathVariable("icn") String icn) {
     RpcResponse response =
-        vistalinkApiClient.request(
+        vistalinkApiClient.requestForPatient(
             icn,
             RpcDetails.builder().name("XOBV TEST PING").context("XOBV VISTALINK TESTER").build());
     return response.results();
