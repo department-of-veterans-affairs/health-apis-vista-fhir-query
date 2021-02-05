@@ -3,6 +3,7 @@ package gov.va.api.health.vistafhirquery.service.controller;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
@@ -49,7 +50,7 @@ public class VistaIdentifierSegment {
     /** An ICN assigned at a local VistA site. */
     LOCAL_VISTA_ICN('L');
 
-    private final char abbreviation;
+    @Getter private final char abbreviation;
 
     /** Get an Enum value from an abbreviation. */
     public static PatientIdentifierType fromAbbreviation(char abbreviation) {
@@ -62,10 +63,6 @@ public class VistaIdentifierSegment {
             "PatientIdentifierType abbreviation in segment is invalid: " + abbreviation);
       }
       return match.get(0);
-    }
-
-    public char abbreviation() {
-      return abbreviation;
     }
   }
 }
