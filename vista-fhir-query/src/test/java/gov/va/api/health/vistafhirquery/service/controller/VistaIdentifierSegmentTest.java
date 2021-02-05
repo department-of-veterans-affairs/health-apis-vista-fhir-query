@@ -42,6 +42,12 @@ public class VistaIdentifierSegmentTest {
   }
 
   @Test
+  void invalidPatientIdentifierTypeIsIllegalState() {
+    assertThatExceptionOfType(IllegalStateException.class)
+            .isThrownBy(() -> VistaIdentifierSegment.PatientIdentifierType.fromAbbreviation('Z'));
+  }
+
+  @Test
   void toIdentiferSegment() {
     assertThat(
             VistaIdentifierSegment.builder()
