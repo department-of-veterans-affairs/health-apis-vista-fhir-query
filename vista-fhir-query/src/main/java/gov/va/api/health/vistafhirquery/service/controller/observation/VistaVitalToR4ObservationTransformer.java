@@ -1,6 +1,7 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toBigDecimal;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.valueOfValueOnlyXmlAttribute;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
@@ -25,13 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class VistaVitalToR4ObservationTransformer {
   @NonNull private final Vitals.Vital vistaVital;
-
-  static Integer bmi(String bmi) {
-    if (bmi == null) {
-      return null;
-    }
-    return Integer.valueOf(bmi);
-  }
 
   static List<CodeableConcept> category() {
     return List.of(
@@ -114,14 +108,6 @@ public class VistaVitalToR4ObservationTransformer {
     return Observation.ObservationStatus.entered_in_error;
   }
 
-  static String valueOf(ValueOnlyXmlAttribute valueOnlyXmlAttribute) {
-    if (valueOnlyXmlAttribute == null) {
-      return null;
-    } else {
-      return valueOnlyXmlAttribute.value();
-    }
-  }
-
   static Quantity valueQuantity(String value, String units) {
     return Quantity.builder().value(toBigDecimal(value)).unit(units).build();
   }
@@ -133,8 +119,8 @@ public class VistaVitalToR4ObservationTransformer {
           .category(category())
           .code(code(measurement))
           .component(component(measurement))
-          .effectiveDateTime(valueOf(vistaVital.taken()))
-          .issued(valueOf(vistaVital.entered()))
+          .effectiveDateTime(valueOfValueOnlyXmlAttribute(vistaVital.taken()))
+          .issued(valueOfValueOnlyXmlAttribute(vistaVital.entered()))
           .id(measurement.id())
           .performer(performer(vistaVital.facility()))
           .status(status(vistaVital.removed()))
@@ -144,14 +130,13 @@ public class VistaVitalToR4ObservationTransformer {
         .resourceType("Observation")
         .category(category())
         .code(code(measurement))
-        .effectiveDateTime(valueOf(vistaVital.taken()))
-        .issued(valueOf(vistaVital.entered()))
+        .effectiveDateTime(valueOfValueOnlyXmlAttribute(vistaVital.taken()))
+        .issued(valueOfValueOnlyXmlAttribute(vistaVital.entered()))
         .id(measurement.id())
         .performer(performer(vistaVital.facility()))
         .referenceRange(referenceRange(measurement.high(), measurement.low()))
         .status(status(vistaVital.removed()))
         .valueQuantity(valueQuantity(measurement.value(), measurement.units()))
-        .valueInteger(bmi(measurement.bmi()))
         .build();
   }
 

@@ -152,7 +152,6 @@ public class ObservationSamples {
           .performer(performer())
           .status(Observation.ObservationStatus._final)
           .valueQuantity(Quantity.builder().value(new BigDecimal("190")).unit("lb").build())
-          .valueInteger(Integer.valueOf("25"))
           .build();
     }
 

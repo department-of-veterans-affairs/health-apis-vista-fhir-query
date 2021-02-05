@@ -1,5 +1,6 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
+import gov.va.api.lighthouse.vistalink.models.ValueOnlyXmlAttribute;
 import java.math.BigDecimal;
 import java.util.regex.Pattern;
 import lombok.experimental.UtilityClass;
@@ -17,5 +18,14 @@ public class R4Transformers {
       return new BigDecimal(string);
     }
     return null;
+  }
+
+  /** Gets value of a ValueOnlyXmlAttribute if it exists. */
+  public static String valueOfValueOnlyXmlAttribute(ValueOnlyXmlAttribute valueOnlyXmlAttribute) {
+    if (valueOnlyXmlAttribute == null) {
+      return null;
+    } else {
+      return valueOnlyXmlAttribute.value();
+    }
   }
 }
