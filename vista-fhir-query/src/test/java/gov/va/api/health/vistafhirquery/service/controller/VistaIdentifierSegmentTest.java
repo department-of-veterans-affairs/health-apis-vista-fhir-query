@@ -10,6 +10,12 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 public class VistaIdentifierSegmentTest {
   @Test
+  void invalidPatientIdentifierTypeThrowsIllegalArgument() {
+    assertThatExceptionOfType(IllegalArgumentException.class)
+        .isThrownBy(() -> VistaIdentifierSegment.PatientIdentifierType.fromAbbreviation('Z'));
+  }
+
+  @Test
   void parseIdSuccessfully() {
     assertThat(VistaIdentifierSegment.parse("Nicn+siteId+vistaId"))
         .isEqualTo(
@@ -22,15 +28,10 @@ public class VistaIdentifierSegmentTest {
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {1, 2, 4})
-  void parseIdWithInvalidSegmentThrows(Integer segmentFieldCount) {
-    StringBuilder sb = new StringBuilder("" + 0);
-    for (int i = 1; i < segmentFieldCount; i++) {
-      sb.append("+");
-      sb.append(i);
-    }
+  @ValueSource(strings = {"x+123+abc", "+123+abc", "123", "123+abc", "123+abc+456+def"})
+  void parseInvalidSegmentThrowsIllegalArgument(String segment) {
     assertThatExceptionOfType(IllegalArgumentException.class)
-        .isThrownBy(() -> VistaIdentifierSegment.parse(sb.toString()));
+        .isThrownBy(() -> VistaIdentifierSegment.parse(segment));
   }
 
   @ParameterizedTest
@@ -39,12 +40,6 @@ public class VistaIdentifierSegmentTest {
     var shortened = value.abbreviation();
     var fullLength = VistaIdentifierSegment.PatientIdentifierType.fromAbbreviation(shortened);
     assertThat(fullLength).isEqualTo(value);
-  }
-
-  @Test
-  void invalidPatientIdentifierTypeIsIllegalState() {
-    assertThatExceptionOfType(IllegalStateException.class)
-            .isThrownBy(() -> VistaIdentifierSegment.PatientIdentifierType.fromAbbreviation('Z'));
   }
 
   @Test

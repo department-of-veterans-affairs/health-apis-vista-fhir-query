@@ -1,7 +1,5 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -27,6 +25,11 @@ public class VistaIdentifierSegment {
           "VistaIdentifierSegments are expected to have 3 parts "
               + "(e.g. patientIdTypeAndId+vistaSiteId+vistaRecordId).");
     }
+    if (segmentParts[0].length() < 2) {
+      throw new IllegalArgumentException(
+          "The first section of a VistaIdentifierSegment must contain "
+              + "a type and an identifier value.");
+    }
     return VistaIdentifierSegment.builder()
         .patientIdentifierType(PatientIdentifierType.fromAbbreviation(segmentParts[0].charAt(0)))
         .patientIdentifier(segmentParts[0].substring(1))
@@ -37,8 +40,11 @@ public class VistaIdentifierSegment {
 
   /** Build a VistaIdentifier. */
   public String toIdentifierSegment() {
-    return patientIdentifierType().abbreviation()
-        + String.join("+", patientIdentifier(), vistaSiteId(), vistaRecordId());
+    return String.join(
+        "+",
+        patientIdentifierType().abbreviation() + patientIdentifier(),
+        vistaSiteId(),
+        vistaRecordId());
   }
 
   @RequiredArgsConstructor
@@ -54,15 +60,17 @@ public class VistaIdentifierSegment {
 
     /** Get an Enum value from an abbreviation. */
     public static PatientIdentifierType fromAbbreviation(char abbreviation) {
-      var match =
-          Arrays.stream(PatientIdentifierType.values())
-              .filter(e -> e.abbreviation() == abbreviation)
-              .collect(Collectors.toList());
-      if (match.size() != 1) {
-        throw new IllegalStateException(
-            "PatientIdentifierType abbreviation in segment is invalid: " + abbreviation);
+      switch (abbreviation) {
+        case 'D':
+          return VISTA_PATIENT_FILE_ID;
+        case 'N':
+          return NATIONAL_ICN;
+        case 'L':
+          return LOCAL_VISTA_ICN;
+        default:
+          throw new IllegalArgumentException(
+              "PatientIdentifierType abbreviation in segment is invalid: " + abbreviation);
       }
-      return match.get(0);
     }
   }
 }
