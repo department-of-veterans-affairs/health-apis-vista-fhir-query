@@ -8,7 +8,7 @@
     <relativePath/>
   </parent>
   <artifactId>vista-fhir-query</artifactId>
-  <version>0.0.8-SNAPSHOT</version>
+  <version>0.0.11-SNAPSHOT</version>
   <packaging>jar</packaging>
   <properties>
     <fhir-resources.version>5.0.17</fhir-resources.version>

@@ -46,8 +46,8 @@ public class R4ObservationControllerTest {
                     List.of(
                         RpcInvocationResult.builder().vista("123").response(responseBody).build()))
                 .build());
-    var actual = controller().read("nicn+p1+123+456");
-    assertThat(actual).isEqualTo(Observation.builder().id("nicn+p1+123+456").build());
+    var actual = controller().read("Np1+123+456");
+    assertThat(actual).isEqualTo(Observation.builder().id("Np1+123+456").build());
   }
 
   @Test
@@ -63,7 +63,7 @@ public class R4ObservationControllerTest {
                         RpcInvocationResult.builder().vista("123").response(responseBody).build()))
                 .build());
     assertThatExceptionOfType(ResourceExceptions.NotFound.class)
-        .isThrownBy(() -> controller().read("nicn+p1+123+NOPE"));
+        .isThrownBy(() -> controller().read("Np1+123+NOPE"));
   }
 
   @Test

@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 import lombok.Builder;
 import lombok.Getter;
 
+/** This structure represents the components needed to construct new bundles. */
 @Getter
 @Builder
 public class R4Bundling<
@@ -15,10 +16,13 @@ public class R4Bundling<
     EntryT extends AbstractEntry<ResourceT>,
     BundleT extends AbstractBundle<EntryT>> {
 
+  /** How to create a new Bundle instance, typically a method reference to `new`. */
   private final Supplier<BundleT> newBundle;
 
+  /** How to create a new Entry instance, typically a method reference to `new`. */
   private final Supplier<EntryT> newEntry;
 
+  /** The properties that will be used to create links. */
   private final LinkProperties linkProperties;
 
   public static <R extends Resource, E extends AbstractEntry<R>, B extends AbstractBundle<E>>

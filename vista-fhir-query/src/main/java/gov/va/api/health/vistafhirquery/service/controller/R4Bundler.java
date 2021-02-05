@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
+/** Provides standard mapping from a TypeSafeRpcResponse to a FHIR bundle. */
 @Slf4j
 @Builder
 public class R4Bundler<
@@ -21,14 +22,17 @@ public class R4Bundler<
         EntryT extends AbstractEntry<ResourceT>,
         BundleT extends AbstractBundle<EntryT>>
     implements Function<RpcResponseT, BundleT> {
-  String resourceType;
+  private final String resourceType;
 
-  Map<String, String> parameters;
+  private final Map<String, String> parameters;
 
-  R4Transformation<RpcResponseT, ResourceT> transformation;
+  /** The transformation process that will be applied to the results. */
+  private final R4Transformation<RpcResponseT, ResourceT> transformation;
 
-  R4Bundling<ResourceT, EntryT, BundleT> bundling;
+  /** The bundling configuration that will be used to create the actual bundle. */
+  private final R4Bundling<ResourceT, EntryT, BundleT> bundling;
 
+  /** Create a new instance for the given transformation. */
   public static <RpcResponseT extends TypeSafeRpcResponse, ResourceT extends Resource>
       R4BundlerPart1<RpcResponseT, ResourceT> forTransformation(
           R4Transformation<RpcResponseT, ResourceT> transformation) {
@@ -37,7 +41,6 @@ public class R4Bundler<
 
   @Override
   public BundleT apply(RpcResponseT rpcResult) {
-    log.info("ToDo: Replace parameters map and resourceType with ParamMappings class");
     log.info("ToDo: Determine total results better");
     log.info(
         "ToDo: We'll have to do special paging logic here because "
@@ -47,6 +50,13 @@ public class R4Bundler<
     bundle.resourceType("Bundle");
     bundle.total(resources.size());
     bundle.link(toLinks());
+    log.info("ToDo: better count handling");
+    String countParam =
+        parameters.getOrDefault("_count", "" + bundling.linkProperties().getDefaultPageSize());
+    int count = Integer.parseInt(countParam);
+    if (resources.size() > count) {
+      resources = resources.subList(0, count);
+    }
     bundle.entry(resources.stream().map(this::toEntry).collect(Collectors.toList()));
     return bundle;
   }
@@ -59,6 +69,7 @@ public class R4Bundler<
     return entry;
   }
 
+  /** Create R4 BundleLinks. */
   private List<BundleLink> toLinks() {
     log.info("ToDo: Build bundle links dynamically");
     List<BundleLink> links = new ArrayList<>(5);
@@ -75,6 +86,10 @@ public class R4Bundler<
     return links;
   }
 
+  /**
+   * These builder parts are used to slowly infer the generics types based on the arguments vs.
+   * specifying the types and requires arguments that match.
+   */
   @Builder
   public static class R4BundlerPart1<V extends TypeSafeRpcResponse, R extends Resource> {
     private final R4Transformation<V, R> transformation;
