@@ -10,10 +10,13 @@ import com.google.common.io.Resources;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.lighthouse.vistalink.api.RpcDetails;
 import gov.va.api.lighthouse.vistalink.api.RpcRequest;
+import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.VprGetPatientData;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Consumer;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +35,7 @@ public class MockServices {
   private final List<String> supportedQueries = new ArrayList<>();
 
   private final List<Consumer<MockServerClient>> supportedRequests =
-      List.of(this::ping, this::help);
+      List.of(this::ping, this::observationRead, this::help);
 
   private MockServer mockServer;
 
@@ -73,6 +76,23 @@ public class MockServices {
                 .withHeader(new Header("Content-Type", "text/plain"))
                 .withBody(supportedQueries.stream().sorted().collect(joining("\n"))));
     log.info("List of supported queries available at http://localhost:{}/help", PORT);
+  }
+
+  private void observationRead(MockServerClient mock) {
+    mock.when(
+            addRpcQueryWithExpectedRpcDetails(
+                VprGetPatientData.Request.builder()
+                    .dfn(";1011537977V693883")
+                    .type(Set.of(VprGetPatientData.Domains.vitals))
+                    .max(Optional.of("1"))
+                    .id(Optional.of("32463"))
+                    .build()
+                    .asDetails()))
+        .respond(
+            response()
+                .withStatusCode(200)
+                .withHeader(contentTypeApplicationJson())
+                .withBody(contentOfFile("/vistalinkapi-vprgetpatientdata-readresponse.json")));
   }
 
   private void ping(MockServerClient mock) {
