@@ -1,5 +1,7 @@
 package gov.va.api.health.vistafhirquery.tests.r4;
 
+import static gov.va.api.health.sentinel.EnvironmentAssumptions.assumeEnvironmentNotIn;
+
 import gov.va.api.health.sentinel.Environment;
 import gov.va.api.health.vistafhirquery.tests.SystemDefinitions;
 import gov.va.api.health.vistafhirquery.tests.TestClients;
@@ -7,8 +9,6 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-
-import static gov.va.api.health.sentinel.EnvironmentAssumptions.assumeEnvironmentNotIn;
 
 @Slf4j
 public class ObservationIT {
