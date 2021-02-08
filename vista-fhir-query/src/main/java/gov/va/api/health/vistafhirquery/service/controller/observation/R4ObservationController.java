@@ -68,8 +68,10 @@ public class R4ObservationController {
     if (resources.isEmpty()) {
       ResourceExceptions.NotFound.because("Identifier not found in VistA: " + publicId);
     }
-    log.info("ToDo: Verify only one result was returned.");
-    return Observation.builder().id(publicId).build();
+    if (resources.size() != 1) {
+      ResourceExceptions.ExpectationFailed.because("Too many results returned.");
+    }
+    return resources.get(0);
   }
 
   /** Search for Observation records by Patient. */
@@ -121,8 +123,12 @@ public class R4ObservationController {
               if (filteredResults.isEmpty()) {
                 return List.of();
               }
-              log.info("ToDo: Actual transformation.");
-              return List.of(Observation.builder().id("myPublicId").build());
+              // Parallel trasformation of VistA sites
+              return filteredResults.entrySet().parallelStream()
+                  .flatMap(
+                      entry ->
+                          R4ObservationTransformer.builder().resultsEntry(entry).build().toFhir())
+                  .collect(Collectors.toList());
             })
         .build();
   }

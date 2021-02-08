@@ -1,5 +1,7 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
+import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationSamples.json;
+import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationSamples.xml;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
@@ -7,13 +9,13 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
 import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions;
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
 import gov.va.api.lighthouse.vistalink.api.RpcDetails;
 import gov.va.api.lighthouse.vistalink.api.RpcInvocationResult;
 import gov.va.api.lighthouse.vistalink.api.RpcResponse;
+import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.VprGetPatientData;
 import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
@@ -35,9 +37,10 @@ public class R4ObservationControllerTest {
   @Test
   @SneakyThrows
   void read() {
-    String responseBody =
-        new String(
-            getClass().getResourceAsStream("vitals-only-rpcresponse-read.xml").readAllBytes());
+    var vista = ObservationSamples.Vista.create();
+    VprGetPatientData.Response.Results sample = vista.results();
+    sample.vitals().vitalResults().get(0).measurements(List.of(vista.weight()));
+    String responseBody = xml(sample);
     when(vlClient.requestForVistaSite(eq("123"), any(RpcDetails.class)))
         .thenReturn(
             RpcResponse.builder()
@@ -47,7 +50,7 @@ public class R4ObservationControllerTest {
                         RpcInvocationResult.builder().vista("123").response(responseBody).build()))
                 .build());
     var actual = controller().read("Np1+123+456");
-    assertThat(actual).isEqualTo(Observation.builder().id("Np1+123+456").build());
+    assertThat(json(actual)).isEqualTo(json(ObservationSamples.Fhir.create().weight()));
   }
 
   @Test

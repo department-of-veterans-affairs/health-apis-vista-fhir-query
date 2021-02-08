@@ -1,5 +1,7 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
 import gov.va.api.health.r4.api.datatypes.Coding;
 import gov.va.api.health.r4.api.datatypes.Quantity;
@@ -14,10 +16,21 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class ObservationSamples {
+  @SneakyThrows
+  static String json(Object o) {
+    return JacksonConfig.createMapper().writerWithDefaultPrettyPrinter().writeValueAsString(o);
+  }
+
+  @SneakyThrows
+  static String xml(Object o) {
+    return new XmlMapper().writeValueAsString(o);
+  }
+
   @AllArgsConstructor(staticName = "create")
   public static class Vista {
     public List<Vitals.Measurement> measurements() {
@@ -31,26 +44,19 @@ public class ObservationSamples {
               .high("210/110")
               .low("100/60")
               .build(),
-          Vitals.Measurement.builder()
-              .id("32076")
-              .vuid("4500639")
-              .name("WEIGHT")
-              .value("190")
-              .units("lb")
-              .metricValue("86.18")
-              .metricUnits("kg")
-              .bmi("25")
-              .build());
+          weight());
+    }
+
+    public VprGetPatientData.Response.Results results() {
+      return VprGetPatientData.Response.Results.builder()
+          .version("1.13")
+          .timeZone("-0500")
+          .vitals(Vitals.builder().total(1).vitalResults(vitals()).build())
+          .build();
     }
 
     public Map.Entry<String, VprGetPatientData.Response.Results> resultsByStation() {
-      return Map.entry(
-          "673",
-          VprGetPatientData.Response.Results.builder()
-              .version("1.13")
-              .timeZone("-0500")
-              .vitals(Vitals.builder().total(1).vitalResults(vitals()).build())
-              .build());
+      return Map.entry("673", results());
     }
 
     public List<Vitals.Vital> vitals() {
@@ -64,6 +70,19 @@ public class ObservationSamples {
               .measurements(measurements())
               .taken(ValueOnlyXmlAttribute.builder().value("3100406.14").build())
               .build());
+    }
+
+    public Vitals.Measurement weight() {
+      return Vitals.Measurement.builder()
+          .id("32076")
+          .vuid("4500639")
+          .name("WEIGHT")
+          .value("190")
+          .units("lb")
+          .metricValue("86.18")
+          .metricUnits("kg")
+          .bmi("25")
+          .build();
     }
   }
 
