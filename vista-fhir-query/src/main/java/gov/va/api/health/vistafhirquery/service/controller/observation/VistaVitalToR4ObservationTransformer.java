@@ -102,7 +102,7 @@ public class VistaVitalToR4ObservationTransformer {
   }
 
   static Observation.ObservationStatus status(List<ValueOnlyXmlAttribute> removed) {
-    if (isEmpty(removed)) {
+    if (isEmpty(removed) || removed.get(0) == null || removed.get(0).value() == null) {
       return Observation.ObservationStatus._final;
     }
     return Observation.ObservationStatus.entered_in_error;

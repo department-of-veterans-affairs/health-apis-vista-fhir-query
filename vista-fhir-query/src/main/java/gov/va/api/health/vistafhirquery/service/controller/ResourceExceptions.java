@@ -12,6 +12,16 @@ public class ResourceExceptions {
     }
   }
 
+  public static final class ExpectationFailed extends ResourceException {
+    public ExpectationFailed(String message) {
+      super(message);
+    }
+
+    public static void because(String message) {
+      throw new ExpectationFailed(message);
+    }
+  }
+
   static class ResourceException extends RuntimeException {
     ResourceException(String message) {
       super(message);

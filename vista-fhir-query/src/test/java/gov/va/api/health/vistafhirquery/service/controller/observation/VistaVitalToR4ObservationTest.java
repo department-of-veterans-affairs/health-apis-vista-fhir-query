@@ -33,7 +33,7 @@ public class VistaVitalToR4ObservationTest {
             List.of(
                 Observation.builder()
                     .valueQuantity(Quantity.builder().build())
-                    .status(Observation.ObservationStatus.entered_in_error)
+                    .status(Observation.ObservationStatus._final)
                     .resourceType("Observation")
                     .category(
                         List.of(

@@ -48,6 +48,7 @@ public class R4Bundler<
     List<ResourceT> resources = transformation.toResource().apply(rpcResult);
     BundleT bundle = bundling.newBundle().get();
     bundle.resourceType("Bundle");
+    bundle.type(AbstractBundle.BundleType.searchset);
     bundle.total(resources.size());
     bundle.link(toLinks());
     log.info("ToDo: better count handling");
