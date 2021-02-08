@@ -15,7 +15,7 @@
     <!-- ToDo Increase Coverage -->
     <jacoco.coverage>0.90</jacoco.coverage>
     <talos.version>0.0.3</talos.version>
-    <vistalink.version>2.0.12</vistalink.version>
+    <vistalink.version>2.0.13</vistalink.version>
   </properties>
   <dependencies>
     <dependency>
