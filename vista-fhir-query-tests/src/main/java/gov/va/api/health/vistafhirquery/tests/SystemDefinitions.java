@@ -40,7 +40,7 @@ public final class SystemDefinitions {
   private static TestIds qaIds() {
     return TestIds.builder()
         .patient("1011537977V693883")
-        .observation("N5000000349+qa+32463")
+        .observation("N5000000349+358+32463")
         .build();
   }
 
@@ -68,7 +68,7 @@ public final class SystemDefinitions {
   private static TestIds stagingIds() {
     return TestIds.builder()
         .patient("1011537977V693883")
-        .observation("N5000000349+lomalinda+32463")
+        .observation("N5000000349+358+32463")
         .build();
   }
 
