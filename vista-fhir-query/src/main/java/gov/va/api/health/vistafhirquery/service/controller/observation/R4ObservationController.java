@@ -64,7 +64,8 @@ public class R4ObservationController {
                 .asDetails());
     VprGetPatientData.Response vprPatientData =
         VprGetPatientData.create().fromResults(rpcResponse.results());
-    List<Observation> resources = transformation().toResource().apply(vprPatientData);
+    List<Observation> resources =
+        transformation(ids.patientIdentifier()).toResource().apply(vprPatientData);
     if (resources.isEmpty()) {
       ResourceExceptions.NotFound.because("Identifier not found in VistA: " + publicId);
     }
@@ -98,7 +99,7 @@ public class R4ObservationController {
 
   private R4Bundler<VprGetPatientData.Response, Observation, Observation.Entry, Observation.Bundle>
       toBundle(Map<String, String> parameters) {
-    return R4Bundler.forTransformation(transformation())
+    return R4Bundler.forTransformation(transformation(parameters.get("patient")))
         .bundling(
             R4Bundling.newBundle(Observation.Bundle::new)
                 .newEntry(Observation.Entry::new)
@@ -109,7 +110,8 @@ public class R4ObservationController {
         .build();
   }
 
-  private R4Transformation<VprGetPatientData.Response, Observation> transformation() {
+  private R4Transformation<VprGetPatientData.Response, Observation> transformation(
+      String patientIdentifier) {
     return R4Transformation.<VprGetPatientData.Response, Observation>builder()
         .toResource(
             rpcResponse -> {
@@ -127,7 +129,11 @@ public class R4ObservationController {
               return filteredResults.entrySet().parallelStream()
                   .flatMap(
                       entry ->
-                          R4ObservationTransformer.builder().resultsEntry(entry).build().toFhir())
+                          R4ObservationTransformer.builder()
+                              .patientIcn(patientIdentifier)
+                              .resultsEntry(entry)
+                              .build()
+                              .toFhir())
                   .collect(Collectors.toList());
             })
         .build();
