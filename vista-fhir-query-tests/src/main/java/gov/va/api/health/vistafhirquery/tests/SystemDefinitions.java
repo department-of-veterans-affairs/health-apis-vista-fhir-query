@@ -22,7 +22,10 @@ public final class SystemDefinitions {
   }
 
   private static TestIds localIds() {
-    return TestIds.builder().patient("1011537977V693883").build();
+    return TestIds.builder()
+        .patient("1011537977V693883")
+        .observation("N1011537977V693883+ms+32463")
+        .build();
   }
 
   private static SystemDefinition qa() {
@@ -35,7 +38,10 @@ public final class SystemDefinitions {
   }
 
   private static TestIds qaIds() {
-    return TestIds.builder().patient("1011537977V693883").build();
+    return TestIds.builder()
+        .patient("1011537977V693883")
+        .observation("N5000000349+358+32463")
+        .build();
   }
 
   private static ServiceDefinition serviceDefinition(
@@ -60,7 +66,10 @@ public final class SystemDefinitions {
   }
 
   private static TestIds stagingIds() {
-    return TestIds.builder().patient("1011537977V693883").build();
+    return TestIds.builder()
+        .patient("1011537977V693883")
+        .observation("N5000000349+358+32463")
+        .build();
   }
 
   /** Return the applicable system definition for the current environment. */
