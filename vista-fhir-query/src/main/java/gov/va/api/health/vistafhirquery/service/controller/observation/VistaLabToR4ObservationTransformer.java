@@ -17,10 +17,8 @@ import gov.va.api.health.r4.api.datatypes.SimpleQuantity;
 import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.health.vistafhirquery.service.controller.VistaIdentifierSegment;
-import gov.va.api.lighthouse.vistalink.models.CodeAndNameXmlAttribute;
 import gov.va.api.lighthouse.vistalink.models.ValueOnlyXmlAttribute;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Labs;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Stream;
@@ -73,7 +71,7 @@ public class VistaLabToR4ObservationTransformer {
           .build();
     }
     if (!isBlank(vuid)) {
-      log.info("ToDo: If vuid is set and loinc isn't map using database table.");
+      log.info("ToDo: If vuid is set and loinc isn't, map using database table.");
     }
     return null;
   }
@@ -224,22 +222,6 @@ public class VistaLabToR4ObservationTransformer {
     return List.of(Annotation.builder().text(note).build());
   }
 
-  List<Reference> performer(CodeAndNameXmlAttribute maybeFacility, Labs.Provider maybeProvider) {
-    List<Reference> performers = new ArrayList<>(2);
-    if (allBlank(maybeFacility, maybeProvider)) {
-      return null;
-    }
-    if (!isBlank(maybeFacility)) {
-      ifPresent(
-          toReference("Organization", maybeFacility.code(), maybeFacility.name()), performers::add);
-    }
-    if (!isBlank(maybeProvider)) {
-      ifPresent(
-          toReference("Practitioner", maybeProvider.code(), maybeProvider.name()), performers::add);
-    }
-    return performers;
-  }
-
   List<Observation.ReferenceRange> referenceRange(
       ValueOnlyXmlAttribute maybeHigh, ValueOnlyXmlAttribute maybeLow) {
     String high = valueOfValueOnlyXmlAttribute(maybeHigh);
@@ -261,14 +243,6 @@ public class VistaLabToR4ObservationTransformer {
     return SimpleQuantity.builder().value(toBigDecimal(value)).build();
   }
 
-  Reference specimen(CodeAndNameXmlAttribute maybeSpecimen) {
-    if (isBlank(maybeSpecimen)) {
-      return null;
-    }
-    return ifPresent(
-        toReference("Specimen", maybeSpecimen.code(), maybeSpecimen.name()), ref -> ref);
-  }
-
   Observation.ObservationStatus status(ValueOnlyXmlAttribute maybeStatus) {
     String status = valueOfValueOnlyXmlAttribute(maybeStatus);
     if (isBlank(status)) {
@@ -285,14 +259,12 @@ public class VistaLabToR4ObservationTransformer {
   }
 
   private Reference subject() {
-    if (isBlank(patientIcn)) {
-      return null;
-    }
-    return Reference.builder().reference("Patient/" + patientIcn).build();
+    return toReference("Patient", patientIcn, null);
   }
 
   /** Transform a VPR PATIENT DATA VistA Lab result to FHIR Observation. */
   public Stream<Observation> toFhir() {
+    // References Not Reflected: specimen, performer.facility, and performer.provider
     log.info("ToDo: Should groupName, labOrderId, orderId be in the identifier array?");
     var observation =
         Observation.builder()
@@ -301,13 +273,11 @@ public class VistaLabToR4ObservationTransformer {
             .subject(subject())
             .issued(toHumanDateTime(vistaLab.collected()))
             .note(note(vistaLab.comment()))
-            .performer(performer(vistaLab.facility(), vistaLab.provider()))
             .referenceRange(referenceRange(vistaLab.high(), vistaLab.low()))
             .interpretation(interpretation(vistaLab.interpretation()))
             .code(code(vistaLab.loinc(), vistaLab.test(), vistaLab.vuid()))
             .valueQuantity(valueQuantity(vistaLab.result(), vistaLab.units()))
             .effectiveDateTime(toHumanDateTime(vistaLab.resulted()))
-            .specimen(specimen(vistaLab.specimen()))
             .status(status(vistaLab.status()))
             .build();
     return Stream.of(observation);
