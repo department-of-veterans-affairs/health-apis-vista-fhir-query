@@ -6,8 +6,6 @@ import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toBigDecimal;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toHumanDateTime;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.valueOfValueOnlyXmlAttribute;
-import static org.apache.commons.lang3.StringUtils.trimToEmpty;
-import static org.apache.commons.lang3.StringUtils.upperCase;
 
 import gov.va.api.health.r4.api.datatypes.Annotation;
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
@@ -20,7 +18,6 @@ import gov.va.api.health.vistafhirquery.service.controller.VistaIdentifierSegmen
 import gov.va.api.lighthouse.vistalink.models.ValueOnlyXmlAttribute;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Labs;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.NonNull;
@@ -91,7 +88,7 @@ public class VistaLabToR4ObservationTransformer {
       return null;
     }
     return ifPresent(
-        interpretationDisplay(interpretation),
+        InterpretationDisplayMapping.forCode(interpretation),
         display ->
             List.of(
                 CodeableConcept.builder()
@@ -105,113 +102,6 @@ public class VistaLabToR4ObservationTransformer {
                                 .build()))
                     .text(interpretation)
                     .build()));
-  }
-
-  String interpretationDisplay(String code) {
-    switch (upperCase(trimToEmpty(code), Locale.US)) {
-      case "CAR":
-      case "CARRIER":
-        return "Carrier";
-      case "<":
-        return "Off scale low";
-      case ">":
-        return "Off scale high";
-      case "A":
-        return "Abnormal";
-      case "AA":
-        return "Critical abnormal";
-      case "AC":
-        return "Anti-complementary substances present";
-      case "B":
-        return "Better";
-      case "D":
-        return "Significant change down";
-      case "DET":
-        return "Detected";
-      case "E":
-        return "Equivocal";
-      case "EX":
-        return "outside threshold";
-      case "EXP":
-        return "Expected";
-      case "H":
-        return "High";
-      case "H*":
-        // fall-through
-      case "HH":
-        return "Critical high";
-      case "HU":
-      case "H>":
-        return "Significantly high";
-      case "HM":
-        return "Hold for Medical Review";
-      case "HX":
-        return "above high threshold";
-      case "I":
-        return "Intermediate";
-      case "IE":
-        return "Insufficient evidence";
-      case "IND":
-        return "Indeterminate";
-      case "L":
-        return "Low";
-      case "L*":
-        // fall-through
-      case "LL":
-        return "Critical low";
-      case "LU":
-      case "L<":
-        return "Significantly low";
-      case "LX":
-        return "below low threshold";
-      case "MS":
-        return "moderately susceptible";
-      case "N":
-        return "Normal";
-      case "NCL":
-        return "No CLSI defined breakpoint";
-      case "ND":
-        return "Not detected";
-      case "NEG":
-        return "Negative";
-      case "NR":
-        return "Non-reactive";
-      case "NS":
-        return "Non-susceptible";
-      case "OBX":
-        return "Interpretation qualifiers in separate OBX segments";
-      case "POS":
-        return "Positive";
-      case "QCF":
-        return "Quality control failure";
-      case "R":
-        return "Resistant";
-      case "RR":
-        return "Reactive";
-      case "S":
-        return "Susceptible";
-      case "SDD":
-        return "Susceptible-dose dependent";
-      case "SYN-R":
-        return "Synergy - resistant";
-      case "SYN-S":
-        return "Synergy - susceptible";
-      case "TOX":
-        return "Cytotoxic substance present";
-      case "U":
-        return "Significant change up";
-      case "UNE":
-        return "Unexpected";
-      case "VS":
-        return "very susceptible";
-      case "W":
-        return "Worse";
-      case "WR":
-        return "Weakly reactive";
-      default:
-        log.error("No display value for interpretation code '{}'.", code);
-        return null;
-    }
   }
 
   List<Annotation> note(ValueOnlyXmlAttribute maybeNote) {
