@@ -21,29 +21,37 @@ import lombok.experimental.UtilityClass;
 public class ObservationLabSamples {
   @NoArgsConstructor(staticName = "create")
   public static class Vista {
+
+    public Labs.Lab lab() {
+      return lab("CH;6899283.889996;741");
+    }
+
+    public Labs.Lab lab(String id) {
+      return Labs.Lab.builder()
+          .collected(ValueOnlyXmlAttribute.of("3100715.110004"))
+          .comment(ValueOnlyXmlAttribute.of("Ordering Provider: Eightyeight Vehu"))
+          .facility(CodeAndNameXmlAttribute.of("500", "CAMP MASTER"))
+          .groupName(ValueOnlyXmlAttribute.of("RIA 0412 7"))
+          .high(ValueOnlyXmlAttribute.of("9"))
+          .id(ValueOnlyXmlAttribute.of(id))
+          .localName(ValueOnlyXmlAttribute.of("TSH"))
+          .low(ValueOnlyXmlAttribute.of("5"))
+          .performingLab(ValueOnlyXmlAttribute.of("ALBANY VA MEDICAL CENTER"))
+          .provider(provider())
+          .result(ValueOnlyXmlAttribute.of("7.3"))
+          .resulted(ValueOnlyXmlAttribute.of("3110412.125156"))
+          .specimen(CodeAndNameXmlAttribute.of("0X500", "SERUM"))
+          .status(ValueOnlyXmlAttribute.of("completed"))
+          .test(ValueOnlyXmlAttribute.of("TSH"))
+          .type(ValueOnlyXmlAttribute.of("CH"))
+          .units(ValueOnlyXmlAttribute.of("MCIU/ML"))
+          .interpretation(ValueOnlyXmlAttribute.of("H"))
+          .loinc(ValueOnlyXmlAttribute.of("1751-7"))
+          .build();
+    }
+
     public List<Labs.Lab> labs() {
-      return List.of(
-          Labs.Lab.builder()
-              .collected(ValueOnlyXmlAttribute.of("3100715.110004"))
-              .comment(ValueOnlyXmlAttribute.of("Ordering Provider: Eightyeight Vehu"))
-              .facility(CodeAndNameXmlAttribute.of("500", "CAMP MASTER"))
-              .groupName(ValueOnlyXmlAttribute.of("RIA 0412 7"))
-              .high(ValueOnlyXmlAttribute.of("9"))
-              .id(ValueOnlyXmlAttribute.of("CH;6899283.889996;741"))
-              .localName(ValueOnlyXmlAttribute.of("TSH"))
-              .low(ValueOnlyXmlAttribute.of("5"))
-              .performingLab(ValueOnlyXmlAttribute.of("ALBANY VA MEDICAL CENTER"))
-              .provider(provider())
-              .result(ValueOnlyXmlAttribute.of("7.3"))
-              .resulted(ValueOnlyXmlAttribute.of("3110412.125156"))
-              .specimen(CodeAndNameXmlAttribute.of("0X500", "SERUM"))
-              .status(ValueOnlyXmlAttribute.of("completed"))
-              .test(ValueOnlyXmlAttribute.of("TSH"))
-              .type(ValueOnlyXmlAttribute.of("CH"))
-              .units(ValueOnlyXmlAttribute.of("MCIU/ML"))
-              .interpretation(ValueOnlyXmlAttribute.of("H"))
-              .loinc(ValueOnlyXmlAttribute.of("1751-7"))
-              .build());
+      return List.of(lab());
     }
 
     Labs.Provider provider() {
@@ -58,10 +66,14 @@ public class ObservationLabSamples {
     }
 
     public VprGetPatientData.Response.Results results() {
+      return results(lab());
+    }
+
+    public VprGetPatientData.Response.Results results(Labs.Lab lab) {
       return VprGetPatientData.Response.Results.builder()
           .version("1.13")
           .timeZone("-0500")
-          .labs(Labs.builder().labResults(labs()).build())
+          .labs(Labs.builder().labResults(List.of(lab)).build())
           .build();
     }
 

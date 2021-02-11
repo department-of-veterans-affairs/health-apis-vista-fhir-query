@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
 import gov.va.api.health.r4.api.datatypes.Coding;
-import gov.va.api.health.r4.api.datatypes.Quantity;
+import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.lighthouse.vistalink.models.ValueOnlyXmlAttribute;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Vitals;
@@ -16,12 +16,16 @@ public class VistaVitalToR4ObservationTest {
   public void nullSafe() {
     assertThat(
             VistaVitalToR4ObservationTransformer.builder()
+                .patientIcn("p1")
+                .vistaSiteId("123")
                 .vistaVital(Vitals.Vital.builder().build())
                 .build()
                 .toFhir())
         .isEmpty();
     assertThat(
             VistaVitalToR4ObservationTransformer.builder()
+                .patientIcn("p1")
+                .vistaSiteId("123")
                 .vistaVital(
                     Vitals.Vital.builder()
                         .removed(List.of(ValueOnlyXmlAttribute.builder().build()))
@@ -32,9 +36,9 @@ public class VistaVitalToR4ObservationTest {
         .isEqualTo(
             List.of(
                 Observation.builder()
-                    .valueQuantity(Quantity.builder().build())
                     .status(Observation.ObservationStatus._final)
                     .resourceType("Observation")
+                    .subject(Reference.builder().reference("Patient/p1").build())
                     .category(
                         List.of(
                             CodeableConcept.builder()
