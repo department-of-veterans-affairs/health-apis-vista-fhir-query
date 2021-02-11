@@ -158,6 +158,7 @@ public class VistaLabToR4ObservationTransformer {
     log.info("ToDo: Should groupName, labOrderId, orderId be in the identifier array?");
     var observation =
         Observation.builder()
+            .resourceType("Observation")
             .id(idFrom(vistaLab.id()))
             .category(category())
             .subject(subject())

@@ -166,6 +166,7 @@ public class VistaLabToR4ObservationTransformerTest {
                 .get(0))
         .isEqualTo(
             Observation.builder()
+                .resourceType("Observation")
                 .category(
                     List.of(
                         CodeableConcept.builder()
