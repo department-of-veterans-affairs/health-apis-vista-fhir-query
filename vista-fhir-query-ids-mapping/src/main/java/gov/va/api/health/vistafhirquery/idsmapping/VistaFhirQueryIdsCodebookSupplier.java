@@ -14,7 +14,7 @@ public class VistaFhirQueryIdsCodebookSupplier implements CodebookSupplier {
             List.of(
                 /* Systems */
                 Mapping.of("VISTA", "V"),
-                Mapping.of("MVI", "M"),
+                Mapping.of("MPI", "M"),
                 Mapping.of("UNKNOWN", "U"),
                 /* Resources*/
                 Mapping.of("OBSERVATION", "OB"),
