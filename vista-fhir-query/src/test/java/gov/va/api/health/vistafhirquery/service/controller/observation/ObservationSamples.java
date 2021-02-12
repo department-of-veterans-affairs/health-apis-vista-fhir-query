@@ -33,10 +33,15 @@ public class ObservationSamples {
 
   @AllArgsConstructor(staticName = "create")
   public static class Vista {
+
     public List<Vitals.Measurement> measurements() {
+      return measurements("32071");
+    }
+
+    public List<Vitals.Measurement> measurements(String vistaId) {
       return List.of(
           Vitals.Measurement.builder()
-              .id("32071")
+              .id(vistaId)
               .vuid("4500634")
               .name("BLOOD PRESSURE")
               .value("126/65")
@@ -73,8 +78,12 @@ public class ObservationSamples {
     }
 
     public Vitals.Measurement weight() {
+      return weight("32076");
+    }
+
+    public Vitals.Measurement weight(String vistaId) {
       return Vitals.Measurement.builder()
-          .id("32076")
+          .id(vistaId)
           .vuid("4500639")
           .name("WEIGHT")
           .value("190")
@@ -91,12 +100,13 @@ public class ObservationSamples {
     public Observation bloodPressure() {
       return Observation.builder()
           .resourceType("Observation")
+          .subject(subject("p1"))
           .category(category())
           .code(bloodPressureCode())
           .component(List.of(bloodPressureSystolic(), bloodPressureDiastolic()))
           .effectiveDateTime("3100406.14")
           .issued("3110225.110428")
-          .id("32071")
+          .id("Np1+673+32071")
           .performer(performer())
           .status(Observation.ObservationStatus._final)
           .build();
@@ -160,14 +170,23 @@ public class ObservationSamples {
       return List.of(Reference.builder().reference("673").display("TAMPA (JAH VAH)").build());
     }
 
+    public Reference subject(String patientIcn) {
+      return Reference.builder().reference("Patient/" + patientIcn).build();
+    }
+
     public Observation weight() {
+      return weight("Np1+673+32076");
+    }
+
+    public Observation weight(String idSegment) {
       return Observation.builder()
           .resourceType("Observation")
+          .subject(subject("p1"))
           .category(category())
           .code(weightCode())
           .effectiveDateTime("3100406.14")
           .issued("3110225.110428")
-          .id("32076")
+          .id(idSegment)
           .performer(performer())
           .status(Observation.ObservationStatus._final)
           .valueQuantity(Quantity.builder().value(new BigDecimal("190")).unit("lb").build())

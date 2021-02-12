@@ -39,7 +39,7 @@ public class R4ObservationControllerTest {
   void read() {
     var vista = ObservationSamples.Vista.create();
     VprGetPatientData.Response.Results sample = vista.results();
-    sample.vitals().vitalResults().get(0).measurements(List.of(vista.weight()));
+    sample.vitals().vitalResults().get(0).measurements(List.of(vista.weight("456")));
     String responseBody = xml(sample);
     when(vlClient.requestForVistaSite(eq("123"), any(RpcDetails.class)))
         .thenReturn(
@@ -50,7 +50,8 @@ public class R4ObservationControllerTest {
                         RpcInvocationResult.builder().vista("123").response(responseBody).build()))
                 .build());
     var actual = controller().read("Np1+123+456");
-    assertThat(json(actual)).isEqualTo(json(ObservationSamples.Fhir.create().weight()));
+    assertThat(json(actual))
+        .isEqualTo(json(ObservationSamples.Fhir.create().weight("Np1+123+456")));
   }
 
   @Test

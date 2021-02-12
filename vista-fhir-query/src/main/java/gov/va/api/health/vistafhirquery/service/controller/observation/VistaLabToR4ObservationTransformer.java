@@ -1,20 +1,18 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.allBlank;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.ifPresent;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toBigDecimal;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toHumanDateTime;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toReference;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toResourceId;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.valueOfValueOnlyXmlAttribute;
+import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationTransformers.referenceRange;
+import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationTransformers.valueQuantity;
 
 import gov.va.api.health.r4.api.datatypes.Annotation;
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
 import gov.va.api.health.r4.api.datatypes.Coding;
-import gov.va.api.health.r4.api.datatypes.Quantity;
-import gov.va.api.health.r4.api.datatypes.SimpleQuantity;
-import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Observation;
-import gov.va.api.health.vistafhirquery.service.controller.VistaIdentifierSegment;
 import gov.va.api.lighthouse.vistalink.models.ValueOnlyXmlAttribute;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Labs;
 import java.util.List;
@@ -79,7 +77,7 @@ public class VistaLabToR4ObservationTransformer {
     if (isBlank(id)) {
       return null;
     }
-    return toResourceId(id);
+    return toResourceId(patientIcn, vistaSiteId, id);
   }
 
   List<CodeableConcept> interpretation(ValueOnlyXmlAttribute maybeInterpretation) {
@@ -112,27 +110,6 @@ public class VistaLabToR4ObservationTransformer {
     return List.of(Annotation.builder().text(note).build());
   }
 
-  List<Observation.ReferenceRange> referenceRange(
-      ValueOnlyXmlAttribute maybeHigh, ValueOnlyXmlAttribute maybeLow) {
-    String high = valueOfValueOnlyXmlAttribute(maybeHigh);
-    String low = valueOfValueOnlyXmlAttribute(maybeLow);
-    if (allBlank(high, low)) {
-      return null;
-    }
-    return List.of(
-        Observation.ReferenceRange.builder()
-            .high(simpleQuantityFor(high))
-            .low(simpleQuantityFor(low))
-            .build());
-  }
-
-  private SimpleQuantity simpleQuantityFor(String value) {
-    if (isBlank(value)) {
-      return null;
-    }
-    return SimpleQuantity.builder().value(toBigDecimal(value)).build();
-  }
-
   Observation.ObservationStatus status(ValueOnlyXmlAttribute maybeStatus) {
     String status = valueOfValueOnlyXmlAttribute(maybeStatus);
     if (isBlank(status)) {
@@ -148,10 +125,6 @@ public class VistaLabToR4ObservationTransformer {
     }
   }
 
-  private Reference subject() {
-    return toReference("Patient", patientIcn, null);
-  }
-
   /** Transform a VPR PATIENT DATA VistA Lab result to FHIR Observation. */
   public Stream<Observation> toFhir() {
     // References Not Reflected: specimen, performer.facility, and performer.provider
@@ -161,7 +134,7 @@ public class VistaLabToR4ObservationTransformer {
             .resourceType("Observation")
             .id(idFrom(vistaLab.id()))
             .category(category())
-            .subject(subject())
+            .subject(toReference("Patient", patientIcn, null))
             .issued(toHumanDateTime(vistaLab.collected()))
             .note(note(vistaLab.comment()))
             .referenceRange(referenceRange(vistaLab.high(), vistaLab.low()))
@@ -172,38 +145,5 @@ public class VistaLabToR4ObservationTransformer {
             .status(status(vistaLab.status()))
             .build();
     return Stream.of(observation);
-  }
-
-  private Reference toReference(@NonNull String resourceType, String maybeId, String maybeDisplay) {
-    if (allBlank(maybeId, maybeDisplay)) {
-      return null;
-    }
-    return Reference.builder()
-        .reference(ifPresent(maybeId, id -> resourceType + "/" + id))
-        .display(maybeDisplay)
-        .build();
-  }
-
-  private String toResourceId(String recordId) {
-    if (isBlank(recordId)) {
-      return null;
-    }
-    return VistaIdentifierSegment.builder()
-        .patientIdentifierType(VistaIdentifierSegment.PatientIdentifierType.NATIONAL_ICN)
-        .patientIdentifier(patientIcn)
-        .vistaSiteId(vistaSiteId)
-        .vistaRecordId(recordId)
-        .build()
-        .toIdentifierSegment();
-  }
-
-  Quantity valueQuantity(
-      ValueOnlyXmlAttribute maybeQuantityValue, ValueOnlyXmlAttribute maybeUnits) {
-    String quantityValue = valueOfValueOnlyXmlAttribute(maybeQuantityValue);
-    String units = valueOfValueOnlyXmlAttribute(maybeUnits);
-    if (isBlank(quantityValue)) {
-      return null;
-    }
-    return Quantity.builder().value(toBigDecimal(quantityValue)).unit(units).build();
   }
 }

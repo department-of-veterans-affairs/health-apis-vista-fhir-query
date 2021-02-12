@@ -46,6 +46,7 @@ public class R4ObservationTransformerTest {
   public void vitalToFhir() {
     assertThat(
             R4ObservationTransformer.builder()
+                .patientIcn("p1")
                 .resultsEntry(ObservationSamples.Vista.create().resultsByStation())
                 .build()
                 .toFhir()
