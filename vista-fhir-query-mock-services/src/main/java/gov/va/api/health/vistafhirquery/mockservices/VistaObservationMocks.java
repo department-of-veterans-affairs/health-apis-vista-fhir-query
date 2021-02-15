@@ -1,8 +1,8 @@
 package gov.va.api.health.vistafhirquery.mockservices;
 
-import static gov.va.api.health.vistafhirquery.mockservices.MockUtils.contentTypeApplicationJson;
-import static gov.va.api.health.vistafhirquery.mockservices.MockUtils.json;
-import static gov.va.api.health.vistafhirquery.mockservices.MockUtils.rpcQueryWithExpectedRpcDetails;
+import static gov.va.api.health.vistafhirquery.mockservices.MockServiceRequests.contentTypeApplicationJson;
+import static gov.va.api.health.vistafhirquery.mockservices.MockServiceRequests.json;
+import static gov.va.api.health.vistafhirquery.mockservices.MockServiceRequests.rpcQueryWithExpectedRpcDetails;
 import static org.mockserver.model.HttpResponse.response;
 
 import com.google.common.io.Resources;

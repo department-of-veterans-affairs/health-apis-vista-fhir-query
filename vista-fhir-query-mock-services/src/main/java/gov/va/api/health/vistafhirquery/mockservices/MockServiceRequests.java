@@ -18,7 +18,7 @@ import org.mockserver.model.JsonBody;
 
 @Slf4j
 @UtilityClass
-public class MockUtils {
+public class MockServiceRequests {
   public static Header contentTypeApplicationJson() {
     return new Header("Content-Type", "application/json");
   }
