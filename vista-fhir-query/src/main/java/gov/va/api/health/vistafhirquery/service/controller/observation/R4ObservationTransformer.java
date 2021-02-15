@@ -27,6 +27,8 @@ public class R4ObservationTransformer {
             .flatMap(
                 vital ->
                     VistaVitalToR4ObservationTransformer.builder()
+                        .patientIcn(patientIcn)
+                        .vistaSiteId(resultsEntry.getKey())
                         .vistaVital(vital)
                         .build()
                         .toFhir());

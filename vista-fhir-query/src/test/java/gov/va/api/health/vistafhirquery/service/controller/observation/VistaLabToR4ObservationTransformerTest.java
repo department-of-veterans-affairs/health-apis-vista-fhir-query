@@ -6,13 +6,10 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import gov.va.api.health.r4.api.datatypes.Annotation;
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
 import gov.va.api.health.r4.api.datatypes.Coding;
-import gov.va.api.health.r4.api.datatypes.Quantity;
-import gov.va.api.health.r4.api.datatypes.SimpleQuantity;
 import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.lighthouse.vistalink.models.ValueOnlyXmlAttribute;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Labs;
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -185,34 +182,6 @@ public class VistaLabToR4ObservationTransformerTest {
   }
 
   @Test
-  void referenceRange() {
-    assertThat(
-            tx().referenceRange(ValueOnlyXmlAttribute.of("9"), ValueOnlyXmlAttribute.of("1"))
-                .get(0))
-        .isEqualTo(
-            Observation.ReferenceRange.builder()
-                .high(SimpleQuantity.builder().value(new BigDecimal("9")).build())
-                .low(SimpleQuantity.builder().value(new BigDecimal("1")).build())
-                .build());
-    assertThat(
-            tx().referenceRange(ValueOnlyXmlAttribute.of("9"), ValueOnlyXmlAttribute.of(null))
-                .get(0))
-        .isEqualTo(
-            Observation.ReferenceRange.builder()
-                .high(SimpleQuantity.builder().value(new BigDecimal("9")).build())
-                .build());
-    assertThat(
-            tx().referenceRange(ValueOnlyXmlAttribute.of(null), ValueOnlyXmlAttribute.of("1"))
-                .get(0))
-        .isEqualTo(
-            Observation.ReferenceRange.builder()
-                .low(SimpleQuantity.builder().value(new BigDecimal("1")).build())
-                .build());
-    assertThat(tx().referenceRange(ValueOnlyXmlAttribute.of(null), ValueOnlyXmlAttribute.of(null)))
-        .isNull();
-  }
-
-  @Test
   void status() {
     assertThat(tx().status(null)).isNull();
     assertThat(tx().status(ValueOnlyXmlAttribute.of("completed")))
@@ -229,17 +198,5 @@ public class VistaLabToR4ObservationTransformerTest {
         .vistaSiteId("123")
         .vistaLab(Labs.Lab.builder().build())
         .build();
-  }
-
-  @Test
-  void valueQuantity() {
-    assertThat(tx().valueQuantity(ValueOnlyXmlAttribute.of(null), ValueOnlyXmlAttribute.of(null)))
-        .isNull();
-    assertThat(tx().valueQuantity(ValueOnlyXmlAttribute.of(null), ValueOnlyXmlAttribute.of("mL")))
-        .isNull();
-    assertThat(tx().valueQuantity(ValueOnlyXmlAttribute.of("1"), ValueOnlyXmlAttribute.of(null)))
-        .isEqualTo(Quantity.builder().value(new BigDecimal("1")).build());
-    assertThat(tx().valueQuantity(ValueOnlyXmlAttribute.of("1"), ValueOnlyXmlAttribute.of("mL")))
-        .isEqualTo(Quantity.builder().value(new BigDecimal("1")).unit("mL").build());
   }
 }

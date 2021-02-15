@@ -3,16 +3,20 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>gov.va.api.health</groupId>
-    <artifactId>health-apis-parent</artifactId>
+    <artifactId>api-starter</artifactId>
     <version>7.0.20</version>
   </parent>
-  <artifactId>vista-fhir-query-parent</artifactId>
+  <artifactId>vista-fhir-query-ids-mapping</artifactId>
   <version>0.0.19-SNAPSHOT</version>
-  <packaging>pom</packaging>
-  <modules>
-    <module>vista-fhir-query-ids-mapping</module>
-    <module>vista-fhir-query</module>
-    <module>vista-fhir-query-mock-services</module>
-    <module>vista-fhir-query-tests</module>
-  </modules>
+  <packaging>jar</packaging>
+  <properties>
+    <ids.version>3.0.5</ids.version>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>gov.va.api.health</groupId>
+      <artifactId>ids-client</artifactId>
+      <version>${ids.version}</version>
+    </dependency>
+  </dependencies>
 </project>

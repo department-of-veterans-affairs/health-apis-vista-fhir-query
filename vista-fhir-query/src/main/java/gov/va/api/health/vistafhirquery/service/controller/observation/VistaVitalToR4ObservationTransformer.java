@@ -1,13 +1,15 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toBigDecimal;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toReference;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toResourceId;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.valueOfValueOnlyXmlAttribute;
+import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationTransformers.referenceRange;
+import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationTransformers.valueQuantity;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
 import gov.va.api.health.r4.api.datatypes.Coding;
-import gov.va.api.health.r4.api.datatypes.Quantity;
-import gov.va.api.health.r4.api.datatypes.SimpleQuantity;
 import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.lighthouse.vistalink.models.CodeAndNameXmlAttribute;
@@ -22,9 +24,13 @@ import lombok.Builder;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
-@Builder
 @Slf4j
+@Builder
 public class VistaVitalToR4ObservationTransformer {
+  @NonNull private final String patientIcn;
+
+  @NonNull private final String vistaSiteId;
+
   @NonNull private final Vitals.Vital vistaVital;
 
   static List<CodeableConcept> category() {
@@ -63,7 +69,7 @@ public class VistaVitalToR4ObservationTransformer {
    */
   static List<Observation.Component> component(Vitals.Measurement measurement) {
     Optional<BloodPressure> bp = measurement.asBloodPressure();
-    if (!bp.isPresent()) {
+    if (bp.isEmpty()) {
       return null;
     }
     BloodPressure.BloodPressureMeasurement systolicMeasurement = bp.get().systolic();
@@ -90,17 +96,6 @@ public class VistaVitalToR4ObservationTransformer {
     }
   }
 
-  static List<Observation.ReferenceRange> referenceRange(String high, String low) {
-    if (high == null && low == null) {
-      return null;
-    }
-    return List.of(
-        Observation.ReferenceRange.builder()
-            .high(SimpleQuantity.builder().value(toBigDecimal(high)).build())
-            .low(SimpleQuantity.builder().value(toBigDecimal(low)).build())
-            .build());
-  }
-
   static Observation.ObservationStatus status(List<ValueOnlyXmlAttribute> removed) {
     if (isEmpty(removed) || removed.get(0) == null || removed.get(0).value() == null) {
       return Observation.ObservationStatus._final;
@@ -108,31 +103,38 @@ public class VistaVitalToR4ObservationTransformer {
     return Observation.ObservationStatus.entered_in_error;
   }
 
-  static Quantity valueQuantity(String value, String units) {
-    return Quantity.builder().value(toBigDecimal(value)).unit(units).build();
+  String idFrom(String id) {
+    log.info("ToDo: Is null logical id an illegal state?");
+    if (isBlank(id)) {
+      return null;
+    }
+    return toResourceId(patientIcn, vistaSiteId, id);
   }
 
   Observation observationFromMeasurement(Vitals.Measurement measurement) {
+    var patientReference = toReference("Patient", patientIcn, null);
     if (measurement.isBloodPressure()) {
       return Observation.builder()
           .resourceType("Observation")
+          .id(idFrom(measurement.id()))
           .category(category())
+          .subject(patientReference)
           .code(code(measurement))
           .component(component(measurement))
           .effectiveDateTime(valueOfValueOnlyXmlAttribute(vistaVital.taken()))
           .issued(valueOfValueOnlyXmlAttribute(vistaVital.entered()))
-          .id(measurement.id())
           .performer(performer(vistaVital.facility()))
           .status(status(vistaVital.removed()))
           .build();
     }
     return Observation.builder()
         .resourceType("Observation")
+        .id(idFrom(measurement.id()))
         .category(category())
+        .subject(patientReference)
         .code(code(measurement))
         .effectiveDateTime(valueOfValueOnlyXmlAttribute(vistaVital.taken()))
         .issued(valueOfValueOnlyXmlAttribute(vistaVital.entered()))
-        .id(measurement.id())
         .performer(performer(vistaVital.facility()))
         .referenceRange(referenceRange(measurement.high(), measurement.low()))
         .status(status(vistaVital.removed()))
