@@ -1,5 +1,6 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
+import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.lighthouse.vistalink.models.ValueOnlyXmlAttribute;
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -7,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.regex.Pattern;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -90,6 +92,32 @@ public class R4Transformers {
     log.info("ToDo: Parse and transformer FileMan DateTimes.");
     String fm = valueOfValueOnlyXmlAttribute(filemanDateTime);
     return fm;
+  }
+
+  /** Create a reference sing the resourceType, an id, and a display. */
+  public static Reference toReference(
+      @NonNull String resourceType, String maybeId, String maybeDisplay) {
+    if (allBlank(maybeId, maybeDisplay)) {
+      return null;
+    }
+    return Reference.builder()
+        .reference(ifPresent(maybeId, id -> resourceType + "/" + id))
+        .display(maybeDisplay)
+        .build();
+  }
+
+  /** Build an Identifier Segment using patientId, siteId, and the recordId. */
+  public static String toResourceId(String patientId, String siteId, String recordId) {
+    if (isBlank(recordId)) {
+      return null;
+    }
+    return VistaIdentifierSegment.builder()
+        .patientIdentifierType(VistaIdentifierSegment.PatientIdentifierType.NATIONAL_ICN)
+        .patientIdentifier(patientId)
+        .vistaSiteId(siteId)
+        .vistaRecordId(recordId)
+        .build()
+        .toIdentifierSegment();
   }
 
   /** Gets value of a ValueOnlyXmlAttribute if it exists. */
