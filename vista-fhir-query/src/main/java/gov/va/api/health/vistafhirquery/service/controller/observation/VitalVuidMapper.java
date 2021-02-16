@@ -25,16 +25,21 @@ public class VitalVuidMapper {
 
   /** Map a VistaVitalMapping to an R4 CodeableConcept. */
   public static Function<VitalVuidMapping, CodeableConcept> asCodeableConcept() {
-    return m ->
-        CodeableConcept.builder()
-            .coding(
-                List.of(
-                    Coding.builder()
-                        .system(m.system())
-                        .code(m.code())
-                        .display(m.display())
+    return m -> {
+      if (m == null || m.code() == null) {
+        return null;
+      }
+      return CodeableConcept.builder()
+          .coding(
+              List.of(
+                  Coding.builder()
+                          .system(m.system())
+                          .code(m.code())
+                          .display(m.display())
                         .build()))
-            .build();
+          .build();
+
+    };
   }
 
   public static Predicate<VitalVuidMapping> forSystem(@NonNull String systemUri) {
