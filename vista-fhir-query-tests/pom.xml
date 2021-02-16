@@ -15,6 +15,12 @@
   </properties>
   <dependencies>
     <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>${h2.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>gov.va.api.health</groupId>
       <artifactId>sentinel</artifactId>
       <version>${project.parent.version}</version>
@@ -45,7 +51,7 @@
             </goals>
             <configuration>
               <outputDirectory>${project.build.directory}</outputDirectory>
-              <includeArtifactIds>junit-platform-console-standalone,vista-fhir-query,vista-fhir-query-mock-services</includeArtifactIds>
+              <includeArtifactIds>h2,junit-platform-console-standalone,vista-fhir-query,vista-fhir-query-mock-services</includeArtifactIds>
               <stripVersion>true</stripVersion>
             </configuration>
           </execution>
@@ -92,11 +98,18 @@
                 <argument>java</argument>
                 <argument>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5085</argument>
                 <argument>-cp</argument>
-                <argument>vista-fhir-query.jar</argument>
+                <argument>h2.jar${path.separator}vista-fhir-query.jar</argument>
                 <argument>-Dlogging.level.root=INFO</argument>
                 <argument>-Dloader=gov.va.api.health.vistafhirquery.service.Application</argument>
                 <argument>-Dvistalink.api.url=http://localhost:8096</argument>
                 <argument>-Dvista-fhir-query.internal.client-keys=~shanktopus~</argument>
+                <argument>-Dspring.datasource.driver-class-name=org.h2.Driver</argument>
+                <argument>-Dspring.datasource.url=jdbc:h2:${project.basedir}/target/test-classes/mitre</argument>
+                <argument>-Dspring.datasource.username=sa</argument>
+                <argument>-Dspring.datasource.password=sa</argument>
+                <argument>-Dspring.jpa.generate-ddl=false</argument>
+                <argument>-Dspring.jpa.hibernate.ddl-auto=none</argument>
+                <argument>-Dspring.jpa.properties.hibernate.globally_quoted_identifiers=false</argument>
                 <argument>-Dspring.config.location=classpath:/application.properties,file:${project.basedir}/config/secrets.properties</argument>
                 <argument>org.springframework.boot.loader.PropertiesLauncher</argument>
               </arguments>

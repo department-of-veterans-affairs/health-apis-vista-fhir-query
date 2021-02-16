@@ -14,6 +14,7 @@
     <fhir-resources.version>5.0.20</fhir-resources.version>
     <!-- ToDo Increase Coverage -->
     <jacoco.coverage>0.90</jacoco.coverage>
+    <mssql-jdbc.version>7.4.1.jre8</mssql-jdbc.version>
     <talos.version>0.0.3</talos.version>
     <vistalink.version>2.0.13</vistalink.version>
   </properties>
@@ -24,6 +25,11 @@
       <version>${fhir-resources.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.microsoft.sqlserver</groupId>
+      <artifactId>mssql-jdbc</artifactId>
+      <version>${mssql-jdbc.version}</version>
+    </dependency>
+    <dependency>
       <groupId>gov.va.api.health</groupId>
       <artifactId>service-auto-config</artifactId>
     </dependency>
@@ -31,6 +37,10 @@
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
       <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
     </dependency>
     <dependency>
       <groupId>gov.va.api.lighthouse</groupId>
@@ -48,4 +58,34 @@
       <version>${vistalink.version}</version>
     </dependency>
   </dependencies>
+  <build>
+    <plugins>
+      <!--
+        Needed by health-apis-datamart-synthetic-records to
+        access entities and populate the database.
+      -->
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>library-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <configuration>
+              <classifier>library</classifier>
+            </configuration>
+          </execution>
+          <execution>
+            <id>test-jar</id>
+            <phase>package</phase>
+            <goals>
+              <goal>test-jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

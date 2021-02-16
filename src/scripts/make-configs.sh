@@ -55,6 +55,9 @@ main() {
   requiredParam VISTALINK_URL "$VISTALINK_URL"
   requiredParam VISTALINK_ACCESS_CODE "$VISTALINK_ACCESS_CODE"
   requiredParam VISTALINK_VERIFY_CODE "$VISTALINK_VERIFY_CODE"
+  requiredParam VFQ_DB_URL "${VFQ_DB_URL}"
+  requiredParam VFQ_DB_USER "${VFQ_DB_USER}"
+  requiredParam VFQ_DB_PASSWORD "${VFQ_DB_PASSWORD}"
   [ -z "$VISTALINK_CLIENT_KEY" ] && VISTALINK_CLIENT_KEY="not-used"
   [ $MISSING_SECRETS == true ] && usage "Missing configuration secrets, please update $SECRETS"
 
@@ -113,6 +116,9 @@ EOF
   configValue vista-fhir-query $PROFILE vista-fhir-query.internal.client-keys "disabled"
   configValue vista-fhir-query $PROFILE vista-fhir-query.public-url "http://localhost:8095"
   configValue vista-fhir-query $PROFILE vista-fhir-query.public-r4-base-path "r4"
+  configValue vista-fhir-query $PROFILE spring.datasource.url "${VFQ_DB_URL}"
+  configValue vista-fhir-query $PROFILE spring.datasource.username "${VFQ_DB_USER}"
+  configValue vista-fhir-query $PROFILE spring.datasource.password "${VFQ_DB_PASSWORD}"
   checkForUnsetValues vista-fhir-query $PROFILE
 }
 
