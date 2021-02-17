@@ -8,6 +8,7 @@ import gov.va.api.health.vistafhirquery.service.controller.R4Transformation;
 import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions;
 import gov.va.api.health.vistafhirquery.service.controller.VistaIdentifierSegment;
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
+import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.WitnessProtection;
 import gov.va.api.lighthouse.vistalink.api.RpcResponse;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Vitals;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.VprGetPatientData;
@@ -18,6 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.validation.constraints.Min;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,17 +43,29 @@ import org.springframework.web.bind.annotation.RestController;
     value = "/r4/Observation",
     produces = {"application/json", "application/fhir+json"})
 @AllArgsConstructor(onConstructor_ = @Autowired)
+@Builder
 public class R4ObservationController {
   private final VistalinkApiClient vistalinkApiClient;
 
   private final LinkProperties linkProperties;
+
+  private final WitnessProtection witnessProtection;
+
+  private VistaIdentifierSegment parseOrDie(String publicId) {
+    try {
+      return VistaIdentifierSegment.parse(witnessProtection.toPrivateId(publicId));
+    } catch (IllegalArgumentException e) {
+      throw new ResourceExceptions.NotFound(publicId);
+    }
+  }
 
   /** Read by publicId. */
   @SneakyThrows
   @GetMapping(value = {"/{publicId}"})
   public Observation read(@PathVariable("publicId") String publicId) {
     log.info("ToDo: Search By _id and identifier");
-    VistaIdentifierSegment ids = VistaIdentifierSegment.parse(publicId);
+
+    VistaIdentifierSegment ids = parseOrDie(publicId);
     RpcResponse rpcResponse =
         vistalinkApiClient.requestForVistaSite(
             ids.vistaSiteId(),

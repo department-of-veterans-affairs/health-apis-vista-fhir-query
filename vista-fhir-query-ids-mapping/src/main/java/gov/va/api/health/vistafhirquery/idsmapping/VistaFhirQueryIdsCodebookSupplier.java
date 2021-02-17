@@ -17,8 +17,8 @@ public class VistaFhirQueryIdsCodebookSupplier implements CodebookSupplier {
                 Mapping.of("MPI", "M"),
                 Mapping.of("UNKNOWN", "U"),
                 /* Resources*/
-                Mapping.of("OBSERVATION", "OB"),
-                Mapping.of("PATIENT", "PA")))
+                Mapping.of("Observation", "OB"),
+                Mapping.of("Patient", "PA")))
         .build();
   }
 }
