@@ -32,13 +32,8 @@ public class VitalVuidMapper {
       return CodeableConcept.builder()
           .coding(
               List.of(
-                  Coding.builder()
-                          .system(m.system())
-                          .code(m.code())
-                          .display(m.display())
-                        .build()))
+                  Coding.builder().system(m.system()).code(m.code()).display(m.display()).build()))
           .build();
-
     };
   }
 
@@ -51,8 +46,8 @@ public class VitalVuidMapper {
   }
 
   /** Get a stream of VitalVuidMappings using the cached repository method. */
-  public VitalVuidStreamer mappings() {
-    return VitalVuidStreamer.of(
+  public VitalVuidMappingStream mappings() {
+    return VitalVuidMappingStream.of(
         vuidMappings().stream()
             .filter(Objects::nonNull)
             .map(
@@ -83,15 +78,15 @@ public class VitalVuidMapper {
   }
 
   @AllArgsConstructor(staticName = "of")
-  public static class VitalVuidStreamer {
+  public static class VitalVuidMappingStream {
     @Delegate Stream<VitalVuidMapping> mappings;
 
-    public VitalVuidStreamer and(Predicate<VitalVuidMapping> condition) {
+    public VitalVuidMappingStream and(Predicate<VitalVuidMapping> condition) {
       mappings = mappings.filter(condition);
       return this;
     }
 
-    public VitalVuidStreamer lookup(Predicate<VitalVuidMapping> condition) {
+    public VitalVuidMappingStream lookup(Predicate<VitalVuidMapping> condition) {
       mappings = mappings.filter(condition);
       return this;
     }
