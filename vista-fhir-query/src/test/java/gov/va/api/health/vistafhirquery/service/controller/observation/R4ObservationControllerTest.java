@@ -1,7 +1,7 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
-import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationSamples.json;
-import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationSamples.xml;
+import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationVitalSamples.json;
+import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationVitalSamples.xml;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
@@ -18,10 +18,21 @@ import gov.va.api.lighthouse.vistalink.api.RpcResponse;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.VprGetPatientData;
 import java.util.List;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class R4ObservationControllerTest {
+  private static VitalVuidMapper mapper;
+
   VistalinkApiClient vlClient = mock(VistalinkApiClient.class);
+
+  @BeforeAll
+  static void _init() {
+    VitalVuidMappingRepository repository = mock(VitalVuidMappingRepository.class);
+    when(repository.findByCodingSystemId(eq((short) 11)))
+        .thenReturn(ObservationVitalSamples.Datamart.create().mappingEntities());
+    mapper = new VitalVuidMapper(repository);
+  }
 
   private R4ObservationController controller() {
     return new R4ObservationController(
@@ -31,13 +42,14 @@ public class R4ObservationControllerTest {
             .maxPageSize(100)
             .publicUrl("http://fugazi.com")
             .publicR4BasePath("r4")
-            .build());
+            .build(),
+        mapper);
   }
 
   @Test
   @SneakyThrows
   void read() {
-    var vista = ObservationSamples.Vista.create();
+    var vista = ObservationVitalSamples.Vista.create();
     VprGetPatientData.Response.Results sample = vista.results();
     sample.vitals().vitalResults().get(0).measurements(List.of(vista.weight("456")));
     String responseBody = xml(sample);
@@ -51,7 +63,7 @@ public class R4ObservationControllerTest {
                 .build());
     var actual = controller().read("Np1+123+456");
     assertThat(json(actual))
-        .isEqualTo(json(ObservationSamples.Fhir.create().weight("Np1+123+456")));
+        .isEqualTo(json(ObservationVitalSamples.Fhir.create().weight("Np1+123+456")));
   }
 
   @Test

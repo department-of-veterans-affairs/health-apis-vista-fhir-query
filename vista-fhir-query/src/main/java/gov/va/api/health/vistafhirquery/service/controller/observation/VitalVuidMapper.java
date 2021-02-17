@@ -38,7 +38,6 @@ public class VitalVuidMapper {
                           .display(m.display())
                         .build()))
           .build();
-
     };
   }
 

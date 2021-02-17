@@ -46,6 +46,8 @@ public class R4ObservationController {
 
   private final LinkProperties linkProperties;
 
+  private final VitalVuidMapper vitalVuids;
+
   /** Read by publicId. */
   @SneakyThrows
   @GetMapping(value = {"/{publicId}"})
@@ -132,6 +134,7 @@ public class R4ObservationController {
                           R4ObservationTransformer.builder()
                               .patientIcn(patientIdentifier)
                               .resultsEntry(entry)
+                              .vitalVuidMapper(vitalVuids)
                               .build()
                               .toFhir())
                   .collect(Collectors.toList());

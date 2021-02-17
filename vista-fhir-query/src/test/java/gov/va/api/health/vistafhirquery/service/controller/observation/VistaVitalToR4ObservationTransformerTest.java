@@ -1,6 +1,8 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
 import gov.va.api.health.r4.api.datatypes.Coding;
@@ -11,14 +13,22 @@ import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Vitals;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-public class VistaVitalToR4ObservationTest {
+public class VistaVitalToR4ObservationTransformerTest {
+
+  VitalVuidMapper mapper = mock(VitalVuidMapper.class);
+
   @Test
   public void nullSafe() {
+    when(mapper.mappings())
+        .thenReturn(
+            VitalVuidMapper.VitalVuidMappingStream.of(
+                ObservationVitalSamples.Datamart.create().vuidMappings().stream()));
     assertThat(
             VistaVitalToR4ObservationTransformer.builder()
                 .patientIcn("p1")
                 .vistaSiteId("123")
                 .vistaVital(Vitals.Vital.builder().build())
+                .vuidMapper(mapper)
                 .build()
                 .toFhir())
         .isEmpty();
@@ -31,6 +41,7 @@ public class VistaVitalToR4ObservationTest {
                         .removed(List.of(ValueOnlyXmlAttribute.builder().build()))
                         .measurements(List.of(Vitals.Measurement.builder().build()))
                         .build())
+                .vuidMapper(mapper)
                 .build()
                 .toFhir())
         .isEqualTo(
@@ -52,10 +63,6 @@ public class VistaVitalToR4ObservationTest {
                                             .build()))
                                 .text("Vital Signs")
                                 .build()))
-                    .code(
-                        CodeableConcept.builder()
-                            .coding(List.of(Coding.builder().system("http://loinc.org").build()))
-                            .build())
                     .build()));
   }
 }
