@@ -92,10 +92,9 @@ public class VitalVuidMapperTest {
   @Test
   void asCodeableConcept() {
     assertThat(
-            mapper()
-                .mappings()
-                .lookup(VitalVuidMapper.forSystem("http://loinc.org"))
-                .and(VitalVuidMapper.forVuid("1"))
+            mapper().mappings().stream()
+                .filter(VitalVuidMapper.forSystem("http://loinc.org"))
+                .filter(VitalVuidMapper.forVuid("1"))
                 .map(VitalVuidMapper.asCodeableConcept())
                 .collect(Collectors.toList()))
         .containsExactly(
@@ -114,9 +113,8 @@ public class VitalVuidMapperTest {
   @MethodSource
   void forSystem(String system, List<VitalVuidMapper.VitalVuidMapping> expected) {
     assertThat(
-            mapper()
-                .mappings()
-                .lookup(VitalVuidMapper.forSystem(system))
+            mapper().mappings().stream()
+                .filter(VitalVuidMapper.forSystem(system))
                 .collect(Collectors.toList()))
         .isEqualTo(expected);
   }
@@ -125,7 +123,9 @@ public class VitalVuidMapperTest {
   @MethodSource
   void forVuid(String vuid, List<VitalVuidMapper.VitalVuidMapping> expected) {
     assertThat(
-            mapper().mappings().lookup(VitalVuidMapper.forVuid(vuid)).collect(Collectors.toList()))
+            mapper().mappings().stream()
+                .filter(VitalVuidMapper.forVuid(vuid))
+                .collect(Collectors.toList()))
         .isEqualTo(expected);
   }
 
@@ -135,13 +135,8 @@ public class VitalVuidMapperTest {
 
   @Test
   void mappings() {
-    assertThat(mapper().mappings().collect(Collectors.toList()))
+    assertThat(mapper().mappings())
         .containsExactlyInAnyOrder(
             loincMapping(1), loincMapping(2), snomedMapping(1), snomedMapping(2));
-  }
-
-  @Test
-  void vuidMappings() {
-    assertThat(mapper().vuidMappings()).isEqualTo(entities());
   }
 }

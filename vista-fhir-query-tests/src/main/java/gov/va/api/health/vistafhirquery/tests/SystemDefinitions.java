@@ -24,7 +24,8 @@ public final class SystemDefinitions {
   private static TestIds localIds() {
     return TestIds.builder()
         .patient("1011537977V693883")
-        .observation("N1011537977V693883+ms+32463")
+        .observation(
+            "I2-6FYK5ZV4ERKV6Q6R33FN7SQVQGAMBKJVSVI3I6UBSZ4SMKCA3I4YM3QX7EWV6TDY7PNZXQGS5BZHQ000")
         .build();
   }
 
@@ -40,7 +41,7 @@ public final class SystemDefinitions {
   private static TestIds qaIds() {
     return TestIds.builder()
         .patient("1011537977V693883")
-        .observation("N5000000349+358+32463")
+        .observation("I2-AWHH57I6XDD2XII72DKZZCRXZUS6ZZ5Y46ZZZYXX6GJYYHGPVGJA0000")
         .build();
   }
 
@@ -66,10 +67,7 @@ public final class SystemDefinitions {
   }
 
   private static TestIds stagingIds() {
-    return TestIds.builder()
-        .patient("1011537977V693883")
-        .observation("N5000000349+358+32463")
-        .build();
+    return qaIds();
   }
 
   /** Return the applicable system definition for the current environment. */

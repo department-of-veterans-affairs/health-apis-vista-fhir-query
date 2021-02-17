@@ -57,10 +57,8 @@ public class VistaVitalToR4ObservationTransformer {
       return null;
     }
     Optional<CodeableConcept> maybeLoincMapping =
-        vuidMapper
-            .mappings()
-            .lookup(forVuid(measurement.vuid()))
-            .and(forSystem("http://loinc.org"))
+        vuidMapper.mappings().stream()
+            .filter(forVuid(measurement.vuid()).and(forSystem("http://loinc.org")))
             .map(asCodeableConcept())
             .filter(Objects::nonNull)
             .findFirst();

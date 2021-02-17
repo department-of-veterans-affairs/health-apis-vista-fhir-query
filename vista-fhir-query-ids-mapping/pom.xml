@@ -5,9 +5,10 @@
     <groupId>gov.va.api.health</groupId>
     <artifactId>api-starter</artifactId>
     <version>7.0.21</version>
+    <relativePath/>
   </parent>
   <artifactId>vista-fhir-query-ids-mapping</artifactId>
-  <version>0.0.21-SNAPSHOT</version>
+  <version>0.0.23-SNAPSHOT</version>
   <packaging>jar</packaging>
   <properties>
     <ids.version>3.0.6</ids.version>

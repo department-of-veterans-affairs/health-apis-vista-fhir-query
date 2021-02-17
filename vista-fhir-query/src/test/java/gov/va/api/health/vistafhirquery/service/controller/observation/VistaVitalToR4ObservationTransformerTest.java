@@ -19,10 +19,7 @@ public class VistaVitalToR4ObservationTransformerTest {
 
   @Test
   public void nullSafe() {
-    when(mapper.mappings())
-        .thenReturn(
-            VitalVuidMapper.VitalVuidMappingStream.of(
-                ObservationVitalSamples.Datamart.create().vuidMappings().stream()));
+    when(mapper.mappings()).thenReturn(ObservationVitalSamples.Datamart.create().vuidMappings());
     assertThat(
             VistaVitalToR4ObservationTransformer.builder()
                 .patientIcn("p1")

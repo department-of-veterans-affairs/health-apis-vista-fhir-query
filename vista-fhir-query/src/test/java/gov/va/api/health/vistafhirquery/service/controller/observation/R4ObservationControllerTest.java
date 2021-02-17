@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
 import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions;
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
+import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.WitnessProtection;
 import gov.va.api.lighthouse.vistalink.api.RpcDetails;
 import gov.va.api.lighthouse.vistalink.api.RpcInvocationResult;
 import gov.va.api.lighthouse.vistalink.api.RpcResponse;
@@ -20,11 +21,15 @@ import java.util.List;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 public class R4ObservationControllerTest {
   private static VitalVuidMapper mapper;
-
-  VistalinkApiClient vlClient = mock(VistalinkApiClient.class);
+  @Mock VistalinkApiClient vlClient;
+  @Mock WitnessProtection wp;
 
   @BeforeAll
   static void _init() {
@@ -35,15 +40,18 @@ public class R4ObservationControllerTest {
   }
 
   private R4ObservationController controller() {
-    return new R4ObservationController(
-        vlClient,
-        LinkProperties.builder()
-            .defaultPageSize(15)
-            .maxPageSize(100)
-            .publicUrl("http://fugazi.com")
-            .publicR4BasePath("r4")
-            .build(),
-        mapper);
+    return R4ObservationController.builder()
+        .vistalinkApiClient(vlClient)
+        .witnessProtection(wp)
+        .linkProperties(
+            LinkProperties.builder()
+                .defaultPageSize(15)
+                .maxPageSize(100)
+                .publicUrl("http://fugazi.com")
+                .publicR4BasePath("r4")
+                .build())
+        .vitalVuids(mapper)
+        .build();
   }
 
   @Test
@@ -61,9 +69,17 @@ public class R4ObservationControllerTest {
                     List.of(
                         RpcInvocationResult.builder().vista("123").response(responseBody).build()))
                 .build());
-    var actual = controller().read("Np1+123+456");
+    when(wp.toPrivateId("public-Np1+123+456")).thenReturn("Np1+123+456");
+    var actual = controller().read("public-Np1+123+456");
     assertThat(json(actual))
         .isEqualTo(json(ObservationVitalSamples.Fhir.create().weight("Np1+123+456")));
+  }
+
+  @Test
+  void readUnusableIdReturnsNotFound() {
+    when(wp.toPrivateId("garbage")).thenReturn("garbage");
+    assertThatExceptionOfType(ResourceExceptions.NotFound.class)
+        .isThrownBy(() -> controller().read("garbage"));
   }
 
   @Test
@@ -78,8 +94,9 @@ public class R4ObservationControllerTest {
                     List.of(
                         RpcInvocationResult.builder().vista("123").response(responseBody).build()))
                 .build());
+    when(wp.toPrivateId("public-Np1+123+NOPE")).thenReturn("Np1+123+NOPE");
     assertThatExceptionOfType(ResourceExceptions.NotFound.class)
-        .isThrownBy(() -> controller().read("Np1+123+NOPE"));
+        .isThrownBy(() -> controller().read("public-Np1+123+NOPE"));
   }
 
   @Test
