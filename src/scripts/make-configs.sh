@@ -51,6 +51,10 @@ main() {
   [ ! -f "$SECRETS" ] && usage "File not found: $SECRETS"
   . $SECRETS
 
+  # Support values as configured in Shanktosecrets
+  if [ -z "${VISTALINK_ACCESS_CODE:-}" ]; then export VISTALINK_ACCESS_CODE=${VISTA_ACCESS_CODE:-}; fi
+  if [ -z "${VISTALINK_VERIFY_CODE:-}" ]; then export VISTALINK_VERIFY_CODE=${VISTA_VERIFY_CODE:-}; fi
+  
   MISSING_SECRETS=false
   requiredParam VISTALINK_URL "$VISTALINK_URL"
   requiredParam VISTALINK_ACCESS_CODE "$VISTALINK_ACCESS_CODE"
@@ -82,6 +86,16 @@ comment() {
   local profile="$2"
   local target="$REPO/$project/config/application-${profile}.properties"
   cat >> $target
+}
+
+addValue() {
+  local project="$1"
+  local profile="$2"
+  local key="$3"
+  local value="$4"
+  local target="$REPO/$project/config/application-${profile}.properties"
+  local escapedValue=$(echo $value | sed -e 's/\\/\\\\/g; s/\//\\\//g; s/&/\\\&/g')
+  echo "$key=$escapedValue" >> $target
 }
 
 configValue() {
@@ -116,10 +130,14 @@ EOF
   configValue vista-fhir-query $PROFILE vista-fhir-query.internal.client-keys "disabled"
   configValue vista-fhir-query $PROFILE vista-fhir-query.public-url "http://localhost:8095"
   configValue vista-fhir-query $PROFILE vista-fhir-query.public-r4-base-path "r4"
+  configValue vista-fhir-query $PROFILE identityservice.encodingKey fhir-query
+  configValue vista-fhir-query $PROFILE identityservice.patientIdPattern "[0-9]+(V[0-9]{6})?"
   configValue vista-fhir-query $PROFILE spring.datasource.url "${VFQ_DB_URL}"
   configValue vista-fhir-query $PROFILE spring.datasource.username "${VFQ_DB_USER}"
   configValue vista-fhir-query $PROFILE spring.datasource.password "${VFQ_DB_PASSWORD}"
   checkForUnsetValues vista-fhir-query $PROFILE
+
+  addValue vista-fhir-query $PROFILE management.endpoints.web.exposure.include "health,info,i2"
 }
 
 requiredParam() {

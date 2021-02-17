@@ -8,10 +8,10 @@
     <relativePath/>
   </parent>
   <artifactId>vista-fhir-query</artifactId>
-  <version>0.0.21-SNAPSHOT</version>
+  <version>0.0.22-SNAPSHOT</version>
   <packaging>jar</packaging>
   <properties>
-    <fhir-resources.version>5.0.20</fhir-resources.version>
+    <fhir-resources.version>6.0.2</fhir-resources.version>
     <!-- ToDo Increase Coverage -->
     <jacoco.coverage>0.90</jacoco.coverage>
     <mssql-jdbc.version>7.4.1.jre8</mssql-jdbc.version>
@@ -56,6 +56,11 @@
       <groupId>gov.va.api.lighthouse</groupId>
       <artifactId>vistalink-models</artifactId>
       <version>${vistalink.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>vista-fhir-query-ids-mapping</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
   <build>

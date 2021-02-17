@@ -8,7 +8,7 @@
     <relativePath/>
   </parent>
   <artifactId>vista-fhir-query-tests</artifactId>
-  <version>0.0.21-SNAPSHOT</version>
+  <version>0.0.22-SNAPSHOT</version>
   <packaging>jar</packaging>
   <properties>
     <sentinel.skipLaunch>false</sentinel.skipLaunch>
@@ -103,6 +103,8 @@
                 <argument>-Dloader=gov.va.api.health.vistafhirquery.service.Application</argument>
                 <argument>-Dvistalink.api.url=http://localhost:8096</argument>
                 <argument>-Dvista-fhir-query.internal.client-keys=~shanktopus~</argument>
+                <argument>-Didentityservice.encodingKey=fhir-query</argument>
+                <argument>-Didentityservice.patientIdPattern=[0-9]+(V[0-9]{6})?</argument>
                 <argument>-Dspring.datasource.driver-class-name=org.h2.Driver</argument>
                 <argument>-Dspring.datasource.url=jdbc:h2:${project.basedir}/target/test-classes/mitre</argument>
                 <argument>-Dspring.datasource.username=sa</argument>

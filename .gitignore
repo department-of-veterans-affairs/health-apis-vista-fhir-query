@@ -31,4 +31,5 @@
 target/
 
 secrets.conf
+ids.conf
 *.pem
