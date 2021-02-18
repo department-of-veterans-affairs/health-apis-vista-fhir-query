@@ -13,9 +13,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
 import gov.va.api.health.r4.api.datatypes.Coding;
-import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Observation;
-import gov.va.api.lighthouse.vistalink.models.CodeAndNameXmlAttribute;
 import gov.va.api.lighthouse.vistalink.models.ValueOnlyXmlAttribute;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.BloodPressure;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Vitals;
@@ -110,7 +108,6 @@ public class VistaVitalToR4ObservationTransformer {
           .component(component(measurement))
           .effectiveDateTime(valueOfValueOnlyXmlAttribute(vistaVital.taken()))
           .issued(valueOfValueOnlyXmlAttribute(vistaVital.entered()))
-          .performer(performer(vistaVital.facility()))
           .status(status(vistaVital.removed()))
           .build();
     }
@@ -122,20 +119,10 @@ public class VistaVitalToR4ObservationTransformer {
         .code(code(measurement))
         .effectiveDateTime(valueOfValueOnlyXmlAttribute(vistaVital.taken()))
         .issued(valueOfValueOnlyXmlAttribute(vistaVital.entered()))
-        .performer(performer(vistaVital.facility()))
         .referenceRange(referenceRange(measurement.high(), measurement.low()))
         .status(status(vistaVital.removed()))
         .valueQuantity(valueQuantity(measurement.value(), measurement.units()))
         .build();
-  }
-
-  List<Reference> performer(CodeAndNameXmlAttribute facility) {
-    if (facility == null) {
-      return null;
-    } else {
-      return List.of(
-          Reference.builder().reference(facility.code()).display(facility.name()).build());
-    }
   }
 
   Observation.ObservationStatus status(List<ValueOnlyXmlAttribute> removed) {
