@@ -107,7 +107,6 @@ public class ObservationSamples {
           .effectiveDateTime("3100406.14")
           .issued("3110225.110428")
           .id("Np1+673+32071")
-          .performer(performer())
           .status(Observation.ObservationStatus._final)
           .build();
     }
@@ -166,10 +165,6 @@ public class ObservationSamples {
       return List.of(bloodPressure(), weight());
     }
 
-    public List<Reference> performer() {
-      return List.of(Reference.builder().reference("673").display("TAMPA (JAH VAH)").build());
-    }
-
     public Reference subject(String patientIcn) {
       return Reference.builder().reference("Patient/" + patientIcn).build();
     }
@@ -187,7 +182,6 @@ public class ObservationSamples {
           .effectiveDateTime("3100406.14")
           .issued("3110225.110428")
           .id(idSegment)
-          .performer(performer())
           .status(Observation.ObservationStatus._final)
           .valueQuantity(Quantity.builder().value(new BigDecimal("190")).unit("lb").build())
           .build();
