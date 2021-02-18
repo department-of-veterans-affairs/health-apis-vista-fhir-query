@@ -70,7 +70,7 @@ public class R4ObservationController {
         vistalinkApiClient.requestForVistaSite(
             ids.vistaSiteId(),
             VprGetPatientData.Request.builder()
-                .dfn(";" + ids.patientIdentifier())
+                .dfn(VprGetPatientData.Request.PatientId.forIcn(ids.patientIdentifier()))
                 .type(Set.of(VprGetPatientData.Domains.vitals))
                 .max(Optional.of("1"))
                 .id(Optional.of(ids.vistaRecordId()))
@@ -93,7 +93,7 @@ public class R4ObservationController {
   @SneakyThrows
   @GetMapping(params = {"patient"})
   public Observation.Bundle searchByPatient(
-      @RequestParam(name = "patient", required = true) String patient,
+      @RequestParam(name = "patient") String patient,
       @RequestParam(name = "_count", required = false) @Min(0) Integer count) {
     int countValue = count == null ? linkProperties.getDefaultPageSize() : count;
     Map<String, String> parameters = Map.of("patient", patient, "_count", "" + countValue);
@@ -102,7 +102,7 @@ public class R4ObservationController {
         vistalinkApiClient.requestForPatient(
             patient,
             VprGetPatientData.Request.builder()
-                .dfn(";" + patient)
+                .dfn(VprGetPatientData.Request.PatientId.forIcn(patient))
                 .type(Set.of(VprGetPatientData.Domains.vitals))
                 .build()
                 .asDetails());
