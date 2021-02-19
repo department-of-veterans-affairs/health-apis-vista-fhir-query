@@ -79,7 +79,9 @@ public class R4ObservationController {
     VprGetPatientData.Response vprPatientData =
         VprGetPatientData.create().fromResults(rpcResponse.results());
     List<Observation> resources =
-        transformation(ids.patientIdentifier()).toResource().apply(vprPatientData);
+        transformation(Map.of("patient", ids.patientIdentifier()))
+            .toResource()
+            .apply(vprPatientData);
     if (resources.isEmpty()) {
       ResourceExceptions.NotFound.because("Identifier not found in VistA: " + publicId);
     }
@@ -113,7 +115,7 @@ public class R4ObservationController {
 
   private R4Bundler<VprGetPatientData.Response, Observation, Observation.Entry, Observation.Bundle>
       toBundle(Map<String, String> parameters) {
-    return R4Bundler.forTransformation(transformation(parameters.get("patient")))
+    return R4Bundler.forTransformation(transformation(parameters))
         .bundling(
             R4Bundling.newBundle(Observation.Bundle::new)
                 .newEntry(Observation.Entry::new)
@@ -125,7 +127,7 @@ public class R4ObservationController {
   }
 
   private R4Transformation<VprGetPatientData.Response, Observation> transformation(
-      String patientIdentifier) {
+      Map<String, String> parameters) {
     return R4Transformation.<VprGetPatientData.Response, Observation>builder()
         .toResource(
             rpcResponse -> {
@@ -139,16 +141,22 @@ public class R4ObservationController {
               if (filteredResults.isEmpty()) {
                 return List.of();
               }
-              // Parallel trasformation of VistA sites
+              // Parallel transformation of VistA sites
               return filteredResults.entrySet().parallelStream()
                   .flatMap(
                       entry ->
                           R4ObservationTransformer.builder()
-                              .patientIcn(patientIdentifier)
+                              .patientIcn(parameters.get("patient"))
                               .resultsEntry(entry)
                               .build()
                               .toFhir())
                   .collect(Collectors.toList());
+            })
+        .filter(
+            o -> {
+              log.info(
+                  "ToDo: Filter by code/category parameters and remove this usage-type predicate.");
+              return true;
             })
         .build();
   }

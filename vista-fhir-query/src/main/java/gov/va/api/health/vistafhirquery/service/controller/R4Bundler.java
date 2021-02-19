@@ -46,6 +46,9 @@ public class R4Bundler<
         "ToDo: We'll have to do special paging logic here because "
             + "vista gives us _ALL_ the results at once");
     List<ResourceT> resources = transformation.toResource().apply(rpcResult);
+    if (transformation.hasFilter()) {
+      resources = resources.stream().filter(transformation.filters()).collect(Collectors.toList());
+    }
     BundleT bundle = bundling.newBundle().get();
     bundle.resourceType("Bundle");
     bundle.type(AbstractBundle.BundleType.searchset);
