@@ -40,15 +40,19 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 public class WitnessProtectionAdvice extends IdentitySubstitution<ProtectedReference>
     implements ResponseBodyAdvice<Object>, WitnessProtection {
 
+  private final FakeIds fakeIds;
+
   private final Map<Type, WitnessProtectionAgent<?>> agents;
 
   /** Create a new instance. */
   @Builder
   @Autowired
   public WitnessProtectionAdvice(
+      FakeIds fakeIds,
       @NonNull IdentityService identityService,
       @Singular List<WitnessProtectionAgent<?>> availableAgents) {
     super(identityService, ProtectedReference::asResourceIdentity, NotFound::new);
+    this.fakeIds = fakeIds;
     this.agents =
         availableAgents.stream().collect(toMap(WitnessProtectionAdvice::agentType, identity()));
     log.info(
@@ -123,7 +127,25 @@ public class WitnessProtectionAdvice extends IdentitySubstitution<ProtectedRefer
 
     Operations<Resource, ProtectedReference> operations =
         Operations.<Resource, ProtectedReference>builder()
-            .toReferences(r -> Stream.concat(additionalReferences.stream(), agent.referencesOf(r)))
+            .toReferences(
+                r ->
+                    Stream.concat(additionalReferences.stream(), agent.referencesOf(r))
+                        .map(
+                            fu -> {
+                              if (!fu.type().equals("Patient")) {
+                                return fu;
+                              }
+                              String id = fakeIds.toPublicId(fu.id());
+                              log.info("{} -> {}", fu, id);
+                              ProtectedReference newRe =
+                                  ProtectedReference.builder()
+                                      .type(fu.type())
+                                      .onUpdate(fu.onUpdate())
+                                      .id(id)
+                                      .build();
+                              newRe.onUpdate().accept(id);
+                              return newRe;
+                            }))
             .isReplaceable(reference -> true)
             .resourceNameOf(ProtectedReference::type)
             .privateIdOf(ProtectedReference::id)

@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
+import gov.va.api.health.vistafhirquery.service.controller.R4BundlerFactory;
 import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions;
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
 import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.WitnessProtection;
@@ -17,6 +18,7 @@ import gov.va.api.lighthouse.vistalink.api.RpcInvocationResult;
 import gov.va.api.lighthouse.vistalink.api.RpcResponse;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.VprGetPatientData;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,18 +29,23 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public class R4ObservationControllerTest {
   @Mock VistalinkApiClient vlClient;
   @Mock WitnessProtection wp;
+  @Mock HttpServletRequest request;
 
   private R4ObservationController controller() {
+    var bundlerFactory =
+        R4BundlerFactory.builder()
+            .linkProperties(
+                LinkProperties.builder()
+                    .defaultPageSize(15)
+                    .maxPageSize(100)
+                    .publicUrl("http://fugazi.com")
+                    .publicR4BasePath("r4")
+                    .build())
+            .build();
     return R4ObservationController.builder()
         .vistalinkApiClient(vlClient)
         .witnessProtection(wp)
-        .linkProperties(
-            LinkProperties.builder()
-                .defaultPageSize(15)
-                .maxPageSize(100)
-                .publicUrl("http://fugazi.com")
-                .publicR4BasePath("r4")
-                .build())
+        .bundlerFactory(bundlerFactory)
         .build();
   }
 
@@ -99,7 +106,7 @@ public class R4ObservationControllerTest {
                     List.of(
                         RpcInvocationResult.builder().vista("123").response(responseBody).build()))
                 .build());
-    var actual = controller().searchByPatient("p1", 10);
+    var actual = controller().searchByPatient("p1", 10, request);
     assertThat(actual.entry()).isEmpty();
   }
 
@@ -117,7 +124,7 @@ public class R4ObservationControllerTest {
                     List.of(
                         RpcInvocationResult.builder().vista("123").response(responseBody).build()))
                 .build());
-    var actual = controller().searchByPatient("p1", 10);
+    var actual = controller().searchByPatient("p1", 10, request);
     assertThat(actual.entry()).isNotEmpty();
   }
 }
