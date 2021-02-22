@@ -21,9 +21,15 @@ import org.springframework.context.annotation.Configuration;
 @Builder
 public class FakeIdProperties {
 
+  /** If enabled, request will be intercepted to swap configured IDs. */
   private boolean enabled;
 
+  /** Public ID (key) to private Id (value). */
   private Map<String, String> id;
 
+  /**
+   * Supported parameters that will be inspected for Fake IDs, e.g. patient, _id. Only these
+   * parameters will be considered eligible for fake ID swapping.
+   */
   private List<String> parameters;
 }
