@@ -1,0 +1,24 @@
+@startuml
+class FakeIdProperties <<ConfigurationProperties>>
+class FakeIdConfig <<Configuration>>
+class FakeIdFilter <<RequestFilter>>
+interface FakeIds
+class DisabledFakeIds
+class MappedFakeIds
+class WitnessProtectionAdvice <<ResponseAdvice>>
+class R4Bundler
+class R4BundlerFactory <<Component>>
+
+FakeIdConfig .> FakeIdProperties : <<uses>>
+FakeIdConfig -up-> DisabledFakeIds : <<creates bean>>
+FakeIdConfig -up-> MappedFakeIds : <<creates bean>>
+
+DisabledFakeIds -up-|> FakeIds
+MappedFakeIds -up-|> FakeIds
+
+FakeIdFilter o--> FakeIds : <<Autowire>>
+WitnessProtectionAdvice o--> FakeIds : <<Autowire>>
+R4Bundler o--> FakeIds : <<uses>>
+R4BundlerFactory o..> FakeIds : <<Autowire>>
+R4BundlerFactory --> R4Bundler : <<creates>>
+@enduml
