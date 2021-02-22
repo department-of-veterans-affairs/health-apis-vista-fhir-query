@@ -13,15 +13,26 @@ import org.springframework.core.Ordered;
 @Slf4j
 public class FakeIdConfig {
 
+  /** Register the FakeIdFilter on any R4 path. */
   @Bean
   public FilterRegistrationBean<FakeIdFilter> fakeId(@Autowired FakeIds fakeIds) {
     var registration = new FilterRegistrationBean<FakeIdFilter>();
+    /*
+     * We want this filter to go first, before any other filter has a chance to see the request
+     * parameters.
+     */
     registration.setOrder(Ordered.HIGHEST_PRECEDENCE);
     registration.setFilter(FakeIdFilter.of(fakeIds));
+    /*
+     * Apply this filter to any R4 path, this includes the default `/r4/` path but must also include
+     * any paths rewritten, e.g. `/vista-fhir-query/r4`. This filter will be applied before path
+     * rewrite.
+     */
     registration.addUrlPatterns("/r4/*", PathRewriteConfig.leadingPath() + "r4/*");
     return registration;
   }
 
+  /** Produce a FakeIds implementation optimized for configuration properties. */
   @Bean
   public FakeIds fakeIds(@Autowired FakeIdProperties properties) {
     if (properties.isEnabled()) {

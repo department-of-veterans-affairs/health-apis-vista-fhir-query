@@ -24,7 +24,6 @@ public class FakeIdFilter extends OncePerRequestFilter {
   protected void doFilterInternal(
       HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
       throws ServletException, IOException {
-    log.info("filtering request");
 
     Map<String, String[]> newParameters = null;
 
@@ -41,7 +40,6 @@ public class FakeIdFilter extends OncePerRequestFilter {
         newParameters = new HashMap<>(request.getParameterMap());
       }
       newParameters.put(parameter, new String[] {privateId});
-      request.setAttribute(FakeIds.publicIdAttributeFor(parameter), publicId);
     }
 
     if (newParameters != null) {
@@ -56,12 +54,6 @@ public class FakeIdFilter extends OncePerRequestFilter {
 
     private final Map<String, String[]> parameters;
 
-    /**
-     * Constructs a request object wrapping the given request.
-     *
-     * @param request The request to wrap
-     * @throws IllegalArgumentException if the request is null
-     */
     public OverrideParametersHttpServletRequestWrapper(
         HttpServletRequest request, Map<String, String[]> parameters) {
       super(request);

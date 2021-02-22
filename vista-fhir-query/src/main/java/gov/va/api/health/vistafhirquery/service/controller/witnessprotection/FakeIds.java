@@ -10,18 +10,24 @@ import lombok.extern.slf4j.Slf4j;
 
 public interface FakeIds {
 
-  static String publicIdAttributeFor(String parameter) {
-    return FakeIds.class.getName() + ".publicId." + parameter;
-  }
-
+  /** Return true if the given parameter is a known patient ID type request parameter. */
   default boolean isPatientIdParameter(String parameter) {
     return patientIdParameters().contains(parameter);
   }
 
+  /** Return the HTTP request parameters that are can have patient IDs. */
   List<String> patientIdParameters();
 
+  /**
+   * Return the private ID for the given public ID if available. If no such private ID is available,
+   * the given public ID will be returned.
+   */
   String toPrivateId(String publicId);
 
+  /**
+   * Return the public ID for the given private ID if available. If no such public ID is available,
+   * the given private ID will be returned.
+   */
   String toPublicId(String privateId);
 
   class DisabledFakeIds implements FakeIds {

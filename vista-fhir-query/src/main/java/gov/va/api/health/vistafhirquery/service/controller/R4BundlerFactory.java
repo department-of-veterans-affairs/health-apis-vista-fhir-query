@@ -41,6 +41,7 @@ public class R4BundlerFactory {
     private final R4BundlerFactory fromFactory;
     private final R4Transformation<V, R> transformation;
 
+    /** Create the next phrase after configuring link properties and fake ids. */
     public <E extends AbstractEntry<R>, B extends AbstractBundle<E>>
         R4BundlerBuilder<V, R, E, B> bundling(R4Bundling<R, E, B> bundling) {
       return R4Bundler.<V, R, E, B>builder()
