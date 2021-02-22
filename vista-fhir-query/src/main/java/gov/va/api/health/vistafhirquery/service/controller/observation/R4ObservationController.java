@@ -141,7 +141,8 @@ public class R4ObservationController {
               if (filteredResults.isEmpty()) {
                 return List.of();
               }
-              // Parallel trasformation of VistA sites
+              // Parallel trasformation of VistA sites'
+              log.info("{} vuid mappings found", vitalVuids.mappings().size());
               return filteredResults.entrySet().parallelStream()
                   .flatMap(
                       entry ->
