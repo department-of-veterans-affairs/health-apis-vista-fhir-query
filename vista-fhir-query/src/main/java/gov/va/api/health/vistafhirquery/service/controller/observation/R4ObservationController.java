@@ -86,7 +86,8 @@ public class R4ObservationController {
       ResourceExceptions.NotFound.because("Identifier not found in VistA: " + publicId);
     }
     if (resources.size() != 1) {
-      ResourceExceptions.ExpectationFailed.because("Too many results returned.");
+      ResourceExceptions.ExpectationFailed.because(
+          "Too many results returned. Expected %d but found %d.", 1, resources.size());
     }
     return resources.get(0);
   }
