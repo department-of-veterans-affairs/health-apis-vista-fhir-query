@@ -87,7 +87,7 @@ public class R4ObservationController {
     }
     if (resources.size() != 1) {
       ResourceExceptions.ExpectationFailed.because(
-          "Too many results returned. Expected %d but found %d.", 1, resources.size());
+          "Too many results returned. Expected 1 but found %d.", resources.size());
     }
     return resources.get(0);
   }
