@@ -4,18 +4,23 @@ import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Labs;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Vitals;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.VprGetPatientData;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.NonNull;
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 
+@Value
 @Slf4j
 @Builder
-public class R4ObservationTransformer {
+public class R4ObservationCollector {
   private final String patientIcn;
 
   private final VitalVuidMapper vitalVuidMapper;
+
+  private final List<String> codes;
 
   @NonNull private final Map.Entry<String, VprGetPatientData.Response.Results> resultsEntry;
 
@@ -33,8 +38,9 @@ public class R4ObservationTransformer {
                         .vistaSiteId(resultsEntry.getKey())
                         .vuidMapper(vitalVuidMapper)
                         .vistaVital(vital)
+                        .conditions(ObservationConditions.of(codes()))
                         .build()
-                        .toFhir());
+                        .conditionallyToFhir());
     Stream<Observation> labs =
         resultsEntry
             .getValue()

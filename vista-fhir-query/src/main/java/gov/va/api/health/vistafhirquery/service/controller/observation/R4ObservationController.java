@@ -1,5 +1,7 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
+import static gov.va.api.health.vistafhirquery.service.controller.observation.VitalVuidMapper.forLoinc;
+
 import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
 import gov.va.api.health.vistafhirquery.service.controller.R4Bundler;
@@ -12,8 +14,11 @@ import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.Wit
 import gov.va.api.lighthouse.vistalink.api.RpcResponse;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Vitals;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.VprGetPatientData;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -81,7 +86,9 @@ public class R4ObservationController {
     VprGetPatientData.Response vprPatientData =
         VprGetPatientData.create().fromResults(rpcResponse.results());
     List<Observation> resources =
-        transformation(ids.patientIdentifier()).toResource().apply(vprPatientData);
+        transformation(Map.of("patient", ids.patientIdentifier()))
+            .toResource()
+            .apply(vprPatientData);
     if (resources.isEmpty()) {
       ResourceExceptions.NotFound.because("Identifier not found in VistA: " + publicId);
     }
@@ -96,9 +103,15 @@ public class R4ObservationController {
   @GetMapping(params = {"patient"})
   public Observation.Bundle searchByPatient(
       @RequestParam(name = "patient") String patient,
+      @RequestParam(name = "code", required = false) String codeCsv,
       @RequestParam(name = "_count", required = false) @Min(0) Integer count) {
     int countValue = count == null ? linkProperties.getDefaultPageSize() : count;
-    Map<String, String> parameters = Map.of("patient", patient, "_count", "" + countValue);
+    Map<String, String> parameters = new HashMap<>();
+    parameters.put("patient", patient);
+    parameters.put("_count", "" + countValue);
+    if (codeCsv != null) {
+      parameters.put("code", codeCsv);
+    }
     // Default .max() value is 9999
     RpcResponse rpcResponse =
         vistalinkApiClient.requestForPatient(
@@ -115,7 +128,7 @@ public class R4ObservationController {
 
   private R4Bundler<VprGetPatientData.Response, Observation, Observation.Entry, Observation.Bundle>
       toBundle(Map<String, String> parameters) {
-    return R4Bundler.forTransformation(transformation(parameters.get("patient")))
+    return R4Bundler.forTransformation(transformation(parameters))
         .bundling(
             R4Bundling.newBundle(Observation.Bundle::new)
                 .newEntry(Observation.Entry::new)
@@ -127,32 +140,32 @@ public class R4ObservationController {
   }
 
   private R4Transformation<VprGetPatientData.Response, Observation> transformation(
-      String patientIdentifier) {
+      Map<String, String> parameters) {
     return R4Transformation.<VprGetPatientData.Response, Observation>builder()
         .toResource(
-            rpcResponse -> {
-              // Filter out empty results
-              Map<String, VprGetPatientData.Response.Results> filteredResults =
-                  rpcResponse.resultsByStation().entrySet().stream()
-                      .filter(
-                          entry ->
-                              entry.getValue().vitalStream().anyMatch(Vitals.Vital::isNotEmpty))
-                      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-              if (filteredResults.isEmpty()) {
-                return List.of();
-              }
-              // Parallel trasformation of VistA sites
-              return filteredResults.entrySet().parallelStream()
-                  .flatMap(
-                      entry ->
-                          R4ObservationTransformer.builder()
-                              .patientIcn(patientIdentifier)
-                              .resultsEntry(entry)
-                              .vitalVuidMapper(vitalVuids)
-                              .build()
-                              .toFhir())
-                  .collect(Collectors.toList());
-            })
+            rpcResponse ->
+                rpcResponse.resultsByStation().entrySet().parallelStream()
+                    .filter(
+                        entry -> entry.getValue().vitalStream().anyMatch(Vitals.Vital::isNotEmpty))
+                    .flatMap(
+                        entry ->
+                            R4ObservationCollector.builder()
+                                .patientIcn(parameters.get("patient"))
+                                .resultsEntry(entry)
+                                .vitalVuidMapper(vitalVuids)
+                                .codes(
+                                    Arrays.stream(
+                                            parameters.getOrDefault("code", "").split(",", -1))
+                                        .flatMap(
+                                            code ->
+                                                vitalVuids.mappings().stream()
+                                                    .filter(forLoinc(code)))
+                                        .filter(Objects::nonNull)
+                                        .map(VitalVuidMapper.VitalVuidMapping::vuid)
+                                        .collect(Collectors.toList()))
+                                .build()
+                                .toFhir())
+                    .collect(Collectors.toList()))
         .build();
   }
 }

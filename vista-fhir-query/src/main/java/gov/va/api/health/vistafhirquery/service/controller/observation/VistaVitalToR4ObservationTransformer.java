@@ -34,6 +34,8 @@ public class VistaVitalToR4ObservationTransformer {
 
   @NonNull private final Vitals.Vital vistaVital;
 
+  private final ObservationConditions conditions;
+
   private final VitalVuidMapper vuidMapper;
 
   List<CodeableConcept> category() {
@@ -88,6 +90,16 @@ public class VistaVitalToR4ObservationTransformer {
     return List.of(systolic, diastolic);
   }
 
+  Stream<Observation> conditionallyToFhir() {
+    if (isEmpty(vistaVital.measurements())) {
+      return Stream.empty();
+    }
+    return vistaVital.measurements().parallelStream()
+        .filter(Objects::nonNull)
+        .filter(conditions::hasAcceptedCode)
+        .map(this::observationFromMeasurement);
+  }
+
   String idFrom(String id) {
     log.info("ToDo: Is null logical id an illegal state?");
     if (isBlank(id)) {
@@ -130,14 +142,5 @@ public class VistaVitalToR4ObservationTransformer {
       return Observation.ObservationStatus._final;
     }
     return Observation.ObservationStatus.entered_in_error;
-  }
-
-  Stream<Observation> toFhir() {
-    if (isEmpty(vistaVital.measurements())) {
-      return Stream.empty();
-    }
-    return vistaVital.measurements().stream()
-        .filter(Objects::nonNull)
-        .map(this::observationFromMeasurement);
   }
 }
