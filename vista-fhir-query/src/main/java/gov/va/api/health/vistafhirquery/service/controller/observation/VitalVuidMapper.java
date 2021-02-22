@@ -12,7 +12,6 @@ import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 @Data
@@ -46,7 +45,7 @@ public class VitalVuidMapper {
   /**
    * Retrieve Vital VUID mappings from a database, map them to a reusable format, and cache them.
    */
-  @Cacheable("vitalVuidMapping")
+  // TODO renable @Cacheable("vitalVuidMapping")
   public List<VitalVuidMapping> mappings() {
     List<VitalVuidMappingEntity> vitalVuidEntities =
         repository.findByCodingSystemId(Short.valueOf("11"));
