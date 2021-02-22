@@ -21,7 +21,7 @@ public class ObservationConditions {
 
   /** Test a Vista Measurements VUID and check it matches one of the accepted codes. */
   public boolean hasAcceptedCode(String vuid) {
-    if (codes.isEmpty()) {
+    if (codes().isEmpty()) {
       return true;
     }
     if (vuid == null) {

@@ -27,7 +27,7 @@ public class VistaVitalToR4ObservationTransformerTest {
                 .vistaVital(Vitals.Vital.builder().build())
                 .vuidMapper(mapper)
                 .build()
-                .toFhir())
+                .conditionallyToFhir())
         .isEmpty();
     assertThat(
             VistaVitalToR4ObservationTransformer.builder()
@@ -40,7 +40,7 @@ public class VistaVitalToR4ObservationTransformerTest {
                         .build())
                 .vuidMapper(mapper)
                 .build()
-                .toFhir())
+                .conditionallyToFhir())
         .isEqualTo(
             List.of(
                 Observation.builder()

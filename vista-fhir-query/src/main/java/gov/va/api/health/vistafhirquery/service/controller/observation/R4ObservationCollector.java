@@ -52,8 +52,9 @@ public class R4ObservationCollector {
                         .patientIcn(patientIcn)
                         .vistaSiteId(resultsEntry.getKey())
                         .vistaLab(lab)
+                        .conditions(ObservationConditions.of(codes()))
                         .build()
-                        .toFhir());
+                        .conditionallyToFhir());
 
     return Stream.concat(vitals, labs);
   }
