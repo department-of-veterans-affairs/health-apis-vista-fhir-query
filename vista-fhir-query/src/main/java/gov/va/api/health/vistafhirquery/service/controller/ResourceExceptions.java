@@ -1,5 +1,7 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
+import com.google.errorprone.annotations.FormatMethod;
+
 public class ResourceExceptions {
 
   public static final class NotFound extends ResourceException {
@@ -19,6 +21,11 @@ public class ResourceExceptions {
 
     public static void because(String message) {
       throw new ExpectationFailed(message);
+    }
+
+    @FormatMethod
+    public static void because(String message, Object... values) {
+      because(String.format(message, values));
     }
   }
 
