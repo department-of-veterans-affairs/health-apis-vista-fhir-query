@@ -6,6 +6,9 @@ import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.valueOfValueOnlyXmlAttribute;
 import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationTransformers.referenceRange;
 import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationTransformers.valueQuantity;
+import static gov.va.api.health.vistafhirquery.service.controller.observation.VitalVuidMapper.asCodeableConcept;
+import static gov.va.api.health.vistafhirquery.service.controller.observation.VitalVuidMapper.forSystem;
+import static gov.va.api.health.vistafhirquery.service.controller.observation.VitalVuidMapper.forVuid;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
@@ -31,7 +34,9 @@ public class VistaVitalToR4ObservationTransformer {
 
   @NonNull private final Vitals.Vital vistaVital;
 
-  static List<CodeableConcept> category() {
+  private final VitalVuidMapper vuidMapper;
+
+  List<CodeableConcept> category() {
     return List.of(
         CodeableConcept.builder()
             .text("Vital Signs")
@@ -45,19 +50,17 @@ public class VistaVitalToR4ObservationTransformer {
             .build());
   }
 
-  static CodeableConcept code(Vitals.Measurement measurement) {
-    log.info(
-        "TODO: Update Observation.code codings use proper"
-            + " LOINC code values that are matched with CDW mappings");
-    return CodeableConcept.builder()
-        .coding(
-            List.of(
-                Coding.builder()
-                    .system("http://loinc.org")
-                    .code(measurement.vuid())
-                    .display(measurement.name())
-                    .build()))
-        .build();
+  CodeableConcept code(Vitals.Measurement measurement) {
+    if (isBlank(measurement) || isBlank(measurement.vuid())) {
+      return null;
+    }
+    Optional<CodeableConcept> maybeLoincMapping =
+        vuidMapper.mappings().stream()
+            .filter(forVuid(measurement.vuid()).and(forSystem("http://loinc.org")))
+            .map(asCodeableConcept())
+            .filter(Objects::nonNull)
+            .findFirst();
+    return maybeLoincMapping.orElse(null);
   }
 
   /**
@@ -65,7 +68,7 @@ public class VistaVitalToR4ObservationTransformer {
    * response, with the values provided in the format of `systolic/diastolic` so when split systolic
    * is represented by the 0 index while diastolic is represented by the 1 index.
    */
-  static List<Observation.Component> component(Vitals.Measurement measurement) {
+  List<Observation.Component> component(Vitals.Measurement measurement) {
     Optional<BloodPressure> bp = measurement.asBloodPressure();
     if (bp.isEmpty()) {
       return null;
@@ -83,13 +86,6 @@ public class VistaVitalToR4ObservationTransformer {
             .valueQuantity(valueQuantity(diastolicMeasurement.value(), measurement.units()))
             .build();
     return List.of(systolic, diastolic);
-  }
-
-  static Observation.ObservationStatus status(List<ValueOnlyXmlAttribute> removed) {
-    if (isEmpty(removed) || removed.get(0) == null || removed.get(0).value() == null) {
-      return Observation.ObservationStatus._final;
-    }
-    return Observation.ObservationStatus.entered_in_error;
   }
 
   String idFrom(String id) {
@@ -127,6 +123,13 @@ public class VistaVitalToR4ObservationTransformer {
         .status(status(vistaVital.removed()))
         .valueQuantity(valueQuantity(measurement.value(), measurement.units()))
         .build();
+  }
+
+  Observation.ObservationStatus status(List<ValueOnlyXmlAttribute> removed) {
+    if (isEmpty(removed) || removed.get(0) == null || removed.get(0).value() == null) {
+      return Observation.ObservationStatus._final;
+    }
+    return Observation.ObservationStatus.entered_in_error;
   }
 
   Stream<Observation> toFhir() {

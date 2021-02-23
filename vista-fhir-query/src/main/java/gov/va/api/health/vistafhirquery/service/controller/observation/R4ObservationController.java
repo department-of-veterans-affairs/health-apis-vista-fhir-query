@@ -51,6 +51,8 @@ public class R4ObservationController {
   @NonNull private final R4BundlerFactory bundlerFactory;
 
   @NonNull private final VistalinkApiClient vistalinkApiClient;
+  
+  @NonNull private final VitalVuidMapper vitalVuids;
 
   @NonNull private final WitnessProtection witnessProtection;
 
@@ -87,7 +89,8 @@ public class R4ObservationController {
       ResourceExceptions.NotFound.because("Identifier not found in VistA: " + publicId);
     }
     if (resources.size() != 1) {
-      ResourceExceptions.ExpectationFailed.because("Too many results returned.");
+      ResourceExceptions.ExpectationFailed.because(
+          "Too many results returned. Expected 1 but found %d.", resources.size());
     }
     return resources.get(0);
   }
@@ -142,13 +145,15 @@ public class R4ObservationController {
               if (filteredResults.isEmpty()) {
                 return List.of();
               }
-              // Parallel trasformation of VistA sites
+              // Parallel trasformation of VistA sites'
+              log.info("{} vuid mappings found", vitalVuids.mappings().size());
               return filteredResults.entrySet().parallelStream()
                   .flatMap(
                       entry ->
                           R4ObservationTransformer.builder()
                               .patientIcn(patientIdentifier)
                               .resultsEntry(entry)
+                              .vitalVuidMapper(vitalVuids)
                               .build()
                               .toFhir())
                   .collect(Collectors.toList());

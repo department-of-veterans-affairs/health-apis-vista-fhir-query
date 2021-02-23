@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 public class R4ObservationTransformer {
   private final String patientIcn;
 
+  private final VitalVuidMapper vitalVuidMapper;
+
   @NonNull private final Map.Entry<String, VprGetPatientData.Response.Results> resultsEntry;
 
   Stream<Observation> toFhir() {
@@ -29,6 +31,7 @@ public class R4ObservationTransformer {
                     VistaVitalToR4ObservationTransformer.builder()
                         .patientIcn(patientIcn)
                         .vistaSiteId(resultsEntry.getKey())
+                        .vuidMapper(vitalVuidMapper)
                         .vistaVital(vital)
                         .build()
                         .toFhir());

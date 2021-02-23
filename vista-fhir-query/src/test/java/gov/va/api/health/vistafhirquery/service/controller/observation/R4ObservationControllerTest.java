@@ -1,11 +1,12 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
-import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationSamples.json;
-import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationSamples.xml;
+import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationVitalSamples.json;
+import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationVitalSamples.xml;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
@@ -21,6 +22,7 @@ import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.VprGetPatientDat
 import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -28,9 +30,18 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class R4ObservationControllerTest {
+  private static VitalVuidMapper mapper;
   @Mock VistalinkApiClient vlClient;
   @Mock WitnessProtection wp;
   @Mock HttpServletRequest request;
+
+  @BeforeAll
+  static void _init() {
+    VitalVuidMappingRepository repository = mock(VitalVuidMappingRepository.class);
+    when(repository.findByCodingSystemId(eq((short) 11)))
+        .thenReturn(ObservationVitalSamples.Datamart.create().mappingEntities());
+    mapper = new VitalVuidMapper(repository);
+  }
 
   private R4ObservationController controller() {
     var bundlerFactory =
@@ -46,6 +57,7 @@ public class R4ObservationControllerTest {
             .build();
     return R4ObservationController.builder()
         .vistalinkApiClient(vlClient)
+        .vitalVuids(mapper)
         .witnessProtection(wp)
         .bundlerFactory(bundlerFactory)
         .build();
@@ -54,7 +66,7 @@ public class R4ObservationControllerTest {
   @Test
   @SneakyThrows
   void read() {
-    var vista = ObservationSamples.Vista.create();
+    var vista = ObservationVitalSamples.Vista.create();
     VprGetPatientData.Response.Results sample = vista.results();
     sample.vitals().vitalResults().get(0).measurements(List.of(vista.weight("456")));
     String responseBody = xml(sample);
@@ -69,7 +81,7 @@ public class R4ObservationControllerTest {
     when(wp.toPrivateId("public-Np1+123+456")).thenReturn("Np1+123+456");
     var actual = controller().read("public-Np1+123+456");
     assertThat(json(actual))
-        .isEqualTo(json(ObservationSamples.Fhir.create().weight("Np1+123+456")));
+        .isEqualTo(json(ObservationVitalSamples.Fhir.create().weight("Np1+123+456")));
   }
 
   @Test

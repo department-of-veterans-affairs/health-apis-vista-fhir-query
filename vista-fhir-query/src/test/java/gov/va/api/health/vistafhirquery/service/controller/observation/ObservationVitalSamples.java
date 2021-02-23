@@ -16,11 +16,12 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class ObservationSamples {
+public class ObservationVitalSamples {
   @SneakyThrows
   static String json(Object o) {
     return JacksonConfig.createMapper().writerWithDefaultPrettyPrinter().writeValueAsString(o);
@@ -31,9 +32,45 @@ public class ObservationSamples {
     return new XmlMapper().writeValueAsString(o);
   }
 
+  @NoArgsConstructor(staticName = "create")
+  public static class Datamart {
+    public List<VitalVuidMappingEntity> mappingEntities() {
+      return List.of(
+          VitalVuidMappingEntity.builder()
+              .sourceValue("4500634")
+              .code("55284-4")
+              .display("Blood pressure systolic and diastolic")
+              .uri("http://loinc.org")
+              .codingSystemId((short) 11)
+              .build(),
+          VitalVuidMappingEntity.builder()
+              .sourceValue("4500639")
+              .code("29463-7")
+              .display("Body weight")
+              .uri("http://loinc.org")
+              .codingSystemId((short) 11)
+              .build());
+    }
+
+    public List<VitalVuidMapper.VitalVuidMapping> vuidMappings() {
+      return List.of(
+          VitalVuidMapper.VitalVuidMapping.builder()
+              .vuid("4500634")
+              .code("55284-4")
+              .display("Blood pressure systolic and diastolic")
+              .system("http://loinc.org")
+              .build(),
+          VitalVuidMapper.VitalVuidMapping.builder()
+              .vuid("4500639")
+              .code("29463-7")
+              .display("Body weight")
+              .system("http://loinc.org")
+              .build());
+    }
+  }
+
   @AllArgsConstructor(staticName = "create")
   public static class Vista {
-
     public List<Vitals.Measurement> measurements() {
       return measurements("32071");
     }
@@ -117,8 +154,8 @@ public class ObservationSamples {
               List.of(
                   Coding.builder()
                       .system("http://loinc.org")
-                      .code("4500634")
-                      .display("BLOOD PRESSURE")
+                      .code("55284-4")
+                      .display("Blood pressure systolic and diastolic")
                       .build()))
           .build();
     }
@@ -193,8 +230,8 @@ public class ObservationSamples {
               List.of(
                   Coding.builder()
                       .system("http://loinc.org")
-                      .code("4500639")
-                      .display("WEIGHT")
+                      .code("29463-7")
+                      .display("Body weight")
                       .build()))
           .build();
     }
