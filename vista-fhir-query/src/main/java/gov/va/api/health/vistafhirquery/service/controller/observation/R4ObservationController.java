@@ -51,7 +51,7 @@ public class R4ObservationController {
   @NonNull private final R4BundlerFactory bundlerFactory;
 
   @NonNull private final VistalinkApiClient vistalinkApiClient;
-  
+
   @NonNull private final VitalVuidMapper vitalVuids;
 
   @NonNull private final WitnessProtection witnessProtection;
