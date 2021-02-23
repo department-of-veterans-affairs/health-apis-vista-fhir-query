@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,11 +48,11 @@ import org.springframework.web.bind.annotation.RestController;
 @Builder
 public class R4ObservationController {
 
-  private final R4BundlerFactory bundlerFactory;
+  @NonNull private final R4BundlerFactory bundlerFactory;
 
-  private final VistalinkApiClient vistalinkApiClient;
+  @NonNull private final VistalinkApiClient vistalinkApiClient;
 
-  private final WitnessProtection witnessProtection;
+  @NonNull private final WitnessProtection witnessProtection;
 
   private VistaIdentifierSegment parseOrDie(String publicId) {
     try {

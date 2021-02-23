@@ -12,6 +12,7 @@ import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
 import gov.va.api.health.vistafhirquery.service.controller.R4BundlerFactory;
 import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions;
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
+import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.FakeIds.DisabledFakeIds;
 import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.WitnessProtection;
 import gov.va.api.lighthouse.vistalink.api.RpcDetails;
 import gov.va.api.lighthouse.vistalink.api.RpcInvocationResult;
@@ -41,6 +42,7 @@ public class R4ObservationControllerTest {
                     .publicUrl("http://fugazi.com")
                     .publicR4BasePath("r4")
                     .build())
+            .fakeIds(new DisabledFakeIds())
             .build();
     return R4ObservationController.builder()
         .vistalinkApiClient(vlClient)
@@ -106,6 +108,7 @@ public class R4ObservationControllerTest {
                     List.of(
                         RpcInvocationResult.builder().vista("123").response(responseBody).build()))
                 .build());
+    when(request.getParameter("patient")).thenReturn("p1");
     var actual = controller().searchByPatient("p1", 10, request);
     assertThat(actual.entry()).isEmpty();
   }
@@ -124,6 +127,7 @@ public class R4ObservationControllerTest {
                     List.of(
                         RpcInvocationResult.builder().vista("123").response(responseBody).build()))
                 .build());
+    when(request.getParameter("patient")).thenReturn("p1");
     var actual = controller().searchByPatient("p1", 10, request);
     assertThat(actual.entry()).isNotEmpty();
   }

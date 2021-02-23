@@ -10,6 +10,7 @@ import gov.va.api.lighthouse.vistalink.models.TypeSafeRpcResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +19,8 @@ import org.springframework.stereotype.Component;
 @Builder
 public class R4BundlerFactory {
 
-  @Getter private final LinkProperties linkProperties;
-  @Getter private final FakeIds fakeIds;
+  @Getter @NonNull private final LinkProperties linkProperties;
+  @Getter @NonNull private final FakeIds fakeIds;
 
   /** Create a new instance for the given transformation. */
   public <RpcResponseT extends TypeSafeRpcResponse, ResourceT extends Resource>
