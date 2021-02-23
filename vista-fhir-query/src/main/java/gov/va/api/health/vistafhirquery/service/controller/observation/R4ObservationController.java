@@ -99,7 +99,8 @@ public class R4ObservationController {
       @RequestParam(name = "_count", required = false) @Min(0) Integer count,
       HttpServletRequest request) {
 
-    int countValue = count == null ? bundlerFactory.linkProperties().getDefaultPageSize() : count;
+    // int count =
+    //        HttpRequestParameters.integer(request, "_count", linkProperties.getDefaultPageSize());
     // Default .max() value is 9999
     RpcResponse rpcResponse =
         vistalinkApiClient.requestForPatient(
@@ -121,7 +122,7 @@ public class R4ObservationController {
         .bundling(
             R4Bundling.newBundle(Observation.Bundle::new).newEntry(Observation.Entry::new).build())
         .resourceType("Observation")
-        .parameters(parameters)
+        .request(parameters)
         .build();
   }
 

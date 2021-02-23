@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
 public interface FakeIds {
 
@@ -48,7 +47,6 @@ public interface FakeIds {
     }
   }
 
-  @Slf4j
   class MappedFakeIds implements FakeIds {
 
     private final BiMap<String, String> publicToPrivateIds;

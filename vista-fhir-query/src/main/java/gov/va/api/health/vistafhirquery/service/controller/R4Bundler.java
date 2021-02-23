@@ -34,7 +34,7 @@ public class R4Bundler<
 
   private final LinkProperties linkProperties;
 
-  private final HttpServletRequest parameters;
+  private final HttpServletRequest request;
 
   /** The transformation process that will be applied to the results. */
   private final R4Transformation<RpcResponseT, ResourceT> transformation;
@@ -55,9 +55,8 @@ public class R4Bundler<
     bundle.total(resources.size());
     bundle.link(toLinks());
     log.info("ToDo: better count handling");
-    String countParam = parameters.getParameter("_count");
     int count =
-        countParam != null ? Integer.parseInt(countParam) : linkProperties.getDefaultPageSize();
+        HttpRequestParameters.integer(request, "_count", linkProperties.getDefaultPageSize());
     if (resources.size() > count) {
       resources = resources.subList(0, count);
     }
@@ -74,8 +73,8 @@ public class R4Bundler<
     return join("=", name, value);
   }
 
-  private String parameters() {
-    return parameters.getParameterMap().entrySet().stream()
+  private String request() {
+    return request.getParameterMap().entrySet().stream()
         .flatMap(e -> Stream.of(e.getValue()).map(value -> parameter(e.getKey(), value)))
         .collect(joining("&"));
   }
@@ -95,7 +94,7 @@ public class R4Bundler<
     links.add(
         BundleLink.builder()
             .relation(BundleLink.LinkRelation.self)
-            .url(linkProperties.r4().resourceUrl(resourceType) + "?" + parameters())
+            .url(linkProperties.r4().resourceUrl(resourceType) + "?" + request())
             .build());
     return links;
   }
