@@ -5,7 +5,7 @@ import gov.va.api.health.r4.api.bundle.AbstractEntry;
 import gov.va.api.health.r4.api.resources.Resource;
 import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
 import gov.va.api.health.vistafhirquery.service.controller.R4Bundler.R4BundlerBuilder;
-import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.FakeIds;
+import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.AlternatePatientIds;
 import gov.va.api.lighthouse.vistalink.models.TypeSafeRpcResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 public class R4BundlerFactory {
 
   @Getter @NonNull private final LinkProperties linkProperties;
-  @Getter @NonNull private final FakeIds fakeIds;
+  @Getter @NonNull private final AlternatePatientIds alternatePatientIds;
 
   /** Create a new instance for the given transformation. */
   public <RpcResponseT extends TypeSafeRpcResponse, ResourceT extends Resource>
@@ -42,12 +42,12 @@ public class R4BundlerFactory {
     private final R4BundlerFactory fromFactory;
     private final R4Transformation<V, R> transformation;
 
-    /** Create the next phrase after configuring link properties and fake ids. */
+    /** Create the next phrase after configuring link properties and alternate patient ids. */
     public <E extends AbstractEntry<R>, B extends AbstractBundle<E>>
         R4BundlerBuilder<V, R, E, B> bundling(R4Bundling<R, E, B> bundling) {
       return R4Bundler.<V, R, E, B>builder()
           .linkProperties(fromFactory.linkProperties())
-          .fakeIds(fromFactory.fakeIds())
+          .alternatePatientIds(fromFactory.alternatePatientIds())
           .transformation(transformation)
           .bundling(bundling);
     }

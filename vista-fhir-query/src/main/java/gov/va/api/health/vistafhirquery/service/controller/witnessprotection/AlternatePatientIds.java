@@ -7,7 +7,7 @@ import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
 
-public interface FakeIds {
+public interface AlternatePatientIds {
 
   /** Return true if the given parameter is a known patient ID type request parameter. */
   default boolean isPatientIdParameter(String parameter) {
@@ -29,7 +29,7 @@ public interface FakeIds {
    */
   String toPublicId(String privateId);
 
-  class DisabledFakeIds implements FakeIds {
+  class DisabledAlternatePatientIds implements AlternatePatientIds {
 
     @Override
     public List<String> patientIdParameters() {
@@ -47,14 +47,15 @@ public interface FakeIds {
     }
   }
 
-  class MappedFakeIds implements FakeIds {
+  class MappedAlternatePatientIds implements AlternatePatientIds {
 
     private final BiMap<String, String> publicToPrivateIds;
 
     @Getter private final List<String> patientIdParameters;
 
     @Builder
-    public MappedFakeIds(List<String> patientIdParameters, Map<String, String> publicToPrivateIds) {
+    public MappedAlternatePatientIds(
+        List<String> patientIdParameters, Map<String, String> publicToPrivateIds) {
       this.patientIdParameters = List.copyOf(patientIdParameters);
       this.publicToPrivateIds = HashBiMap.create(publicToPrivateIds);
     }

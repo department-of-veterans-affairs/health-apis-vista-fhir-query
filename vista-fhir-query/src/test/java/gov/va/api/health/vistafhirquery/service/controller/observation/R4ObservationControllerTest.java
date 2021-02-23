@@ -12,7 +12,7 @@ import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
 import gov.va.api.health.vistafhirquery.service.controller.R4BundlerFactory;
 import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions;
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
-import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.FakeIds.DisabledFakeIds;
+import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.AlternatePatientIds.DisabledAlternatePatientIds;
 import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.WitnessProtection;
 import gov.va.api.lighthouse.vistalink.api.RpcDetails;
 import gov.va.api.lighthouse.vistalink.api.RpcInvocationResult;
@@ -42,7 +42,7 @@ public class R4ObservationControllerTest {
                     .publicUrl("http://fugazi.com")
                     .publicR4BasePath("r4")
                     .build())
-            .fakeIds(new DisabledFakeIds())
+            .alternatePatientIds(new DisabledAlternatePatientIds())
             .build();
     return R4ObservationController.builder()
         .vistalinkApiClient(vlClient)

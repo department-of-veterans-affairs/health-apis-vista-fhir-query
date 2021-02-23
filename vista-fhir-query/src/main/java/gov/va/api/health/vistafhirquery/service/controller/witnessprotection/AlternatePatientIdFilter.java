@@ -14,9 +14,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @AllArgsConstructor(staticName = "of")
-public class FakeIdFilter extends OncePerRequestFilter {
+public class AlternatePatientIdFilter extends OncePerRequestFilter {
 
-  private final FakeIds fakeIds;
+  private final AlternatePatientIds alternatePatientIds;
 
   @Override
   protected void doFilterInternal(
@@ -25,12 +25,12 @@ public class FakeIdFilter extends OncePerRequestFilter {
 
     Map<String, String[]> newParameters = null;
 
-    for (String parameter : fakeIds.patientIdParameters()) {
+    for (String parameter : alternatePatientIds.patientIdParameters()) {
       var publicId = request.getParameter(parameter);
       if (publicId == null) {
         continue;
       }
-      var privateId = fakeIds.toPrivateId(publicId);
+      var privateId = alternatePatientIds.toPrivateId(publicId);
       if (publicId.equals(privateId)) {
         continue;
       }

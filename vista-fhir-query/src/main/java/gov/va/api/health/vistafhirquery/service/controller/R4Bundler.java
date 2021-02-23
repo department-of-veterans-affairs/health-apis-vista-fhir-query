@@ -8,7 +8,7 @@ import gov.va.api.health.r4.api.bundle.AbstractEntry;
 import gov.va.api.health.r4.api.bundle.BundleLink;
 import gov.va.api.health.r4.api.resources.Resource;
 import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
-import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.FakeIds;
+import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.AlternatePatientIds;
 import gov.va.api.lighthouse.vistalink.models.TypeSafeRpcResponse;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ public class R4Bundler<
     implements Function<RpcResponseT, BundleT> {
   private final String resourceType;
 
-  private final FakeIds fakeIds;
+  private final AlternatePatientIds alternatePatientIds;
 
   private final LinkProperties linkProperties;
 
@@ -65,9 +65,9 @@ public class R4Bundler<
   }
 
   private String parameter(String name, String value) {
-    log.info("{}={} : {}", name, value, fakeIds.patientIdParameters());
-    if (fakeIds.isPatientIdParameter(name)) {
-      value = fakeIds.toPublicId(value);
+    log.info("{}={} : {}", name, value, alternatePatientIds.patientIdParameters());
+    if (alternatePatientIds.isPatientIdParameter(name)) {
+      value = alternatePatientIds.toPublicId(value);
       log.info("{} ==> {}", name, value);
     }
     return join("=", name, value);

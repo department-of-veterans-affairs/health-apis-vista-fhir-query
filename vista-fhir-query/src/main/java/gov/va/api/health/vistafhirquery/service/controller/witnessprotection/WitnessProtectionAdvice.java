@@ -40,7 +40,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 public class WitnessProtectionAdvice extends IdentitySubstitution<ProtectedReference>
     implements ResponseBodyAdvice<Object>, WitnessProtection {
 
-  private final FakeIds fakeIds;
+  private final AlternatePatientIds alternatePatientIds;
 
   private final Map<Type, WitnessProtectionAgent<?>> agents;
 
@@ -48,11 +48,11 @@ public class WitnessProtectionAdvice extends IdentitySubstitution<ProtectedRefer
   @Builder
   @Autowired
   public WitnessProtectionAdvice(
-      FakeIds fakeIds,
+      AlternatePatientIds alternatePatientIds,
       @NonNull IdentityService identityService,
       @Singular List<WitnessProtectionAgent<?>> availableAgents) {
     super(identityService, ProtectedReference::asResourceIdentity, NotFound::new);
-    this.fakeIds = fakeIds;
+    this.alternatePatientIds = alternatePatientIds;
     this.agents =
         availableAgents.stream().collect(toMap(WitnessProtectionAdvice::agentType, identity()));
     log.info(
@@ -135,7 +135,7 @@ public class WitnessProtectionAdvice extends IdentitySubstitution<ProtectedRefer
                               if (!fu.type().equals("Patient")) {
                                 return fu;
                               }
-                              String id = fakeIds.toPublicId(fu.id());
+                              String id = alternatePatientIds.toPublicId(fu.id());
                               log.info("{} -> {}", fu, id);
                               ProtectedReference newRe =
                                   ProtectedReference.builder()
