@@ -90,7 +90,7 @@ public class R4Transformers {
   /** Transform a FileMan date to a human date. */
   public static String toHumanDateTime(ValueOnlyXmlAttribute filemanDateTime) {
     FilemanDate result = FilemanDate.from(filemanDateTime, ZoneId.of("UTC"));
-    if (result == null) {
+    if (isBlank(result)) {
       return null;
     }
     return result.instant().toString();
