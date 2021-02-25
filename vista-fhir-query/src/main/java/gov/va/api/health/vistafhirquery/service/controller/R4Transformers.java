@@ -1,8 +1,10 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
 import gov.va.api.health.r4.api.elements.Reference;
+import gov.va.api.lighthouse.vistalink.models.FilemanDate;
 import gov.va.api.lighthouse.vistalink.models.ValueOnlyXmlAttribute;
 import java.math.BigDecimal;
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -10,10 +12,8 @@ import java.util.function.Function;
 import java.util.regex.Pattern;
 import lombok.NonNull;
 import lombok.experimental.UtilityClass;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-@Slf4j
 @UtilityClass
 public class R4Transformers {
   private static final Pattern BIG_DECIMAL_PATTERN = Pattern.compile("\\d+(\\.\\d+)?");
@@ -89,9 +89,11 @@ public class R4Transformers {
 
   /** Transform a FileMan date to a human date. */
   public static String toHumanDateTime(ValueOnlyXmlAttribute filemanDateTime) {
-    log.info("ToDo: Parse and transformer FileMan DateTimes.");
-    String fm = valueOfValueOnlyXmlAttribute(filemanDateTime);
-    return fm;
+    FilemanDate result = FilemanDate.from(filemanDateTime, ZoneId.of("UTC"));
+    if (isBlank(result)) {
+      return null;
+    }
+    return result.instant().toString();
   }
 
   /** Create a reference sing the resourceType, an id, and a display. */

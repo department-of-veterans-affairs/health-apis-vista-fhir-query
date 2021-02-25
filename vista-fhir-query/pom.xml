@@ -8,7 +8,7 @@
     <relativePath/>
   </parent>
   <artifactId>vista-fhir-query</artifactId>
-  <version>0.0.31-SNAPSHOT</version>
+  <version>0.0.32-SNAPSHOT</version>
   <packaging>jar</packaging>
   <properties>
     <fhir-resources.version>6.0.5</fhir-resources.version>
@@ -16,7 +16,7 @@
     <jacoco.coverage>0.90</jacoco.coverage>
     <mssql-jdbc.version>7.4.1.jre8</mssql-jdbc.version>
     <talos.version>0.0.3</talos.version>
-    <vistalink.version>2.0.17</vistalink.version>
+    <vistalink.version>2.0.18</vistalink.version>
   </properties>
   <dependencies>
     <dependency>

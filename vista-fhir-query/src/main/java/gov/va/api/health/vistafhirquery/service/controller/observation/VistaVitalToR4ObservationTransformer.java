@@ -1,9 +1,9 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toHumanDateTime;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toReference;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toResourceId;
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.valueOfValueOnlyXmlAttribute;
 import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationTransformers.referenceRange;
 import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationTransformers.valueQuantity;
 import static gov.va.api.health.vistafhirquery.service.controller.observation.VitalVuidMapper.asCodeableConcept;
@@ -106,8 +106,8 @@ public class VistaVitalToR4ObservationTransformer {
           .subject(patientReference)
           .code(code(measurement))
           .component(component(measurement))
-          .effectiveDateTime(valueOfValueOnlyXmlAttribute(vistaVital.taken()))
-          .issued(valueOfValueOnlyXmlAttribute(vistaVital.entered()))
+          .effectiveDateTime(toHumanDateTime(vistaVital.taken()))
+          .issued(toHumanDateTime(vistaVital.entered()))
           .status(status(vistaVital.removed()))
           .build();
     }
@@ -117,8 +117,8 @@ public class VistaVitalToR4ObservationTransformer {
         .category(category())
         .subject(patientReference)
         .code(code(measurement))
-        .effectiveDateTime(valueOfValueOnlyXmlAttribute(vistaVital.taken()))
-        .issued(valueOfValueOnlyXmlAttribute(vistaVital.entered()))
+        .effectiveDateTime(toHumanDateTime(vistaVital.taken()))
+        .issued(toHumanDateTime(vistaVital.entered()))
         .referenceRange(referenceRange(measurement.high(), measurement.low()))
         .status(status(vistaVital.removed()))
         .valueQuantity(valueQuantity(measurement.value(), measurement.units()))
