@@ -106,21 +106,59 @@ public class R4ObservationControllerTest {
   }
 
   @Test
+  void searchByPatientAndCodeKnownAndUnknown() {
+    var request = requestFromUri("?_count=10&code=29463-7,NOPE&patient=p1");
+    var results = ObservationVitalSamples.Vista.create().results();
+    when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
+        .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
+    var actual = controller().searchByPatient("p1", "29463-7,NOPE", 10, request);
+    var expected =
+        ObservationVitalSamples.Fhir.asBundle(
+            "http://fugazi.com/r4",
+            List.of(ObservationVitalSamples.Fhir.create().weight()),
+            1,
+            link(
+                BundleLink.LinkRelation.self,
+                "http://fugazi.com/r4/Observation",
+                "_count=10&code=29463-7,NOPE&patient=p1"));
+    assertThat(json(actual)).isEqualTo(json(expected));
+  }
+
+  @Test
   void searchByPatientAndKnownCode() {
     var request = requestFromUri("?_count=10&code=29463-7&patient=p1");
     var results = ObservationVitalSamples.Vista.create().results();
     when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
-        .thenReturn(rpcResponse(RpcResponse.Status.OK, "123", xml(results)));
+        .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
     var actual = controller().searchByPatient("p1", "29463-7", 10, request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
-            List.of(ObservationVitalSamples.Fhir.create().weight("Np1+123+32076")),
+            List.of(ObservationVitalSamples.Fhir.create().weight()),
             1,
             link(
                 BundleLink.LinkRelation.self,
                 "http://fugazi.com/r4/Observation",
                 "_count=10&code=29463-7&patient=p1"));
+    assertThat(json(actual)).isEqualTo(json(expected));
+  }
+
+  @Test
+  void searchByPatientAndMultipleKnownCode() {
+    var request = requestFromUri("?_count=10&code=29463-7,55284-4&patient=p1");
+    var results = ObservationVitalSamples.Vista.create().results();
+    when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
+        .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
+    var actual = controller().searchByPatient("p1", "29463-7,55284-4", 10, request);
+    var expected =
+        ObservationVitalSamples.Fhir.asBundle(
+            "http://fugazi.com/r4",
+            ObservationVitalSamples.Fhir.create().observations(),
+            2,
+            link(
+                BundleLink.LinkRelation.self,
+                "http://fugazi.com/r4/Observation",
+                "_count=10&code=29463-7,55284-4&patient=p1"));
     assertThat(json(actual)).isEqualTo(json(expected));
   }
 

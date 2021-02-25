@@ -16,6 +16,7 @@ public class ObservationConditionsTest {
         Arguments.of(null, "a", true),
         Arguments.of(List.of(), "a", true),
         Arguments.of(List.of("a"), "a", true),
+        Arguments.of(List.of("a"), null, false),
         Arguments.of(List.of("a"), "b", false),
         Arguments.of(List.of("a", "b", "c"), "a", true),
         Arguments.of(List.of("a", "b", "c"), "b", true),
