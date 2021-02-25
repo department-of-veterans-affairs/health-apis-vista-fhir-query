@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
+import org.springframework.lang.NonNull;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 @AllArgsConstructor(staticName = "of")
@@ -20,7 +21,9 @@ public class AlternatePatientIdFilter extends OncePerRequestFilter {
 
   @Override
   protected void doFilterInternal(
-      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+      @NonNull HttpServletRequest request,
+      @NonNull HttpServletResponse response,
+      @NonNull FilterChain filterChain)
       throws ServletException, IOException {
 
     Map<String, String[]> newParameters = null;
@@ -47,8 +50,7 @@ public class AlternatePatientIdFilter extends OncePerRequestFilter {
     filterChain.doFilter(request, response);
   }
 
-  private static class OverrideParametersHttpServletRequestWrapper
-      extends HttpServletRequestWrapper {
+  static class OverrideParametersHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
     private final Map<String, String[]> parameters;
 

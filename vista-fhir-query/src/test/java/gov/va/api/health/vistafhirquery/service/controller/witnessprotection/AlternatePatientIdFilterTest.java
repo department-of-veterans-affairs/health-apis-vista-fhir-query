@@ -1,10 +1,14 @@
 package gov.va.api.health.vistafhirquery.service.controller.witnessprotection;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.AlternatePatientIdFilter.OverrideParametersHttpServletRequestWrapper;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.servlet.FilterChain;
 import javax.servlet.http.HttpServletRequest;
 import lombok.SneakyThrows;
@@ -45,6 +49,39 @@ class AlternatePatientIdFilterTest {
     assertThat(captor.getValue().getParameter("patient")).isEqualTo("private1");
     assertThat(captor.getValue().getParameter("also-patient")).isEqualTo("private2");
     assertThat(captor.getValue().getParameter("not-patient")).isEqualTo("public1");
+  }
+
+  @Test
+  void overrideParametersHttpServletRequestWrapperOverridesParameterOperations() {
+    var original = new MockHttpServletRequest();
+    original.setParameter("a", "a1");
+    original.setParameter("b", "b1", "b2");
+    original.setParameter("c", "c1");
+
+    var overParameters =
+        Map.of(
+            "a", new String[] {"newA1"},
+            "b", new String[] {"newB1", "newB2"},
+            "x", new String[] {"x1"});
+    var over = new OverrideParametersHttpServletRequestWrapper(original, overParameters);
+
+    assertThat(over.getParameter("a")).isEqualTo("newA1");
+    assertThat(over.getParameter("b")).isEqualTo("newB1"); // must be first value
+    assertThat(over.getParameter("c")).isNull();
+    assertThat(over.getParameter("x")).isEqualTo("x1");
+    assertThat(over.getParameterValues("a")).containsExactlyInAnyOrder("newA1");
+    assertThat(over.getParameterValues("b")).containsExactlyInAnyOrder("newB1", "newB2");
+    assertThat(over.getParameterMap()).isNotSameAs(overParameters);
+    assertThat(over.getParameterMap()).isEqualTo(overParameters);
+    assertThatExceptionOfType(UnsupportedOperationException.class)
+        .isThrownBy(() -> over.getParameterMap().put("not", new String[] {"allowed"}));
+
+    var enumerator = over.getParameterNames();
+    var names = new ArrayList<String>(3);
+    while (enumerator.hasMoreElements()) {
+      names.add(enumerator.nextElement());
+    }
+    assertThat(names).containsExactlyInAnyOrder("a", "b", "x");
   }
 
   @Test

@@ -82,6 +82,7 @@ public class ProtectedReference {
         ResourceIdentity.builder().system(VISTA_SYSTEM).resource(type).identifier(id).build());
   }
 
+  @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
   public void updateId(Optional<String> id) {
     onUpdate.accept(id.orElse(null));
   }
