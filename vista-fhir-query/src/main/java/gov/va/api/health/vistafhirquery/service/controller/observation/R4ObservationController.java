@@ -1,6 +1,5 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
-import static gov.va.api.health.vistafhirquery.service.controller.observation.VitalVuidMapper.forLoinc;
 
 import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
@@ -14,11 +13,9 @@ import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.Wit
 import gov.va.api.lighthouse.vistalink.api.RpcResponse;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Vitals;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.VprGetPatientData;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -153,16 +150,7 @@ public class R4ObservationController {
                                 .patientIcn(parameters.get("patient"))
                                 .resultsEntry(entry)
                                 .vitalVuidMapper(vitalVuids)
-                                .codes(
-                                    Arrays.stream(
-                                            parameters.getOrDefault("code", "").split(",", -1))
-                                        .flatMap(
-                                            code ->
-                                                vitalVuids.mappings().stream()
-                                                    .filter(forLoinc(code)))
-                                        .filter(Objects::nonNull)
-                                        .map(VitalVuidMapper.VitalVuidMapping::vuid)
-                                        .collect(Collectors.toList()))
+                                .codes(parameters.get("code"))
                                 .build()
                                 .toFhir())
                     .collect(Collectors.toList()))
