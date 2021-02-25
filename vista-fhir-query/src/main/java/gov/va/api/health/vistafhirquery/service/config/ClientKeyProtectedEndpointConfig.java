@@ -49,7 +49,7 @@ public class ClientKeyProtectedEndpointConfig {
             .unauthorizedResponse(unauthorizedResponse())
             .build());
 
-    registration.addUrlPatterns("/internal/*");
+    registration.addUrlPatterns("/internal/*", PathRewriteConfig.leadingPath() + "internal/*");
 
     return registration;
   }
