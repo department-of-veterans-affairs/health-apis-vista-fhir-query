@@ -79,7 +79,7 @@ public class VistaLabToR4ObservationTransformer {
     if (vistaLab == null) {
       return Stream.empty();
     }
-    if (!(vistaLoincCodeIsAccepted() || vistaVuidIsAccepted())) {
+    if (!hasAcceptedCode()) {
       return Stream.empty();
     }
     log.info("ToDo: Should groupName, labOrderId, orderId be in the identifier array?");
@@ -99,6 +99,15 @@ public class VistaLabToR4ObservationTransformer {
             .status(status(vistaLab.status()))
             .build();
     return Stream.of(observation);
+  }
+
+  private boolean hasAcceptedCode() {
+    if (isBlank(conditions)) {
+      return true;
+    }
+    var loinc = valueOfValueOnlyXmlAttribute(vistaLab.loinc());
+    var vuid = valueOfValueOnlyXmlAttribute(vistaLab.vuid());
+    return conditions.hasAcceptedLoincCode(loinc) || conditions.hasAcceptedVuidCode(vuid);
   }
 
   String idFrom(ValueOnlyXmlAttribute maybeId) {
@@ -153,27 +162,5 @@ public class VistaLabToR4ObservationTransformer {
       default:
         throw new IllegalArgumentException("Invalid Observation Status Type: " + status);
     }
-  }
-
-  private boolean vistaLoincCodeIsAccepted() {
-    if (isBlank(conditions) || conditions.codes().isEmpty()) {
-      return true;
-    }
-    var loinc = valueOfValueOnlyXmlAttribute(vistaLab.loinc());
-    if (isBlank(loinc)) {
-      return false;
-    }
-    return conditions.hasAcceptedLoincCode(loinc);
-  }
-
-  private boolean vistaVuidIsAccepted() {
-    if (isBlank(conditions)) {
-      return true;
-    }
-    var vuid = valueOfValueOnlyXmlAttribute(vistaLab.vuid());
-    if (vuid == null) {
-      return false;
-    }
-    return conditions.hasAcceptedVuidCode(vuid);
   }
 }
