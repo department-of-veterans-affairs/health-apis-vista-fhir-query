@@ -2,7 +2,7 @@ package gov.va.api.health.vistafhirquery.service.controller.observation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -11,22 +11,33 @@ import org.junit.jupiter.params.provider.MethodSource;
 public class ObservationConditionsTest {
 
   static Stream<Arguments> hasAcceptedCode() {
-    // List<String> allowedCodes, String code, boolean expected
+    // Map<String, String> allowedCodes, String code, boolean expected
     return Stream.of(
         Arguments.of(null, "a", true),
-        Arguments.of(List.of(), "a", true),
-        Arguments.of(List.of("a"), "a", true),
-        Arguments.of(List.of("a"), null, false),
-        Arguments.of(List.of("a"), "b", false),
-        Arguments.of(List.of("a", "b", "c"), "a", true),
-        Arguments.of(List.of("a", "b", "c"), "b", true),
-        Arguments.of(List.of("a", "b", "c"), "c", true),
-        Arguments.of(List.of("a", "b", "c"), "d", false));
+        Arguments.of(Map.of(), "a", true),
+        Arguments.of(Map.of("a", "A"), "a", true),
+        Arguments.of(Map.of("a", "A"), null, false),
+        Arguments.of(Map.of("a", "A"), "b", false),
+        Arguments.of(Map.of("a", "A", "b", "B", "c", "C"), "a", true),
+        Arguments.of(Map.of("a", "A", "b", "B", "c", "C"), "b", true),
+        Arguments.of(Map.of("a", "A", "b", "B", "c", "C"), "c", true),
+        Arguments.of(Map.of("a", "A", "b", "B", "c", "C"), "d", false));
   }
 
   @ParameterizedTest
-  @MethodSource
-  void hasAcceptedCode(List<String> allowedCodes, String code, boolean expected) {
-    assertThat(ObservationConditions.of(allowedCodes).hasAcceptedCode(code)).isEqualTo(expected);
+  @MethodSource("hasAcceptedCode")
+  void hasAcceptedLoincCode(Map<String, String> allowedCodes, String loinc, boolean expected) {
+    if (loinc != null) {
+      loinc = loinc.toUpperCase();
+    }
+    assertThat(ObservationConditions.of(allowedCodes).hasAcceptedLoincCode(loinc))
+        .isEqualTo(expected);
+  }
+
+  @ParameterizedTest
+  @MethodSource("hasAcceptedCode")
+  void hasAcceptedVuidCode(Map<String, String> allowedCodes, String vuid, boolean expected) {
+    assertThat(ObservationConditions.of(allowedCodes).hasAcceptedVuidCode(vuid))
+        .isEqualTo(expected);
   }
 }

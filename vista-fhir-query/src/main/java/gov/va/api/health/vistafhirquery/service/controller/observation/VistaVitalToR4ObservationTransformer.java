@@ -97,7 +97,8 @@ public class VistaVitalToR4ObservationTransformer {
     return vistaVital.measurements().parallelStream()
         .filter(Objects::nonNull)
         .filter(
-            measurement -> isBlank(conditions) || conditions.hasAcceptedCode(measurement.vuid()))
+            measurement ->
+                isBlank(conditions) || conditions.hasAcceptedVuidCode(measurement.vuid()))
         .map(this::observationFromMeasurement);
   }
 

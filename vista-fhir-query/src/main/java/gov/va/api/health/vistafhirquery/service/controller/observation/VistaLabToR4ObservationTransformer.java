@@ -163,7 +163,7 @@ public class VistaLabToR4ObservationTransformer {
     if (isBlank(loinc)) {
       return false;
     }
-    return conditions.codes().contains(loinc);
+    return conditions.hasAcceptedLoincCode(loinc);
   }
 
   private boolean vistaVuidIsAccepted() {
@@ -174,6 +174,6 @@ public class VistaLabToR4ObservationTransformer {
     if (vuid == null) {
       return false;
     }
-    return conditions.hasAcceptedCode(vuid);
+    return conditions.hasAcceptedVuidCode(vuid);
   }
 }

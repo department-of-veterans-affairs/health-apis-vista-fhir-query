@@ -7,9 +7,7 @@ import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Labs;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Vitals;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.VprGetPatientData;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.Builder;
@@ -29,9 +27,9 @@ public class R4ObservationCollector {
 
   @NonNull private final Map.Entry<String, VprGetPatientData.Response.Results> resultsEntry;
 
-  private List<String> allowedVuids() {
+  private Map<String, String> allowedVuids() {
     if (codes() == null) {
-      return List.of();
+      return Map.of();
     }
     return Arrays.stream(codes().split(",", -1))
         .flatMap(
@@ -41,13 +39,16 @@ public class R4ObservationCollector {
                       .filter(forLoinc(code))
                       .collect(Collectors.toList());
               if (mappings.isEmpty()) {
-                return Stream.of(VitalVuidMapper.VitalVuidMapping.builder().vuid(code).build());
+                /* In the case where a code is not mappable;
+                add it to the map so we can filter out results by it. */
+                return Stream.of(
+                    VitalVuidMapper.VitalVuidMapping.builder().vuid(code).code(code).build());
               }
               return mappings.stream();
             })
-        .filter(Objects::nonNull)
-        .map(VitalVuidMapper.VitalVuidMapping::vuid)
-        .collect(Collectors.toList());
+        .collect(
+            Collectors.toMap(
+                VitalVuidMapper.VitalVuidMapping::vuid, VitalVuidMapper.VitalVuidMapping::code));
   }
 
   Stream<Observation> toFhir() {
@@ -78,7 +79,6 @@ public class R4ObservationCollector {
                         .patientIcn(patientIcn)
                         .vistaSiteId(resultsEntry.getKey())
                         .vistaLab(lab)
-                        .conditions(ObservationConditions.of(allowedVuids()))
                         .build()
                         .conditionallyToFhir());
 
