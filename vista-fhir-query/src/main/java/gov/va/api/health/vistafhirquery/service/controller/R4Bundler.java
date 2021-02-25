@@ -1,15 +1,21 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
+import static java.lang.String.join;
+import static java.util.stream.Collectors.joining;
+
 import gov.va.api.health.r4.api.bundle.AbstractBundle;
 import gov.va.api.health.r4.api.bundle.AbstractEntry;
 import gov.va.api.health.r4.api.bundle.BundleLink;
 import gov.va.api.health.r4.api.resources.Resource;
+import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
+import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.AlternatePatientIds;
 import gov.va.api.lighthouse.vistalink.models.TypeSafeRpcResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import javax.servlet.http.HttpServletRequest;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,20 +30,17 @@ public class R4Bundler<
     implements Function<RpcResponseT, BundleT> {
   private final String resourceType;
 
-  private final Map<String, String> parameters;
+  private final AlternatePatientIds alternatePatientIds;
+
+  private final LinkProperties linkProperties;
+
+  private final HttpServletRequest request;
 
   /** The transformation process that will be applied to the results. */
   private final R4Transformation<RpcResponseT, ResourceT> transformation;
 
   /** The bundling configuration that will be used to create the actual bundle. */
   private final R4Bundling<ResourceT, EntryT, BundleT> bundling;
-
-  /** Create a new instance for the given transformation. */
-  public static <RpcResponseT extends TypeSafeRpcResponse, ResourceT extends Resource>
-      R4BundlerPart1<RpcResponseT, ResourceT> forTransformation(
-          R4Transformation<RpcResponseT, ResourceT> transformation) {
-    return R4BundlerPart1.<RpcResponseT, ResourceT>builder().transformation(transformation).build();
-  }
 
   @Override
   public BundleT apply(RpcResponseT rpcResult) {
@@ -52,9 +55,8 @@ public class R4Bundler<
     bundle.total(resources.size());
     bundle.link(toLinks());
     log.info("ToDo: better count handling");
-    String countParam =
-        parameters.getOrDefault("_count", "" + bundling.linkProperties().getDefaultPageSize());
-    int count = Integer.parseInt(countParam);
+    int count =
+        HttpRequestParameters.integer(request, "_count", linkProperties.getDefaultPageSize());
     if (resources.size() > count) {
       resources = resources.subList(0, count);
     }
@@ -62,9 +64,24 @@ public class R4Bundler<
     return bundle;
   }
 
+  private String parameter(String name, String value) {
+    log.info("{}={} : {}", name, value, alternatePatientIds.patientIdParameters());
+    if (alternatePatientIds.isPatientIdParameter(name)) {
+      value = alternatePatientIds.toPublicId(value);
+      log.info("{} ==> {}", name, value);
+    }
+    return join("=", name, value);
+  }
+
+  private String request() {
+    return request.getParameterMap().entrySet().stream()
+        .flatMap(e -> Stream.of(e.getValue()).map(value -> parameter(e.getKey(), value)))
+        .collect(joining("&"));
+  }
+
   private EntryT toEntry(ResourceT resource) {
     EntryT entry = bundling.newEntry().get();
-    entry.fullUrl(bundling.linkProperties().r4().readUrl(resource));
+    entry.fullUrl(linkProperties.r4().readUrl(resource));
     entry.resource(resource);
     entry.search(AbstractEntry.Search.builder().mode(AbstractEntry.SearchMode.match).build());
     return entry;
@@ -77,27 +94,8 @@ public class R4Bundler<
     links.add(
         BundleLink.builder()
             .relation(BundleLink.LinkRelation.self)
-            .url(
-                bundling.linkProperties().r4().resourceUrl(resourceType)
-                    + "?"
-                    + parameters.entrySet().stream()
-                        .map(e -> String.join("=", e.getKey(), e.getValue()))
-                        .collect(Collectors.joining("&")))
+            .url(linkProperties.r4().resourceUrl(resourceType) + "?" + request())
             .build());
     return links;
-  }
-
-  /**
-   * These builder parts are used to slowly infer the generics types based on the arguments vs.
-   * specifying the types and requires arguments that match.
-   */
-  @Builder
-  public static class R4BundlerPart1<V extends TypeSafeRpcResponse, R extends Resource> {
-    private final R4Transformation<V, R> transformation;
-
-    public <E extends AbstractEntry<R>, B extends AbstractBundle<E>>
-        R4BundlerBuilder<V, R, E, B> bundling(R4Bundling<R, E, B> bundling) {
-      return R4Bundler.<V, R, E, B>builder().transformation(transformation).bundling(bundling);
-    }
   }
 }

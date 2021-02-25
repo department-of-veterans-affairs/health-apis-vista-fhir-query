@@ -1,5 +1,6 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
+import static gov.va.api.health.vistafhirquery.service.controller.MockRequests.requestFromUri;
 import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationVitalSamples.Fhir.link;
 import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationVitalSamples.json;
 import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationVitalSamples.xml;
@@ -12,8 +13,10 @@ import static org.mockito.Mockito.when;
 
 import gov.va.api.health.r4.api.bundle.BundleLink;
 import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
+import gov.va.api.health.vistafhirquery.service.controller.R4BundlerFactory;
 import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions;
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
+import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.AlternatePatientIds.DisabledAlternatePatientIds;
 import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.WitnessProtection;
 import gov.va.api.lighthouse.vistalink.api.RpcDetails;
 import gov.va.api.lighthouse.vistalink.api.RpcInvocationResult;
@@ -44,17 +47,22 @@ public class R4ObservationControllerTest {
   }
 
   private R4ObservationController controller() {
+    var bundlerFactory =
+        R4BundlerFactory.builder()
+            .linkProperties(
+                LinkProperties.builder()
+                    .defaultPageSize(15)
+                    .maxPageSize(100)
+                    .publicUrl("http://fugazi.com")
+                    .publicR4BasePath("r4")
+                    .build())
+            .alternatePatientIds(new DisabledAlternatePatientIds())
+            .build();
     return R4ObservationController.builder()
         .vistalinkApiClient(vlClient)
-        .witnessProtection(wp)
-        .linkProperties(
-            LinkProperties.builder()
-                .defaultPageSize(15)
-                .maxPageSize(100)
-                .publicUrl("http://fugazi.com")
-                .publicR4BasePath("r4")
-                .build())
         .vitalVuids(mapper)
+        .witnessProtection(wp)
+        .bundlerFactory(bundlerFactory)
         .build();
   }
 
@@ -99,10 +107,11 @@ public class R4ObservationControllerTest {
 
   @Test
   void searchByPatientAndKnownCode() {
+    var request = requestFromUri("?_count=10&code=29463-7&patient=p1");
     var results = ObservationVitalSamples.Vista.create().results();
     when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "123", xml(results)));
-    var actual = controller().searchByPatient("p1", "29463-7", 10);
+    var actual = controller().searchByPatient("p1", "29463-7", 10, request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
@@ -117,10 +126,11 @@ public class R4ObservationControllerTest {
 
   @Test
   void searchByPatientAndUnknownCode() {
+    var request = requestFromUri("?_count=10&code=NOPE&patient=p1");
     var results = ObservationVitalSamples.Vista.create().results();
     when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "123", xml(results)));
-    var actual = controller().searchByPatient("p1", "NOPE", 10);
+    var actual = controller().searchByPatient("p1", "NOPE", 10, request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
@@ -135,11 +145,12 @@ public class R4ObservationControllerTest {
 
   @Test
   void searchByPatientWithVistaEmptyResults() {
+    var request = requestFromUri("?_count=10&patient=p1");
     var responseBody =
         "<results version='1.13' timeZone='-0500'><vitals total='1'><vital></vital></vitals></results>";
     when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "123", responseBody));
-    var actual = controller().searchByPatient("p1", null, 10);
+    var actual = controller().searchByPatient("p1", null, 10, request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
@@ -155,10 +166,11 @@ public class R4ObservationControllerTest {
   @Test
   @SneakyThrows
   void searchByPatientWithVistaPopulatedResults() {
+    var request = requestFromUri("?_count=10&patient=p1");
     var results = ObservationVitalSamples.Vista.create().results();
     when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
-    var actual = controller().searchByPatient("p1", null, 10);
+    var actual = controller().searchByPatient("p1", null, 10, request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",

@@ -77,7 +77,7 @@ checkForUnsetValues() {
   echo "checking $target"
   grep -E '(.*= *unset)' "$target"
   [ $? == 0 ] && echo "Failed to populate all unset values" && exit 1
-  diff -q $target $target.$MARKER
+  diff $target $target.$MARKER
   [ $? == 0 ] && rm -v $target.$MARKER
 }
 
@@ -135,9 +135,12 @@ EOF
   configValue vista-fhir-query $PROFILE spring.datasource.url "${VFQ_DB_URL}"
   configValue vista-fhir-query $PROFILE spring.datasource.username "${VFQ_DB_USER}"
   configValue vista-fhir-query $PROFILE spring.datasource.password "${VFQ_DB_PASSWORD}"
-  checkForUnsetValues vista-fhir-query $PROFILE
 
   addValue vista-fhir-query $PROFILE management.endpoints.web.exposure.include "health,info,i2"
+  addValue vista-fhir-query $PROFILE alternate-patient-ids.enabled true
+  addValue vista-fhir-query $PROFILE alternate-patient-ids.id.1011537977V693883 5000000347
+
+  checkForUnsetValues vista-fhir-query $PROFILE
 }
 
 requiredParam() {

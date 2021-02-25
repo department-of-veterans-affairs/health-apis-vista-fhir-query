@@ -9,9 +9,11 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 @Builder
 @Getter
+@ToString
 public class ProtectedReference {
 
   public static final String VISTA_SYSTEM = "VISTA";
@@ -20,7 +22,7 @@ public class ProtectedReference {
 
   private final String id;
 
-  private final Consumer<String> onUpdate;
+  @ToString.Exclude private final Consumer<String> onUpdate;
 
   /**
    * Create a new instance from an R4 reference if possible. See {@link #forUri(String, Consumer)}.
@@ -80,6 +82,7 @@ public class ProtectedReference {
         ResourceIdentity.builder().system(VISTA_SYSTEM).resource(type).identifier(id).build());
   }
 
+  @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
   public void updateId(Optional<String> id) {
     onUpdate.accept(id.orElse(null));
   }

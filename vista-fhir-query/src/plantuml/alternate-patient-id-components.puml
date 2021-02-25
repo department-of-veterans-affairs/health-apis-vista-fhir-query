@@ -1,0 +1,24 @@
+@startuml
+class AlternatePatientIdProperties <<ConfigurationProperties>>
+class AlternatePatientIdConfig <<Configuration>>
+class AlternatePatientIdFilter <<RequestFilter>>
+interface AlternatePatientIds
+class DisabledAlternatePatientIds
+class MappedAlternatePatientIds
+class WitnessProtectionAdvice <<ResponseAdvice>>
+class R4Bundler
+class R4BundlerFactory <<Component>>
+
+AlternatePatientIdConfig .> AlternatePatientIdProperties : <<uses>>
+AlternatePatientIdConfig -up-> DisabledAlternatePatientIds : <<creates bean>>
+AlternatePatientIdConfig -up-> MappedAlternatePatientIds : <<creates bean>>
+
+DisabledAlternatePatientIds -up-|> AlternatePatientIds
+MappedAlternatePatientIds -up-|> AlternatePatientIds
+
+AlternatePatientIdFilter o--> AlternatePatientIds : <<Autowire>>
+WitnessProtectionAdvice o--> AlternatePatientIds : <<Autowire>>
+R4Bundler o--> AlternatePatientIds : <<uses>>
+R4BundlerFactory o..> AlternatePatientIds : <<Autowire>>
+R4BundlerFactory --> R4Bundler : <<creates>>
+@enduml

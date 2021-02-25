@@ -3,6 +3,7 @@ package gov.va.api.health.vistafhirquery.service.controller.witnessprotection;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Stream.concat;
 
 import gov.va.api.health.ids.api.IdentityService;
 import gov.va.api.health.ids.api.IdentitySubstitution;
@@ -40,15 +41,19 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 public class WitnessProtectionAdvice extends IdentitySubstitution<ProtectedReference>
     implements ResponseBodyAdvice<Object>, WitnessProtection {
 
+  private final AlternatePatientIds alternatePatientIds;
+
   private final Map<Type, WitnessProtectionAgent<?>> agents;
 
   /** Create a new instance. */
   @Builder
   @Autowired
   public WitnessProtectionAdvice(
+      AlternatePatientIds alternatePatientIds,
       @NonNull IdentityService identityService,
       @Singular List<WitnessProtectionAgent<?>> availableAgents) {
     super(identityService, ProtectedReference::asResourceIdentity, NotFound::new);
+    this.alternatePatientIds = alternatePatientIds;
     this.agents =
         availableAgents.stream().collect(toMap(WitnessProtectionAdvice::agentType, identity()));
     log.info(
@@ -69,6 +74,7 @@ public class WitnessProtectionAdvice extends IdentitySubstitution<ProtectedRefer
     return ((ParameterizedType) agentInterface).getActualTypeArguments()[0];
   }
 
+  @SuppressWarnings("NullableProblems")
   @Override
   public Object beforeBodyWrite(
       Object body,
@@ -101,10 +107,6 @@ public class WitnessProtectionAdvice extends IdentitySubstitution<ProtectedRefer
         referenceToFullUrl.isEmpty() ? List.of() : List.of(referenceToFullUrl.get()));
   }
 
-  private void protectResource(@NonNull Resource resource) {
-    protectResource(resource, List.of());
-  }
-
   private void protectResource(
       @NonNull Resource resource, List<ProtectedReference> additionalReferences) {
     /*
@@ -123,7 +125,10 @@ public class WitnessProtectionAdvice extends IdentitySubstitution<ProtectedRefer
 
     Operations<Resource, ProtectedReference> operations =
         Operations.<Resource, ProtectedReference>builder()
-            .toReferences(r -> Stream.concat(additionalReferences.stream(), agent.referencesOf(r)))
+            .toReferences(
+                rsrc ->
+                    concat(additionalReferences.stream(), agent.referencesOf(rsrc))
+                        .map(this::restorePublicPatientIds))
             .isReplaceable(reference -> true)
             .resourceNameOf(ProtectedReference::type)
             .privateIdOf(ProtectedReference::id)
@@ -131,6 +136,25 @@ public class WitnessProtectionAdvice extends IdentitySubstitution<ProtectedRefer
             .build();
     IdentityMapping identities = register(List.of(resource), operations.toReferences());
     identities.replacePrivateIdsWithPublicIds(List.of(resource), operations);
+  }
+
+  private void protectResource(@NonNull Resource resource) {
+    protectResource(resource, List.of());
+  }
+
+  private ProtectedReference restorePublicPatientIds(ProtectedReference reference) {
+    if (!"Patient".equals(reference.type())) {
+      return reference;
+    }
+    String publicId = alternatePatientIds.toPublicId(reference.id());
+    ProtectedReference referenceWithPublicId =
+        ProtectedReference.builder()
+            .type(reference.type())
+            .onUpdate(reference.onUpdate())
+            .id(publicId)
+            .build();
+    referenceWithPublicId.onUpdate().accept(publicId);
+    return referenceWithPublicId;
   }
 
   @Override

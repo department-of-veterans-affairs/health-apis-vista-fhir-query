@@ -1,9 +1,8 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
-
 import gov.va.api.health.r4.api.resources.Observation;
-import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
 import gov.va.api.health.vistafhirquery.service.controller.R4Bundler;
+import gov.va.api.health.vistafhirquery.service.controller.R4BundlerFactory;
 import gov.va.api.health.vistafhirquery.service.controller.R4Bundling;
 import gov.va.api.health.vistafhirquery.service.controller.R4Transformation;
 import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions;
@@ -13,15 +12,15 @@ import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.Wit
 import gov.va.api.lighthouse.vistalink.api.RpcResponse;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Vitals;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.VprGetPatientData;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,13 +46,14 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor(onConstructor_ = @Autowired)
 @Builder
 public class R4ObservationController {
-  private final VistalinkApiClient vistalinkApiClient;
 
-  private final LinkProperties linkProperties;
+  @NonNull private final R4BundlerFactory bundlerFactory;
 
-  private final VitalVuidMapper vitalVuids;
+  @NonNull private final VistalinkApiClient vistalinkApiClient;
 
-  private final WitnessProtection witnessProtection;
+  @NonNull private final VitalVuidMapper vitalVuids;
+
+  @NonNull private final WitnessProtection witnessProtection;
 
   private VistaIdentifierSegment parseOrDie(String publicId) {
     try {
@@ -83,14 +83,13 @@ public class R4ObservationController {
     VprGetPatientData.Response vprPatientData =
         VprGetPatientData.create().fromResults(rpcResponse.results());
     List<Observation> resources =
-        transformation(Map.of("patient", ids.patientIdentifier()))
-            .toResource()
-            .apply(vprPatientData);
+        transformation(ids.patientIdentifier(), null).toResource().apply(vprPatientData);
     if (resources.isEmpty()) {
       ResourceExceptions.NotFound.because("Identifier not found in VistA: " + publicId);
     }
     if (resources.size() != 1) {
-      ResourceExceptions.ExpectationFailed.because("Too many results returned.");
+      ResourceExceptions.ExpectationFailed.because(
+          "Too many results returned. Expected 1 but found %d.", resources.size());
     }
     return resources.get(0);
   }
@@ -101,14 +100,8 @@ public class R4ObservationController {
   public Observation.Bundle searchByPatient(
       @RequestParam(name = "patient") String patient,
       @RequestParam(name = "code", required = false) String codeCsv,
-      @RequestParam(name = "_count", required = false) @Min(0) Integer count) {
-    int countValue = count == null ? linkProperties.getDefaultPageSize() : count;
-    Map<String, String> parameters = new HashMap<>();
-    parameters.put("patient", patient);
-    parameters.put("_count", "" + countValue);
-    if (codeCsv != null) {
-      parameters.put("code", codeCsv);
-    }
+      @RequestParam(name = "_count", required = false) @Min(0) Integer count,
+      HttpServletRequest request) {
     // Default .max() value is 9999
     RpcResponse rpcResponse =
         vistalinkApiClient.requestForPatient(
@@ -120,24 +113,23 @@ public class R4ObservationController {
                 .asDetails());
     VprGetPatientData.Response vprPatientData =
         VprGetPatientData.create().fromResults(rpcResponse.results());
-    return toBundle(parameters).apply(vprPatientData);
+    return toBundle(request).apply(vprPatientData);
   }
 
   private R4Bundler<VprGetPatientData.Response, Observation, Observation.Entry, Observation.Bundle>
-      toBundle(Map<String, String> parameters) {
-    return R4Bundler.forTransformation(transformation(parameters))
+      toBundle(HttpServletRequest request) {
+    return bundlerFactory
+        .forTransformation(
+            transformation(request.getParameter("patient"), request.getParameter("code")))
         .bundling(
-            R4Bundling.newBundle(Observation.Bundle::new)
-                .newEntry(Observation.Entry::new)
-                .linkProperties(linkProperties)
-                .build())
+            R4Bundling.newBundle(Observation.Bundle::new).newEntry(Observation.Entry::new).build())
         .resourceType("Observation")
-        .parameters(parameters)
+        .request(request)
         .build();
   }
 
   private R4Transformation<VprGetPatientData.Response, Observation> transformation(
-      Map<String, String> parameters) {
+      String patientIdentifier, String codes) {
     return R4Transformation.<VprGetPatientData.Response, Observation>builder()
         .toResource(
             rpcResponse ->
@@ -147,10 +139,10 @@ public class R4ObservationController {
                     .flatMap(
                         entry ->
                             R4ObservationCollector.builder()
-                                .patientIcn(parameters.get("patient"))
+                                .patientIcn(patientIdentifier)
                                 .resultsEntry(entry)
                                 .vitalVuidMapper(vitalVuids)
-                                .codes(parameters.get("code"))
+                                .codes(codes)
                                 .build()
                                 .toFhir())
                     .collect(Collectors.toList()))

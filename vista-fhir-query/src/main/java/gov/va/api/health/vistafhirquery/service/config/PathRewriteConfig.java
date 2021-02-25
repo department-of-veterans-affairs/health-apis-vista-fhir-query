@@ -10,12 +10,15 @@ import org.springframework.core.Ordered;
 @Slf4j
 @Configuration
 public class PathRewriteConfig {
+  static String leadingPath() {
+    return "/vista-fhir-query/";
+  }
+
   @Bean
   FilterRegistrationBean<PathRewriteFilter> pathRewriteFilter() {
     var registration = new FilterRegistrationBean<PathRewriteFilter>();
     registration.setOrder(Ordered.LOWEST_PRECEDENCE);
-    PathRewriteFilter filter =
-        PathRewriteFilter.builder().removeLeadingPath("/vista-fhir-query/").build();
+    PathRewriteFilter filter = PathRewriteFilter.builder().removeLeadingPath(leadingPath()).build();
     registration.setFilter(filter);
     registration.addUrlPatterns(filter.removeLeadingPathsAsUrlPatterns());
     log.info("PathRewriteFilter enabled with priority {}", registration.getOrder());

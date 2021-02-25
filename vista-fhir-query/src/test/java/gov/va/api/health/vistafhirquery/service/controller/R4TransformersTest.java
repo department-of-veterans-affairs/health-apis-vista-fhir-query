@@ -7,7 +7,9 @@ import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toHumanDateTime;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.valueOfValueOnlyXmlAttribute;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import gov.va.api.lighthouse.vistalink.models.FilemanDate;
 import gov.va.api.lighthouse.vistalink.models.ValueOnlyXmlAttribute;
 import java.math.BigDecimal;
 import java.util.List;
@@ -76,7 +78,18 @@ public class R4TransformersTest {
   void humanDateTime() {
     assertThat(toHumanDateTime(null)).isNull();
     assertThat(toHumanDateTime(ValueOnlyXmlAttribute.builder().build())).isNull();
-    assertThat(toHumanDateTime(ValueOnlyXmlAttribute.of("abc"))).isEqualTo("abc");
+    assertThat(toHumanDateTime(ValueOnlyXmlAttribute.of("2970919")))
+        .isEqualTo("1997-09-19T00:00:00Z");
+    assertThat(toHumanDateTime(ValueOnlyXmlAttribute.of("2970919.08")))
+        .isEqualTo("1997-09-19T08:00:00Z");
+    assertThat(toHumanDateTime(ValueOnlyXmlAttribute.of("2970919.0827")))
+        .isEqualTo("1997-09-19T08:27:00Z");
+    assertThat(toHumanDateTime(ValueOnlyXmlAttribute.of("2970919.082701")))
+        .isEqualTo("1997-09-19T08:27:01Z");
+    assertThatExceptionOfType(FilemanDate.BadFilemanDate.class)
+        .isThrownBy(() -> toHumanDateTime(ValueOnlyXmlAttribute.of("29")));
+    assertThatExceptionOfType(FilemanDate.BadFilemanDate.class)
+        .isThrownBy(() -> toHumanDateTime(ValueOnlyXmlAttribute.of("abc")));
   }
 
   @Test
