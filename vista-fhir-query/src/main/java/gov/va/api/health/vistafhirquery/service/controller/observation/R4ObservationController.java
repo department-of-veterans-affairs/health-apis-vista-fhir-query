@@ -120,13 +120,13 @@ public class R4ObservationController {
   }
 
   private R4Bundler<VprGetPatientData.Response, Observation, Observation.Entry, Observation.Bundle>
-      toBundle(HttpServletRequest parameters) {
+      toBundle(HttpServletRequest request) {
     return bundlerFactory
-        .forTransformation(transformation(parameters.getParameter("patient")))
+        .forTransformation(transformation(request.getParameter("patient")))
         .bundling(
             R4Bundling.newBundle(Observation.Bundle::new).newEntry(Observation.Entry::new).build())
         .resourceType("Observation")
-        .request(parameters)
+        .request(request)
         .build();
   }
 
