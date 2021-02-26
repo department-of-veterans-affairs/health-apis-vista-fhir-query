@@ -7,6 +7,8 @@ import static org.mockserver.model.HttpResponse.response;
 
 import com.google.common.io.Resources;
 import gov.va.api.lighthouse.vistalink.api.RpcDetails;
+import gov.va.api.lighthouse.vistalink.api.RpcInvocationResult;
+import gov.va.api.lighthouse.vistalink.api.RpcResponse;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.VprGetPatientData;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -28,7 +30,8 @@ public class VistaObservationMocks implements MockService {
 
   private List<String> supportedQueries = new ArrayList<>();
 
-  private List<Consumer<MockServerClient>> supportedRequests = List.of(this::observationRead);
+  private List<Consumer<MockServerClient>> supportedRequests =
+      List.of(this::observationRead, this::observationSearch);
 
   private void addSupportedQuery(RpcDetails body) {
     supportedQueries.add(
@@ -56,6 +59,30 @@ public class VistaObservationMocks implements MockService {
             response()
                 .withStatusCode(200)
                 .withHeader(contentTypeApplicationJson())
-                .withBody(contentOfFile("/vistalinkapi-vprgetpatientdata-readresponse.json")));
+                .withBody(
+                    rpcResponseOkWithContent("/vistalinkapi-vprgetpatientdata-readresponse.xml")));
+  }
+
+  void observationSearch(MockServerClient mock) {
+    supportedQueries.add("[POST] http://localhost:" + port() + "/rpc with _any_ RPC Details");
+    mock.when(rpcQueryWithExpectedRpcDetails(port(), null))
+        .respond(
+            response()
+                .withStatusCode(200)
+                .withHeader(contentTypeApplicationJson())
+                .withBody(
+                    rpcResponseOkWithContent(
+                        "/vistalinkapi-vprgetpatientdata-searchresponse.xml")));
+  }
+
+  private String rpcResponseOkWithContent(String rpcResponseFile) {
+    return json(
+        RpcResponse.builder()
+            .status(RpcResponse.Status.OK)
+            .result(
+                RpcInvocationResult.builder()
+                    .vista("ms")
+                    .response(contentOfFile(rpcResponseFile))
+                    .build()));
   }
 }

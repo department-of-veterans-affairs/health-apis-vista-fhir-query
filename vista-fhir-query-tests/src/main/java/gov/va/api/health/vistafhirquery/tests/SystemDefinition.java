@@ -11,6 +11,8 @@ import lombok.Value;
 public final class SystemDefinition {
   @NonNull ServiceDefinition internal;
 
+  @NonNull ServiceDefinition r4;
+
   @NonNull TestIds publicIds;
 
   Optional<String> clientKey;
