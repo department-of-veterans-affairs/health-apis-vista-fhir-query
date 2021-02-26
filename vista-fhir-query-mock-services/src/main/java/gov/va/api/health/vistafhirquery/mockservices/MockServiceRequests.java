@@ -34,12 +34,18 @@ public class MockServiceRequests {
     var path = "/rpc";
     log.info("Support Query [POST]: http://localhost:{}{}", port, path);
     URL url = new URL("http://localhost" + path);
-    String body = json(RpcRequest.builder().rpc(rpcDetails).build());
-    log.info("With RPC Details like: {}", body);
-    return request()
-        .withMethod("POST")
-        .withPath(url.getPath())
-        .withHeader(contentTypeApplicationJson())
-        .withBody(JsonBody.json(body, StandardCharsets.UTF_8, MatchType.ONLY_MATCHING_FIELDS));
+    var request =
+        request()
+            .withMethod("POST")
+            .withPath(url.getPath())
+            .withHeader(contentTypeApplicationJson());
+    if (rpcDetails != null) {
+      String body = json(RpcRequest.builder().rpc(rpcDetails).build());
+      log.info("With RPC Details like: {}", body);
+      request =
+          request.withBody(
+              JsonBody.json(body, StandardCharsets.UTF_8, MatchType.ONLY_MATCHING_FIELDS));
+    }
+    return request;
   }
 }
