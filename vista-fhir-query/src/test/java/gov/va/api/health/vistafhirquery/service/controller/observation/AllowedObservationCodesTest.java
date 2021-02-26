@@ -1,14 +1,12 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.Map;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class ObservationConditionsTest {
+public class AllowedObservationCodesTest {
 
   static Stream<Arguments> hasAcceptedCode() {
     // Map<String, String> allowedCodes, String code, boolean expected
@@ -30,14 +28,14 @@ public class ObservationConditionsTest {
     if (loinc != null) {
       loinc = loinc.toUpperCase();
     }
-    assertThat(ObservationConditions.of(allowedCodes).hasAcceptedLoincCode(loinc))
+    assertThat(AllowedObservationCodes.of(allowedCodes).hasAcceptedLoincCode(loinc))
         .isEqualTo(expected);
   }
 
   @ParameterizedTest
   @MethodSource("hasAcceptedCode")
   void hasAcceptedVuidCode(Map<String, String> allowedCodes, String vuid, boolean expected) {
-    assertThat(ObservationConditions.of(allowedCodes).hasAcceptedVuidCode(vuid))
+    assertThat(AllowedObservationCodes.of(allowedCodes).hasAcceptedVuidCode(vuid))
         .isEqualTo(expected);
   }
 }

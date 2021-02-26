@@ -30,7 +30,7 @@ public class VistaLabToR4ObservationTransformer {
 
   @NonNull private final Labs.Lab vistaLab;
 
-  private final ObservationConditions conditions;
+  private final AllowedObservationCodes conditions;
 
   private List<CodeableConcept> category() {
     return List.of(
@@ -107,7 +107,7 @@ public class VistaLabToR4ObservationTransformer {
     }
     var loinc = valueOfValueOnlyXmlAttribute(vistaLab.loinc());
     var vuid = valueOfValueOnlyXmlAttribute(vistaLab.vuid());
-    return conditions.hasAcceptedLoincCode(loinc) || conditions.hasAcceptedVuidCode(vuid);
+    return conditions.isAllowedLoincCode(loinc) || conditions.isAllowedVuidCode(vuid);
   }
 
   String idFrom(ValueOnlyXmlAttribute maybeId) {

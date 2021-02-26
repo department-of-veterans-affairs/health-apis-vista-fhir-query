@@ -34,7 +34,7 @@ public class VistaVitalToR4ObservationTransformer {
 
   @NonNull private final Vitals.Vital vistaVital;
 
-  private final ObservationConditions conditions;
+  private final AllowedObservationCodes conditions;
 
   private final VitalVuidMapper vuidMapper;
 
@@ -97,8 +97,7 @@ public class VistaVitalToR4ObservationTransformer {
     return vistaVital.measurements().parallelStream()
         .filter(Objects::nonNull)
         .filter(
-            measurement ->
-                isBlank(conditions) || conditions.hasAcceptedVuidCode(measurement.vuid()))
+            measurement -> isBlank(conditions) || conditions.isAllowedVuidCode(measurement.vuid()))
         .map(this::observationFromMeasurement);
   }
 
