@@ -1,11 +1,9 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
 import static gov.va.api.health.vistafhirquery.service.controller.observation.VitalVuidMapper.forLoinc;
-import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import gov.va.api.health.r4.api.resources.Observation;
-import gov.va.api.health.vistafhirquery.service.controller.observation.VitalVuidMapper.VitalVuidMapping;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Labs;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Vitals;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.VprGetPatientData;
@@ -29,31 +27,13 @@ public class R4ObservationCollector {
 
   @NonNull private final Map.Entry<String, VprGetPatientData.Response.Results> resultsEntry;
 
-  private Stream<VitalVuidMapping> allowUnknownLoinc(String code) {
-    /*
-     * In the case where a code is not mappable; add it to the map so we can exclude
-     * results.
-     */
-    return Stream.of(VitalVuidMapping.builder().vuid(code).code(code).build());
-  }
-
   private AllowedObservationCodes allowedCodes() {
     if (codes() == null) {
       return AllowedObservationCodes.allowAll();
     }
     Map<String, String> vuidToLoinc =
         Arrays.stream(codes().split(",", -1))
-            .flatMap(
-                loinc -> {
-                  var mappings =
-                      vitalVuidMapper().mappings().stream()
-                          .filter(forLoinc(loinc))
-                          .collect(toList());
-                  if (mappings.isEmpty()) {
-                    return allowUnknownLoinc(loinc);
-                  }
-                  return mappings.stream();
-                })
+            .flatMap(code -> vitalVuidMapper().mappings().stream().filter(forLoinc(code)))
             .collect(
                 toMap(
                     VitalVuidMapper.VitalVuidMapping::vuid,
@@ -89,6 +69,7 @@ public class R4ObservationCollector {
                         .patientIcn(patientIcn)
                         .vistaSiteId(resultsEntry.getKey())
                         .vistaLab(lab)
+                        .conditions(allowedCodes())
                         .build()
                         .conditionallyToFhir());
 

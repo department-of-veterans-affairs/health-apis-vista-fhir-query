@@ -1,5 +1,7 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import java.util.Map;
 import java.util.stream.Stream;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -11,8 +13,7 @@ public class AllowedObservationCodesTest {
   static Stream<Arguments> hasAcceptedCode() {
     // Map<String, String> allowedCodes, String code, boolean expected
     return Stream.of(
-        Arguments.of(null, "a", true),
-        Arguments.of(Map.of(), "a", true),
+        Arguments.of(Map.of(), "a", false),
         Arguments.of(Map.of("a", "A"), "a", true),
         Arguments.of(Map.of("a", "A"), null, false),
         Arguments.of(Map.of("a", "A"), "b", false),
@@ -28,14 +29,14 @@ public class AllowedObservationCodesTest {
     if (loinc != null) {
       loinc = loinc.toUpperCase();
     }
-    assertThat(AllowedObservationCodes.of(allowedCodes).hasAcceptedLoincCode(loinc))
+    assertThat(AllowedObservationCodes.allowOnly(allowedCodes).isAllowedLoincCode(loinc))
         .isEqualTo(expected);
   }
 
   @ParameterizedTest
   @MethodSource("hasAcceptedCode")
   void hasAcceptedVuidCode(Map<String, String> allowedCodes, String vuid, boolean expected) {
-    assertThat(AllowedObservationCodes.of(allowedCodes).hasAcceptedVuidCode(vuid))
+    assertThat(AllowedObservationCodes.allowOnly(allowedCodes).isAllowedVuidCode(vuid))
         .isEqualTo(expected);
   }
 }
