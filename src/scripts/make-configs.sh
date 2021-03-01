@@ -139,6 +139,10 @@ EOF
   addValue vista-fhir-query $PROFILE management.endpoints.web.exposure.include "health,info,i2"
   addValue vista-fhir-query $PROFILE alternate-patient-ids.enabled true
   addValue vista-fhir-query $PROFILE alternate-patient-ids.id.1011537977V693883 5000000347
+  addValue vista-fhir-query $PROFILE alternate-patient-ids.id.32000225 195601
+  addValue vista-fhir-query $PROFILE alternate-patient-ids.id.1017283148V813263 195604
+  addValue vista-fhir-query $PROFILE alternate-patient-ids.id.5000335 195602
+  addValue vista-fhir-query $PROFILE alternate-patient-ids.id.25000126 195603
 
   checkForUnsetValues vista-fhir-query $PROFILE
 }
