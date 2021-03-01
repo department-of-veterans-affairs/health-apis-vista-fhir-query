@@ -33,16 +33,16 @@ public class R4Transformers {
   }
 
   /** Given a reference, attempt to get the reference Id from the reference field. */
-  public static String getReferenceId(IsReference maybeReference) {
+  public static Optional<String> getReferenceId(IsReference maybeReference) {
     if (maybeReference == null || maybeReference.reference() == null) {
-      return null;
+      return Optional.empty();
     }
     String reference = maybeReference.reference();
     String[] referenceParts = reference.split("/", -1);
     if (referenceParts.length <= 1) {
-      return null;
+      return Optional.empty();
     }
-    return referenceParts[referenceParts.length - 1];
+    return Optional.ofNullable(referenceParts[referenceParts.length - 1]);
   }
 
   /**

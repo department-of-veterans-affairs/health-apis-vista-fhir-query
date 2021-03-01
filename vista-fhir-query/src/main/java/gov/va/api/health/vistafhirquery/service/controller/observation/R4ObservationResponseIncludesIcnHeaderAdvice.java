@@ -6,7 +6,6 @@ import gov.va.api.health.r4.api.bundle.AbstractEntry;
 import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.AlternatePatientIds;
 import gov.va.api.lighthouse.talos.ResponseIncludesIcnHeaderAdvice;
-import java.util.stream.Stream;
 import lombok.experimental.Delegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -29,13 +28,10 @@ public class R4ObservationResponseIncludesIcnHeaderAdvice implements ResponseBod
             .bundleType(Observation.Bundle.class)
             .extractResources(bundle -> bundle.entry().stream().map(AbstractEntry::resource))
             .extractIcns(
-                body -> {
-                  var maybeSubject = getReferenceId(body.subject());
-                  if (maybeSubject != null) {
-                    maybeSubject = alternatePatientIds.toPublicId(maybeSubject);
-                  }
-                  return Stream.ofNullable(maybeSubject);
-                })
+                resource ->
+                    getReferenceId(resource.subject())
+                        .map(alternatePatientIds::toPublicId)
+                        .stream())
             .build();
   }
 }
