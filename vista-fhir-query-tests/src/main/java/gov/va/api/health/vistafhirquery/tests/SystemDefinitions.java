@@ -1,5 +1,7 @@
 package gov.va.api.health.vistafhirquery.tests;
 
+import static gov.va.api.health.sentinel.SentinelProperties.magicAccessToken;
+
 import gov.va.api.health.sentinel.Environment;
 import gov.va.api.health.sentinel.SentinelProperties;
 import gov.va.api.health.sentinel.ServiceDefinition;
@@ -16,6 +18,7 @@ public final class SystemDefinitions {
     String url = "http://localhost";
     return SystemDefinition.builder()
         .internal(serviceDefinition("internal", url, 8095, null, "/"))
+        .r4(serviceDefinition("r4", url, 8095, null, "/r4"))
         .publicIds(localIds())
         .clientKey(Optional.of(System.getProperty("client-key", "~shanktopus~")))
         .build();
@@ -33,6 +36,7 @@ public final class SystemDefinitions {
     String url = "https://blue.qa.lighthouse.va.gov";
     return SystemDefinition.builder()
         .internal(serviceDefinition("internal", url, 443, null, "/vista-fhir-query/"))
+        .r4(serviceDefinition("r4", url, 443, magicAccessToken(), "/vista-fhir-query/r4"))
         .publicIds(qaIds())
         .clientKey(clientKey())
         .build();
@@ -41,7 +45,7 @@ public final class SystemDefinitions {
   private static TestIds qaIds() {
     return TestIds.builder()
         .patient("1011537977V693883")
-        .observation("I2-AWHH57I6XDD2XII72DKZZCRXZUS6ZZ5Y46ZZZYXX6GJYYHGPVGJA0000")
+        .observation("I2-IBV5HN7B4CKF4XNL7GXDCWZNPD2T3WDMVHZZSIIBWTK3PXVFONYQ0000")
         .build();
   }
 
@@ -61,6 +65,7 @@ public final class SystemDefinitions {
     String url = "https://blue.qa.lighthouse.va.gov";
     return SystemDefinition.builder()
         .internal(serviceDefinition("internal", url, 443, null, "/vista-fhir-query/"))
+        .r4(serviceDefinition("r4", url, 443, magicAccessToken(), "/vista-fhir-query/r4"))
         .publicIds(stagingIds())
         .clientKey(clientKey())
         .build();

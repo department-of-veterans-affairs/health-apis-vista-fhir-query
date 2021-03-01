@@ -1,5 +1,6 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
+import gov.va.api.health.fhir.api.IsReference;
 import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.lighthouse.vistalink.models.FilemanDate;
 import gov.va.api.lighthouse.vistalink.models.ValueOnlyXmlAttribute;
@@ -29,6 +30,19 @@ public class R4Transformers {
       }
     }
     return true;
+  }
+
+  /** Given a reference, attempt to get the reference Id from the reference field. */
+  public static Optional<String> getReferenceId(IsReference maybeReference) {
+    if (maybeReference == null || maybeReference.reference() == null) {
+      return Optional.empty();
+    }
+    String reference = maybeReference.reference();
+    String[] referenceParts = reference.split("/", -1);
+    if (referenceParts.length <= 1) {
+      return Optional.empty();
+    }
+    return Optional.ofNullable(referenceParts[referenceParts.length - 1]);
   }
 
   /**

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<results version="1.13" timeZone="-0500">
+  <vitals total="1">
+    <vital>
+      <entered value="3110405.085055"/>
+      <facility code="673" name="TAMPA (JAH VAH)"/>
+      <location code="23" name="GENERAL MEDICINE"/>
+      <measurements>
+        <measurement id="32463" vuid="4500634" name="BLOOD PRESSURE" value="117/68" units="mm[Hg]" high="210/110" low="100/60">
+          <qualifiers>
+            <qualifier name="-1" vuid="-1"/>
+          </qualifiers>
+        </measurement>
+      </measurements>
+      <taken value="3100715.14"/>
+    </vital>
+  </vitals>
+</results>
