@@ -1,0 +1,71 @@
+@startuml
+
+skinparam {
+  ClassBackgroundColor<<Vitals>> pink
+  ClassBackgroundColor<<Labs>> lightblue
+  ClassBackgroundColor<<VitalsAndLabs>> lavender
+  ClassBackgroundColor<<Authorization>> palegreen
+  ClassBackgroundColor<<WitnessProtection>> lightgray
+}
+
+interface AllowedObservationCodes <<VitalsAndLabs>>
+class AllowAllObservationCodes <<VitalsAndLabs>> implements AllowedObservationCodes
+class AllowOnlyTheseObservationCodes <<VitalsAndLabs>> implements AllowedObservationCodes
+
+class InterpretationDisplayMapping <<Labs>>
+class ObservationTransformers <<VitalsAndLabs>>
+class R4ObservationCollector <<VitalsAndLabs>>
+class R4ObservationController <<RestController>>
+
+interface ResponseBodyAdvice<Object>
+class R4ObservationResponseIncludesIcnHeaderAdvice <<Authorization>> <<ControllerAdvice>> implements ResponseBodyAdvice
+class ResponseIncludesIcnHeaderAdvice <<Talos>> <<Authorization>>
+
+interface  WitnessProtectionAgent<Observation> <<WitnessProtection>>
+class R4ObservationWitnessProtectionAgent <<Component>> <<WitnessProtection>> implements WitnessProtectionAgent
+
+class VistaLabToR4ObservationTransformer <<Labs>>
+class VistaVitalToR4ObservationTransformer <<Vitals>>
+
+class VitalVuidMapper <<Component>> <<Vitals>>
+class VitalVuidMapping <<Vitals>>
+class VitalVuidMappingCompositeId <<Vitals>>
+class VitalVuidMappingEntity <<Vitals>>
+interface VitalVuidMappingRepository <<JPA Repository>> <<Vitals>>
+
+class R4BundlerFactory <<Component>>
+interface VistalinkApiClient
+interface WitnessProtection
+class WitnessProtectionAdvice <<ControllerAdvice>> <<WitnessProtection>> implements WitnessProtection
+R4ObservationController o--> R4BundlerFactory : <<Autowire>>
+R4ObservationController o--> VistalinkApiClient : <<Autowire>>
+R4ObservationController o--> VitalVuidMapper : <<Autowire>>
+R4ObservationController o--> WitnessProtection : <<Autowire>>
+R4ObservationController --> R4ObservationCollector
+
+WitnessProtectionAdvice o--> WitnessProtectionAgent
+
+R4ObservationCollector --> VistaLabToR4ObservationTransformer
+R4ObservationCollector --> VistaVitalToR4ObservationTransformer
+R4ObservationCollector --> VitalVuidMapper
+R4ObservationCollector --> AllowAllObservationCodes : <<create>>
+R4ObservationCollector --> AllowOnlyTheseObservationCodes : <<create>>
+
+
+R4ObservationResponseIncludesIcnHeaderAdvice *--> ResponseIncludesIcnHeaderAdvice : <<delegate>>
+
+VitalVuidMappingEntity ..> VitalVuidMappingCompositeId : <<id>>
+VitalVuidMappingRepository ..> VitalVuidMappingEntity
+VitalVuidMapper o--> VitalVuidMapping
+VitalVuidMapper o--> VitalVuidMappingRepository : Autowire
+
+VistaVitalToR4ObservationTransformer o--> VitalVuidMapper
+VistaVitalToR4ObservationTransformer o--> AllowedObservationCodes
+VistaVitalToR4ObservationTransformer --> ObservationTransformers
+
+VistaLabToR4ObservationTransformer o--> AllowedObservationCodes : <<use>>
+VistaLabToR4ObservationTransformer --> InterpretationDisplayMapping
+VistaLabToR4ObservationTransformer --> ObservationTransformers
+
+
+@enduml

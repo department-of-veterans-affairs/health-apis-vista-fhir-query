@@ -30,3 +30,7 @@ For example,
 - The `R4Bundler` is responsible for producing page links. It must perform the inverse operation of the `AlternatePatientIdFilter` to emit page links in terms of public patient IDs.
 - The `WitnessProtectionAdvice` is responsible for producing resource reference links. Like, the `R4Bundler`, it must perform the inverse operation of the `AlternatePatientIdFilter`.
 - The `R4Bundler` and `WitnessProtectionAdvice` are invoked in every FHIR response, regardless of the request type and whether the `AlternatePatientIdFilter` has participated in the request.
+
+# Observation
+
+![observation-components](vista-fhir-query/src/plantuml/observation-components.png)
