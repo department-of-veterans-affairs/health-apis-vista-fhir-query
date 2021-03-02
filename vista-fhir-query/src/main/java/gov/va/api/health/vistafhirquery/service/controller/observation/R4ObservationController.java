@@ -1,6 +1,5 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
-import gov.va.api.health.fhir.api.FhirDateTimeParameter;
 import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.health.vistafhirquery.service.controller.DateSearchBoundaries;
 import gov.va.api.health.vistafhirquery.service.controller.R4Bundler;
@@ -111,11 +110,7 @@ public class R4ObservationController {
     //        HttpRequestParameters.integer(request, "_count", linkProperties.getDefaultPageSize());
     // Default .max() value is 9999
 
-    FhirDateTimeParameter date1 =
-        (date == null || date.length < 1) ? null : new FhirDateTimeParameter(date[0]);
-    FhirDateTimeParameter date2 =
-        (date == null || date.length < 2) ? null : new FhirDateTimeParameter(date[1]);
-    DateSearchBoundaries boundaries = new DateSearchBoundaries(date1, date2);
+    DateSearchBoundaries boundaries = DateSearchBoundaries.of(date);
     RpcResponse rpcResponse =
         vistalinkApiClient.requestForPatient(
             patient,

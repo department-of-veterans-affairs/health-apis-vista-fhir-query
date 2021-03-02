@@ -5,7 +5,7 @@ import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toBigDecimal;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toHumanDateTime;
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toOptionalString;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toIso8601;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.valueOfValueOnlyXmlAttribute;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -96,10 +96,10 @@ public class R4TransformersTest {
 
   @Test
   void optionalString() {
-    assertThat(toOptionalString(null)).isEqualTo(Optional.empty());
-    assertThat(toOptionalString(Instant.ofEpochMilli(2000)))
+    assertThat(toIso8601(null)).isEqualTo(Optional.empty());
+    assertThat(toIso8601(Instant.ofEpochMilli(2000)))
         .isEqualTo(Optional.of(Instant.ofEpochMilli(2000).toString()));
-    assertThat(toOptionalString(Instant.parse("2006-01-01T00:00:00Z")))
+    assertThat(toIso8601(Instant.parse("2006-01-01T00:00:00Z")))
         .isEqualTo(Optional.of("2006-01-01T00:00:00Z"));
   }
 

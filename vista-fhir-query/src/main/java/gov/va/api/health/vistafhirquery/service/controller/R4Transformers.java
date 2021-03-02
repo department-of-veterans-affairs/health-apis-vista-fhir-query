@@ -112,11 +112,11 @@ public class R4Transformers {
   }
 
   /** Transform an Instant to an Optional String. */
-  public static Optional<String> toOptionalString(Instant i) {
-    if (i == null) {
+  public static Optional<String> toIso8601(Instant maybeInstant) {
+    if (maybeInstant == null) {
       return Optional.empty();
     }
-    return Optional.of(i.toString());
+    return Optional.of(maybeInstant.toString());
   }
 
   /** Create a reference sing the resourceType, an id, and a display. */

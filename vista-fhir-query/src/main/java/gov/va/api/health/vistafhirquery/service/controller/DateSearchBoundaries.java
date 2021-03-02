@@ -1,12 +1,14 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toOptionalString;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toIso8601;
 
 import gov.va.api.health.fhir.api.FhirDateTimeParameter;
 import java.time.Instant;
 import java.util.Optional;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class DateSearchBoundaries {
   private final FhirDateTimeParameter date1;
 
@@ -21,13 +23,159 @@ public class DateSearchBoundaries {
     date1 = d1;
     date2 = d2;
     if (date1 != null) {
-      computeStartStop();
+      initializeStartStop();
     }
-    start = start == null ? Optional.empty() : start;
-    stop = stop == null ? Optional.empty() : stop;
   }
 
-  private void computeStartStop() {
+  /**
+   * Takes in an array of ISO 8601 date strings and creates a DateSearchBoundaries with up to the
+   * first two.
+   */
+  public static DateSearchBoundaries of(String[] dates) {
+    FhirDateTimeParameter d1 =
+        (dates == null || dates.length < 1) ? null : new FhirDateTimeParameter(dates[0]);
+    FhirDateTimeParameter d2 =
+        (dates == null || dates.length < 2) ? null : new FhirDateTimeParameter(dates[1]);
+    return new DateSearchBoundaries(d1, d2);
+  }
+
+  private void createBounds(boolean isValid, Instant maybeStart, Instant maybeStop) {
+    if (isValid) {
+      start(maybeStart);
+      stop(maybeStop);
+    } else {
+      invalidDateCombination();
+    }
+  }
+
+  private void equalToDate1() {
+    if (date2 == null) {
+      start(date1.lowerBound());
+      stop = toIso8601(date1.upperBound());
+      return;
+    }
+    switch (date2.prefix()) {
+      case EQ:
+        createBounds(date1.equals(date2), date1.lowerBound(), date1.upperBound());
+        break;
+      case SA:
+        // fall-through
+      case GT:
+        createBounds(
+            date1.lowerBound().isAfter(date2.upperBound()), date1.lowerBound(), date1.upperBound());
+        break;
+      case EB:
+        // fall-through
+      case LT:
+        createBounds(
+            date1.upperBound().isBefore(date2.upperBound()),
+            date1.lowerBound(),
+            date1.upperBound());
+        break;
+      case GE:
+        createBounds(
+            !date1.lowerBound().isBefore(date2.lowerBound()),
+            date1.lowerBound(),
+            date1.upperBound());
+        break;
+      case LE:
+        createBounds(
+            !date1.lowerBound().isAfter(date2.upperBound()),
+            date1.lowerBound(),
+            date1.upperBound());
+        break;
+      case AP:
+        throw new UnsupportedOperationException("AP search prefix not implemented");
+      default:
+        throw new IllegalStateException("FhirDateTimeParameter doesnt support this prefix.");
+    }
+  }
+
+  private void greaterThanDate1() {
+    if (date2 == null) {
+      start(date1.upperBound());
+      stop(null);
+      return;
+    }
+    switch (date2.prefix()) {
+      case EQ:
+        createBounds(
+            date1.upperBound().isBefore(date2.lowerBound()),
+            date2.lowerBound(),
+            date2.upperBound());
+        break;
+      case SA:
+        // fall-through
+      case GT:
+        createBounds(true, maxInstant(date1.upperBound(), date2.upperBound()), null);
+        break;
+      case EB:
+        // fall-through
+      case LT:
+        createBounds(
+            date1.upperBound().isBefore(date2.lowerBound()),
+            date1.upperBound(),
+            date2.lowerBound());
+        break;
+      case GE:
+        createBounds(true, maxInstant(date1.upperBound(), date2.lowerBound()), null);
+        break;
+      case LE:
+        createBounds(
+            date1.upperBound().isBefore(date2.upperBound()),
+            date1.upperBound(),
+            date2.upperBound());
+        break;
+      case AP:
+        throw new UnsupportedOperationException("AP search prefix not implemented");
+      default:
+        throw new IllegalStateException("FhirDateTimeParameter doesnt support this prefix.");
+    }
+  }
+
+  private void greaterThanOrEqualToDate1() {
+    if (date2 == null) {
+      start(date1.lowerBound());
+      stop(null);
+      return;
+    }
+    switch (date2.prefix()) {
+      case EQ:
+        createBounds(
+            !date1.lowerBound().isAfter(date2.lowerBound()),
+            date2.lowerBound(),
+            date2.upperBound());
+        break;
+      case SA:
+        // fall-through
+      case GT:
+        createBounds(true, maxInstant(date1.lowerBound(), date2.upperBound()), null);
+        break;
+      case EB:
+        // fall-through
+      case LT:
+        createBounds(
+            date1.lowerBound().isBefore(date2.lowerBound()),
+            date1.lowerBound(),
+            date2.lowerBound());
+        break;
+      case GE:
+        createBounds(true, maxInstant(date1.lowerBound(), date2.lowerBound()), null);
+        break;
+      case LE:
+        createBounds(
+            !date1.lowerBound().isAfter(date2.lowerBound()),
+            date1.lowerBound(),
+            date2.upperBound());
+        break;
+      case AP:
+        throw new UnsupportedOperationException("AP search prefix not implemented");
+      default:
+        throw new IllegalStateException("FhirDateTimeParameter doesnt support this prefix.");
+    }
+  }
+
+  private void initializeStartStop() {
     switch (date1.prefix()) {
       case EQ:
         equalToDate1();
@@ -55,356 +203,86 @@ public class DateSearchBoundaries {
     }
   }
 
-  private void equalToDate1() {
-    if (date2 == null) {
-      start = toOptionalString(date1.lowerBound());
-      stop = toOptionalString(date1.upperBound());
-    } else {
-      switch (date2.prefix()) {
-        case EQ:
-          equalToDate1EqualToDate2();
-          break;
-        case SA:
-          // fall-through
-        case GT:
-          equalToDate1GreaterThanDate2();
-          break;
-        case EB:
-          // fall-through
-        case LT:
-          equalToDate1LessThanDate2();
-          break;
-        case GE:
-          equalToDate1GreaterThanOrEqualToDate2();
-          break;
-        case LE:
-          equalToDate1LessThanOrEqualToDate2();
-          break;
-        case AP:
-          throw new UnsupportedOperationException("AP search prefix not implemented");
-        default:
-          throw new IllegalStateException("FhirDateTimeParameter doesnt support this prefix.");
-      }
-    }
-  }
-
-  private void equalToDate1EqualToDate2() {
-    if (date1.equals(date2)) {
-      start = toOptionalString(date1.lowerBound());
-      stop = toOptionalString(date1.upperBound());
-    } else {
-      invalidDateCombination();
-    }
-  }
-
-  private void equalToDate1GreaterThanDate2() {
-    if (date1.lowerBound().isAfter(date2.upperBound())) {
-      start = toOptionalString(date1.lowerBound());
-      stop = toOptionalString(date1.upperBound());
-    } else {
-      invalidDateCombination();
-    }
-  }
-
-  private void equalToDate1GreaterThanOrEqualToDate2() {
-    if (!date1.lowerBound().isBefore(date2.lowerBound())) {
-      start = toOptionalString(date1.lowerBound());
-      stop = toOptionalString(date1.upperBound());
-    } else {
-      invalidDateCombination();
-    }
-  }
-
-  private void equalToDate1LessThanDate2() {
-    if (date1.upperBound().isBefore(date2.upperBound())) {
-      start = toOptionalString(date1.lowerBound());
-      stop = toOptionalString(date1.upperBound());
-    } else {
-      invalidDateCombination();
-    }
-  }
-
-  private void equalToDate1LessThanOrEqualToDate2() {
-    if (!date1.lowerBound().isAfter(date2.upperBound())) {
-      start = toOptionalString(date1.lowerBound());
-      stop = toOptionalString(date1.upperBound());
-    } else {
-      invalidDateCombination();
-    }
-  }
-
-  private void greaterThanDate1() {
-    if (date2 == null) {
-      start = toOptionalString(date1.upperBound());
-    } else {
-      switch (date2.prefix()) {
-        case EQ:
-          greaterThanDate1EqualToDate2();
-          break;
-        case SA:
-          // fall-through
-        case GT:
-          greaterThanDate1GreaterThanDate2();
-          break;
-        case EB:
-          // fall-through
-        case LT:
-          greaterThanDate1LessThanDate2();
-          break;
-        case GE:
-          greaterThanDate1GreaterThanOrEqualToDate2();
-          break;
-        case LE:
-          greaterThanDate1LessThanOrEqualToDate2();
-          break;
-        case AP:
-          throw new UnsupportedOperationException("AP search prefix not implemented");
-        default:
-          throw new IllegalStateException("FhirDateTimeParameter doesnt support this prefix.");
-      }
-    }
-  }
-
-  private void greaterThanDate1EqualToDate2() {
-    if (date1.upperBound().isBefore(date2.lowerBound())) {
-      start = toOptionalString(date2.lowerBound());
-      stop = toOptionalString(date2.upperBound());
-    } else {
-      invalidDateCombination();
-    }
-  }
-
-  private void greaterThanDate1GreaterThanDate2() {
-    start = toOptionalString(maxInstant(date1.upperBound(), date2.upperBound()));
-  }
-
-  private void greaterThanDate1GreaterThanOrEqualToDate2() {
-    start = toOptionalString(maxInstant(date1.upperBound(), date2.lowerBound()));
-  }
-
-  private void greaterThanDate1LessThanDate2() {
-    if (date1.upperBound().isBefore(date2.lowerBound())) {
-      start = toOptionalString(date1.upperBound());
-      stop = toOptionalString(date2.lowerBound());
-    } else {
-      invalidDateCombination();
-    }
-  }
-
-  private void greaterThanDate1LessThanOrEqualToDate2() {
-    if (date1.upperBound().isBefore(date2.upperBound())) {
-      start = toOptionalString(date1.upperBound());
-      stop = toOptionalString(date2.upperBound());
-    } else {
-      invalidDateCombination();
-    }
-  }
-
-  private void greaterThanOrEqualToDate1() {
-    if (date2 == null) {
-      start = toOptionalString(date1.lowerBound());
-    } else {
-      switch (date2.prefix()) {
-        case EQ:
-          greaterThanOrEqualToDate1EqualToDate2();
-          break;
-        case SA:
-          // fall-through
-        case GT:
-          greaterThanOrEqualToDate1GreaterThanDate2();
-          break;
-        case EB:
-          // fall-through
-        case LT:
-          greaterThanOrEqualToDate1LessThanDate2();
-          break;
-        case GE:
-          greaterThanOrEqualToDate1GreaterThanOrEqualToDate2();
-          break;
-        case LE:
-          greaterThanOrEqualToDate1LessThanOrEqualToDate2();
-          break;
-        case AP:
-          throw new UnsupportedOperationException("AP search prefix not implemented");
-        default:
-          throw new IllegalStateException("FhirDateTimeParameter doesnt support this prefix.");
-      }
-    }
-  }
-
-  private void greaterThanOrEqualToDate1EqualToDate2() {
-    if (!date1.lowerBound().isAfter(date2.lowerBound())) {
-      start = toOptionalString(date2.lowerBound());
-      stop = toOptionalString(date2.upperBound());
-    } else {
-      invalidDateCombination();
-    }
-  }
-
-  private void greaterThanOrEqualToDate1GreaterThanDate2() {
-    start = toOptionalString(maxInstant(date1.lowerBound(), date2.upperBound()));
-  }
-
-  private void greaterThanOrEqualToDate1GreaterThanOrEqualToDate2() {
-    start = toOptionalString(maxInstant(date1.lowerBound(), date2.lowerBound()));
-  }
-
-  private void greaterThanOrEqualToDate1LessThanDate2() {
-    if (date1.lowerBound().isBefore(date2.lowerBound())) {
-      start = toOptionalString(date1.lowerBound());
-      stop = toOptionalString(date2.lowerBound());
-    } else {
-      invalidDateCombination();
-    }
-  }
-
-  private void greaterThanOrEqualToDate1LessThanOrEqualToDate2() {
-    if (!date1.lowerBound().isAfter(date2.lowerBound())) {
-      start = toOptionalString(date1.lowerBound());
-      stop = toOptionalString(date2.upperBound());
-    } else {
-      invalidDateCombination();
-    }
-  }
-
-  // TODO: Web exception handler goodness with bad request (400)
   private void invalidDateCombination() {
-    throw new ResourceExceptions.BadSearchParameters(
+    log.info("TODO: Web exception handler goodness with bad request (400)");
+    ResourceExceptions.BadSearchParameters.because(
         "Bad date search combination : date=" + date1.toString() + "&" + date2.toString());
   }
 
   private void lessThanDate1() {
     if (date2 == null) {
-      stop = toOptionalString(date1.lowerBound());
-    } else {
-      switch (date2.prefix()) {
-        case EQ:
-          lessThanDate1EqualToDate2();
-          break;
-        case SA:
-          // fall-through
-        case GT:
-          lessThanDate1GreaterThanDate2();
-          break;
-        case EB:
-          // fall-through
-        case LT:
-          lessThanDate1LessThanDate2();
-          break;
-        case GE:
-          lessThanDate1GreaterThanOrEqualToDate2();
-          break;
-        case LE:
-          lessThanDate1LessThanOrEqualToDate2();
-          break;
-        case AP:
-          throw new UnsupportedOperationException("AP search prefix not implemented");
-        default:
-          throw new IllegalStateException("FhirDateTimeParameter doesnt support this prefix.");
-      }
+      start(null);
+      stop(date1.lowerBound());
+      return;
     }
-  }
-
-  private void lessThanDate1EqualToDate2() {
-    if (date1.lowerBound().isAfter(date2.upperBound())) {
-      start = toOptionalString(date2.lowerBound());
-      stop = toOptionalString(date2.upperBound());
-    } else {
-      invalidDateCombination();
+    switch (date2.prefix()) {
+      case EQ:
+        createBounds(
+            date1.lowerBound().isAfter(date2.upperBound()), date2.lowerBound(), date2.upperBound());
+        break;
+      case SA:
+        // fall-through
+      case GT:
+        createBounds(
+            date1.lowerBound().isAfter(date2.upperBound()), date2.upperBound(), date1.lowerBound());
+        break;
+      case EB:
+        // fall-through
+      case LT:
+        createBounds(true, null, minInstant(date1.lowerBound(), date2.lowerBound()));
+        break;
+      case GE:
+        createBounds(
+            date1.lowerBound().isAfter(date2.lowerBound()), date2.lowerBound(), date1.lowerBound());
+        break;
+      case LE:
+        createBounds(true, null, minInstant(date1.lowerBound(), date2.upperBound()));
+        break;
+      case AP:
+        throw new UnsupportedOperationException("AP search prefix not implemented");
+      default:
+        throw new IllegalStateException("FhirDateTimeParameter doesnt support this prefix.");
     }
-  }
-
-  private void lessThanDate1GreaterThanDate2() {
-    if (date1.lowerBound().isAfter(date2.upperBound())) {
-      start = toOptionalString(date2.upperBound());
-      stop = toOptionalString(date1.lowerBound());
-    } else {
-      invalidDateCombination();
-    }
-  }
-
-  private void lessThanDate1GreaterThanOrEqualToDate2() {
-    if (date1.lowerBound().isAfter(date2.lowerBound())) {
-      start = toOptionalString(date2.lowerBound());
-      stop = toOptionalString(date1.lowerBound());
-    } else {
-      invalidDateCombination();
-    }
-  }
-
-  private void lessThanDate1LessThanDate2() {
-    stop = toOptionalString(minInstant(date1.lowerBound(), date2.lowerBound()));
-  }
-
-  private void lessThanDate1LessThanOrEqualToDate2() {
-    stop = toOptionalString(minInstant(date1.lowerBound(), date2.upperBound()));
   }
 
   private void lessThanOrEqualToDate1() {
     if (date2 == null) {
-      stop = toOptionalString(date1.upperBound());
-    } else {
-      switch (date2.prefix()) {
-        case EQ:
-          lessThanOrEqualToDate1EqualToDate2();
-          break;
-        case SA:
-          // fall-through
-        case GT:
-          lessThanOrEqualToDate1GreaterThanDate2();
-          break;
-        case EB:
-          // fall-through
-        case LT:
-          lessThanOrEqualToDate1LessThanDate2();
-          break;
-        case GE:
-          lessThanOrEqualToDate1GreaterThanOrEqualToDate2();
-          break;
-        case LE:
-          lessThanOrEqualToDate1LessThanOrEqualToDate2();
-          break;
-        case AP:
-          throw new UnsupportedOperationException("AP search prefix not implemented");
-        default:
-          throw new IllegalStateException("FhirDateTimeParameter doesnt support this prefix.");
-      }
+      start(null);
+      stop(date1.upperBound());
+      return;
     }
-  }
-
-  private void lessThanOrEqualToDate1EqualToDate2() {
-    if (!date1.upperBound().isBefore(date2.lowerBound())) {
-      start = toOptionalString(date2.lowerBound());
-      stop = toOptionalString(date2.upperBound());
-    } else {
-      invalidDateCombination();
+    switch (date2.prefix()) {
+      case EQ:
+        createBounds(
+            !date1.upperBound().isBefore(date2.lowerBound()),
+            date2.lowerBound(),
+            date2.upperBound());
+        break;
+      case SA:
+        // fall-through
+      case GT:
+        createBounds(
+            date1.upperBound().isAfter(date2.upperBound()), date2.upperBound(), date1.upperBound());
+        break;
+      case EB:
+        // fall-through
+      case LT:
+        createBounds(true, null, minInstant(date1.upperBound(), date2.lowerBound()));
+        break;
+      case GE:
+        createBounds(
+            !date1.upperBound().isBefore(date2.lowerBound()),
+            date2.lowerBound(),
+            date1.upperBound());
+        break;
+      case LE:
+        createBounds(true, null, minInstant(date1.upperBound(), date2.upperBound()));
+        break;
+      case AP:
+        throw new UnsupportedOperationException("AP search prefix not implemented");
+      default:
+        throw new IllegalStateException("FhirDateTimeParameter doesnt support this prefix.");
     }
-  }
-
-  private void lessThanOrEqualToDate1GreaterThanDate2() {
-    if (date1.upperBound().isAfter(date2.upperBound())) {
-      start = toOptionalString(date2.upperBound());
-      stop = toOptionalString(date1.upperBound());
-    } else {
-      invalidDateCombination();
-    }
-  }
-
-  private void lessThanOrEqualToDate1GreaterThanOrEqualToDate2() {
-    if (!date1.upperBound().isBefore(date2.lowerBound())) {
-      start = toOptionalString(date2.lowerBound());
-      stop = toOptionalString(date1.upperBound());
-    } else {
-      invalidDateCombination();
-    }
-  }
-
-  private void lessThanOrEqualToDate1LessThanDate2() {
-    stop = toOptionalString(minInstant(date1.upperBound(), date2.lowerBound()));
-  }
-
-  private void lessThanOrEqualToDate1LessThanOrEqualToDate2() {
-    stop = toOptionalString(minInstant(date1.upperBound(), date2.upperBound()));
   }
 
   private Instant maxInstant(Instant a, Instant b) {
@@ -413,5 +291,13 @@ public class DateSearchBoundaries {
 
   private Instant minInstant(Instant a, Instant b) {
     return a.isBefore(b) ? a : b;
+  }
+
+  private void start(Instant startInstant) {
+    start = toIso8601(startInstant);
+  }
+
+  private void stop(Instant stopInstant) {
+    stop = toIso8601(stopInstant);
   }
 }
