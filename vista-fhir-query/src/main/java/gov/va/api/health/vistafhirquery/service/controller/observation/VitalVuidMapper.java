@@ -35,6 +35,11 @@ public class VitalVuidMapper {
     };
   }
 
+  public static Predicate<VitalVuidMapping> forLoinc(@NonNull String loinc) {
+    Predicate<VitalVuidMapping> matchLoinc = m -> loinc.equals(m.code());
+    return forSystem("http://loinc.org").and(matchLoinc);
+  }
+
   public static Predicate<VitalVuidMapping> forSystem(@NonNull String systemUri) {
     return m -> systemUri.equals(m.system());
   }

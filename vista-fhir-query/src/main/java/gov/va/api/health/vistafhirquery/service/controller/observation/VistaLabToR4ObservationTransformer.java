@@ -30,6 +30,8 @@ public class VistaLabToR4ObservationTransformer {
 
   @NonNull private final Labs.Lab vistaLab;
 
+  private final AllowedObservationCodes conditions;
+
   private List<CodeableConcept> category() {
     return List.of(
         CodeableConcept.builder()
@@ -69,6 +71,43 @@ public class VistaLabToR4ObservationTransformer {
       log.info("ToDo: If vuid is set and loinc isn't, map using database table.");
     }
     return null;
+  }
+
+  /** Transform a VPR PATIENT DATA VistA Lab result to FHIR Observation. */
+  public Stream<Observation> conditionallyToFhir() {
+    // References Not Reflected: specimen, performer.facility, and performer.provider
+    if (vistaLab == null) {
+      return Stream.empty();
+    }
+    if (!hasAcceptedCode()) {
+      return Stream.empty();
+    }
+    log.info("ToDo: Should groupName, labOrderId, orderId be in the identifier array?");
+    var observation =
+        Observation.builder()
+            .resourceType("Observation")
+            .id(idFrom(vistaLab.id()))
+            .category(category())
+            .subject(toReference("Patient", patientIcn, null))
+            .issued(toHumanDateTime(vistaLab.collected()))
+            .note(note(vistaLab.comment()))
+            .referenceRange(referenceRange(vistaLab.high(), vistaLab.low()))
+            .interpretation(interpretation(vistaLab.interpretation()))
+            .code(code(vistaLab.loinc(), vistaLab.test(), vistaLab.vuid()))
+            .valueQuantity(valueQuantity(vistaLab.result(), vistaLab.units()))
+            .effectiveDateTime(toHumanDateTime(vistaLab.resulted()))
+            .status(status(vistaLab.status()))
+            .build();
+    return Stream.of(observation);
+  }
+
+  private boolean hasAcceptedCode() {
+    if (isBlank(conditions)) {
+      return true;
+    }
+    var loinc = valueOfValueOnlyXmlAttribute(vistaLab.loinc());
+    var vuid = valueOfValueOnlyXmlAttribute(vistaLab.vuid());
+    return conditions.isAllowedLoincCode(loinc) || conditions.isAllowedVuidCode(vuid);
   }
 
   String idFrom(ValueOnlyXmlAttribute maybeId) {
@@ -123,27 +162,5 @@ public class VistaLabToR4ObservationTransformer {
       default:
         throw new IllegalArgumentException("Invalid Observation Status Type: " + status);
     }
-  }
-
-  /** Transform a VPR PATIENT DATA VistA Lab result to FHIR Observation. */
-  public Stream<Observation> toFhir() {
-    // References Not Reflected: specimen, performer.facility, and performer.provider
-    log.info("ToDo: Should groupName, labOrderId, orderId be in the identifier array?");
-    var observation =
-        Observation.builder()
-            .resourceType("Observation")
-            .id(idFrom(vistaLab.id()))
-            .category(category())
-            .subject(toReference("Patient", patientIcn, null))
-            .issued(toHumanDateTime(vistaLab.collected()))
-            .note(note(vistaLab.comment()))
-            .referenceRange(referenceRange(vistaLab.high(), vistaLab.low()))
-            .interpretation(interpretation(vistaLab.interpretation()))
-            .code(code(vistaLab.loinc(), vistaLab.test(), vistaLab.vuid()))
-            .valueQuantity(valueQuantity(vistaLab.result(), vistaLab.units()))
-            .effectiveDateTime(toHumanDateTime(vistaLab.resulted()))
-            .status(status(vistaLab.status()))
-            .build();
-    return Stream.of(observation);
   }
 }

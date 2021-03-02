@@ -2,6 +2,9 @@ package gov.va.api.health.vistafhirquery.service.controller.observation;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
+import gov.va.api.health.r4.api.bundle.AbstractBundle;
+import gov.va.api.health.r4.api.bundle.AbstractEntry;
+import gov.va.api.health.r4.api.bundle.BundleLink;
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
 import gov.va.api.health.r4.api.datatypes.Coding;
 import gov.va.api.health.r4.api.datatypes.Quantity;
@@ -13,8 +16,11 @@ import gov.va.api.lighthouse.vistalink.models.ValueOnlyXmlAttribute;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Vitals;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.VprGetPatientData;
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
@@ -134,6 +140,36 @@ public class ObservationVitalSamples {
 
   @AllArgsConstructor(staticName = "create")
   public static class Fhir {
+    static Observation.Bundle asBundle(
+        String baseUrl,
+        Collection<Observation> observations,
+        int totalRecords,
+        BundleLink... links) {
+      return Observation.Bundle.builder()
+          .resourceType("Bundle")
+          .type(AbstractBundle.BundleType.searchset)
+          .total(totalRecords)
+          .link(Arrays.asList(links))
+          .entry(
+              observations.stream()
+                  .map(
+                      resource ->
+                          Observation.Entry.builder()
+                              .fullUrl(baseUrl + "/Observation/" + resource.id())
+                              .resource(resource)
+                              .search(
+                                  AbstractEntry.Search.builder()
+                                      .mode(AbstractEntry.SearchMode.match)
+                                      .build())
+                              .build())
+                  .collect(Collectors.toList()))
+          .build();
+    }
+
+    public static BundleLink link(BundleLink.LinkRelation rel, String base, String query) {
+      return BundleLink.builder().relation(rel).url(base + "?" + query).build();
+    }
+
     public Observation bloodPressure() {
       return Observation.builder()
           .resourceType("Observation")
