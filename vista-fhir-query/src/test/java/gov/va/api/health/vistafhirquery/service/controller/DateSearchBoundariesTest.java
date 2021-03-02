@@ -168,8 +168,8 @@ public class DateSearchBoundariesTest {
       FhirDateTimeParameter date2,
       Instant expectedStart,
       Instant expectedStop) {
-    assertThat(new DateSearchBoundaries(date1, date2).start).isEqualTo(toIso8601(expectedStart));
-    assertThat(new DateSearchBoundaries(date1, date2).stop).isEqualTo(toIso8601(expectedStop));
+    assertThat(new DateSearchBoundaries(date1, date2).start()).isEqualTo(toIso8601(expectedStart));
+    assertThat(new DateSearchBoundaries(date1, date2).stop()).isEqualTo(toIso8601(expectedStop));
   }
 
   @ParameterizedTest

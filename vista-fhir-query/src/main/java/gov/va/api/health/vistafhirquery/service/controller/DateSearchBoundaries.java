@@ -5,7 +5,6 @@ import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers
 import gov.va.api.health.fhir.api.FhirDateTimeParameter;
 import java.time.Instant;
 import java.util.Optional;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -14,9 +13,9 @@ public class DateSearchBoundaries {
 
   private final FhirDateTimeParameter date2;
 
-  @Getter Optional<String> start;
+  private Optional<String> start;
 
-  @Getter Optional<String> stop;
+  private Optional<String> stop;
 
   /** Compute start and stop search boundaries for the given date(s). */
   public DateSearchBoundaries(FhirDateTimeParameter d1, FhirDateTimeParameter d2) {
@@ -51,7 +50,7 @@ public class DateSearchBoundaries {
   private void equalToDate1() {
     if (date2 == null) {
       start(date1.lowerBound());
-      stop = toIso8601(date1.upperBound());
+      stop(date1.upperBound());
       return;
     }
     switch (date2.prefix()) {
@@ -94,7 +93,6 @@ public class DateSearchBoundaries {
   private void greaterThanDate1() {
     if (date2 == null) {
       start(date1.upperBound());
-      stop(null);
       return;
     }
     switch (date2.prefix()) {
@@ -136,7 +134,6 @@ public class DateSearchBoundaries {
   private void greaterThanOrEqualToDate1() {
     if (date2 == null) {
       start(date1.lowerBound());
-      stop(null);
       return;
     }
     switch (date2.prefix()) {
@@ -211,7 +208,6 @@ public class DateSearchBoundaries {
 
   private void lessThanDate1() {
     if (date2 == null) {
-      start(null);
       stop(date1.lowerBound());
       return;
     }
@@ -247,7 +243,6 @@ public class DateSearchBoundaries {
 
   private void lessThanOrEqualToDate1() {
     if (date2 == null) {
-      start(null);
       stop(date1.upperBound());
       return;
     }
@@ -297,7 +292,17 @@ public class DateSearchBoundaries {
     start = toIso8601(startInstant);
   }
 
+  /** Lazy initialization. */
+  public Optional<String> start() {
+    return start == null ? Optional.empty() : start;
+  }
+
   private void stop(Instant stopInstant) {
     stop = toIso8601(stopInstant);
+  }
+
+  /** Lazy initialization. */
+  public Optional<String> stop() {
+    return stop == null ? Optional.empty() : stop;
   }
 }
