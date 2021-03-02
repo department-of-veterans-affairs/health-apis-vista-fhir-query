@@ -45,7 +45,7 @@ public final class SystemDefinitions {
   private static TestIds qaIds() {
     return TestIds.builder()
         .patient("1011537977V693883")
-        .observation("I2-AWHH57I6XDD2XII72DKZZCRXZUS6ZZ5Y46ZZZYXX6GJYYHGPVGJA0000")
+        .observation("I2-IBV5HN7B4CKF4XNL7GXDCWZNPD2T3WDMVHZZSIIBWTK3PXVFONYQ0000")
         .build();
   }
 
