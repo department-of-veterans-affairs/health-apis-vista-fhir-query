@@ -32,6 +32,10 @@ public final class SystemDefinitions {
         .build();
   }
 
+  private static TestIds productionIds() {
+    return sandboxIds();
+  }
+
   private static SystemDefinition qa() {
     String url = "https://blue.qa.lighthouse.va.gov";
     return SystemDefinition.builder()
@@ -66,13 +70,9 @@ public final class SystemDefinitions {
     return SystemDefinition.builder()
         .internal(serviceDefinition("internal", url, 443, null, "/vista-fhir-query/"))
         .r4(serviceDefinition("r4", url, 443, magicAccessToken(), "/vista-fhir-query/r4"))
-        .publicIds(stagingIds())
+        .publicIds(productionIds())
         .clientKey(clientKey())
         .build();
-  }
-
-  private static TestIds stagingIds() {
-    return sandboxIds();
   }
 
   private static SystemDefinition stagingLab() {
