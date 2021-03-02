@@ -1,7 +1,6 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
+import com.google.common.collect.ImmutableListMultimap;
 import java.util.Map;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -39,10 +38,10 @@ public interface AllowedObservationCodes {
   @RequiredArgsConstructor
   class AllowOnlyTheseObservationCodes implements AllowedObservationCodes {
     /** [Vuid, Loinc] Mappings for testing allowed codes. */
-    @NonNull BiMap<String, String> codes;
+    @NonNull ImmutableListMultimap<String, String> codes;
 
     public static AllowOnlyTheseObservationCodes of(Map<String, String> codes) {
-      return new AllowOnlyTheseObservationCodes(HashBiMap.create(codes));
+      return new AllowOnlyTheseObservationCodes(ImmutableListMultimap.copyOf(codes.entrySet()));
     }
 
     /** Test a LOINC and check it matches one of the accepted codes. */
