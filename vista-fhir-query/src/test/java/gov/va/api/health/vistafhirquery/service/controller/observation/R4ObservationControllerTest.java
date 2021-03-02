@@ -125,6 +125,25 @@ public class R4ObservationControllerTest {
   }
 
   @Test
+  void searchByPatientAndDateAndCode() {
+    var request = requestFromUri("?_count=10&date=2010&code=29463-7&patient=p1");
+    var results = ObservationVitalSamples.Vista.create().results();
+    when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
+        .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
+    var actual = controller().searchByPatient("p1", new String[] {"2010"}, "29463-7", 10, request);
+    var expected =
+        ObservationVitalSamples.Fhir.asBundle(
+            "http://fugazi.com/r4",
+            List.of(ObservationVitalSamples.Fhir.create().weight()),
+            1,
+            link(
+                BundleLink.LinkRelation.self,
+                "http://fugazi.com/r4/Observation",
+                "_count=10&date=2010&code=29463-7&patient=p1"));
+    assertThat(json(actual)).isEqualTo(json(expected));
+  }
+
+  @Test
   void searchByPatientAndKnownCode() {
     var request = requestFromUri("?_count=10&code=29463-7&patient=p1");
     var results = ObservationVitalSamples.Vista.create().results();
@@ -140,6 +159,26 @@ public class R4ObservationControllerTest {
                 BundleLink.LinkRelation.self,
                 "http://fugazi.com/r4/Observation",
                 "_count=10&code=29463-7&patient=p1"));
+    assertThat(json(actual)).isEqualTo(json(expected));
+  }
+
+  @Test
+  void searchByPatientAndMultipleDates() {
+    var request = requestFromUri("?_count=10&date=ge2010&date=lt2012&patient=p1");
+    var results = ObservationVitalSamples.Vista.create().results();
+    when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
+        .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
+    var actual =
+        controller().searchByPatient("p1", new String[] {"ge2010", "lt2012"}, null, 10, request);
+    var expected =
+        ObservationVitalSamples.Fhir.asBundle(
+            "http://fugazi.com/r4",
+            ObservationVitalSamples.Fhir.create().observations(),
+            2,
+            link(
+                BundleLink.LinkRelation.self,
+                "http://fugazi.com/r4/Observation",
+                "_count=10&date=ge2010&date=lt2012&patient=p1"));
     assertThat(json(actual)).isEqualTo(json(expected));
   }
 
