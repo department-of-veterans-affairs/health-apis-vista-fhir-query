@@ -33,7 +33,7 @@ public final class SystemDefinitions {
   }
 
   private static TestIds productionIds() {
-    return sandboxIds();
+    return TestIds.builder().patient("1011537977V693883").observation("TBD").build();
   }
 
   private static SystemDefinition qa() {
