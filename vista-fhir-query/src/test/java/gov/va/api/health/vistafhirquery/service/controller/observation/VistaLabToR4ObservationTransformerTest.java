@@ -158,7 +158,7 @@ public class VistaLabToR4ObservationTransformerTest {
                 .vistaSiteId("123")
                 .vistaLab(Labs.Lab.builder().build())
                 .build()
-                .toFhir()
+                .conditionallyToFhir()
                 .collect(Collectors.toList())
                 .get(0))
         .isEqualTo(

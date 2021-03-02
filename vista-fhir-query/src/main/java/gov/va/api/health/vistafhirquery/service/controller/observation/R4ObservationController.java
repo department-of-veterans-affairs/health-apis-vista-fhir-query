@@ -13,7 +13,6 @@ import gov.va.api.lighthouse.vistalink.api.RpcResponse;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Vitals;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.VprGetPatientData;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -84,7 +83,7 @@ public class R4ObservationController {
     VprGetPatientData.Response vprPatientData =
         VprGetPatientData.create().fromResults(rpcResponse.results());
     List<Observation> resources =
-        transformation(ids.patientIdentifier()).toResource().apply(vprPatientData);
+        transformation(ids.patientIdentifier(), null).toResource().apply(vprPatientData);
     if (resources.isEmpty()) {
       ResourceExceptions.NotFound.because("Identifier not found in VistA: " + publicId);
     }
@@ -100,11 +99,9 @@ public class R4ObservationController {
   @GetMapping(params = {"patient"})
   public Observation.Bundle searchByPatient(
       @RequestParam(name = "patient") String patient,
+      @RequestParam(name = "code", required = false) String codeCsv,
       @RequestParam(name = "_count", required = false) @Min(0) Integer count,
       HttpServletRequest request) {
-
-    // int count =
-    //        HttpRequestParameters.integer(request, "_count", linkProperties.getDefaultPageSize());
     // Default .max() value is 9999
     RpcResponse rpcResponse =
         vistalinkApiClient.requestForPatient(
@@ -122,7 +119,8 @@ public class R4ObservationController {
   private R4Bundler<VprGetPatientData.Response, Observation, Observation.Entry, Observation.Bundle>
       toBundle(HttpServletRequest request) {
     return bundlerFactory
-        .forTransformation(transformation(request.getParameter("patient")))
+        .forTransformation(
+            transformation(request.getParameter("patient"), request.getParameter("code")))
         .bundling(
             R4Bundling.newBundle(Observation.Bundle::new).newEntry(Observation.Entry::new).build())
         .resourceType("Observation")
@@ -131,33 +129,23 @@ public class R4ObservationController {
   }
 
   private R4Transformation<VprGetPatientData.Response, Observation> transformation(
-      String patientIdentifier) {
+      String patientIdentifier, String codes) {
     return R4Transformation.<VprGetPatientData.Response, Observation>builder()
         .toResource(
-            rpcResponse -> {
-              // Filter out empty results
-              Map<String, VprGetPatientData.Response.Results> filteredResults =
-                  rpcResponse.resultsByStation().entrySet().stream()
-                      .filter(
-                          entry ->
-                              entry.getValue().vitalStream().anyMatch(Vitals.Vital::isNotEmpty))
-                      .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-              if (filteredResults.isEmpty()) {
-                return List.of();
-              }
-              // Parallel trasformation of VistA sites'
-              log.info("{} vuid mappings found", vitalVuids.mappings().size());
-              return filteredResults.entrySet().parallelStream()
-                  .flatMap(
-                      entry ->
-                          R4ObservationTransformer.builder()
-                              .patientIcn(patientIdentifier)
-                              .resultsEntry(entry)
-                              .vitalVuidMapper(vitalVuids)
-                              .build()
-                              .toFhir())
-                  .collect(Collectors.toList());
-            })
+            rpcResponse ->
+                rpcResponse.resultsByStation().entrySet().parallelStream()
+                    .filter(
+                        entry -> entry.getValue().vitalStream().anyMatch(Vitals.Vital::isNotEmpty))
+                    .flatMap(
+                        entry ->
+                            R4ObservationCollector.builder()
+                                .patientIcn(patientIdentifier)
+                                .resultsEntry(entry)
+                                .vitalVuidMapper(vitalVuids)
+                                .codes(codes)
+                                .build()
+                                .toFhir())
+                    .collect(Collectors.toList()))
         .build();
   }
 }

@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-public class R4ObservationTransformerTest {
+public class R4ObservationCollectorTest {
 
   private static VitalVuidMapper mapper;
 
@@ -37,7 +37,7 @@ public class R4ObservationTransformerTest {
             .build();
     var entry = Map.entry("673", vprResp);
     assertThat(
-            R4ObservationTransformer.builder()
+            R4ObservationCollector.builder()
                 .patientIcn("p1")
                 .resultsEntry(entry)
                 .vitalVuidMapper(mapper)
@@ -52,7 +52,7 @@ public class R4ObservationTransformerTest {
   @Test
   void labToFhir() {
     assertThat(
-            R4ObservationTransformer.builder()
+            R4ObservationCollector.builder()
                 .patientIcn("p1")
                 .resultsEntry(ObservationLabSamples.Vista.create().resultsByStation())
                 .vitalVuidMapper(mapper)
@@ -64,7 +64,7 @@ public class R4ObservationTransformerTest {
   @Test
   public void vitalToFhir() {
     assertThat(
-            R4ObservationTransformer.builder()
+            R4ObservationCollector.builder()
                 .patientIcn("p1")
                 .resultsEntry(ObservationVitalSamples.Vista.create().resultsByStation())
                 .vitalVuidMapper(mapper)
