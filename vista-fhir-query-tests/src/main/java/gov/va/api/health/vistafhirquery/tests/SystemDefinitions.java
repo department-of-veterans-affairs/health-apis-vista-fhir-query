@@ -41,12 +41,12 @@ public final class SystemDefinitions {
     return SystemDefinition.builder()
         .internal(serviceDefinition("internal", url, 443, null, "/vista-fhir-query/"))
         .r4(serviceDefinition("r4", url, 443, magicAccessToken(), "/vista-fhir-query/r4"))
-        .publicIds(sandboxIds())
+        .publicIds(syntheticIds())
         .clientKey(clientKey())
         .build();
   }
 
-  private static TestIds sandboxIds() {
+  private static TestIds syntheticIds() {
     return TestIds.builder()
         .patient("1011537977V693883")
         .observation("I2-IBV5HN7B4CKF4XNL7GXDCWZNPD2T3WDMVHZZSIIBWTK3PXVFONYQ0000")
@@ -80,7 +80,7 @@ public final class SystemDefinitions {
     return SystemDefinition.builder()
         .internal(serviceDefinition("internal", url, 443, null, "/vista-fhir-query/"))
         .r4(serviceDefinition("r4", url, 443, magicAccessToken(), "/vista-fhir-query/r4"))
-        .publicIds(sandboxIds())
+        .publicIds(syntheticIds())
         .clientKey(clientKey())
         .build();
   }
