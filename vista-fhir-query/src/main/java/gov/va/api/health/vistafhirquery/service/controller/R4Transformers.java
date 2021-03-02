@@ -5,6 +5,7 @@ import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.lighthouse.vistalink.models.FilemanDate;
 import gov.va.api.lighthouse.vistalink.models.ValueOnlyXmlAttribute;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Map;
@@ -108,6 +109,14 @@ public class R4Transformers {
       return null;
     }
     return result.instant().toString();
+  }
+
+  /** Transform an Instant to an Optional String. */
+  public static Optional<String> toOptionalString(Instant i) {
+    if (i == null) {
+      return Optional.empty();
+    }
+    return Optional.of(i.toString());
   }
 
   /** Create a reference sing the resourceType, an id, and a display. */

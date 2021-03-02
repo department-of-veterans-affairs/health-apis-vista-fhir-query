@@ -2,6 +2,7 @@ package gov.va.api.health.vistafhirquery.service.controller.observation;
 
 import gov.va.api.health.fhir.api.FhirDateTimeParameter;
 import gov.va.api.health.r4.api.resources.Observation;
+import gov.va.api.health.vistafhirquery.service.controller.DateSearchBoundaries;
 import gov.va.api.health.vistafhirquery.service.controller.R4Bundler;
 import gov.va.api.health.vistafhirquery.service.controller.R4BundlerFactory;
 import gov.va.api.health.vistafhirquery.service.controller.R4Bundling;
@@ -13,8 +14,6 @@ import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.Wit
 import gov.va.api.lighthouse.vistalink.api.RpcResponse;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Vitals;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.VprGetPatientData;
-
-import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,7 +22,6 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
@@ -104,30 +102,32 @@ public class R4ObservationController {
   @SneakyThrows
   @GetMapping(params = {"patient"})
   public Observation.Bundle searchByPatient(
-          @RequestParam(name = "patient") String patient,
-          @RequestParam(name = "date", required = false) @Size(max = 2) String[] date,
-          @RequestParam(name = "_count", required = false) @Min(0) Integer count,
-          HttpServletRequest request) {
+      @RequestParam(name = "patient") String patient,
+      @RequestParam(name = "date", required = false) @Size(max = 2) String[] date,
+      @RequestParam(name = "_count", required = false) @Min(0) Integer count,
+      HttpServletRequest request) {
 
     // int count =
     //        HttpRequestParameters.integer(request, "_count", linkProperties.getDefaultPageSize());
     // Default .max() value is 9999
 
-    FhirDateTimeParameter date1 = (date == null || date.length < 1) ? null : new FhirDateTimeParameter(date[0]);
-    FhirDateTimeParameter date2 = (date == null || date.length < 2) ? null : new FhirDateTimeParameter(date[1]);
-    StartStop bounds = new StartStop(date1,date2);
+    FhirDateTimeParameter date1 =
+        (date == null || date.length < 1) ? null : new FhirDateTimeParameter(date[0]);
+    FhirDateTimeParameter date2 =
+        (date == null || date.length < 2) ? null : new FhirDateTimeParameter(date[1]);
+    DateSearchBoundaries boundaries = new DateSearchBoundaries(date1, date2);
     RpcResponse rpcResponse =
-            vistalinkApiClient.requestForPatient(
-                    patient,
-                    VprGetPatientData.Request.builder()
-                            .dfn(VprGetPatientData.Request.PatientId.forIcn(patient))
-                            .type(Set.of(VprGetPatientData.Domains.vitals))
-                            .start(bounds.start())
-                            .stop(bounds.stop())
-                            .build()
-                            .asDetails());
+        vistalinkApiClient.requestForPatient(
+            patient,
+            VprGetPatientData.Request.builder()
+                .dfn(VprGetPatientData.Request.PatientId.forIcn(patient))
+                .type(Set.of(VprGetPatientData.Domains.vitals))
+                .start(boundaries.start())
+                .stop(boundaries.stop())
+                .build()
+                .asDetails());
     VprGetPatientData.Response vprPatientData =
-            VprGetPatientData.create().fromResults(rpcResponse.results());
+        VprGetPatientData.create().fromResults(rpcResponse.results());
     return toBundle(request).apply(vprPatientData);
   }
 

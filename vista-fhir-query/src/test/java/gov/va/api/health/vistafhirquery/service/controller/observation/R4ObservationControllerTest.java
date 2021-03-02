@@ -121,7 +121,7 @@ public class R4ObservationControllerTest {
                         RpcInvocationResult.builder().vista("123").response(responseBody).build()))
                 .build());
     when(request.getParameter("patient")).thenReturn("p1");
-    var actual = controller().searchByPatient("p1", 10, request);
+    var actual = controller().searchByPatient("p1", null, 10, request);
     assertThat(actual.entry()).isEmpty();
   }
 
@@ -140,7 +140,7 @@ public class R4ObservationControllerTest {
                         RpcInvocationResult.builder().vista("123").response(responseBody).build()))
                 .build());
     when(request.getParameter("patient")).thenReturn("p1");
-    var actual = controller().searchByPatient("p1", 10, request);
+    var actual = controller().searchByPatient("p1", null, 10, request);
     assertThat(actual.entry()).isNotEmpty();
   }
 }
