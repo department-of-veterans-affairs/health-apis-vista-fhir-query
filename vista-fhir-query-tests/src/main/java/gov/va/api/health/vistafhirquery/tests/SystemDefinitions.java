@@ -32,20 +32,17 @@ public final class SystemDefinitions {
         .build();
   }
 
+  private static TestIds productionIds() {
+    return TestIds.builder().patient("1011537977V693883").observation("TBD").build();
+  }
+
   private static SystemDefinition qa() {
     String url = "https://blue.qa.lighthouse.va.gov";
     return SystemDefinition.builder()
         .internal(serviceDefinition("internal", url, 443, null, "/vista-fhir-query/"))
         .r4(serviceDefinition("r4", url, 443, magicAccessToken(), "/vista-fhir-query/r4"))
-        .publicIds(qaIds())
+        .publicIds(syntheticIds())
         .clientKey(clientKey())
-        .build();
-  }
-
-  private static TestIds qaIds() {
-    return TestIds.builder()
-        .patient("1011537977V693883")
-        .observation("I2-IBV5HN7B4CKF4XNL7GXDCWZNPD2T3WDMVHZZSIIBWTK3PXVFONYQ0000")
         .build();
   }
 
@@ -66,13 +63,26 @@ public final class SystemDefinitions {
     return SystemDefinition.builder()
         .internal(serviceDefinition("internal", url, 443, null, "/vista-fhir-query/"))
         .r4(serviceDefinition("r4", url, 443, magicAccessToken(), "/vista-fhir-query/r4"))
-        .publicIds(stagingIds())
+        .publicIds(productionIds())
         .clientKey(clientKey())
         .build();
   }
 
-  private static TestIds stagingIds() {
-    return qaIds();
+  private static SystemDefinition stagingLab() {
+    String url = "https://blue.staging-lab.lighthouse.va.gov";
+    return SystemDefinition.builder()
+        .internal(serviceDefinition("internal", url, 443, null, "/vista-fhir-query/"))
+        .r4(serviceDefinition("r4", url, 443, magicAccessToken(), "/vista-fhir-query/r4"))
+        .publicIds(syntheticIds())
+        .clientKey(clientKey())
+        .build();
+  }
+
+  private static TestIds syntheticIds() {
+    return TestIds.builder()
+        .patient("1011537977V693883")
+        .observation("I2-IBV5HN7B4CKF4XNL7GXDCWZNPD2T3WDMVHZZSIIBWTK3PXVFONYQ0000")
+        .build();
   }
 
   /** Return the applicable system definition for the current environment. */
@@ -84,6 +94,8 @@ public final class SystemDefinitions {
         return qa();
       case STAGING:
         return staging();
+      case STAGING_LAB:
+        return stagingLab();
       default:
         throw new IllegalArgumentException("Unknown sentinel environment: " + Environment.get());
     }
