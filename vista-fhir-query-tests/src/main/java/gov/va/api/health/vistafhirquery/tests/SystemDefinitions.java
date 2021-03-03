@@ -15,7 +15,7 @@ public final class SystemDefinitions {
   }
 
   private static SystemDefinition lab() {
-    String url = "https://sandbox-api.va.gov";
+    String url = "https://blue.lab.lighthouse.va.gov";
     return SystemDefinition.builder()
         .internal(serviceDefinition("internal", url, 443, null, "/vista-fhir-query/"))
         .r4(serviceDefinition("r4", url, 443, magicAccessToken(), "/vista-fhir-query/r4"))
@@ -69,7 +69,7 @@ public final class SystemDefinitions {
   }
 
   private static SystemDefinition staging() {
-    String url = "https://blue.qa.lighthouse.va.gov";
+    String url = "https://blue.staging.lighthouse.va.gov";
     return SystemDefinition.builder()
         .internal(serviceDefinition("internal", url, 443, null, "/vista-fhir-query/"))
         .r4(serviceDefinition("r4", url, 443, magicAccessToken(), "/vista-fhir-query/r4"))
