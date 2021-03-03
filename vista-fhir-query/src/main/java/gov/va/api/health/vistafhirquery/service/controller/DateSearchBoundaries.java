@@ -1,6 +1,6 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toIso8601;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toNewYorkFilemanDateString;
 
 import gov.va.api.health.fhir.api.FhirDateTimeParameter;
 import java.time.Instant;
@@ -289,7 +289,7 @@ public class DateSearchBoundaries {
   }
 
   private void start(Instant startInstant) {
-    start = toIso8601(startInstant);
+    start = toNewYorkFilemanDateString(startInstant);
   }
 
   /** Lazy initialization. */
@@ -298,7 +298,7 @@ public class DateSearchBoundaries {
   }
 
   private void stop(Instant stopInstant) {
-    stop = toIso8601(stopInstant);
+    stop = toNewYorkFilemanDateString(stopInstant);
   }
 
   /** Lazy initialization. */

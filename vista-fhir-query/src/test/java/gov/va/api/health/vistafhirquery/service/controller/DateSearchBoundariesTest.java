@@ -1,6 +1,6 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toIso8601;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toNewYorkFilemanDateString;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
@@ -168,8 +168,10 @@ public class DateSearchBoundariesTest {
       FhirDateTimeParameter date2,
       Instant expectedStart,
       Instant expectedStop) {
-    assertThat(new DateSearchBoundaries(date1, date2).start()).isEqualTo(toIso8601(expectedStart));
-    assertThat(new DateSearchBoundaries(date1, date2).stop()).isEqualTo(toIso8601(expectedStop));
+    assertThat(new DateSearchBoundaries(date1, date2).start())
+        .isEqualTo(toNewYorkFilemanDateString(expectedStart));
+    assertThat(new DateSearchBoundaries(date1, date2).stop())
+        .isEqualTo(toNewYorkFilemanDateString(expectedStop));
   }
 
   @ParameterizedTest

@@ -119,6 +119,18 @@ public class R4Transformers {
     return Optional.of(maybeInstant.toString());
   }
 
+  /**
+   * Temporary method until macro can be set up. Transform an Instant to an Optional Fileman Date
+   * String.
+   */
+  public static Optional<String> toNewYorkFilemanDateString(Instant maybeInstant) {
+    if (maybeInstant == null) {
+      return Optional.empty();
+    }
+    return Optional.of(
+        FilemanDate.from(maybeInstant).formatAsDateTime(ZoneId.of("America/New_York")));
+  }
+
   /** Create a reference sing the resourceType, an id, and a display. */
   public static Reference toReference(
       @NonNull String resourceType, String maybeId, String maybeDisplay) {
