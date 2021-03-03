@@ -46,7 +46,7 @@ public class LinkProperties {
   void logConfiguration() {
     log.info("default page size: {}, max page size: {}", getDefaultPageSize(), getMaxPageSize());
     log.info("default R4 links: {}/{}", getPublicUrl(), getPublicR4BasePath());
-    customR4UrlAndPath.forEach((r, u) -> log.info("{} links: {}", r, u));
+    getCustomR4UrlAndPath().forEach((r, u) -> log.info("{} links: {}", r, u));
   }
 
   public Links r4() {
