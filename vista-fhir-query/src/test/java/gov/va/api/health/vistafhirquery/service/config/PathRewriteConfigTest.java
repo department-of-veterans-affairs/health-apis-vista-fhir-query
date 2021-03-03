@@ -12,9 +12,11 @@ import org.springframework.boot.web.server.LocalServerPort;
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {
       "spring.datasource.driver-class-name=org.h2.Driver",
-      "spring.datasource.url=jdbc:h2:mem:db;DB_CLOSE_DELAY=-1",
+      "spring.datasource.url=jdbc:h2:mem:db;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA app",
       "spring.datasource.username=sa",
-      "spring.datasource.password=sa"
+      "spring.datasource.password=sa",
+      "spring.datasource.initialization-mode=always",
+      "spring.jpa.hibernate.ddl-auto=none"
     })
 public class PathRewriteConfigTest {
   @Autowired TestRestTemplate restTemplate;
