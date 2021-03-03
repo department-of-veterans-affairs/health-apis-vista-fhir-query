@@ -14,6 +14,16 @@ public final class SystemDefinitions {
     return Optional.ofNullable(System.getProperty("client-key"));
   }
 
+  private static SystemDefinition lab() {
+    String url = "https://blue.lab.lighthouse.va.gov";
+    return SystemDefinition.builder()
+        .internal(serviceDefinition("internal", url, 443, null, "/vista-fhir-query/"))
+        .r4(serviceDefinition("r4", url, 443, magicAccessToken(), "/vista-fhir-query/r4"))
+        .publicIds(syntheticIds())
+        .clientKey(clientKey())
+        .build();
+  }
+
   private static SystemDefinition local() {
     String url = "http://localhost";
     return SystemDefinition.builder()
@@ -59,7 +69,7 @@ public final class SystemDefinitions {
   }
 
   private static SystemDefinition staging() {
-    String url = "https://blue.qa.lighthouse.va.gov";
+    String url = "https://blue.staging.lighthouse.va.gov";
     return SystemDefinition.builder()
         .internal(serviceDefinition("internal", url, 443, null, "/vista-fhir-query/"))
         .r4(serviceDefinition("r4", url, 443, magicAccessToken(), "/vista-fhir-query/r4"))
@@ -88,6 +98,8 @@ public final class SystemDefinitions {
   /** Return the applicable system definition for the current environment. */
   public static SystemDefinition systemDefinition() {
     switch (Environment.get()) {
+      case LAB:
+        return lab();
       case LOCAL:
         return local();
       case QA:
