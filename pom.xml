@@ -7,7 +7,7 @@
     <version>7.0.22</version>
   </parent>
   <artifactId>vista-fhir-query-parent</artifactId>
-  <version>0.0.45-SNAPSHOT</version>
+  <version>0.0.46-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
     <module>vista-fhir-query-ids-mapping</module>
