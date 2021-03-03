@@ -1,10 +1,8 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toNewYorkFilemanDateString;
-
 import gov.va.api.health.fhir.api.FhirDateTimeParameter;
 import java.time.Instant;
-import java.util.Optional;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -13,9 +11,9 @@ public class DateSearchBoundaries {
 
   private final FhirDateTimeParameter date2;
 
-  private Optional<String> start;
+  @Getter private Instant start;
 
-  private Optional<String> stop;
+  @Getter private Instant stop;
 
   /** Compute start and stop search boundaries for the given date(s). */
   public DateSearchBoundaries(FhirDateTimeParameter d1, FhirDateTimeParameter d2) {
@@ -40,8 +38,8 @@ public class DateSearchBoundaries {
 
   private void createBounds(boolean isValid, Instant maybeStart, Instant maybeStop) {
     if (isValid) {
-      start(maybeStart);
-      stop(maybeStop);
+      start = maybeStart;
+      stop = maybeStop;
     } else {
       invalidDateCombination();
     }
@@ -49,8 +47,8 @@ public class DateSearchBoundaries {
 
   private void equalToDate1() {
     if (date2 == null) {
-      start(date1.lowerBound());
-      stop(date1.upperBound());
+      start = date1.lowerBound();
+      stop = date1.upperBound();
       return;
     }
     switch (date2.prefix()) {
@@ -92,7 +90,7 @@ public class DateSearchBoundaries {
 
   private void greaterThanDate1() {
     if (date2 == null) {
-      start(date1.upperBound());
+      start = date1.upperBound();
       return;
     }
     switch (date2.prefix()) {
@@ -133,7 +131,7 @@ public class DateSearchBoundaries {
 
   private void greaterThanOrEqualToDate1() {
     if (date2 == null) {
-      start(date1.lowerBound());
+      start = date1.lowerBound();
       return;
     }
     switch (date2.prefix()) {
@@ -208,7 +206,7 @@ public class DateSearchBoundaries {
 
   private void lessThanDate1() {
     if (date2 == null) {
-      stop(date1.lowerBound());
+      stop = date1.lowerBound();
       return;
     }
     switch (date2.prefix()) {
@@ -243,7 +241,7 @@ public class DateSearchBoundaries {
 
   private void lessThanOrEqualToDate1() {
     if (date2 == null) {
-      stop(date1.upperBound());
+      stop = date1.upperBound();
       return;
     }
     switch (date2.prefix()) {
@@ -286,23 +284,5 @@ public class DateSearchBoundaries {
 
   private Instant minInstant(Instant a, Instant b) {
     return a.isBefore(b) ? a : b;
-  }
-
-  private void start(Instant startInstant) {
-    start = toNewYorkFilemanDateString(startInstant);
-  }
-
-  /** Lazy initialization. */
-  public Optional<String> start() {
-    return start == null ? Optional.empty() : start;
-  }
-
-  private void stop(Instant stopInstant) {
-    stop = toNewYorkFilemanDateString(stopInstant);
-  }
-
-  /** Lazy initialization. */
-  public Optional<String> stop() {
-    return stop == null ? Optional.empty() : stop;
   }
 }
