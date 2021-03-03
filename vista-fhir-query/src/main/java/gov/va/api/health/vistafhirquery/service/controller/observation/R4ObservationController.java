@@ -1,6 +1,9 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toNewYorkFilemanDateString;
+
 import gov.va.api.health.r4.api.resources.Observation;
+import gov.va.api.health.vistafhirquery.service.controller.DateSearchBoundaries;
 import gov.va.api.health.vistafhirquery.service.controller.R4Bundler;
 import gov.va.api.health.vistafhirquery.service.controller.R4BundlerFactory;
 import gov.va.api.health.vistafhirquery.service.controller.R4Bundling;
@@ -18,6 +21,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
@@ -99,16 +103,21 @@ public class R4ObservationController {
   @GetMapping(params = {"patient"})
   public Observation.Bundle searchByPatient(
       @RequestParam(name = "patient") String patient,
+      @RequestParam(name = "date", required = false) @Size(max = 2) String[] date,
       @RequestParam(name = "code", required = false) String codeCsv,
       @RequestParam(name = "_count", required = false) @Min(0) Integer count,
       HttpServletRequest request) {
     // Default .max() value is 9999
+
+    DateSearchBoundaries boundaries = DateSearchBoundaries.of(date);
     RpcResponse rpcResponse =
         vistalinkApiClient.requestForPatient(
             patient,
             VprGetPatientData.Request.builder()
                 .dfn(VprGetPatientData.Request.PatientId.forIcn(patient))
                 .type(Set.of(VprGetPatientData.Domains.vitals))
+                .start(toNewYorkFilemanDateString(boundaries.start()))
+                .stop(toNewYorkFilemanDateString(boundaries.stop()))
                 .build()
                 .asDetails());
     VprGetPatientData.Response vprPatientData =

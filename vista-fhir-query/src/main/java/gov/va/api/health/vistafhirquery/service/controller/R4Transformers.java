@@ -5,6 +5,7 @@ import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.lighthouse.vistalink.models.FilemanDate;
 import gov.va.api.lighthouse.vistalink.models.ValueOnlyXmlAttribute;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.util.Collection;
 import java.util.Map;
@@ -108,6 +109,26 @@ public class R4Transformers {
       return null;
     }
     return result.instant().toString();
+  }
+
+  /** Transform an Instant to an Optional String. */
+  public static Optional<String> toIso8601(Instant maybeInstant) {
+    if (maybeInstant == null) {
+      return Optional.empty();
+    }
+    return Optional.of(maybeInstant.toString());
+  }
+
+  /**
+   * Temporary method until macro can be set up. Transform an Instant to an Optional Fileman Date
+   * String.
+   */
+  public static Optional<String> toNewYorkFilemanDateString(Instant maybeInstant) {
+    if (maybeInstant == null) {
+      return Optional.empty();
+    }
+    return Optional.of(
+        FilemanDate.from(maybeInstant).formatAsDateTime(ZoneId.of("America/New_York")));
   }
 
   /** Create a reference sing the resourceType, an id, and a display. */

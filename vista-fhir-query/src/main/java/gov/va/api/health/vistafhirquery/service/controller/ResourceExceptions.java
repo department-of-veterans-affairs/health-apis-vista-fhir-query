@@ -14,6 +14,16 @@ public class ResourceExceptions {
     }
   }
 
+  public static final class BadSearchParameters extends ResourceException {
+    public BadSearchParameters(String message) {
+      super(message);
+    }
+
+    public static void because(String message) {
+      throw new BadSearchParameters(message);
+    }
+  }
+
   public static final class ExpectationFailed extends ResourceException {
     public ExpectationFailed(String message) {
       super(message);

@@ -5,6 +5,8 @@ import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toBigDecimal;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toHumanDateTime;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toIso8601;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toNewYorkFilemanDateString;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.valueOfValueOnlyXmlAttribute;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -12,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import gov.va.api.lighthouse.vistalink.models.FilemanDate;
 import gov.va.api.lighthouse.vistalink.models.ValueOnlyXmlAttribute;
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -90,6 +93,24 @@ public class R4TransformersTest {
         .isThrownBy(() -> toHumanDateTime(ValueOnlyXmlAttribute.of("29")));
     assertThatExceptionOfType(FilemanDate.BadFilemanDate.class)
         .isThrownBy(() -> toHumanDateTime(ValueOnlyXmlAttribute.of("abc")));
+  }
+
+  @Test
+  void optionalFilemanDateString() {
+    assertThat(toNewYorkFilemanDateString(null)).isEqualTo(Optional.empty());
+    assertThat(toNewYorkFilemanDateString(Instant.ofEpochMilli(2000)))
+        .isEqualTo(Optional.of("2691231.190002"));
+    assertThat(toNewYorkFilemanDateString(Instant.parse("2006-01-01T00:00:00Z")))
+        .isEqualTo(Optional.of("3051231.19"));
+  }
+
+  @Test
+  void optionalIso8601String() {
+    assertThat(toIso8601(null)).isEqualTo(Optional.empty());
+    assertThat(toIso8601(Instant.ofEpochMilli(2000)))
+        .isEqualTo(Optional.of(Instant.ofEpochMilli(2000).toString()));
+    assertThat(toIso8601(Instant.parse("2006-01-01T00:00:00Z")))
+        .isEqualTo(Optional.of("2006-01-01T00:00:00Z"));
   }
 
   @Test
