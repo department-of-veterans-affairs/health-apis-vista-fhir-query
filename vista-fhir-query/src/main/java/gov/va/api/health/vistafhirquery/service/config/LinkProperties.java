@@ -1,12 +1,16 @@
 package gov.va.api.health.vistafhirquery.service.config;
 
 import gov.va.api.health.r4.api.resources.Resource;
+import java.util.Map;
+import javax.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -19,24 +23,45 @@ import org.springframework.context.annotation.Configuration;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Slf4j
 public class LinkProperties {
 
   private String publicUrl;
   private String publicR4BasePath;
+
+  /**
+   * Mapping for resource name and URL without resource name, e.g. Patient =
+   * https://api.va.gov/services/fhir/v0/r4.
+   */
+  private Map<String, String> customR4UrlAndPath;
+
   private int defaultPageSize;
   private int maxPageSize;
 
-  public Links<Resource> r4() {
-    return new Links<Resource>(publicUrl, publicR4BasePath);
+  public Map<String, String> getCustomR4UrlAndPath() {
+    return (customR4UrlAndPath == null) ? Map.of() : customR4UrlAndPath;
+  }
+
+  @PostConstruct
+  void logConfiguration() {
+    log.info("default page size: {}, max page size: {}", getDefaultPageSize(), getMaxPageSize());
+    log.info("default R4 links: {}/{}", getPublicUrl(), getPublicR4BasePath());
+    customR4UrlAndPath.forEach((r, u) -> log.info("{} links: {}", r, u));
+  }
+
+  public Links r4() {
+    return new Links(publicUrl, publicR4BasePath, getCustomR4UrlAndPath());
   }
 
   @Accessors(fluent = true)
-  public static class Links<ResourceT> {
+  public static class Links {
 
     @Getter private final String baseUrl;
+    private final Map<String, String> urlForResource;
 
-    Links(String publicUrl, String publicBasePath) {
+    Links(String publicUrl, String publicBasePath, @NonNull Map<String, String> publicR4Link) {
       baseUrl = publicUrl + "/" + publicBasePath;
+      urlForResource = publicR4Link;
     }
 
     public String readUrl(Resource resource) {
@@ -48,7 +73,7 @@ public class LinkProperties {
     }
 
     public String resourceUrl(String resource) {
-      return baseUrl() + "/" + resource;
+      return urlForResource.getOrDefault(resource, baseUrl()) + "/" + resource;
     }
   }
 }

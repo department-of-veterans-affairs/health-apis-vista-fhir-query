@@ -130,6 +130,7 @@ EOF
   configValue vista-fhir-query $PROFILE vista-fhir-query.internal.client-keys "disabled"
   configValue vista-fhir-query $PROFILE vista-fhir-query.public-url "http://localhost:8095"
   configValue vista-fhir-query $PROFILE vista-fhir-query.public-r4-base-path "r4"
+  addValue    vista-fhir-query $PROFILE vista-fhir-query.custom-r4-url-and-path.Patient "http://localhost:8090/data-query/r4"
   configValue vista-fhir-query $PROFILE identityservice.encodingKey fhir-query
   configValue vista-fhir-query $PROFILE identityservice.patientIdPattern "[0-9]+(V[0-9]{6})?"
   configValue vista-fhir-query $PROFILE spring.datasource.url "${VFQ_DB_URL}"
@@ -143,6 +144,7 @@ EOF
   addValue vista-fhir-query $PROFILE alternate-patient-ids.id.1017283148V813263 195604
   addValue vista-fhir-query $PROFILE alternate-patient-ids.id.5000335 195602
   addValue vista-fhir-query $PROFILE alternate-patient-ids.id.25000126 195603
+
 
   checkForUnsetValues vista-fhir-query $PROFILE
 }
