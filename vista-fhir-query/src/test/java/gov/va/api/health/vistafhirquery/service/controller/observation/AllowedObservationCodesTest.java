@@ -17,6 +17,7 @@ public class AllowedObservationCodesTest {
         Arguments.of(Map.of("a", "A"), "a", true),
         Arguments.of(Map.of("a", "A"), null, false),
         Arguments.of(Map.of("a", "A"), "b", false),
+        Arguments.of(Map.of("a", "A", "b", "A"), "a", true),
         Arguments.of(Map.of("a", "A", "b", "B", "c", "C"), "a", true),
         Arguments.of(Map.of("a", "A", "b", "B", "c", "C"), "b", true),
         Arguments.of(Map.of("a", "A", "b", "B", "c", "C"), "c", true),
