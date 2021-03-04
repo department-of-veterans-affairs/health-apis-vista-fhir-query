@@ -41,6 +41,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 public class WitnessProtectionAdvice extends IdentitySubstitution<ProtectedReference>
     implements ResponseBodyAdvice<Object>, WitnessProtection {
 
+  private final ProtectedReferenceFactory protectedReferenceFactory;
+
   private final AlternatePatientIds alternatePatientIds;
 
   private final Map<Type, WitnessProtectionAgent<?>> agents;
@@ -49,10 +51,12 @@ public class WitnessProtectionAdvice extends IdentitySubstitution<ProtectedRefer
   @Builder
   @Autowired
   public WitnessProtectionAdvice(
-      AlternatePatientIds alternatePatientIds,
+      @NonNull ProtectedReferenceFactory protectedReferenceFactory,
+      @NonNull AlternatePatientIds alternatePatientIds,
       @NonNull IdentityService identityService,
       @Singular List<WitnessProtectionAgent<?>> availableAgents) {
     super(identityService, ProtectedReference::asResourceIdentity, NotFound::new);
+    this.protectedReferenceFactory = protectedReferenceFactory;
     this.alternatePatientIds = alternatePatientIds;
     this.agents =
         availableAgents.stream().collect(toMap(WitnessProtectionAdvice::agentType, identity()));
@@ -101,7 +105,7 @@ public class WitnessProtectionAdvice extends IdentitySubstitution<ProtectedRefer
 
   private void protectEntry(AbstractEntry<?> entry) {
     Optional<ProtectedReference> referenceToFullUrl =
-        ProtectedReference.forUri(entry.fullUrl(), entry::fullUrl);
+        protectedReferenceFactory.forUri(entry.fullUrl(), entry::fullUrl);
     protectResource(
         entry.resource(),
         referenceToFullUrl.isEmpty() ? List.of() : List.of(referenceToFullUrl.get()));
