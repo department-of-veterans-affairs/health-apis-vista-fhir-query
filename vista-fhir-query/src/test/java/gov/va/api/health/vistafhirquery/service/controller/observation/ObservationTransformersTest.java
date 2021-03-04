@@ -62,5 +62,15 @@ public class ObservationTransformersTest {
             ObservationTransformers.valueQuantity(
                 ValueOnlyXmlAttribute.of(null), ValueOnlyXmlAttribute.of(null)))
         .isNull();
+    assertThat(ObservationTransformers.valueQuantity("2708-6", "1", "%"))
+        .isEqualTo(
+            Quantity.builder()
+                .system("http://unitsofmeasure.org")
+                .code("%")
+                .value(new BigDecimal(1))
+                .unit("%")
+                .build());
+    assertThat(ObservationTransformers.valueQuantity("UNK", "1", "%"))
+        .isEqualTo(Quantity.builder().value(new BigDecimal(1)).unit("%").build());
   }
 }

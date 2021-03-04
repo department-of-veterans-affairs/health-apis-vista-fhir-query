@@ -44,9 +44,6 @@ public class ObservationTransformers {
 
   /** Build an R4 Quantity from a value, augmenting for specific loinc codes. */
   public static Quantity valueQuantity(String loinc, String value, String units) {
-    if (isBlank(value)) {
-      return null;
-    }
     var maybeVitalSignsProfile =
         ValueQuantityMapping.VitalSignsValueQuantityMapping.FhirVitalSignsProfile.findByLoincCode(
             loinc);

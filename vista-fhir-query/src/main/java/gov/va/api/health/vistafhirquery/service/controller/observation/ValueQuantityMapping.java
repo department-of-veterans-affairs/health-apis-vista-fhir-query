@@ -15,6 +15,9 @@ public interface ValueQuantityMapping {
   class GeneralValueQuantityMapping implements ValueQuantityMapping {
     @Override
     public Quantity toQuantity(String value, String unit) {
+      if (value == null) {
+        return null;
+      }
       return Quantity.builder().value(toBigDecimal(value)).unit(unit).build();
     }
   }
@@ -26,6 +29,9 @@ public interface ValueQuantityMapping {
 
     @Override
     public Quantity toQuantity(String value, String unit) {
+      if (value == null) {
+        return null;
+      }
       var quantity =
           Quantity.builder()
               .value(toBigDecimal(value))
@@ -40,7 +46,7 @@ public interface ValueQuantityMapping {
           return quantity.code("%").build();
         case BODY_TEMPERATURE:
           BodyTemperatureUnits bodyTemp = BodyTemperatureUnits.findByVistaUnit(unit);
-          return quantity.code(bodyTemp.code()).unit(bodyTemp.display()).build();
+          return quantity.code(bodyTemp.code()).build();
         case BODY_HEIGHT:
           // fall-through
         case HEAD_CIRCUMFERENCE:
@@ -62,7 +68,7 @@ public interface ValueQuantityMapping {
         case VITAL_SIGNS_PANEL:
           throw new IllegalArgumentException(
               "Vital-Sign panels should not include "
-                  + "quantities themelves, only reference Observations that do.");
+                  + "quantities themelves, only references to Observations that do.");
         default:
           throw new IllegalStateException("Unknown Vital-Signs profile: " + profile.toString());
       }

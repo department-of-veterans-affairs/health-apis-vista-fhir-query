@@ -1,0 +1,166 @@
+package gov.va.api.health.vistafhirquery.service.controller.observation;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
+
+import gov.va.api.health.r4.api.datatypes.Quantity;
+import java.math.BigDecimal;
+import java.util.stream.Stream;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.MethodSource;
+
+public class ValueQuantityMappingTest {
+  private static Quantity generalQuantity(String value, String unit) {
+    return Quantity.builder().value(new BigDecimal(value)).unit(unit).build();
+  }
+
+  static Stream<Arguments> toQuantity() {
+    // ValueQuantityMapping mapping, String value, String units, Quantity expected
+    return Stream.of(
+        arguments(new ValueQuantityMapping.GeneralValueQuantityMapping(), null, null, null),
+        arguments(new ValueQuantityMapping.GeneralValueQuantityMapping(), null, "a", null),
+        arguments(
+            new ValueQuantityMapping.GeneralValueQuantityMapping(),
+            "1",
+            null,
+            generalQuantity("1", null)),
+        arguments(
+            new ValueQuantityMapping.GeneralValueQuantityMapping(),
+            "1",
+            "a",
+            generalQuantity("1", "a")),
+        arguments(
+            new ValueQuantityMapping.VitalSignsValueQuantityMapping(
+                ValueQuantityMapping.VitalSignsValueQuantityMapping.FhirVitalSignsProfile
+                    .RESPIRATORY_RATE),
+            "1",
+            "a",
+            vitalsQuantity("1", "a", "/min")),
+        arguments(
+            new ValueQuantityMapping.VitalSignsValueQuantityMapping(
+                ValueQuantityMapping.VitalSignsValueQuantityMapping.FhirVitalSignsProfile
+                    .HEART_RATE),
+            "1",
+            "a",
+            vitalsQuantity("1", "a", "/min")),
+        arguments(
+            new ValueQuantityMapping.VitalSignsValueQuantityMapping(
+                ValueQuantityMapping.VitalSignsValueQuantityMapping.FhirVitalSignsProfile
+                    .OXYGEN_SATURATION),
+            "1",
+            "a",
+            vitalsQuantity("1", "a", "%")),
+        arguments(
+            new ValueQuantityMapping.VitalSignsValueQuantityMapping(
+                ValueQuantityMapping.VitalSignsValueQuantityMapping.FhirVitalSignsProfile
+                    .BODY_TEMPERATURE),
+            "1",
+            "F",
+            vitalsQuantity("1", "F", "[degF]")),
+        arguments(
+            new ValueQuantityMapping.VitalSignsValueQuantityMapping(
+                ValueQuantityMapping.VitalSignsValueQuantityMapping.FhirVitalSignsProfile
+                    .BODY_HEIGHT),
+            "1",
+            "in",
+            vitalsQuantity("1", "in", "[in_i]")),
+        arguments(
+            new ValueQuantityMapping.VitalSignsValueQuantityMapping(
+                ValueQuantityMapping.VitalSignsValueQuantityMapping.FhirVitalSignsProfile
+                    .HEAD_CIRCUMFERENCE),
+            "1",
+            "in",
+            vitalsQuantity("1", "in", "[in_i]")),
+        arguments(
+            new ValueQuantityMapping.VitalSignsValueQuantityMapping(
+                ValueQuantityMapping.VitalSignsValueQuantityMapping.FhirVitalSignsProfile
+                    .BODY_WEIGHT),
+            "1",
+            "lb",
+            vitalsQuantity("1", "lb", "[lb_av]")),
+        arguments(
+            new ValueQuantityMapping.VitalSignsValueQuantityMapping(
+                ValueQuantityMapping.VitalSignsValueQuantityMapping.FhirVitalSignsProfile
+                    .BODY_MASS_INDEX),
+            "1",
+            "a",
+            vitalsQuantity("1", "a", "kg/m2")),
+        arguments(
+            new ValueQuantityMapping.VitalSignsValueQuantityMapping(
+                ValueQuantityMapping.VitalSignsValueQuantityMapping.FhirVitalSignsProfile
+                    .SYSTOLIC_BP),
+            "1",
+            "a",
+            vitalsQuantity("1", "a", "mm[Hg]")),
+        arguments(
+            new ValueQuantityMapping.VitalSignsValueQuantityMapping(
+                ValueQuantityMapping.VitalSignsValueQuantityMapping.FhirVitalSignsProfile
+                    .DIASTOLIC_BP),
+            "1",
+            "a",
+            vitalsQuantity("1", "a", "mm[Hg]")),
+        arguments(
+            new ValueQuantityMapping.VitalSignsValueQuantityMapping(
+                ValueQuantityMapping.VitalSignsValueQuantityMapping.FhirVitalSignsProfile
+                    .RESPIRATORY_RATE),
+            "1",
+            null,
+            vitalsQuantity("1", null, "/min")),
+        arguments(
+            new ValueQuantityMapping.VitalSignsValueQuantityMapping(
+                ValueQuantityMapping.VitalSignsValueQuantityMapping.FhirVitalSignsProfile
+                    .RESPIRATORY_RATE),
+            null,
+            "a",
+            null),
+        arguments(
+            new ValueQuantityMapping.VitalSignsValueQuantityMapping(
+                ValueQuantityMapping.VitalSignsValueQuantityMapping.FhirVitalSignsProfile
+                    .RESPIRATORY_RATE),
+            null,
+            null,
+            null));
+  }
+
+  private static Quantity vitalsQuantity(String value, String unit, String code) {
+    return Quantity.builder()
+        .system("http://unitsofmeasure.org")
+        .code(code)
+        .value(new BigDecimal(value))
+        .unit(unit)
+        .build();
+  }
+
+  @ParameterizedTest
+  @EnumSource(
+      value = ValueQuantityMapping.VitalSignsValueQuantityMapping.FhirVitalSignsProfile.class,
+      names = {
+        "BLOOD_PRESSURE",
+        "VITAL_SIGNS_PANEL",
+        "BODY_TEMPERATURE",
+        "BODY_HEIGHT",
+        "BODY_WEIGHT"
+      })
+  void illegalArgument(
+      ValueQuantityMapping.VitalSignsValueQuantityMapping.FhirVitalSignsProfile profile) {
+    /*
+     * This tests Illegal Argument thrown in two different ways:
+     * "BLOOD_PRESSURE", "VITAL_SIGNS_PANEL": can't create quantities
+     * "BODY_TEMPERATURE", "BODY_HEIGHT", "BODY_WEIGHT": will not be able to interpret "NAH" as an enum
+     */
+    assertThatExceptionOfType(IllegalArgumentException.class)
+        .isThrownBy(
+            () ->
+                new ValueQuantityMapping.VitalSignsValueQuantityMapping(profile)
+                    .toQuantity("NAH", "lbs"));
+  }
+
+  @ParameterizedTest
+  @MethodSource
+  void toQuantity(ValueQuantityMapping mapping, String value, String units, Quantity expected) {
+    assertThat(mapping.toQuantity(value, units)).isEqualTo(expected);
+  }
+}
