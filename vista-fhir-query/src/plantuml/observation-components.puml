@@ -23,6 +23,7 @@ class ResponseIncludesIcnHeaderAdvice <<Talos>> <<Authorization>>
 
 interface  WitnessProtectionAgent<Observation> <<WitnessProtection>>
 class R4ObservationWitnessProtectionAgent <<Component>> <<WitnessProtection>> implements WitnessProtectionAgent
+R4ObservationWitnessProtectionAgent o--> ProtectedReferenceFactory
 
 class VistaLabToR4ObservationTransformer <<Labs>>
 class VistaVitalToR4ObservationTransformer <<Vitals>>
@@ -37,6 +38,9 @@ class R4BundlerFactory <<Component>>
 interface VistalinkApiClient
 interface WitnessProtection
 class WitnessProtectionAdvice <<ControllerAdvice>> <<WitnessProtection>> implements WitnessProtection
+class ProtectedReferenceFactory <<Component>> <<WitnessProtection>>
+class LinkProperties <<Configuration>> <<WitnessProtection>>
+
 R4ObservationController o--> R4BundlerFactory : <<Autowire>>
 R4ObservationController o--> VistalinkApiClient : <<Autowire>>
 R4ObservationController o--> VitalVuidMapper : <<Autowire>>
@@ -44,6 +48,8 @@ R4ObservationController o--> WitnessProtection : <<Autowire>>
 R4ObservationController --> R4ObservationCollector
 
 WitnessProtectionAdvice o--> WitnessProtectionAgent
+WitnessProtectionAdvice o--> ProtectedReferenceFactory
+ProtectedReferenceFactory o--> LinkProperties
 
 R4ObservationCollector --> VistaLabToR4ObservationTransformer
 R4ObservationCollector --> VistaVitalToR4ObservationTransformer
