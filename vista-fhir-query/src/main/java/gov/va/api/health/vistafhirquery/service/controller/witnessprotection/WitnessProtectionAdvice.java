@@ -105,7 +105,8 @@ public class WitnessProtectionAdvice extends IdentitySubstitution<ProtectedRefer
 
   private void protectEntry(AbstractEntry<?> entry) {
     Optional<ProtectedReference> referenceToFullUrl =
-        protectedReferenceFactory.forUri(entry.fullUrl(), entry::fullUrl);
+        protectedReferenceFactory.forUri(
+            entry.fullUrl(), entry::fullUrl, protectedReferenceFactory.replaceIdOnly());
     protectResource(
         entry.resource(),
         referenceToFullUrl.isEmpty() ? List.of() : List.of(referenceToFullUrl.get()));

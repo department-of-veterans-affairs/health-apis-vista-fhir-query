@@ -11,6 +11,7 @@ import gov.va.api.health.r4.api.bundle.AbstractBundle;
 import gov.va.api.health.r4.api.bundle.AbstractEntry;
 import gov.va.api.health.r4.api.elements.Meta;
 import gov.va.api.health.r4.api.resources.Resource;
+import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
 import java.util.List;
 import java.util.stream.Stream;
 import lombok.AllArgsConstructor;
@@ -65,6 +66,15 @@ class WitnessProtectionAdviceTest {
         .build();
   }
 
+  private LinkProperties linkProperties() {
+    return LinkProperties.builder()
+        .publicUrl("http://awesome.com/fuego")
+        .publicR4BasePath("r4")
+        .defaultPageSize(99)
+        .maxPageSize(99)
+        .build();
+  }
+
   private Registration registration(String resource, String baseId) {
     return Registration.builder()
         .uuid("public-" + baseId)
@@ -94,7 +104,7 @@ class WitnessProtectionAdviceTest {
 
   @Test
   void unknownResourceTypeIsNotModified() {
-    ProtectedReferenceFactory prf = new ProtectedReferenceFactory();
+    ProtectedReferenceFactory prf = new ProtectedReferenceFactory(linkProperties());
     var f1 = FugaziOne.builder().id("private-f1").build();
     var noF1 =
         WitnessProtectionAdvice.builder()
@@ -115,7 +125,7 @@ class WitnessProtectionAdviceTest {
   }
 
   private WitnessProtectionAdvice wp() {
-    ProtectedReferenceFactory prf = new ProtectedReferenceFactory();
+    ProtectedReferenceFactory prf = new ProtectedReferenceFactory(linkProperties());
     return WitnessProtectionAdvice.builder()
         .protectedReferenceFactory(prf)
         .alternatePatientIds(new AlternatePatientIds.DisabledAlternatePatientIds())

@@ -5,13 +5,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Patient;
 import gov.va.api.health.r4.api.resources.Resource;
+import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+import lombok.Getter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class ProtectedReferenceFactoryTest {
+
+  @Getter
+  private final ProtectedReferenceFactory prf =
+      new ProtectedReferenceFactory(
+          LinkProperties.builder()
+              .publicUrl("http://awesome.com/fuego")
+              .publicR4BasePath("r4")
+              .defaultPageSize(99)
+              .maxPageSize(99)
+              .build());
 
   @Test
   void forReference() {
@@ -27,7 +39,6 @@ class ProtectedReferenceFactoryTest {
 
   @Test
   void forResource() {
-
     var updatedValue = new AtomicReference<String>("not-updated");
     Resource resource = Patient.builder().id("p1").build();
     ProtectedReference actual = prf().forResource(resource, updatedValue::set);
@@ -42,7 +53,8 @@ class ProtectedReferenceFactoryTest {
       strings = {"Patient/p1", "/foo/whatever/Patient/p1", "https://whatever.com/Patient/p1"})
   void forUrisThatAreUnderstoodReferenceForTypeAndIdAreReturned(String uri) {
     var updatedValue = new AtomicReference<String>("not-updated");
-    Optional<ProtectedReference> result = prf().forUri(uri, updatedValue::set);
+    Optional<ProtectedReference> result =
+        prf().forUri(uri, updatedValue::set, prf().replaceIdOnly());
     assertThat(result).isNotEmpty();
     assertThat(result.get().type()).isEqualTo("Patient");
     assertThat(result.get().id()).isEqualTo("p1");
@@ -53,10 +65,6 @@ class ProtectedReferenceFactoryTest {
   @ParameterizedTest
   @ValueSource(strings = {"", "Patient", "/Patient", "Patient/"})
   void forUrisThatCannotBeUnderstoodEmptyIsReturned(String uri) {
-    assertThat(prf().forUri(uri, s -> {})).isEmpty();
-  }
-
-  ProtectedReferenceFactory prf() {
-    return new ProtectedReferenceFactory();
+    assertThat(prf().forUri(uri, s -> {}, prf().replaceIdOnly())).isEmpty();
   }
 }
