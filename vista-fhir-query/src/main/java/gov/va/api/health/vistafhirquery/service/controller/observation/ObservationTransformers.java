@@ -42,19 +42,26 @@ public class ObservationTransformers {
     return SimpleQuantity.builder().value(toBigDecimal(value)).build();
   }
 
+  /** Build an R4 Quantity from a value, augmenting for specific loinc codes. */
+  public static Quantity valueQuantity(String loinc, String value, String units) {
+    if (isBlank(value)) {
+      return null;
+    }
+    var maybeVitalSignsProfile =
+        ValueQuantityMapping.VitalSignsValueQuantityMapping.FhirVitalSignsProfile.findByLoincCode(
+            loinc);
+    if (maybeVitalSignsProfile.isPresent()) {
+      return new ValueQuantityMapping.VitalSignsValueQuantityMapping(maybeVitalSignsProfile.get())
+          .toQuantity(value, units);
+    }
+    return new ValueQuantityMapping.GeneralValueQuantityMapping().toQuantity(value, units);
+  }
+
   /** Build an R4 Quantity using Vista value attributes. */
   public static Quantity valueQuantity(
       ValueOnlyXmlAttribute maybeQuantityValue, ValueOnlyXmlAttribute maybeUnits) {
     String quantityValue = valueOfValueOnlyXmlAttribute(maybeQuantityValue);
     String units = valueOfValueOnlyXmlAttribute(maybeUnits);
-    return valueQuantity(quantityValue, units);
-  }
-
-  /** Build an R4 Quantity using string representations of the value and units. */
-  public static Quantity valueQuantity(String quantityValue, String units) {
-    if (isBlank(quantityValue)) {
-      return null;
-    }
-    return Quantity.builder().value(toBigDecimal(quantityValue)).unit(units).build();
+    return valueQuantity(null, quantityValue, units);
   }
 }

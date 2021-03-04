@@ -78,12 +78,14 @@ public class VistaVitalToR4ObservationTransformer {
     Observation.Component systolic =
         Observation.Component.builder()
             .referenceRange(referenceRange(systolicMeasurement.high(), systolicMeasurement.low()))
-            .valueQuantity(valueQuantity(systolicMeasurement.value(), measurement.units()))
+            .valueQuantity(
+                valueQuantity("8480-6", systolicMeasurement.value(), measurement.units()))
             .build();
     Observation.Component diastolic =
         Observation.Component.builder()
             .referenceRange(referenceRange(diastolicMeasurement.high(), diastolicMeasurement.low()))
-            .valueQuantity(valueQuantity(diastolicMeasurement.value(), measurement.units()))
+            .valueQuantity(
+                valueQuantity("8462-4", diastolicMeasurement.value(), measurement.units()))
             .build();
     return List.of(systolic, diastolic);
   }
@@ -99,6 +101,17 @@ public class VistaVitalToR4ObservationTransformer {
         .map(this::observationFromMeasurement);
   }
 
+  private String extractLoinc(CodeableConcept code) {
+    if (isBlank(code) || isBlank(code.coding())) {
+      return null;
+    }
+    return code.coding().stream()
+        .filter(Objects::nonNull)
+        .map(Coding::code)
+        .findFirst()
+        .orElse(null);
+  }
+
   String idFrom(String id) {
     if (isBlank(id)) {
       return null;
@@ -108,13 +121,14 @@ public class VistaVitalToR4ObservationTransformer {
 
   Observation observationFromMeasurement(Vitals.Measurement measurement) {
     var patientReference = toReference("Patient", patientIcn, null);
+    var code = code(measurement);
     if (measurement.isBloodPressure()) {
       return Observation.builder()
           .resourceType("Observation")
           .id(idFrom(measurement.id()))
           .category(category())
           .subject(patientReference)
-          .code(code(measurement))
+          .code(code)
           .component(component(measurement))
           .effectiveDateTime(toHumanDateTime(vistaVital.taken()))
           .issued(toHumanDateTime(vistaVital.entered()))
@@ -131,7 +145,7 @@ public class VistaVitalToR4ObservationTransformer {
         .issued(toHumanDateTime(vistaVital.entered()))
         .referenceRange(referenceRange(measurement.high(), measurement.low()))
         .status(status(vistaVital.removed()))
-        .valueQuantity(valueQuantity(measurement.value(), measurement.units()))
+        .valueQuantity(valueQuantity(extractLoinc(code), measurement.value(), measurement.units()))
         .build();
   }
 

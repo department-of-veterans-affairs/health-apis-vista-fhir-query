@@ -1,41 +1,14 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toBigDecimal;
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.valueOfValueOnlyXmlAttribute;
 
 import gov.va.api.health.r4.api.datatypes.Quantity;
-import gov.va.api.lighthouse.vistalink.models.ValueOnlyXmlAttribute;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 
 public interface ValueQuantityMapping {
-
-  /** Build an R4 Quantity given a loinc, value, and units. */
-  static Quantity from(String loinc, String value, String units) {
-    if (value == null) {
-      return null;
-    }
-    var maybeVitalSignsProfile =
-        VitalSignsValueQuantityMapping.FhirVitalSignsProfile.findByLoincCode(loinc);
-    if (maybeVitalSignsProfile.isPresent()) {
-      return new VitalSignsValueQuantityMapping(maybeVitalSignsProfile.get())
-          .toQuantity(value, units);
-    }
-    return new GeneralValueQuantityMapping().toQuantity(value, units);
-  }
-
-  static Quantity from(String value, String units) {
-    return from(null, value, units);
-  }
-
-  /** Build an R4 Quantity from a vista xml response value and units. */
-  static Quantity from(ValueOnlyXmlAttribute value, ValueOnlyXmlAttribute units) {
-    String quantityValue = valueOfValueOnlyXmlAttribute(value);
-    String unitValue = valueOfValueOnlyXmlAttribute(units);
-    return from(quantityValue, unitValue);
-  }
 
   Quantity toQuantity(String value, String unit);
 
