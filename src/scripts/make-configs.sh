@@ -20,6 +20,7 @@ Secrets Configuration
 
  Variables that can be used for optional configurations:
  - VISTALINK_CLIENT_KEY
+ - WEB_EXCEPTION_KEY
 
 $1
 EOF
@@ -54,7 +55,7 @@ main() {
   # Support values as configured in Shanktosecrets
   if [ -z "${VISTALINK_ACCESS_CODE:-}" ]; then export VISTALINK_ACCESS_CODE=${VISTA_ACCESS_CODE:-}; fi
   if [ -z "${VISTALINK_VERIFY_CODE:-}" ]; then export VISTALINK_VERIFY_CODE=${VISTA_VERIFY_CODE:-}; fi
-  
+
   MISSING_SECRETS=false
   requiredParam VISTALINK_URL "$VISTALINK_URL"
   requiredParam VISTALINK_ACCESS_CODE "$VISTALINK_ACCESS_CODE"
@@ -63,6 +64,7 @@ main() {
   requiredParam VFQ_DB_USER "${VFQ_DB_USER}"
   requiredParam VFQ_DB_PASSWORD "${VFQ_DB_PASSWORD}"
   [ -z "$VISTALINK_CLIENT_KEY" ] && VISTALINK_CLIENT_KEY="not-used"
+  [ -z "$WEB_EXCEPTION_KEY" ] && WEB_EXCEPTION_KEY="-shanktopus-for-the-win-"
   [ $MISSING_SECRETS == true ] && usage "Missing configuration secrets, please update $SECRETS"
 
   populateConfig
@@ -131,6 +133,7 @@ EOF
   configValue vista-fhir-query $PROFILE vista-fhir-query.public-url "http://localhost:8095"
   configValue vista-fhir-query $PROFILE vista-fhir-query.public-r4-base-path "r4"
   addValue    vista-fhir-query $PROFILE vista-fhir-query.custom-r4-url-and-path.Patient "http://localhost:8090/data-query/r4"
+  configValue vista-fhir-query $PROFILE vista-fhir-query.public-web-exception-key "$WEB_EXCEPTION_KEY"
   configValue vista-fhir-query $PROFILE identityservice.encodingKey fhir-query
   configValue vista-fhir-query $PROFILE identityservice.patientIdPattern "[0-9]+(V[0-9]{6})?"
   configValue vista-fhir-query $PROFILE spring.datasource.url "${VFQ_DB_URL}"
