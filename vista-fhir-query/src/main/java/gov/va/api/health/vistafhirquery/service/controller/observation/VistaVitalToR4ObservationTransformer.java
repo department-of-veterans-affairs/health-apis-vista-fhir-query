@@ -150,7 +150,7 @@ public class VistaVitalToR4ObservationTransformer {
         .id(idFrom(measurement.id()))
         .category(category())
         .subject(patientReference)
-        .code(code(measurement))
+        .code(code)
         .effectiveDateTime(toHumanDateTime(vistaVital.taken()))
         .issued(toHumanDateTime(vistaVital.entered()))
         .referenceRange(referenceRange(measurement.high(), measurement.low()))
