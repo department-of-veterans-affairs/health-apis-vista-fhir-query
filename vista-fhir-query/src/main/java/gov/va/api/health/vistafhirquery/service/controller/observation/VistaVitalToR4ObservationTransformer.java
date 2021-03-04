@@ -23,9 +23,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Builder
 public class VistaVitalToR4ObservationTransformer {
   @NonNull private final String patientIcn;
@@ -102,7 +100,6 @@ public class VistaVitalToR4ObservationTransformer {
   }
 
   String idFrom(String id) {
-    log.info("ToDo: Is null logical id an illegal state?");
     if (isBlank(id)) {
       return null;
     }
