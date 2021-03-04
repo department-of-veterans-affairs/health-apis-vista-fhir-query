@@ -45,10 +45,10 @@ public interface ValueQuantityMapping {
           // fall-through
         case HEAD_CIRCUMFERENCE:
           BodyLengthUnits length = BodyLengthUnits.findByVistaUnit(unit);
-          return quantity.code(length.code()).unit(length.display()).build();
+          return quantity.code(length.code()).build();
         case BODY_WEIGHT:
           BodyWeightUnits weight = BodyWeightUnits.findByVistaUnit(unit);
-          return quantity.code(weight.code()).unit(weight.display()).build();
+          return quantity.code(weight.code()).build();
         case BODY_MASS_INDEX:
           return quantity.code("kg/m2").build();
         case SYSTOLIC_BP:
@@ -56,12 +56,15 @@ public interface ValueQuantityMapping {
         case DIASTOLIC_BP:
           return quantity.code("mm[Hg]").build();
         case BLOOD_PRESSURE:
-          // ToDo throw (blood pressure quantities should be mapped in parts sys&dia)
+          throw new IllegalArgumentException(
+              "Blood pressure quantities should be "
+                  + "mapped separately as systolic and diastolic.");
         case VITAL_SIGNS_PANEL:
-          // ToDo throw (panel quantities should be mapped in parts then added to components)
+          throw new IllegalArgumentException(
+              "Vital-Sign panels should not include "
+                  + "quantities themelves, only reference Observations that do.");
         default:
-          // ToDo throw, we should have returned/thrown by now
-          return quantity.build();
+          throw new IllegalStateException("Unknown Vital-Signs profile: " + profile.toString());
       }
     }
 

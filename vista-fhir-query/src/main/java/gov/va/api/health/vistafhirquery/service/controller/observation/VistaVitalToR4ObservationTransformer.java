@@ -63,6 +63,14 @@ public class VistaVitalToR4ObservationTransformer {
     return maybeLoincMapping.orElse(null);
   }
 
+  private CodeableConcept codeableConceptForLoinc(String code, String display) {
+    return CodeableConcept.builder()
+        .coding(
+            List.of(
+                Coding.builder().system("http://loinc.org").code(code).display(display).build()))
+        .build();
+  }
+
   /**
    * FHIR expects blood pressure to be split into two components within a single vital-signs
    * response, with the values provided in the format of `systolic/diastolic` so when split systolic
@@ -77,12 +85,14 @@ public class VistaVitalToR4ObservationTransformer {
     BloodPressure.BloodPressureMeasurement diastolicMeasurement = bp.get().diastolic();
     Observation.Component systolic =
         Observation.Component.builder()
+            .code(codeableConceptForLoinc("8480-6", "Systolic blood pressure"))
             .referenceRange(referenceRange(systolicMeasurement.high(), systolicMeasurement.low()))
             .valueQuantity(
                 valueQuantity("8480-6", systolicMeasurement.value(), measurement.units()))
             .build();
     Observation.Component diastolic =
         Observation.Component.builder()
+            .code(codeableConceptForLoinc("8462-4", "Diastolic blood pressure"))
             .referenceRange(referenceRange(diastolicMeasurement.high(), diastolicMeasurement.low()))
             .valueQuantity(
                 valueQuantity("8462-4", diastolicMeasurement.value(), measurement.units()))

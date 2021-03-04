@@ -198,25 +198,57 @@ public class ObservationVitalSamples {
 
     public Observation.Component bloodPressureDiastolic() {
       return Observation.Component.builder()
+          .code(
+              CodeableConcept.builder()
+                  .coding(
+                      List.of(
+                          Coding.builder()
+                              .system("http://loinc.org")
+                              .code("8462-4")
+                              .display("Diastolic blood pressure")
+                              .build()))
+                  .build())
           .referenceRange(
               List.of(
                   Observation.ReferenceRange.builder()
                       .high(SimpleQuantity.builder().value(new BigDecimal("110")).build())
                       .low(SimpleQuantity.builder().value(new BigDecimal("60")).build())
                       .build()))
-          .valueQuantity(Quantity.builder().value(new BigDecimal("65")).unit("mm[Hg]").build())
+          .valueQuantity(
+              Quantity.builder()
+                  .system("http://unitsofmeasure.org")
+                  .code("mm[Hg]")
+                  .value(new BigDecimal("65"))
+                  .unit("mm[Hg]")
+                  .build())
           .build();
     }
 
     public Observation.Component bloodPressureSystolic() {
       return Observation.Component.builder()
+          .code(
+              CodeableConcept.builder()
+                  .coding(
+                      List.of(
+                          Coding.builder()
+                              .system("http://loinc.org")
+                              .code("8480-6")
+                              .display("Systolic blood pressure")
+                              .build()))
+                  .build())
           .referenceRange(
               List.of(
                   Observation.ReferenceRange.builder()
                       .high(SimpleQuantity.builder().value(new BigDecimal("210")).build())
                       .low(SimpleQuantity.builder().value(new BigDecimal("100")).build())
                       .build()))
-          .valueQuantity(Quantity.builder().value(new BigDecimal("126")).unit("mm[Hg]").build())
+          .valueQuantity(
+              Quantity.builder()
+                  .system("http://unitsofmeasure.org")
+                  .code("mm[Hg]")
+                  .value(new BigDecimal("126"))
+                  .unit("mm[Hg]")
+                  .build())
           .build();
     }
 
@@ -256,7 +288,13 @@ public class ObservationVitalSamples {
           .issued("2011-02-25T11:04:28Z")
           .id(idSegment)
           .status(Observation.ObservationStatus._final)
-          .valueQuantity(Quantity.builder().value(new BigDecimal("190")).unit("lb").build())
+          .valueQuantity(
+              Quantity.builder()
+                  .system("http://unitsofmeasure.org")
+                  .code("[lb_av]")
+                  .value(new BigDecimal("190"))
+                  .unit("lb")
+                  .build())
           .build();
     }
 
