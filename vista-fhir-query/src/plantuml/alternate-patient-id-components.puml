@@ -8,6 +8,10 @@ class MappedAlternatePatientIds
 class WitnessProtectionAdvice <<ResponseAdvice>>
 class R4Bundler
 class R4BundlerFactory <<Component>>
+class ProtectedReferenceFactory <<Component>>
+class LinkProperties <<Configuration>>
+
+ProtectedReferenceFactory o--> LinkProperties : <<Autowire>>
 
 AlternatePatientIdConfig .> AlternatePatientIdProperties : <<uses>>
 AlternatePatientIdConfig -up-> DisabledAlternatePatientIds : <<creates bean>>
@@ -18,6 +22,7 @@ MappedAlternatePatientIds -up-|> AlternatePatientIds
 
 AlternatePatientIdFilter o--> AlternatePatientIds : <<Autowire>>
 WitnessProtectionAdvice o--> AlternatePatientIds : <<Autowire>>
+WitnessProtectionAdvice o--> ProtectedReferenceFactory : <<Autowire>>
 R4Bundler o--> AlternatePatientIds : <<uses>>
 R4BundlerFactory o..> AlternatePatientIds : <<Autowire>>
 R4BundlerFactory --> R4Bundler : <<creates>>

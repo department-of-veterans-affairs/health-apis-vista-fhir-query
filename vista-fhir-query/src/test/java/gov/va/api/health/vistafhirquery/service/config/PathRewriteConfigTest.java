@@ -16,7 +16,8 @@ import org.springframework.boot.web.server.LocalServerPort;
       "spring.datasource.username=sa",
       "spring.datasource.password=sa",
       "spring.datasource.initialization-mode=always",
-      "spring.jpa.hibernate.ddl-auto=none"
+      "spring.jpa.hibernate.ddl-auto=none",
+      "vista-fhir-query.public-web-exception-key=set"
     })
 public class PathRewriteConfigTest {
   @Autowired TestRestTemplate restTemplate;

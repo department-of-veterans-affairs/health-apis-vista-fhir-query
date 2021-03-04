@@ -1,4 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <FindBugsFilter>
   <!-- Exclusions can be defined here and should include a comment on why the finding can be ignored -->
+  <!--
+  This lombok generated builder accepts an array which is ultimately given to the built instance
+  constructor. This constructor processes the array to store individual fields. The array is not stored
+  directly.
+  -->
+  <Match>
+    <Class name="~.*Builder"/>
+    <Or>
+      <Bug pattern="EI_EXPOSE_REP"/>
+      <Bug pattern="EI_EXPOSE_REP2"/>
+    </Or>
+  </Match>
 </FindBugsFilter>

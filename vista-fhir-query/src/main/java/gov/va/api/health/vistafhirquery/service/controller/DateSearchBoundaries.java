@@ -3,9 +3,7 @@ package gov.va.api.health.vistafhirquery.service.controller;
 import gov.va.api.health.fhir.api.FhirDateTimeParameter;
 import java.time.Instant;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 public class DateSearchBoundaries {
   private final FhirDateTimeParameter date1;
 
@@ -199,7 +197,6 @@ public class DateSearchBoundaries {
   }
 
   private void invalidDateCombination() {
-    log.info("TODO: Web exception handler goodness with bad request (400)");
     ResourceExceptions.BadSearchParameters.because(
         "Bad date search combination : date=" + date1.toString() + "&" + date2.toString());
   }
