@@ -30,11 +30,7 @@ public class ProtectedReferenceFactory {
     if (reference == null) {
       return Optional.empty();
     }
-    Consumer<String> updateWithUrl =
-        ref -> {
-          reference.reference(ref);
-        };
-    return forUri(reference.reference(), updateWithUrl, replaceIdOnly());
+    return forUri(reference.reference(), reference::reference, replaceWithFullUrl());
   }
 
   /**

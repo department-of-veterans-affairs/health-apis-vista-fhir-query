@@ -34,7 +34,7 @@ class ProtectedReferenceFactoryTest {
     assertThat(actual.get().type()).isEqualTo("Patient");
     assertThat(actual.get().id()).isEqualTo("p1");
     actual.get().onUpdate().accept("newton");
-    assertThat(ref.reference()).isEqualTo("Patient/newton");
+    assertThat(ref.reference()).isEqualTo("http://awesome.com/fuego/r4/Patient/newton");
   }
 
   @Test
