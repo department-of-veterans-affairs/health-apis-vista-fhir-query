@@ -151,25 +151,27 @@ public class ValueQuantityMappingTest {
   @ParameterizedTest
   @EnumSource(
       value = ValueQuantityMapping.VitalSignsValueQuantityMapping.FhirVitalSignsProfile.class,
-      names = {
-        "BLOOD_PRESSURE",
-        "VITAL_SIGNS_PANEL",
-        "BODY_TEMPERATURE",
-        "BODY_HEIGHT",
-        "BODY_WEIGHT"
-      })
-  void illegalArgument(
+      names = {"BODY_TEMPERATURE", "BODY_HEIGHT", "BODY_WEIGHT"})
+  void illegalArgumentEnumUnits(
       ValueQuantityMapping.VitalSignsValueQuantityMapping.FhirVitalSignsProfile profile) {
-    /*
-     * This tests Illegal Argument thrown in two different ways:
-     * "BLOOD_PRESSURE", "VITAL_SIGNS_PANEL": can't create quantities
-     * "BODY_TEMPERATURE", "BODY_HEIGHT", "BODY_WEIGHT": will not be able to interpret "NAH" as an enum
-     */
     assertThatExceptionOfType(IllegalArgumentException.class)
         .isThrownBy(
             () ->
                 new ValueQuantityMapping.VitalSignsValueQuantityMapping(profile)
-                    .toQuantity("NAH", "lbs"));
+                    .toQuantity("1", "NAH"));
+  }
+
+  @ParameterizedTest
+  @EnumSource(
+      value = ValueQuantityMapping.VitalSignsValueQuantityMapping.FhirVitalSignsProfile.class,
+      names = {"BLOOD_PRESSURE", "VITAL_SIGNS_PANEL"})
+  void illegalArgumentProfileCantCreateQuantity(
+      ValueQuantityMapping.VitalSignsValueQuantityMapping.FhirVitalSignsProfile profile) {
+    assertThatExceptionOfType(IllegalArgumentException.class)
+        .isThrownBy(
+            () ->
+                new ValueQuantityMapping.VitalSignsValueQuantityMapping(profile)
+                    .toQuantity("1", "lbs"));
   }
 
   @ParameterizedTest

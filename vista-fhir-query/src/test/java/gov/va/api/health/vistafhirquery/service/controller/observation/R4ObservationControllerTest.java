@@ -259,4 +259,15 @@ public class R4ObservationControllerTest {
                 "_count=10&patient=p1"));
     assertThat(json(actual)).isEqualTo(json(expected));
   }
+
+  @Test
+  void vistaReturnsTooManyResultsForRead() {
+    var vista = ObservationVitalSamples.Vista.create();
+    VprGetPatientData.Response.Results results = vista.results();
+    when(vlClient.requestForVistaSite(eq("123"), any(RpcDetails.class)))
+        .thenReturn(rpcResponse(RpcResponse.Status.OK, "123", xml(results)));
+    when(wp.toPrivateId("public-Np1+123+456")).thenReturn("Np1+123+456");
+    assertThatExceptionOfType(ResourceExceptions.ExpectationFailed.class)
+        .isThrownBy(() -> controller().read("public-Np1+123+456"));
+  }
 }
