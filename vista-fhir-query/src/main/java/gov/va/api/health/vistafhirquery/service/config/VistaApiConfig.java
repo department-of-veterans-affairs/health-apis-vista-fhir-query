@@ -16,8 +16,8 @@ import org.springframework.context.annotation.Configuration;
 @AllArgsConstructor
 @Accessors(fluent = false)
 @EnableConfigurationProperties
-@ConfigurationProperties("vistalink.api")
-public class VistalinkApiConfig {
+@ConfigurationProperties("vista.api")
+public class VistaApiConfig {
 
   private String url;
 

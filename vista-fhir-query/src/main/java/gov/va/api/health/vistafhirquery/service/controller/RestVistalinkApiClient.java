@@ -1,6 +1,6 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
-import gov.va.api.health.vistafhirquery.service.config.VistalinkApiConfig;
+import gov.va.api.health.vistafhirquery.service.config.VistaApiConfig;
 import gov.va.api.lighthouse.vistalink.api.RpcDetails;
 import gov.va.api.lighthouse.vistalink.api.RpcPrincipal;
 import gov.va.api.lighthouse.vistalink.api.RpcRequest;
@@ -28,7 +28,7 @@ import org.springframework.web.client.RestTemplate;
 public class RestVistalinkApiClient implements VistalinkApiClient {
   private RestTemplate restTemplate;
 
-  private VistalinkApiConfig config;
+  private VistaApiConfig config;
 
   @SneakyThrows
   private RequestEntity<RpcRequest> buildRequestEntity(RpcRequest body) {

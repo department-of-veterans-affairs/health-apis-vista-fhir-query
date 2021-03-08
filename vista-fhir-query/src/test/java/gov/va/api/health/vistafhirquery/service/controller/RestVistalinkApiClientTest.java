@@ -8,7 +8,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import gov.va.api.health.vistafhirquery.service.config.VistalinkApiConfig;
+import gov.va.api.health.vistafhirquery.service.config.VistaApiConfig;
 import gov.va.api.lighthouse.vistalink.api.RpcDetails;
 import gov.va.api.lighthouse.vistalink.api.RpcInvocationResult;
 import gov.va.api.lighthouse.vistalink.api.RpcResponse;
@@ -21,8 +21,8 @@ import org.springframework.web.client.RestTemplate;
 public class RestVistalinkApiClientTest {
   RestTemplate rt = mock(RestTemplate.class);
 
-  VistalinkApiConfig config =
-      VistalinkApiConfig.builder()
+  VistaApiConfig config =
+      VistaApiConfig.builder()
           .url("http://fugazi.com/")
           .accessCode("ac")
           .verifyCode("vc")

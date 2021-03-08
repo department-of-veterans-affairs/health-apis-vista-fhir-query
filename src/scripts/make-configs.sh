@@ -121,14 +121,14 @@ makeConfig() {
 
 populateConfig() {
   makeConfig vista-fhir-query $PROFILE
-  configValue vista-fhir-query $PROFILE vistalink.api.url "$VISTALINK_URL"
+  configValue vista-fhir-query $PROFILE vista.api.url "$VISTALINK_URL"
   comment vista-fhir-query $PROFILE <<EOF
-# To populate vistalink.api.client-key, use the VISTALINK_CLIENT_KEY value in
+# To populate vista.api.client-key, use the VISTALINK_CLIENT_KEY value in
 # the secrets files used with make-configs.sh
 EOF
-  configValue vista-fhir-query $PROFILE vistalink.api.client-key "$VISTALINK_CLIENT_KEY"
-  configValue vista-fhir-query $PROFILE vistalink.api.access-code "$VISTALINK_ACCESS_CODE"
-  configValue vista-fhir-query $PROFILE vistalink.api.verify-code "$VISTALINK_VERIFY_CODE"
+  configValue vista-fhir-query $PROFILE vista.api.client-key "$VISTALINK_CLIENT_KEY"
+  configValue vista-fhir-query $PROFILE vista.api.access-code "$VISTALINK_ACCESS_CODE"
+  configValue vista-fhir-query $PROFILE vista.api.verify-code "$VISTALINK_VERIFY_CODE"
   configValue vista-fhir-query $PROFILE vista-fhir-query.internal.client-keys "disabled"
   configValue vista-fhir-query $PROFILE vista-fhir-query.public-url "http://localhost:8095"
   configValue vista-fhir-query $PROFILE vista-fhir-query.public-r4-base-path "r4"

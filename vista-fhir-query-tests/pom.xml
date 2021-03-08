@@ -107,7 +107,7 @@
                 <argument>h2.jar${path.separator}vista-fhir-query.jar</argument>
                 <argument>-Dlogging.level.root=INFO</argument>
                 <argument>-Dloader=gov.va.api.health.vistafhirquery.service.Application</argument>
-                <argument>-Dvistalink.api.url=http://localhost:8096</argument>
+                <argument>-Dvista.api.url=http://localhost:8096</argument>
                 <argument>-Dvista-fhir-query.internal.client-keys=~shanktopus~</argument>
                 <argument>-Dvista-fhir-query.public-web-exception-key=-shanktopus-for-the-win-</argument>
                 <argument>-Didentityservice.encodingKey=fhir-query</argument>
