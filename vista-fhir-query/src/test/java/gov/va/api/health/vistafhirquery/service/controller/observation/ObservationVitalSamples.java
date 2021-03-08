@@ -13,6 +13,7 @@ import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.lighthouse.vistalink.models.CodeAndNameXmlAttribute;
 import gov.va.api.lighthouse.vistalink.models.ValueOnlyXmlAttribute;
+import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Labs;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Vitals;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.VprGetPatientData;
 import java.math.BigDecimal;
@@ -105,6 +106,15 @@ public class ObservationVitalSamples {
 
     public Map.Entry<String, VprGetPatientData.Response.Results> resultsByStation() {
       return Map.entry("673", results());
+    }
+
+    public VprGetPatientData.Response.Results resultsWithLab() {
+      return VprGetPatientData.Response.Results.builder()
+          .version("1.13")
+          .timeZone("-0500")
+          .vitals(Vitals.builder().total(1).vitalResults(vitals()).build())
+          .labs(Labs.builder().labResults(ObservationLabSamples.Vista.create().labs()).build())
+          .build();
     }
 
     public List<Vitals.Vital> vitals() {

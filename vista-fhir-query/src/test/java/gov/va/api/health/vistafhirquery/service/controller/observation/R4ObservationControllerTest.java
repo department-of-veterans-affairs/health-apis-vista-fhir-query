@@ -165,7 +165,7 @@ public class R4ObservationControllerTest {
   @Test
   void searchByPatientAndMultipleDates() {
     var request = requestFromUri("?_count=10&date=ge2010&date=lt2012&patient=p1");
-    var results = ObservationVitalSamples.Vista.create().results();
+    var results = ObservationVitalSamples.Vista.create().resultsWithLab();
     when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
     var actual =
@@ -173,8 +173,11 @@ public class R4ObservationControllerTest {
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
-            ObservationVitalSamples.Fhir.create().observations(),
-            2,
+            List.of(
+                ObservationVitalSamples.Fhir.create().bloodPressure(),
+                ObservationVitalSamples.Fhir.create().weight(),
+                ObservationLabSamples.Fhir.create().observation()),
+            3,
             link(
                 BundleLink.LinkRelation.self,
                 "http://fugazi.com/r4/Observation",
@@ -244,15 +247,18 @@ public class R4ObservationControllerTest {
   @SneakyThrows
   void searchByPatientWithVistaPopulatedResults() {
     var request = requestFromUri("?_count=10&patient=p1");
-    var results = ObservationVitalSamples.Vista.create().results();
+    var results = ObservationVitalSamples.Vista.create().resultsWithLab();
     when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
     var actual = controller().searchByPatient("p1", null, null, 10, request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
-            ObservationVitalSamples.Fhir.create().observations(),
-            2,
+            List.of(
+                ObservationVitalSamples.Fhir.create().bloodPressure(),
+                ObservationVitalSamples.Fhir.create().weight(),
+                ObservationLabSamples.Fhir.create().observation()),
+            3,
             link(
                 BundleLink.LinkRelation.self,
                 "http://fugazi.com/r4/Observation",
