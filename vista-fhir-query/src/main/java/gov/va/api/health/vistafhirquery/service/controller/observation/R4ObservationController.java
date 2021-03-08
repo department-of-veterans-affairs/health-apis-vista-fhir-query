@@ -13,6 +13,7 @@ import gov.va.api.health.vistafhirquery.service.controller.VistaIdentifierSegmen
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
 import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.WitnessProtection;
 import gov.va.api.lighthouse.vistalink.api.RpcResponse;
+import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Labs;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Vitals;
 import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.VprGetPatientData;
 import java.util.List;
@@ -111,7 +112,7 @@ public class R4ObservationController {
             patient,
             VprGetPatientData.Request.builder()
                 .dfn(VprGetPatientData.Request.PatientId.forIcn(patient))
-                .type(Set.of(VprGetPatientData.Domains.vitals))
+                .type(Set.of(VprGetPatientData.Domains.vitals, VprGetPatientData.Domains.labs))
                 .start(toNewYorkFilemanDateString(boundaries.start()))
                 .stop(toNewYorkFilemanDateString(boundaries.stop()))
                 .build()
@@ -140,7 +141,9 @@ public class R4ObservationController {
             rpcResponse ->
                 rpcResponse.resultsByStation().entrySet().parallelStream()
                     .filter(
-                        entry -> entry.getValue().vitalStream().anyMatch(Vitals.Vital::isNotEmpty))
+                        entry ->
+                            entry.getValue().vitalStream().anyMatch(Vitals.Vital::isNotEmpty)
+                                || entry.getValue().labStream().anyMatch(Labs.Lab::isNotEmpty))
                     .flatMap(
                         entry ->
                             R4ObservationCollector.builder()
