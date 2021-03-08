@@ -26,7 +26,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,7 +40,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @implSpec
  *     https://build.fhir.org/ig/HL7/US-Core-R4/StructureDefinition-us-core-observation-lab.html
  */
-@Slf4j
 @Validated
 @RestController
 @RequestMapping(
@@ -71,8 +69,6 @@ public class R4ObservationController {
   @SneakyThrows
   @GetMapping(value = {"/{publicId}"})
   public Observation read(@PathVariable("publicId") String publicId) {
-    log.info("ToDo: Search By _id and identifier");
-
     VistaIdentifierSegment ids = parseOrDie(publicId);
     RpcResponse rpcResponse =
         vistalinkApiClient.requestForVistaSite(

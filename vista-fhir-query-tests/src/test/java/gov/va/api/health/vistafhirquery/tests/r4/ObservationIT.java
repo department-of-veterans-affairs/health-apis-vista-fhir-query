@@ -16,7 +16,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 @Slf4j
 public class ObservationIT {
-  /* TODO: Resource Validation/Verification. */
   SystemDefinition def = SystemDefinitions.systemDefinition();
 
   ServiceDefinition r4 = def.r4();

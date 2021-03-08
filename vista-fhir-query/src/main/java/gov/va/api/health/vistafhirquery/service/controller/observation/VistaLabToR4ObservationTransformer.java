@@ -54,9 +54,6 @@ public class VistaLabToR4ObservationTransformer {
     String testName = valueOfValueOnlyXmlAttribute(maybeTestName);
     String vuid = valueOfValueOnlyXmlAttribute(maybeVuid);
     if (!isBlank(loinc)) {
-      log.info(
-          "ToDo: Should vuid be mapped anyway to get the display value? "
-              + "Can we be sure the testName is a valid loinc display value?");
       return CodeableConcept.builder()
           .coding(
               List.of(
@@ -82,7 +79,6 @@ public class VistaLabToR4ObservationTransformer {
     if (!hasAcceptedCode()) {
       return Stream.empty();
     }
-    log.info("ToDo: Should groupName, labOrderId, orderId be in the identifier array?");
     var observation =
         Observation.builder()
             .resourceType("Observation")
@@ -111,7 +107,6 @@ public class VistaLabToR4ObservationTransformer {
   }
 
   String idFrom(ValueOnlyXmlAttribute maybeId) {
-    log.info("ToDo: Is null logical id an illegal state?");
     String id = valueOfValueOnlyXmlAttribute(maybeId);
     if (isBlank(id)) {
       return null;
