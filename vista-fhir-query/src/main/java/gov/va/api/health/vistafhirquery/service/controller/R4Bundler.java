@@ -44,17 +44,12 @@ public class R4Bundler<
 
   @Override
   public BundleT apply(RpcResponseT rpcResult) {
-    log.info("ToDo: Determine total results better");
-    log.info(
-        "ToDo: We'll have to do special paging logic here because "
-            + "vista gives us _ALL_ the results at once");
     List<ResourceT> resources = transformation.toResource().apply(rpcResult);
     BundleT bundle = bundling.newBundle().get();
     bundle.resourceType("Bundle");
     bundle.type(AbstractBundle.BundleType.searchset);
     bundle.total(resources.size());
     bundle.link(toLinks());
-    log.info("ToDo: better count handling");
     int count =
         HttpRequestParameters.integer(request, "_count", linkProperties.getDefaultPageSize());
     if (resources.size() > count) {
@@ -89,7 +84,6 @@ public class R4Bundler<
 
   /** Create R4 BundleLinks. */
   private List<BundleLink> toLinks() {
-    log.info("ToDo: Build bundle links dynamically");
     List<BundleLink> links = new ArrayList<>(5);
     links.add(
         BundleLink.builder()

@@ -12,7 +12,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.SneakyThrows;
 import lombok.Value;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
@@ -20,7 +19,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-@Slf4j
 @Value
 @Builder
 @Component
@@ -82,7 +80,6 @@ public class RestVistalinkApiClient implements VistalinkApiClient {
   }
 
   private void verifyVistalinkApiResponse(ResponseEntity<RpcResponse> response) {
-    log.info("ToDo: Better validation/handling on the HTTP response from VistalinkAPI");
     if (!response.getStatusCode().is2xxSuccessful()) {
       throw new IllegalStateException("Vistalink API didnt return 2xx HTTP status code.");
     }

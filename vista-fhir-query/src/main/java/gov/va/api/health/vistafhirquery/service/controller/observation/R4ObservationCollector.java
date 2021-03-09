@@ -13,10 +13,8 @@ import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
-import lombok.extern.slf4j.Slf4j;
 
 @Value
-@Slf4j
 @Builder
 public class R4ObservationCollector {
   private final String patientIcn;
@@ -42,7 +40,6 @@ public class R4ObservationCollector {
   }
 
   Stream<Observation> toFhir() {
-    log.info("ToDo: Parallelize this.");
     Stream<Observation> vitals =
         resultsEntry
             .getValue()

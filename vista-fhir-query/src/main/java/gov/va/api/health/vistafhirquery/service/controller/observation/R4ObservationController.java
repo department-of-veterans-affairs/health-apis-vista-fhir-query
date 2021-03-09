@@ -13,6 +13,7 @@ import gov.va.api.health.vistafhirquery.service.controller.VistaIdentifierSegmen
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
 import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.WitnessProtection;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
+import gov.va.api.lighthouse.charon.models.vprgetpatientdata.Labs;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.Vitals;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
 import java.util.List;
@@ -26,7 +27,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,7 +41,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @implSpec
  *     https://build.fhir.org/ig/HL7/US-Core-R4/StructureDefinition-us-core-observation-lab.html
  */
-@Slf4j
 @Validated
 @RestController
 @RequestMapping(
@@ -71,8 +70,6 @@ public class R4ObservationController {
   @SneakyThrows
   @GetMapping(value = {"/{publicId}"})
   public Observation read(@PathVariable("publicId") String publicId) {
-    log.info("ToDo: Search By _id and identifier");
-
     VistaIdentifierSegment ids = parseOrDie(publicId);
     RpcResponse rpcResponse =
         vistalinkApiClient.requestForVistaSite(
@@ -115,7 +112,7 @@ public class R4ObservationController {
             patient,
             VprGetPatientData.Request.builder()
                 .dfn(VprGetPatientData.Request.PatientId.forIcn(patient))
-                .type(Set.of(VprGetPatientData.Domains.vitals))
+                .type(Set.of(VprGetPatientData.Domains.vitals, VprGetPatientData.Domains.labs))
                 .start(toNewYorkFilemanDateString(boundaries.start()))
                 .stop(toNewYorkFilemanDateString(boundaries.stop()))
                 .build()
@@ -144,7 +141,9 @@ public class R4ObservationController {
             rpcResponse ->
                 rpcResponse.resultsByStation().entrySet().parallelStream()
                     .filter(
-                        entry -> entry.getValue().vitalStream().anyMatch(Vitals.Vital::isNotEmpty))
+                        entry ->
+                            entry.getValue().vitalStream().anyMatch(Vitals.Vital::isNotEmpty)
+                                || entry.getValue().labStream().anyMatch(Labs.Lab::isNotEmpty))
                     .flatMap(
                         entry ->
                             R4ObservationCollector.builder()
