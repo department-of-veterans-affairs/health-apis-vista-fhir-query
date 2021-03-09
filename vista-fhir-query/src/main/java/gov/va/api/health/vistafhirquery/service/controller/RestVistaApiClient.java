@@ -23,7 +23,7 @@ import org.springframework.web.client.RestTemplate;
 @Builder
 @Component
 @AllArgsConstructor(onConstructor_ = @Autowired)
-public class RestVistalinkApiClient implements VistalinkApiClient {
+public class RestVistaApiClient implements VistalinkApiClient {
   private RestTemplate restTemplate;
 
   private VistaApiConfig config;

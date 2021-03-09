@@ -18,7 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-public class RestVistalinkApiClientTest {
+public class RestVistaApiClientTest {
   RestTemplate rt = mock(RestTemplate.class);
 
   VistaApiConfig config =
@@ -29,8 +29,8 @@ public class RestVistalinkApiClientTest {
           .clientKey("ck")
           .build();
 
-  private RestVistalinkApiClient client() {
-    return RestVistalinkApiClient.builder().config(config).restTemplate(rt).build();
+  private RestVistaApiClient client() {
+    return RestVistaApiClient.builder().config(config).restTemplate(rt).build();
   }
 
   void mockVistalink200Response() {
