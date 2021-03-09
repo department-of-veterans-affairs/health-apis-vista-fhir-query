@@ -8,7 +8,7 @@ import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers
 import gov.va.api.health.r4.api.datatypes.Quantity;
 import gov.va.api.health.r4.api.datatypes.SimpleQuantity;
 import gov.va.api.health.r4.api.resources.Observation;
-import gov.va.api.lighthouse.vistalink.models.ValueOnlyXmlAttribute;
+import gov.va.api.lighthouse.charon.models.ValueOnlyXmlAttribute;
 import java.util.List;
 import lombok.experimental.UtilityClass;
 

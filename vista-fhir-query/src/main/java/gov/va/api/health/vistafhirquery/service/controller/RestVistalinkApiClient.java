@@ -1,11 +1,11 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
 import gov.va.api.health.vistafhirquery.service.config.VistaApiConfig;
-import gov.va.api.lighthouse.vistalink.api.RpcDetails;
-import gov.va.api.lighthouse.vistalink.api.RpcPrincipal;
-import gov.va.api.lighthouse.vistalink.api.RpcRequest;
-import gov.va.api.lighthouse.vistalink.api.RpcResponse;
-import gov.va.api.lighthouse.vistalink.api.RpcVistaTargets;
+import gov.va.api.lighthouse.charon.api.RpcDetails;
+import gov.va.api.lighthouse.charon.api.RpcPrincipal;
+import gov.va.api.lighthouse.charon.api.RpcRequest;
+import gov.va.api.lighthouse.charon.api.RpcResponse;
+import gov.va.api.lighthouse.charon.api.RpcVistaTargets;
 import java.net.URI;
 import java.util.List;
 import lombok.AllArgsConstructor;

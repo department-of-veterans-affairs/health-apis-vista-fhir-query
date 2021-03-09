@@ -5,9 +5,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Labs;
-import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Vitals;
-import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.VprGetPatientData;
+import gov.va.api.lighthouse.charon.models.vprgetpatientdata.Labs;
+import gov.va.api.lighthouse.charon.models.vprgetpatientdata.Vitals;
+import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.BeforeAll;

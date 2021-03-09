@@ -4,9 +4,9 @@ import static gov.va.api.health.vistafhirquery.service.controller.observation.Vi
 import static java.util.stream.Collectors.toMap;
 
 import gov.va.api.health.r4.api.resources.Observation;
-import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Labs;
-import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Vitals;
-import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.VprGetPatientData;
+import gov.va.api.lighthouse.charon.models.vprgetpatientdata.Labs;
+import gov.va.api.lighthouse.charon.models.vprgetpatientdata.Vitals;
+import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Stream;

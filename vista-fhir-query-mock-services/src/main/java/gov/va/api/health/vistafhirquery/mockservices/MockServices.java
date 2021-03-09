@@ -9,7 +9,7 @@ import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.HttpResponse.response;
 
 import com.google.common.io.Resources;
-import gov.va.api.lighthouse.vistalink.api.RpcDetails;
+import gov.va.api.lighthouse.charon.api.RpcDetails;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;

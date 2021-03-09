@@ -3,7 +3,7 @@ package gov.va.api.health.vistafhirquery.service.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import gov.va.api.lighthouse.vistalink.api.RpcResponse;
+import gov.va.api.lighthouse.charon.api.RpcResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;

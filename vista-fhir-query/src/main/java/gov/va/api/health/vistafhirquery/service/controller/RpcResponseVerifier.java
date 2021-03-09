@@ -1,7 +1,7 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
-import gov.va.api.lighthouse.vistalink.api.RpcInvocationResult;
-import gov.va.api.lighthouse.vistalink.api.RpcResponse;
+import gov.va.api.lighthouse.charon.api.RpcInvocationResult;
+import gov.va.api.lighthouse.charon.api.RpcResponse;
 import java.util.List;
 import lombok.experimental.UtilityClass;
 

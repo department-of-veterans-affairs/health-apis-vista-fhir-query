@@ -6,7 +6,7 @@ import gov.va.api.health.r4.api.resources.Resource;
 import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
 import gov.va.api.health.vistafhirquery.service.controller.R4Bundler.R4BundlerBuilder;
 import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.AlternatePatientIds;
-import gov.va.api.lighthouse.vistalink.models.TypeSafeRpcResponse;
+import gov.va.api.lighthouse.charon.models.TypeSafeRpcResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

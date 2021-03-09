@@ -11,8 +11,8 @@ import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import gov.va.api.lighthouse.vistalink.models.FilemanDate;
-import gov.va.api.lighthouse.vistalink.models.ValueOnlyXmlAttribute;
+import gov.va.api.lighthouse.charon.models.FilemanDate;
+import gov.va.api.lighthouse.charon.models.ValueOnlyXmlAttribute;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;

@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import gov.va.api.health.r4.api.datatypes.Quantity;
 import gov.va.api.health.r4.api.datatypes.SimpleQuantity;
 import gov.va.api.health.r4.api.resources.Observation;
-import gov.va.api.lighthouse.vistalink.models.ValueOnlyXmlAttribute;
+import gov.va.api.lighthouse.charon.models.ValueOnlyXmlAttribute;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.Test;
 

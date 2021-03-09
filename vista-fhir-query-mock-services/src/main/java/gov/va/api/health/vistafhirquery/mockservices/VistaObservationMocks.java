@@ -6,10 +6,10 @@ import static gov.va.api.health.vistafhirquery.mockservices.MockServiceRequests.
 import static org.mockserver.model.HttpResponse.response;
 
 import com.google.common.io.Resources;
-import gov.va.api.lighthouse.vistalink.api.RpcDetails;
-import gov.va.api.lighthouse.vistalink.api.RpcInvocationResult;
-import gov.va.api.lighthouse.vistalink.api.RpcResponse;
-import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.VprGetPatientData;
+import gov.va.api.lighthouse.charon.api.RpcDetails;
+import gov.va.api.lighthouse.charon.api.RpcInvocationResult;
+import gov.va.api.lighthouse.charon.api.RpcResponse;
+import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;

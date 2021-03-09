@@ -16,9 +16,19 @@
     <jacoco.coverage>0.93</jacoco.coverage>
     <mssql-jdbc.version>7.4.1.jre8</mssql-jdbc.version>
     <talos.version>0.0.4</talos.version>
-    <vistalink.version>2.0.19</vistalink.version>
+    <charon.version>3.0.0</charon.version>
   </properties>
   <dependencies>
+    <dependency>
+      <groupId>gov.va.api.lighthouse</groupId>
+      <artifactId>charon-api</artifactId>
+      <version>${charon.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>gov.va.api.lighthouse</groupId>
+      <artifactId>charon-models</artifactId>
+      <version>${charon.version}</version>
+    </dependency>
     <dependency>
       <groupId>gov.va.api.health</groupId>
       <artifactId>us-core-r4</artifactId>
@@ -46,16 +56,6 @@
       <groupId>gov.va.api.lighthouse</groupId>
       <artifactId>talos</artifactId>
       <version>${talos.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>gov.va.api.lighthouse</groupId>
-      <artifactId>vistalink-api</artifactId>
-      <version>${vistalink.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>gov.va.api.lighthouse</groupId>
-      <artifactId>vistalink-models</artifactId>
-      <version>${vistalink.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>

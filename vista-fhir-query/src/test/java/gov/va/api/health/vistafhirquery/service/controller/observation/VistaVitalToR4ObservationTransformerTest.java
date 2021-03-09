@@ -8,8 +8,8 @@ import gov.va.api.health.r4.api.datatypes.CodeableConcept;
 import gov.va.api.health.r4.api.datatypes.Coding;
 import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Observation;
-import gov.va.api.lighthouse.vistalink.models.ValueOnlyXmlAttribute;
-import gov.va.api.lighthouse.vistalink.models.vprgetpatientdata.Vitals;
+import gov.va.api.lighthouse.charon.models.ValueOnlyXmlAttribute;
+import gov.va.api.lighthouse.charon.models.vprgetpatientdata.Vitals;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 

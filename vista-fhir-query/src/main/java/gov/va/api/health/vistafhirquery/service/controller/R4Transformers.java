@@ -2,8 +2,8 @@ package gov.va.api.health.vistafhirquery.service.controller;
 
 import gov.va.api.health.fhir.api.IsReference;
 import gov.va.api.health.r4.api.elements.Reference;
-import gov.va.api.lighthouse.vistalink.models.FilemanDate;
-import gov.va.api.lighthouse.vistalink.models.ValueOnlyXmlAttribute;
+import gov.va.api.lighthouse.charon.models.FilemanDate;
+import gov.va.api.lighthouse.charon.models.ValueOnlyXmlAttribute;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.ZoneId;

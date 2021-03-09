@@ -12,9 +12,19 @@
   <packaging>jar</packaging>
   <properties>
     <mockserver.version>5.6.1</mockserver.version>
-    <vistalink.version>2.0.19</vistalink.version>
+    <charon.version>3.0.0</charon.version>
   </properties>
   <dependencies>
+    <dependency>
+      <groupId>gov.va.api.lighthouse</groupId>
+      <artifactId>charon-api</artifactId>
+      <version>${charon.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>gov.va.api.lighthouse</groupId>
+      <artifactId>charon-models</artifactId>
+      <version>${charon.version}</version>
+    </dependency>
     <dependency>
       <groupId>org.mock-server</groupId>
       <artifactId>mockserver-netty</artifactId>
@@ -27,16 +37,6 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>gov.va.api.lighthouse</groupId>
-      <artifactId>vistalink-api</artifactId>
-      <version>${vistalink.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>gov.va.api.lighthouse</groupId>
-      <artifactId>vistalink-models</artifactId>
-      <version>${vistalink.version}</version>
     </dependency>
   </dependencies>
 </project>

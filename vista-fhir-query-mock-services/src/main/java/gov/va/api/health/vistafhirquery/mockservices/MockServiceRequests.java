@@ -4,8 +4,8 @@ import static org.mockserver.model.HttpRequest.request;
 import static org.mockserver.model.JsonBody.json;
 
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
-import gov.va.api.lighthouse.vistalink.api.RpcDetails;
-import gov.va.api.lighthouse.vistalink.api.RpcRequest;
+import gov.va.api.lighthouse.charon.api.RpcDetails;
+import gov.va.api.lighthouse.charon.api.RpcRequest;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import lombok.SneakyThrows;
