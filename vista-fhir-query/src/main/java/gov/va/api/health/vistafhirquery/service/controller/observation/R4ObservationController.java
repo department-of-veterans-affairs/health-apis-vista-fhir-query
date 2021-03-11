@@ -1,6 +1,6 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toNewYorkFilemanDateString;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toLocalDateMacroString;
 
 import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.health.vistafhirquery.service.controller.DateSearchBoundaries;
@@ -113,8 +113,8 @@ public class R4ObservationController {
             VprGetPatientData.Request.builder()
                 .dfn(VprGetPatientData.Request.PatientId.forIcn(patient))
                 .type(Set.of(VprGetPatientData.Domains.vitals, VprGetPatientData.Domains.labs))
-                .start(toNewYorkFilemanDateString(boundaries.start()))
-                .stop(toNewYorkFilemanDateString(boundaries.stop()))
+                .start(toLocalDateMacroString(boundaries.start()))
+                .stop(toLocalDateMacroString(boundaries.stop()))
                 .build()
                 .asDetails());
     VprGetPatientData.Response vprPatientData =
