@@ -81,6 +81,17 @@ public class R4ObservationControllerTest {
   }
 
   @Test
+  void readReturnsTooManyResultsFromVista() {
+    var vista = ObservationVitalSamples.Vista.create();
+    VprGetPatientData.Response.Results results = vista.results();
+    when(vlClient.requestForVistaSite(eq("123"), any(RpcDetails.class)))
+        .thenReturn(rpcResponse(RpcResponse.Status.OK, "123", xml(results)));
+    when(wp.toPrivateId("public-Np1+123+456")).thenReturn("Np1+123+456");
+    assertThatExceptionOfType(ResourceExceptions.ExpectationFailed.class)
+        .isThrownBy(() -> controller().read("public-Np1+123+456"));
+  }
+
+  @Test
   void readUnusableIdReturnsNotFound() {
     when(wp.toPrivateId("garbage")).thenReturn("garbage");
     assertThatExceptionOfType(ResourceExceptions.NotFound.class)
@@ -106,50 +117,94 @@ public class R4ObservationControllerTest {
   }
 
   @Test
-  void searchByPatientAndCodeKnownAndUnknown() {
-    var request = requestFromUri("?_count=10&code=29463-7,NOPE&patient=p1");
+  @SneakyThrows
+  void searchByPatientAndCategoryKnown() {
+    var request = requestFromUri("?category=vital-signs&_count=10&patient=p1");
     var results = ObservationVitalSamples.Vista.create().results();
     when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
-    var actual = controller().searchByPatient("p1", null, "29463-7,NOPE", 10, request);
+    var actual = controller().searchByPatient("vital-signs", null, 10, null, "p1", request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
-            List.of(ObservationVitalSamples.Fhir.create().weight()),
-            1,
+            List.of(
+                ObservationVitalSamples.Fhir.create().bloodPressure(),
+                ObservationVitalSamples.Fhir.create().weight()),
+            2,
             link(
                 BundleLink.LinkRelation.self,
                 "http://fugazi.com/r4/Observation",
-                "_count=10&code=29463-7,NOPE&patient=p1"));
+                "category=vital-signs&_count=10&patient=p1"));
     assertThat(json(actual)).isEqualTo(json(expected));
   }
 
   @Test
-  void searchByPatientAndDateAndCode() {
-    var request = requestFromUri("?_count=10&date=2010&code=29463-7&patient=p1");
-    var results = ObservationVitalSamples.Vista.create().results();
+  @SneakyThrows
+  void searchByPatientAndCategoryMultipleKnown() {
+    var request = requestFromUri("?category=laboratory,vital-signs&_count=10&patient=p1");
+    var results = ObservationVitalSamples.Vista.create().resultsWithLab();
     when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
-    var actual = controller().searchByPatient("p1", new String[] {"2010"}, "29463-7", 10, request);
+    var actual =
+        controller().searchByPatient("laboratory,vital-signs", null, 10, null, "p1", request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
-            List.of(ObservationVitalSamples.Fhir.create().weight()),
-            1,
+            List.of(
+                ObservationVitalSamples.Fhir.create().bloodPressure(),
+                ObservationVitalSamples.Fhir.create().weight(),
+                ObservationLabSamples.Fhir.create().observation()),
+            3,
             link(
                 BundleLink.LinkRelation.self,
                 "http://fugazi.com/r4/Observation",
-                "_count=10&date=2010&code=29463-7&patient=p1"));
+                "category=laboratory,vital-signs&_count=10&patient=p1"));
     assertThat(json(actual)).isEqualTo(json(expected));
   }
 
   @Test
-  void searchByPatientAndKnownCode() {
+  @SneakyThrows
+  void searchByPatientAndCategoryOneKnownAndOneUnknown() {
+    var request = requestFromUri("?category=laboratory,ew-david&_count=10&patient=p1");
+    var results = ObservationLabSamples.Vista.create().results();
+    when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
+        .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
+    var actual = controller().searchByPatient("laboratory,ew-david", null, 10, null, "p1", request);
+    var expected =
+        ObservationVitalSamples.Fhir.asBundle(
+            "http://fugazi.com/r4",
+            List.of(ObservationLabSamples.Fhir.create().observation()),
+            1,
+            link(
+                BundleLink.LinkRelation.self,
+                "http://fugazi.com/r4/Observation",
+                "category=laboratory,ew-david&_count=10&patient=p1"));
+    assertThat(json(actual)).isEqualTo(json(expected));
+  }
+
+  @Test
+  void searchByPatientAndCategoryUnknown() {
+    var request = requestFromUri("?category=ew-david&_count=10&patient=p1");
+    var actual = controller().searchByPatient("ew-david", null, 10, null, "p1", request);
+    var expected =
+        ObservationVitalSamples.Fhir.asBundle(
+            "http://fugazi.com/r4",
+            List.of(),
+            0,
+            link(
+                BundleLink.LinkRelation.self,
+                "http://fugazi.com/r4/Observation",
+                "category=ew-david&_count=10&patient=p1"));
+    assertThat(json(actual)).isEqualTo(json(expected));
+  }
+
+  @Test
+  void searchByPatientAndCodeKnown() {
     var request = requestFromUri("?_count=10&code=29463-7&patient=p1");
     var results = ObservationVitalSamples.Vista.create().results();
     when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
-    var actual = controller().searchByPatient("p1", null, "29463-7", 10, request);
+    var actual = controller().searchByPatient(null, "29463-7", 10, null, "p1", request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
@@ -163,13 +218,91 @@ public class R4ObservationControllerTest {
   }
 
   @Test
-  void searchByPatientAndMultipleDates() {
+  void searchByPatientAndCodeKnownAndUnknown() {
+    var request = requestFromUri("?_count=10&code=29463-7,NOPE&patient=p1");
+    var results = ObservationVitalSamples.Vista.create().results();
+    when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
+        .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
+    var actual = controller().searchByPatient(null, "29463-7,NOPE", 10, null, "p1", request);
+    var expected =
+        ObservationVitalSamples.Fhir.asBundle(
+            "http://fugazi.com/r4",
+            List.of(ObservationVitalSamples.Fhir.create().weight()),
+            1,
+            link(
+                BundleLink.LinkRelation.self,
+                "http://fugazi.com/r4/Observation",
+                "_count=10&code=29463-7,NOPE&patient=p1"));
+    assertThat(json(actual)).isEqualTo(json(expected));
+  }
+
+  @Test
+  void searchByPatientAndCodeMultipleKnown() {
+    var request = requestFromUri("?_count=10&code=29463-7,55284-4&patient=p1");
+    var results = ObservationVitalSamples.Vista.create().results();
+    when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
+        .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
+    var actual = controller().searchByPatient(null, "29463-7,55284-4", 10, null, "p1", request);
+    var expected =
+        ObservationVitalSamples.Fhir.asBundle(
+            "http://fugazi.com/r4",
+            ObservationVitalSamples.Fhir.create().observations(),
+            2,
+            link(
+                BundleLink.LinkRelation.self,
+                "http://fugazi.com/r4/Observation",
+                "_count=10&code=29463-7,55284-4&patient=p1"));
+    assertThat(json(actual)).isEqualTo(json(expected));
+  }
+
+  @Test
+  void searchByPatientAndCodeUnknown() {
+    var request = requestFromUri("?_count=10&code=NOPE&patient=p1");
+    var results = ObservationVitalSamples.Vista.create().results();
+    when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
+        .thenReturn(rpcResponse(RpcResponse.Status.OK, "123", xml(results)));
+    var actual = controller().searchByPatient(null, "NOPE", 10, null, "p1", request);
+    var expected =
+        ObservationVitalSamples.Fhir.asBundle(
+            "http://fugazi.com/r4",
+            List.of(),
+            0,
+            link(
+                BundleLink.LinkRelation.self,
+                "http://fugazi.com/r4/Observation",
+                "_count=10&code=NOPE&patient=p1"));
+    assertThat(json(actual)).isEqualTo(json(expected));
+  }
+
+  @Test
+  void searchByPatientAndDateAndCode() {
+    var request = requestFromUri("?_count=10&date=2010&code=29463-7&patient=p1");
+    var results = ObservationVitalSamples.Vista.create().results();
+    when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
+        .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
+    var actual =
+        controller().searchByPatient(null, "29463-7", 10, new String[] {"2010"}, "p1", request);
+    var expected =
+        ObservationVitalSamples.Fhir.asBundle(
+            "http://fugazi.com/r4",
+            List.of(ObservationVitalSamples.Fhir.create().weight()),
+            1,
+            link(
+                BundleLink.LinkRelation.self,
+                "http://fugazi.com/r4/Observation",
+                "_count=10&date=2010&code=29463-7&patient=p1"));
+    assertThat(json(actual)).isEqualTo(json(expected));
+  }
+
+  @Test
+  void searchByPatientAndDateMultiple() {
     var request = requestFromUri("?_count=10&date=ge2010&date=lt2012&patient=p1");
     var results = ObservationVitalSamples.Vista.create().resultsWithLab();
     when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
     var actual =
-        controller().searchByPatient("p1", new String[] {"ge2010", "lt2012"}, null, 10, request);
+        controller()
+            .searchByPatient(null, null, 10, new String[] {"ge2010", "lt2012"}, "p1", request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
@@ -186,51 +319,13 @@ public class R4ObservationControllerTest {
   }
 
   @Test
-  void searchByPatientAndMultipleKnownCode() {
-    var request = requestFromUri("?_count=10&code=29463-7,55284-4&patient=p1");
-    var results = ObservationVitalSamples.Vista.create().results();
-    when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
-        .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
-    var actual = controller().searchByPatient("p1", null, "29463-7,55284-4", 10, request);
-    var expected =
-        ObservationVitalSamples.Fhir.asBundle(
-            "http://fugazi.com/r4",
-            ObservationVitalSamples.Fhir.create().observations(),
-            2,
-            link(
-                BundleLink.LinkRelation.self,
-                "http://fugazi.com/r4/Observation",
-                "_count=10&code=29463-7,55284-4&patient=p1"));
-    assertThat(json(actual)).isEqualTo(json(expected));
-  }
-
-  @Test
-  void searchByPatientAndUnknownCode() {
-    var request = requestFromUri("?_count=10&code=NOPE&patient=p1");
-    var results = ObservationVitalSamples.Vista.create().results();
-    when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
-        .thenReturn(rpcResponse(RpcResponse.Status.OK, "123", xml(results)));
-    var actual = controller().searchByPatient("p1", null, "NOPE", 10, request);
-    var expected =
-        ObservationVitalSamples.Fhir.asBundle(
-            "http://fugazi.com/r4",
-            List.of(),
-            0,
-            link(
-                BundleLink.LinkRelation.self,
-                "http://fugazi.com/r4/Observation",
-                "_count=10&code=NOPE&patient=p1"));
-    assertThat(json(actual)).isEqualTo(json(expected));
-  }
-
-  @Test
   void searchByPatientWithVistaEmptyResults() {
     var request = requestFromUri("?_count=10&patient=p1");
     var responseBody =
         "<results version='1.13' timeZone='-0500'><vitals total='1'><vital></vital></vitals></results>";
     when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "123", responseBody));
-    var actual = controller().searchByPatient("p1", null, null, 10, request);
+    var actual = controller().searchByPatient(null, null, 10, null, "p1", request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
@@ -250,7 +345,7 @@ public class R4ObservationControllerTest {
     var results = ObservationVitalSamples.Vista.create().resultsWithLab();
     when(vlClient.requestForPatient(eq("p1"), any(RpcDetails.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
-    var actual = controller().searchByPatient("p1", null, null, 10, request);
+    var actual = controller().searchByPatient(null, null, 10, null, "p1", request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
@@ -264,16 +359,5 @@ public class R4ObservationControllerTest {
                 "http://fugazi.com/r4/Observation",
                 "_count=10&patient=p1"));
     assertThat(json(actual)).isEqualTo(json(expected));
-  }
-
-  @Test
-  void vistaReturnsTooManyResultsForRead() {
-    var vista = ObservationVitalSamples.Vista.create();
-    VprGetPatientData.Response.Results results = vista.results();
-    when(vlClient.requestForVistaSite(eq("123"), any(RpcDetails.class)))
-        .thenReturn(rpcResponse(RpcResponse.Status.OK, "123", xml(results)));
-    when(wp.toPrivateId("public-Np1+123+456")).thenReturn("Np1+123+456");
-    assertThatExceptionOfType(ResourceExceptions.ExpectationFailed.class)
-        .isThrownBy(() -> controller().read("public-Np1+123+456"));
   }
 }

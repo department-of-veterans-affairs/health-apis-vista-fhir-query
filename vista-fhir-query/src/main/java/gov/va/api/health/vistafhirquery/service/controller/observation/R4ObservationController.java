@@ -1,6 +1,7 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toNewYorkFilemanDateString;
+import static java.util.stream.Collectors.toSet;
 
 import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.health.vistafhirquery.service.controller.DateSearchBoundaries;
@@ -16,7 +17,10 @@ import gov.va.api.lighthouse.charon.api.RpcResponse;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.Labs;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.Vitals;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -49,7 +53,6 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor(onConstructor_ = @Autowired)
 @Builder
 public class R4ObservationController {
-
   @NonNull private final R4BundlerFactory bundlerFactory;
 
   @NonNull private final VistalinkApiClient vistalinkApiClient;
@@ -57,6 +60,22 @@ public class R4ObservationController {
   @NonNull private final VitalVuidMapper vitalVuids;
 
   @NonNull private final WitnessProtection witnessProtection;
+
+  private Set<VprGetPatientData.Domains> categoryIs(String categoryCsv) {
+    if (categoryCsv == null) {
+      return Set.of(VprGetPatientData.Domains.vitals, VprGetPatientData.Domains.labs);
+    }
+    var requestedCategories = categoryCsv.split(",", -1);
+    return Arrays.stream(requestedCategories)
+        .map(this::toVistaDomain)
+        .filter(Objects::nonNull)
+        .collect(toSet());
+  }
+
+  private Observation.Bundle emptyBundleFor(HttpServletRequest request) {
+    var emptyVprResponse = VprGetPatientData.Response.builder().resultsByStation(Map.of()).build();
+    return toBundle(request).apply(emptyVprResponse);
+  }
 
   private VistaIdentifierSegment parseOrDie(String publicId) {
     try {
@@ -99,20 +118,24 @@ public class R4ObservationController {
   @SneakyThrows
   @GetMapping(params = {"patient"})
   public Observation.Bundle searchByPatient(
-      @RequestParam(name = "patient") String patient,
-      @RequestParam(name = "date", required = false) @Size(max = 2) String[] date,
+      @RequestParam(name = "category", required = false) String categoryCsv,
       @RequestParam(name = "code", required = false) String codeCsv,
       @RequestParam(name = "_count", required = false) @Min(0) Integer count,
+      @RequestParam(name = "date", required = false) @Size(max = 2) String[] date,
+      @RequestParam(name = "patient") String patient,
       HttpServletRequest request) {
     // Default .max() value is 9999
-
     DateSearchBoundaries boundaries = DateSearchBoundaries.of(date);
+    Set<VprGetPatientData.Domains> categoryTypes = categoryIs(categoryCsv);
+    if (categoryTypes.isEmpty()) {
+      return emptyBundleFor(request);
+    }
     RpcResponse rpcResponse =
         vistalinkApiClient.requestForPatient(
             patient,
             VprGetPatientData.Request.builder()
                 .dfn(VprGetPatientData.Request.PatientId.forIcn(patient))
-                .type(Set.of(VprGetPatientData.Domains.vitals, VprGetPatientData.Domains.labs))
+                .type(categoryTypes)
                 .start(toNewYorkFilemanDateString(boundaries.start()))
                 .stop(toNewYorkFilemanDateString(boundaries.stop()))
                 .build()
@@ -132,6 +155,20 @@ public class R4ObservationController {
         .resourceType("Observation")
         .request(request)
         .build();
+  }
+
+  private VprGetPatientData.Domains toVistaDomain(String maybeCategory) {
+    if (maybeCategory == null) {
+      return null;
+    }
+    switch (maybeCategory) {
+      case "vital-signs":
+        return VprGetPatientData.Domains.vitals;
+      case "laboratory":
+        return VprGetPatientData.Domains.labs;
+      default:
+        return null;
+    }
   }
 
   private R4Transformation<VprGetPatientData.Response, Observation> transformation(
