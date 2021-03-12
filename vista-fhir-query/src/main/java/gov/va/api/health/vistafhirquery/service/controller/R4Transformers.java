@@ -120,8 +120,7 @@ public class R4Transformers {
   }
 
   /**
-   * Temporary method until macro can be set up. Transform an Instant to an Optional Fileman Date
-   * String.
+   * Take an instant and from a local-fileman-date macro that charon can consume.
    */
   public static Optional<String> toLocalDateMacroString(Instant maybeInstant) {
     if (maybeInstant == null) {
