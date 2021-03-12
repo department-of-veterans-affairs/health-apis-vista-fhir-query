@@ -134,13 +134,13 @@ public class ObservationLabSamples {
           .id("Np1+673+CH;6899283.889996;741")
           .category(category())
           .subject(Reference.builder().reference("Patient/p1").build())
-          .issued("2010-07-15T11:00:04Z")
+          .issued("2011-04-12T12:51:56Z")
           .note(note())
           .referenceRange(referenceRange())
           .interpretation(interpretation())
           .code(code())
           .valueQuantity(valueQuantity())
-          .effectiveDateTime("2011-04-12T12:51:56Z")
+          .effectiveDateTime("2010-07-15T11:00:04Z")
           .status(Observation.ObservationStatus._final)
           .build();
     }

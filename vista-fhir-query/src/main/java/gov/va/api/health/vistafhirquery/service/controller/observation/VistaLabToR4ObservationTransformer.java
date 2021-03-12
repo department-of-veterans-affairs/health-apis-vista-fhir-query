@@ -85,13 +85,13 @@ public class VistaLabToR4ObservationTransformer {
             .id(idFrom(vistaLab.id()))
             .category(category())
             .subject(toReference("Patient", patientIcn, null))
-            .issued(toHumanDateTime(vistaLab.collected()))
+            .issued(toHumanDateTime(vistaLab.resulted()))
             .note(note(vistaLab.comment()))
             .referenceRange(referenceRange(vistaLab.high(), vistaLab.low()))
             .interpretation(interpretation(vistaLab.interpretation()))
             .code(code(vistaLab.loinc(), vistaLab.test(), vistaLab.vuid()))
             .valueQuantity(valueQuantity(vistaLab.result(), vistaLab.units()))
-            .effectiveDateTime(toHumanDateTime(vistaLab.resulted()))
+            .effectiveDateTime(toHumanDateTime(vistaLab.collected()))
             .status(status(vistaLab.status()))
             .build();
     return Stream.of(observation);
