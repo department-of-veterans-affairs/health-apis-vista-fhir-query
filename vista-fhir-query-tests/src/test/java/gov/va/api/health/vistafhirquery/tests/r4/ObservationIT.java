@@ -32,8 +32,15 @@ public class ObservationIT {
         arguments("?patient=" + testIds.patient() + "&date=ge2010&date=lt2012", 200),
         arguments("?patient=" + testIds.patient() + "&date=ge2012&date=lt2010", 400),
         arguments("?patient=" + testIds.patient() + "&code=8310-5", 200),
+        arguments("?patient=" + testIds.patient() + "&category=laboratory", 200),
         arguments(
-            "?patient=" + testIds.patient() + "&code=8310-5" + "&date=ge2010&date=lt2012", 200));
+            "?patient="
+                + testIds.patient()
+                + "&category=vital-signs"
+                + "&code=8310-5"
+                + "&date=ge2010"
+                + "&date=lt2012",
+            200));
   }
 
   @ParameterizedTest
