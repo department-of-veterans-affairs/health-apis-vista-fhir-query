@@ -95,7 +95,7 @@ public class R4ObservationController {
             ids.vistaSiteId(),
             VprGetPatientData.Request.builder()
                 .dfn(VprGetPatientData.Request.PatientId.forIcn(ids.patientIdentifier()))
-                .type(Set.of(VprGetPatientData.Domains.vitals))
+                .type(Set.of(VprGetPatientData.Domains.vitals, VprGetPatientData.Domains.labs))
                 .max(Optional.of("1"))
                 .id(Optional.of(ids.vistaRecordId()))
                 .build()
