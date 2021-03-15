@@ -26,4 +26,6 @@ public class VistaApiConfig {
   private String accessCode;
 
   private String verifyCode;
+
+  private String applicationProxyUser;
 }

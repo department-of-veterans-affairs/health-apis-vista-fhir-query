@@ -53,11 +53,7 @@ public class RestVistaApiClient implements VistalinkApiClient {
   public RpcResponse requestForPatient(String patient, RpcDetails rpcDetails) {
     RpcRequest rpcRequest =
         RpcRequest.builder()
-            .principal(
-                RpcPrincipal.builder()
-                    .accessCode(config().getAccessCode())
-                    .verifyCode(config().getVerifyCode())
-                    .build())
+            .principal(rpcPrincipal())
             .target(RpcVistaTargets.builder().forPatient(patient).build())
             .rpc(rpcDetails)
             .build();
@@ -68,15 +64,19 @@ public class RestVistaApiClient implements VistalinkApiClient {
   public RpcResponse requestForVistaSite(String vistaSite, RpcDetails rpcDetails) {
     RpcRequest rpcRequest =
         RpcRequest.builder()
-            .principal(
-                RpcPrincipal.builder()
-                    .accessCode(config().getAccessCode())
-                    .verifyCode(config().getVerifyCode())
-                    .build())
+            .principal(rpcPrincipal())
             .target(RpcVistaTargets.builder().include(List.of(vistaSite)).build())
             .rpc(rpcDetails)
             .build();
     return makeRequest(rpcRequest);
+  }
+
+  private RpcPrincipal rpcPrincipal() {
+    return RpcPrincipal.applicationProxyUserBuilder()
+        .accessCode(config.getAccessCode())
+        .verifyCode(config().getVerifyCode())
+        .applicationProxyUser(config.getApplicationProxyUser())
+        .build();
   }
 
   private void verifyVistalinkApiResponse(ResponseEntity<RpcResponse> response) {

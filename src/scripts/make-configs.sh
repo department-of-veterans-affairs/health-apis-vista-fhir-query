@@ -127,8 +127,9 @@ populateConfig() {
 # the secrets files used with make-configs.sh
 EOF
   configValue vista-fhir-query $PROFILE vista.api.client-key "$VISTALINK_CLIENT_KEY"
-  configValue vista-fhir-query $PROFILE vista.api.access-code "$VISTALINK_ACCESS_CODE"
-  configValue vista-fhir-query $PROFILE vista.api.verify-code "$VISTALINK_VERIFY_CODE"
+  configValue vista-fhir-query $PROFILE vista.api.access-code "${VISTA_APP_PROXY_ACCESS_CODE}"
+  configValue vista-fhir-query $PROFILE vista.api.verify-code "${VISTA_APP_PROXY_VERIFY_CODE}"
+  configValue vista-fhir-query $PROFILE vista.api.application-proxy-user "${VISTA_APP_PROXY_VERIFY_CODE}"
   configValue vista-fhir-query $PROFILE vista-fhir-query.internal.client-keys "disabled"
   configValue vista-fhir-query $PROFILE vista-fhir-query.public-url "http://localhost:8095"
   configValue vista-fhir-query $PROFILE vista-fhir-query.public-r4-base-path "r4"
