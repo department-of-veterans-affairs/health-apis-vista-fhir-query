@@ -13,7 +13,7 @@
   <properties>
     <fhir-resources.version>6.0.6</fhir-resources.version>
     <!-- ToDo Increase Coverage -->
-    <jacoco.coverage>0.93</jacoco.coverage>
+    <jacoco.coverage>0.94</jacoco.coverage>
     <mssql-jdbc.version>7.4.1.jre8</mssql-jdbc.version>
     <talos.version>0.0.4</talos.version>
     <charon.version>3.0.9</charon.version>
