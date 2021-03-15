@@ -8,6 +8,7 @@ import gov.va.api.lighthouse.charon.models.vprgetpatientdata.Labs;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.Vitals;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import lombok.Builder;
@@ -29,13 +30,21 @@ public class R4ObservationCollector {
     if (codes() == null) {
       return AllowedObservationCodes.allowAll();
     }
+    List<String> loincCodes = Arrays.asList(codes().split(",", -1));
     Map<String, String> vuidToLoinc =
-        Arrays.stream(codes().split(",", -1))
+        loincCodes.stream()
             .flatMap(code -> vitalVuidMapper().mappings().stream().filter(forLoinc(code)))
             .collect(
                 toMap(
                     VitalVuidMapper.VitalVuidMapping::vuid,
                     VitalVuidMapper.VitalVuidMapping::code));
+    /* The assumption here is that the loinc values that didn't map to a vital vuid _should_ be
+     * supported loinc codes irregardless. For example, the Lab loinc code 1-8 would not have
+     * a mapping in the vital table, but should be included in the map of allowed
+     * Observation codes. */
+    loincCodes.stream()
+        .filter(code -> !vuidToLoinc.containsValue(code))
+        .forEach(code -> vuidToLoinc.put(code, code));
     return AllowedObservationCodes.allowOnly(vuidToLoinc);
   }
 
