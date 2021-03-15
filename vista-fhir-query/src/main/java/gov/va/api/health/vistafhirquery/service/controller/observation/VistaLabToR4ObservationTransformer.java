@@ -19,9 +19,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.NonNull;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Builder
 public class VistaLabToR4ObservationTransformer {
   @NonNull private final String patientIcn;
@@ -46,36 +44,19 @@ public class VistaLabToR4ObservationTransformer {
             .build());
   }
 
-  CodeableConcept code(
-      ValueOnlyXmlAttribute maybeLoinc,
-      ValueOnlyXmlAttribute maybeTestName,
-      ValueOnlyXmlAttribute maybeVuid) {
+  CodeableConcept code(ValueOnlyXmlAttribute maybeLoinc) {
     String loinc = valueOfValueOnlyXmlAttribute(maybeLoinc);
-    String testName = valueOfValueOnlyXmlAttribute(maybeTestName);
-    String vuid = valueOfValueOnlyXmlAttribute(maybeVuid);
-    if (!isBlank(loinc)) {
-      return CodeableConcept.builder()
-          .coding(
-              List.of(
-                  Coding.builder()
-                      .system("http://loinc.org")
-                      .code(loinc)
-                      .display(testName)
-                      .build()))
-          .build();
+    if (isBlank(loinc)) {
+      return null;
     }
-    if (!isBlank(vuid)) {
-      log.info("ToDo: If vuid is set and loinc isn't, map using database table.");
-    }
-    return null;
+    return CodeableConcept.builder()
+        .coding(List.of(Coding.builder().system("http://loinc.org").code(loinc).build()))
+        .build();
   }
 
   /** Transform a VPR PATIENT DATA VistA Lab result to FHIR Observation. */
   public Stream<Observation> conditionallyToFhir() {
     // References Not Reflected: specimen, performer.facility, and performer.provider
-    if (vistaLab == null) {
-      return Stream.empty();
-    }
     if (!hasAcceptedCode()) {
       return Stream.empty();
     }
@@ -89,7 +70,7 @@ public class VistaLabToR4ObservationTransformer {
             .note(note(vistaLab.comment()))
             .referenceRange(referenceRange(vistaLab.high(), vistaLab.low()))
             .interpretation(interpretation(vistaLab.interpretation()))
-            .code(code(vistaLab.loinc(), vistaLab.test(), vistaLab.vuid()))
+            .code(code(vistaLab.loinc()))
             .valueQuantity(valueQuantity(vistaLab.result(), vistaLab.units()))
             .effectiveDateTime(toHumanDateTime(vistaLab.collected()))
             .status(status(vistaLab.status()))
@@ -102,8 +83,7 @@ public class VistaLabToR4ObservationTransformer {
       return true;
     }
     var loinc = valueOfValueOnlyXmlAttribute(vistaLab.loinc());
-    var vuid = valueOfValueOnlyXmlAttribute(vistaLab.vuid());
-    return conditions.isAllowedLoincCode(loinc) || conditions.isAllowedVuidCode(vuid);
+    return conditions.isAllowedLoincCode(loinc);
   }
 
   String idFrom(ValueOnlyXmlAttribute maybeId) {
