@@ -30,14 +30,18 @@ public class AllowedObservationCodesTest {
     if (loinc != null) {
       loinc = loinc.toUpperCase();
     }
-    assertThat(AllowedObservationCodes.allowOnly(allowedCodes).isAllowedLoincCode(loinc))
+    assertThat(
+            AllowedObservationCodes.allowOnly(allowedCodes.keySet(), allowedCodes.values())
+                .isAllowedLoincCode(loinc))
         .isEqualTo(expected);
   }
 
   @ParameterizedTest
   @MethodSource("hasAcceptedCode")
   void hasAcceptedVuidCode(Map<String, String> allowedCodes, String vuid, boolean expected) {
-    assertThat(AllowedObservationCodes.allowOnly(allowedCodes).isAllowedVuidCode(vuid))
+    assertThat(
+            AllowedObservationCodes.allowOnly(allowedCodes.keySet(), allowedCodes.values())
+                .isAllowedVuidCode(vuid))
         .isEqualTo(expected);
   }
 }

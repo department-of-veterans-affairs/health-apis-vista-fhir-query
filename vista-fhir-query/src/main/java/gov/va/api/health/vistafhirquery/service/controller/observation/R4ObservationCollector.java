@@ -1,7 +1,7 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
 import static gov.va.api.health.vistafhirquery.service.controller.observation.VitalVuidMapper.forLoinc;
-import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toList;
 
 import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.Labs;
@@ -31,23 +31,12 @@ public class R4ObservationCollector {
       return AllowedObservationCodes.allowAll();
     }
     List<String> loincCodes = Arrays.asList(codes().split(",", -1));
-    // Allowed Vital Codes
-    Map<String, String> allowedCodes =
+    List<String> vuidCodes =
         loincCodes.stream()
             .flatMap(code -> vitalVuidMapper().mappings().stream().filter(forLoinc(code)))
-            .collect(
-                toMap(
-                    VitalVuidMapper.VitalVuidMapping::vuid,
-                    VitalVuidMapper.VitalVuidMapping::code));
-    /* The assumption here is that the loinc values that didn't map to a vital vuid _should_ be
-     * supported loinc codes irregardless. For example, the Lab loinc code 1-8 would not have
-     * a mapping in the vital table, but should be included in the map of allowed
-     * Observation codes. */
-    // Allowed Lab Codes
-    loincCodes.stream()
-        .filter(code -> !allowedCodes.containsValue(code))
-        .forEach(code -> allowedCodes.put(code, code));
-    return AllowedObservationCodes.allowOnly(allowedCodes);
+            .map(VitalVuidMapper.VitalVuidMapping::vuid)
+            .collect(toList());
+    return AllowedObservationCodes.allowOnly(vuidCodes, loincCodes);
   }
 
   Stream<Observation> toFhir() {

@@ -1,7 +1,7 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
-import com.google.common.collect.ImmutableListMultimap;
-import java.util.Map;
+import java.util.Collection;
+import java.util.Set;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
@@ -12,8 +12,9 @@ public interface AllowedObservationCodes {
     return new AllowAllObservationCodes();
   }
 
-  static AllowedObservationCodes allowOnly(Map<String, String> vuidToLoinc) {
-    return AllowOnlyTheseObservationCodes.of(vuidToLoinc);
+  static AllowedObservationCodes allowOnly(
+      Collection<String> allowedVuids, Collection<String> allowedLoincs) {
+    return AllowOnlyTheseObservationCodes.of(allowedVuids, allowedLoincs);
   }
 
   /** Test a LOINC and check it matches one of the allowed codes. */
@@ -37,23 +38,26 @@ public interface AllowedObservationCodes {
   @Value
   @RequiredArgsConstructor
   class AllowOnlyTheseObservationCodes implements AllowedObservationCodes {
-    /** [Vuid, Loinc] Mappings for testing allowed codes. */
-    @NonNull ImmutableListMultimap<String, String> codes;
+    @NonNull Set<String> allowedVuids;
 
-    public static AllowOnlyTheseObservationCodes of(Map<String, String> codes) {
-      return new AllowOnlyTheseObservationCodes(ImmutableListMultimap.copyOf(codes.entrySet()));
+    @NonNull Set<String> allowedLoincs;
+
+    public static AllowOnlyTheseObservationCodes of(
+        Collection<String> allowedVuids, Collection<String> allowedLoincs) {
+      return new AllowOnlyTheseObservationCodes(
+          Set.copyOf(allowedVuids), Set.copyOf(allowedLoincs));
     }
 
     /** Test a LOINC and check it matches one of the accepted codes. */
     @Override
     public boolean isAllowedLoincCode(String loinc) {
-      return loinc != null && codes().inverse().containsKey(loinc);
+      return loinc != null && allowedLoincs().contains(loinc);
     }
 
     /** Test a Vista VUID and check it matches one of the accepted codes. */
     @Override
     public boolean isAllowedVuidCode(String vuid) {
-      return vuid != null && codes().containsKey(vuid);
+      return vuid != null && allowedVuids().contains(vuid);
     }
   }
 }
