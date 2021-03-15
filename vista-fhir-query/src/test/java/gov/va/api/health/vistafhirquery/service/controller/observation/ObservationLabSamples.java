@@ -100,13 +100,7 @@ public class ObservationLabSamples {
 
     private CodeableConcept code() {
       return CodeableConcept.builder()
-          .coding(
-              List.of(
-                  Coding.builder()
-                      .system("http://loinc.org")
-                      .code("1751-7")
-                      .display("TSH")
-                      .build()))
+          .coding(List.of(Coding.builder().system("http://loinc.org").code("1751-7").build()))
           .build();
     }
 
