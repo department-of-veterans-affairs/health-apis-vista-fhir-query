@@ -119,16 +119,12 @@ public class R4Transformers {
     return Optional.of(maybeInstant.toString());
   }
 
-  /**
-   * Temporary method until macro can be set up. Transform an Instant to an Optional Fileman Date
-   * String.
-   */
-  public static Optional<String> toNewYorkFilemanDateString(Instant maybeInstant) {
+  /** Take an instant and from a local-fileman-date macro that charon can consume. */
+  public static Optional<String> toLocalDateMacroString(Instant maybeInstant) {
     if (maybeInstant == null) {
       return Optional.empty();
     }
-    return Optional.of(
-        FilemanDate.from(maybeInstant).formatAsDateTime(ZoneId.of("America/New_York")));
+    return Optional.of(String.format("${local-fileman-date(%s)", maybeInstant));
   }
 
   /** Create a reference sing the resourceType, an id, and a display. */

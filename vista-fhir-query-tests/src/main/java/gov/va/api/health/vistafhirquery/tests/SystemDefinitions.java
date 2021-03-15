@@ -91,7 +91,7 @@ public final class SystemDefinitions {
   private static TestIds syntheticIds() {
     return TestIds.builder()
         .patient("1011537977V693883")
-        .observation("I2-IBV5HN7B4CKF4XNL7GXDCWZNPD2T3WDMVHZZSIIBWTK3PXVFONYQ0000")
+        .observation("I2-IBV5HN7B4CKF4XNL7GXDCWZNPAMK4P2RZU7GULKE5EBQF7WJ6SFA0000")
         .build();
   }
 

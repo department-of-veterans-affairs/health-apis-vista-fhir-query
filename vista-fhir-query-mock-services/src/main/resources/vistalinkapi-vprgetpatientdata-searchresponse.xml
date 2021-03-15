@@ -148,4 +148,1812 @@
       <taken value="3080728.14"/>
     </vital>
   </vitals>
+  <labs total="94">
+    <lab>
+      <collected value="3100715.110005"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 25, 2011@19:09
+                Performing Lab: ALBANY VA MEDICAL CENTER
+                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097
+            </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0425 14"/>
+      <id value="CH;6899283.889995;500049"/>
+      <localName value="M/C"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="11"/>
+      <resulted value="3110425.190958"/>
+      <sample value="URINE"/>
+      <specimen code="7X100" name="URINE"/>
+      <status value="completed"/>
+      <test value="Microalbumin/Creatinine Ratio"/>
+      <type value="CH"/>
+      <units value="ug/mg"/>
+    </lab>
+    <lab>
+      <collected value="3100715.110004"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:51 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="RIA 0412 7"/>
+      <high value="9"/>
+      <id value="CH;6899283.889996;741"/>
+      <localName value="TSH"/>
+      <low value="5"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="7.3"/>
+      <resulted value="3110412.125156"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="TSH"/>
+      <type value="CH"/>
+      <units value="MCIU/ML"/>
+    </lab>
+    <lab>
+      <collected value="3100715.110003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:51 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 45"/>
+      <high value="199"/>
+      <id value="CH;6899283.889997;12"/>
+      <localName value="CHOL"/>
+      <low value="0"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="176"/>
+      <resulted value="3110412.125108"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="CHOLESTEROL"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3100715.110003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:51 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 45"/>
+      <high value="249"/>
+      <id value="CH;6899283.889997;47"/>
+      <localName value="TRIGLYC"/>
+      <low value="0"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="92"/>
+      <resulted value="3110412.125108"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="TRIGLYCERIDE"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3100715.110003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:51 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 45"/>
+      <high value="60"/>
+      <id value="CH;6899283.889997;80"/>
+      <localName value="HDL"/>
+      <low value="40"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="46"/>
+      <resulted value="3110412.125108"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="HDL"/>
+      <type value="CH"/>
+      <units value="MG/DL"/>
+    </lab>
+    <lab>
+      <collected value="3100715.110003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:51 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 45"/>
+      <high value="130"/>
+      <id value="CH;6899283.889997;291"/>
+      <localName value="LDL CHO"/>
+      <low value="0"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="63"/>
+      <resulted value="3110412.125108"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="LDL CHOLESTEROL"/>
+      <type value="CH"/>
+      <units value="MG/DL"/>
+    </lab>
+    <lab>
+      <collected value="3100715.110002"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:50 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 44"/>
+      <high value="6"/>
+      <id value="CH;6899283.889998;462"/>
+      <interpretation value="H"/>
+      <localName value="A1C"/>
+      <low value="3.5"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="7.5"/>
+      <resulted value="3110412.125014"/>
+      <sample value="BLOOD  "/>
+      <specimen code="0X000" name="BLOOD"/>
+      <status value="completed"/>
+      <test value="HEMOGLOBIN A1C"/>
+      <type value="CH"/>
+      <units value="% "/>
+    </lab>
+    <lab>
+      <collected value="3100715.110001"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:49 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 43"/>
+      <high value="11"/>
+      <id value="CH;6899283.889999;9"/>
+      <localName value="CA"/>
+      <low value="9"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="9.40"/>
+      <resulted value="3110412.124941"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="CALCIUM"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3100715.11"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:49 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 42"/>
+      <high value="110"/>
+      <id value="CH;6899283.89;2"/>
+      <interpretation value="H"/>
+      <localName value="GLUCOSE"/>
+      <low value="60"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="116"/>
+      <resulted value="3110412.124904"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="GLUCOSE"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3100715.11"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:49 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 42"/>
+      <high value="24"/>
+      <id value="CH;6899283.89;3"/>
+      <localName value="BUN"/>
+      <low value="5"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="13"/>
+      <resulted value="3110412.124904"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="UREA NITROGEN"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3100715.11"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:49 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 42"/>
+      <high value="145"/>
+      <id value="CH;6899283.89;5"/>
+      <localName value="NA"/>
+      <low value="135"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="139"/>
+      <resulted value="3110412.124904"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="SODIUM"/>
+      <type value="CH"/>
+      <units value="meq/L"/>
+    </lab>
+    <lab>
+      <collected value="3100715.11"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:49 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 42"/>
+      <high value="5.3"/>
+      <id value="CH;6899283.89;6"/>
+      <localName value="K"/>
+      <low value="3.8"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="4.6"/>
+      <resulted value="3110412.124904"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="POTASSIUM"/>
+      <type value="CH"/>
+      <units value="meq/L"/>
+    </lab>
+    <lab>
+      <collected value="3100715.11"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:49 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 42"/>
+      <high value="108"/>
+      <id value="CH;6899283.89;7"/>
+      <localName value="CL"/>
+      <low value="95"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="104"/>
+      <resulted value="3110412.124904"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="CHLORIDE"/>
+      <type value="CH"/>
+      <units value="meq/L"/>
+    </lab>
+    <lab>
+      <collected value="3100715.11"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:49 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 42"/>
+      <high value="31"/>
+      <id value="CH;6899283.89;8"/>
+      <localName value="CO2"/>
+      <low value="23"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="29"/>
+      <resulted value="3110412.124904"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="CO2"/>
+      <type value="CH"/>
+      <units value="meq/L"/>
+    </lab>
+    <lab>
+      <collected value="3100715.11"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:49 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 42"/>
+      <high value="1.4"/>
+      <id value="CH;6899283.89;4"/>
+      <localName value="CREAT"/>
+      <low value=".9"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="0.9"/>
+      <resulted value="3110412.124904"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="CREATININE"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3090722.110005"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 25, 2011@19:10 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0425 15"/>
+      <id value="CH;6909276.889995;500049"/>
+      <localName value="M/C"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="12"/>
+      <resulted value="3110425.19104"/>
+      <sample value="URINE"/>
+      <specimen code="7X100" name="URINE"/>
+      <status value="completed"/>
+      <test value="Microalbumin/Creatinine Ratio"/>
+      <type value="CH"/>
+      <units value="ug/mg"/>
+    </lab>
+    <lab>
+      <collected value="3090722.110004"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:56 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="RIA 0412 8"/>
+      <high value="9"/>
+      <id value="CH;6909276.889996;741"/>
+      <interpretation value="L"/>
+      <localName value="TSH"/>
+      <low value="5"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="2.6"/>
+      <resulted value="3110412.125627"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="TSH"/>
+      <type value="CH"/>
+      <units value="MCIU/ML"/>
+    </lab>
+    <lab>
+      <collected value="3090722.110003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:55 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 49"/>
+      <high value="199"/>
+      <id value="CH;6909276.889997;12"/>
+      <localName value="CHOL"/>
+      <low value="0"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="163"/>
+      <resulted value="3110412.125543"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="CHOLESTEROL"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3090722.110003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:55 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 49"/>
+      <high value="249"/>
+      <id value="CH;6909276.889997;47"/>
+      <localName value="TRIGLYC"/>
+      <low value="0"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="113"/>
+      <resulted value="3110412.125543"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="TRIGLYCERIDE"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3090722.110003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:55 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 49"/>
+      <high value="60"/>
+      <id value="CH;6909276.889997;80"/>
+      <localName value="HDL"/>
+      <low value="40"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="48"/>
+      <resulted value="3110412.125543"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="HDL"/>
+      <type value="CH"/>
+      <units value="MG/DL"/>
+    </lab>
+    <lab>
+      <collected value="3090722.110003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:55 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 49"/>
+      <high value="130"/>
+      <id value="CH;6909276.889997;291"/>
+      <localName value="LDL CHO"/>
+      <low value="0"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="68"/>
+      <resulted value="3110412.125543"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="LDL CHOLESTEROL"/>
+      <type value="CH"/>
+      <units value="MG/DL"/>
+    </lab>
+    <lab>
+      <collected value="3090722.110002"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:54 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 48"/>
+      <high value="6"/>
+      <id value="CH;6909276.889998;462"/>
+      <interpretation value="H"/>
+      <localName value="A1C"/>
+      <low value="3.5"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="7.5"/>
+      <resulted value="3110412.12545"/>
+      <sample value="BLOOD  "/>
+      <specimen code="0X000" name="BLOOD"/>
+      <status value="completed"/>
+      <test value="HEMOGLOBIN A1C"/>
+      <type value="CH"/>
+      <units value="% "/>
+    </lab>
+    <lab>
+      <collected value="3090722.110001"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:54 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 47"/>
+      <high value="11"/>
+      <id value="CH;6909276.889999;9"/>
+      <localName value="CA"/>
+      <low value="9"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="9.00"/>
+      <resulted value="3110412.125403"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="CALCIUM"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3090722.11"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:53 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 46"/>
+      <high value="110"/>
+      <id value="CH;6909276.89;2"/>
+      <interpretation value="H"/>
+      <localName value="GLUCOSE"/>
+      <low value="60"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="128"/>
+      <resulted value="3110412.125326"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="GLUCOSE"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3090722.11"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:53 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 46"/>
+      <high value="24"/>
+      <id value="CH;6909276.89;3"/>
+      <localName value="BUN"/>
+      <low value="5"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="18"/>
+      <resulted value="3110412.125326"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="UREA NITROGEN"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3090722.11"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:53 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 46"/>
+      <high value="145"/>
+      <id value="CH;6909276.89;5"/>
+      <localName value="NA"/>
+      <low value="135"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="140"/>
+      <resulted value="3110412.125326"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="SODIUM"/>
+      <type value="CH"/>
+      <units value="meq/L"/>
+    </lab>
+    <lab>
+      <collected value="3090722.11"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:53 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 46"/>
+      <high value="5.3"/>
+      <id value="CH;6909276.89;6"/>
+      <localName value="K"/>
+      <low value="3.8"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="4.5"/>
+      <resulted value="3110412.125326"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="POTASSIUM"/>
+      <type value="CH"/>
+      <units value="meq/L"/>
+    </lab>
+    <lab>
+      <collected value="3090722.11"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:53 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 46"/>
+      <high value="108"/>
+      <id value="CH;6909276.89;7"/>
+      <localName value="CL"/>
+      <low value="95"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="105"/>
+      <resulted value="3110412.125326"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="CHLORIDE"/>
+      <type value="CH"/>
+      <units value="meq/L"/>
+    </lab>
+    <lab>
+      <collected value="3090722.11"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:53 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 46"/>
+      <high value="31"/>
+      <id value="CH;6909276.89;8"/>
+      <localName value="CO2"/>
+      <low value="23"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="29"/>
+      <resulted value="3110412.125326"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="CO2"/>
+      <type value="CH"/>
+      <units value="meq/L"/>
+    </lab>
+    <lab>
+      <collected value="3090722.11"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:53 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 46"/>
+      <high value="1.4"/>
+      <id value="CH;6909276.89;4"/>
+      <localName value="CREAT"/>
+      <low value=".9"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="1"/>
+      <resulted value="3110412.125326"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="CREATININE"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3080724.110005"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 25, 2011@19:11 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0425 16"/>
+      <id value="CH;6919274.889995;500049"/>
+      <localName value="M/C"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="9"/>
+      <resulted value="3110425.191125"/>
+      <sample value="URINE"/>
+      <specimen code="7X100" name="URINE"/>
+      <status value="completed"/>
+      <test value="Microalbumin/Creatinine Ratio"/>
+      <type value="CH"/>
+      <units value="ug/mg"/>
+    </lab>
+    <lab>
+      <collected value="3080724.110004"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:02 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="RIA 0412 9"/>
+      <high value="9"/>
+      <id value="CH;6919274.889996;741"/>
+      <interpretation value="L"/>
+      <localName value="TSH"/>
+      <low value="5"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="2.7"/>
+      <resulted value="3110412.130231"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="TSH"/>
+      <type value="CH"/>
+      <units value="MCIU/ML"/>
+    </lab>
+    <lab>
+      <collected value="3080724.110003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:01 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 53"/>
+      <high value="6"/>
+      <id value="CH;6919274.889997;462"/>
+      <interpretation value="H"/>
+      <localName value="A1C"/>
+      <low value="3.5"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="7.5"/>
+      <resulted value="3110412.130138"/>
+      <sample value="BLOOD  "/>
+      <specimen code="0X000" name="BLOOD"/>
+      <status value="completed"/>
+      <test value="HEMOGLOBIN A1C"/>
+      <type value="CH"/>
+      <units value="% "/>
+    </lab>
+    <lab>
+      <collected value="3080724.110002"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:59 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 52"/>
+      <high value="199"/>
+      <id value="CH;6919274.889998;12"/>
+      <localName value="CHOL"/>
+      <low value="0"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="187"/>
+      <resulted value="3110412.125941"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="CHOLESTEROL"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3080724.110002"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:59 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 52"/>
+      <high value="249"/>
+      <id value="CH;6919274.889998;47"/>
+      <localName value="TRIGLYC"/>
+      <low value="0"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="108"/>
+      <resulted value="3110412.125941"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="TRIGLYCERIDE"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3080724.110002"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:59 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 52"/>
+      <high value="60"/>
+      <id value="CH;6919274.889998;80"/>
+      <localName value="HDL"/>
+      <low value="40"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="49"/>
+      <resulted value="3110412.125941"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="HDL"/>
+      <type value="CH"/>
+      <units value="MG/DL"/>
+    </lab>
+    <lab>
+      <collected value="3080724.110002"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:59 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 52"/>
+      <high value="130"/>
+      <id value="CH;6919274.889998;291"/>
+      <localName value="LDL CHO"/>
+      <low value="0"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="61"/>
+      <resulted value="3110412.125941"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="LDL CHOLESTEROL"/>
+      <type value="CH"/>
+      <units value="MG/DL"/>
+    </lab>
+    <lab>
+      <collected value="3080724.110001"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:58 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 51"/>
+      <high value="11"/>
+      <id value="CH;6919274.889999;9"/>
+      <localName value="CA"/>
+      <low value="9"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="9.30"/>
+      <resulted value="3110412.125858"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="CALCIUM"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3080724.11"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:58 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 50"/>
+      <high value="110"/>
+      <id value="CH;6919274.89;2"/>
+      <interpretation value="H"/>
+      <localName value="GLUCOSE"/>
+      <low value="60"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="113"/>
+      <resulted value="3110412.125811"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="GLUCOSE"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3080724.11"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:58 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 50"/>
+      <high value="24"/>
+      <id value="CH;6919274.89;3"/>
+      <localName value="BUN"/>
+      <low value="5"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="15"/>
+      <resulted value="3110412.125811"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="UREA NITROGEN"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3080724.11"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:58 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 50"/>
+      <high value="145"/>
+      <id value="CH;6919274.89;5"/>
+      <localName value="NA"/>
+      <low value="135"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="139"/>
+      <resulted value="3110412.125811"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="SODIUM"/>
+      <type value="CH"/>
+      <units value="meq/L"/>
+    </lab>
+    <lab>
+      <collected value="3080724.11"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:58 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 50"/>
+      <high value="5.3"/>
+      <id value="CH;6919274.89;6"/>
+      <localName value="K"/>
+      <low value="3.8"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="4.5"/>
+      <resulted value="3110412.125811"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="POTASSIUM"/>
+      <type value="CH"/>
+      <units value="meq/L"/>
+    </lab>
+    <lab>
+      <collected value="3080724.11"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:58 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 50"/>
+      <high value="108"/>
+      <id value="CH;6919274.89;7"/>
+      <localName value="CL"/>
+      <low value="95"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="103"/>
+      <resulted value="3110412.125811"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="CHLORIDE"/>
+      <type value="CH"/>
+      <units value="meq/L"/>
+    </lab>
+    <lab>
+      <collected value="3080724.11"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:58 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 50"/>
+      <high value="31"/>
+      <id value="CH;6919274.89;8"/>
+      <localName value="CO2"/>
+      <low value="23"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="25"/>
+      <resulted value="3110412.125811"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="CO2"/>
+      <type value="CH"/>
+      <units value="meq/L"/>
+    </lab>
+    <lab>
+      <collected value="3080724.11"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@12:58 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 50"/>
+      <high value="1.4"/>
+      <id value="CH;6919274.89;4"/>
+      <localName value="CREAT"/>
+      <low value=".9"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="1"/>
+      <resulted value="3110412.125811"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="CREATININE"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3071015.11"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:03 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="RIA 0412 10"/>
+      <high value="9"/>
+      <id value="CH;6928983.89;741"/>
+      <interpretation value="L"/>
+      <localName value="TSH"/>
+      <low value="5"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="2.6"/>
+      <resulted value="3110412.13032"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="TSH"/>
+      <type value="CH"/>
+      <units value="MCIU/ML"/>
+    </lab>
+    <lab>
+      <collected value="3070829.11"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:04 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="RIA 0412 11"/>
+      <high value="9"/>
+      <id value="CH;6929169.89;741"/>
+      <localName value="TSH"/>
+      <low value="5"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="7.6"/>
+      <resulted value="3110412.130408"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="TSH"/>
+      <type value="CH"/>
+      <units value="MCIU/ML"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160008"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 25, 2011@19:12 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0425 17"/>
+      <id value="CH;6929384.839992;500049"/>
+      <localName value="M/C"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="13"/>
+      <resulted value="3110425.191221"/>
+      <sample value="URINE"/>
+      <specimen code="7X100" name="URINE"/>
+      <status value="completed"/>
+      <test value="Microalbumin/Creatinine Ratio"/>
+      <type value="CH"/>
+      <units value="ug/mg"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160007"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:12 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="RIA 0412 13"/>
+      <high value="12"/>
+      <id value="CH;6929384.839993;737"/>
+      <localName value="T-4"/>
+      <low value="5"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="canc"/>
+      <resulted value="3110412.131205"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="T-4"/>
+      <type value="CH"/>
+      <units value="ug/dl"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160007"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:12 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="RIA 0412 13"/>
+      <high value="15.7"/>
+      <id value="CH;6929384.839993;739"/>
+      <interpretation value="L*"/>
+      <localName value="FR T-4"/>
+      <low value="4.4"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="1.2"/>
+      <resulted value="3110412.131205"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="FREE T-4"/>
+      <type value="CH"/>
+      <units value="uG/ml"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160006"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:10 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="RIA 0412 12"/>
+      <high value="9"/>
+      <id value="CH;6929384.839994;741"/>
+      <interpretation value="H"/>
+      <localName value="TSH"/>
+      <low value="5"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="12.3"/>
+      <resulted value="3110412.131055"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="TSH"/>
+      <type value="CH"/>
+      <units value="MCIU/ML"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160005"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:10 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 56"/>
+      <high value="199"/>
+      <id value="CH;6929384.839995;12"/>
+      <localName value="CHOL"/>
+      <low value="0"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="164"/>
+      <resulted value="3110412.131012"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="CHOLESTEROL"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160005"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:10 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 56"/>
+      <high value="249"/>
+      <id value="CH;6929384.839995;47"/>
+      <localName value="TRIGLYC"/>
+      <low value="0"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="94"/>
+      <resulted value="3110412.131012"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="TRIGLYCERIDE"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160005"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:10 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 56"/>
+      <high value="60"/>
+      <id value="CH;6929384.839995;80"/>
+      <localName value="HDL"/>
+      <low value="40"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="46"/>
+      <resulted value="3110412.131012"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="HDL"/>
+      <type value="CH"/>
+      <units value="MG/DL"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160005"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:10 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 56"/>
+      <high value="130"/>
+      <id value="CH;6929384.839995;291"/>
+      <localName value="LDL CHO"/>
+      <low value="0"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="61"/>
+      <resulted value="3110412.131012"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="LDL CHOLESTEROL"/>
+      <type value="CH"/>
+      <units value="MG/DL"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160004"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:09 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 55"/>
+      <high value="6"/>
+      <id value="CH;6929384.839996;462"/>
+      <interpretation value="H"/>
+      <localName value="A1C"/>
+      <low value="3.5"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="7.3"/>
+      <resulted value="3110412.130922"/>
+      <sample value="BLOOD  "/>
+      <specimen code="0X000" name="BLOOD"/>
+      <status value="completed"/>
+      <test value="HEMOGLOBIN A1C"/>
+      <type value="CH"/>
+      <units value="% "/>
+    </lab>
+    <lab>
+      <collected value="3070614.160003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:08 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 54"/>
+      <high value="110"/>
+      <id value="CH;6929384.839997;2"/>
+      <interpretation value="H"/>
+      <localName value="GLUCOSE"/>
+      <low value="60"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="117"/>
+      <resulted value="3110412.130823"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="GLUCOSE"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:08 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 54"/>
+      <high value="24"/>
+      <id value="CH;6929384.839997;3"/>
+      <localName value="BUN"/>
+      <low value="5"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="19"/>
+      <resulted value="3110412.130823"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="UREA NITROGEN"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:08 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 54"/>
+      <high value="145"/>
+      <id value="CH;6929384.839997;5"/>
+      <localName value="NA"/>
+      <low value="135"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="143"/>
+      <resulted value="3110412.130823"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="SODIUM"/>
+      <type value="CH"/>
+      <units value="meq/L"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:08 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 54"/>
+      <high value="5.3"/>
+      <id value="CH;6929384.839997;6"/>
+      <localName value="K"/>
+      <low value="3.8"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="4.6"/>
+      <resulted value="3110412.130823"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="POTASSIUM"/>
+      <type value="CH"/>
+      <units value="meq/L"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:08 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 54"/>
+      <high value="108"/>
+      <id value="CH;6929384.839997;7"/>
+      <localName value="CL"/>
+      <low value="95"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="104"/>
+      <resulted value="3110412.130823"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="CHLORIDE"/>
+      <type value="CH"/>
+      <units value="meq/L"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:08 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 54"/>
+      <high value="31"/>
+      <id value="CH;6929384.839997;8"/>
+      <localName value="CO2"/>
+      <low value="23"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="25"/>
+      <resulted value="3110412.130823"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="CO2"/>
+      <type value="CH"/>
+      <units value="meq/L"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:08 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 54"/>
+      <high value="1.4"/>
+      <id value="CH;6929384.839997;4"/>
+      <localName value="CREAT"/>
+      <low value=".9"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="1.1"/>
+      <resulted value="3110412.130823"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="CREATININE"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:08 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 54"/>
+      <high value="1.7"/>
+      <id value="CH;6929384.839997;15"/>
+      <localName value="T. BIL"/>
+      <low value=".3"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="0.7"/>
+      <resulted value="3110412.130823"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="TOT. BILIRUBIN"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:08 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 54"/>
+      <high value=".3"/>
+      <id value="CH;6929384.839997;16"/>
+      <localName value="D BILI"/>
+      <low value="0"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="canc"/>
+      <resulted value="3110412.130823"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="DIR. BILIRUBIN"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:08 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 54"/>
+      <high value="7.7"/>
+      <id value="CH;6929384.839997;13"/>
+      <interpretation value="H"/>
+      <localName value="PROTEIN"/>
+      <low value="6.2"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="7.8"/>
+      <resulted value="3110412.130823"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="PROTEIN,TOTAL"/>
+      <type value="CH"/>
+      <units value="g/dL"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:08 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 54"/>
+      <high value="4.9"/>
+      <id value="CH;6929384.839997;14"/>
+      <localName value="ALBUMIN"/>
+      <loinc value="1751-7"/>
+      <low value="3.9"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="4.3"/>
+      <resulted value="3110412.130823"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="ALBUMIN"/>
+      <type value="CH"/>
+      <units value="g/dL"/>
+      <vuid value="4659241"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:08 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 54"/>
+      <high value="3.9"/>
+      <id value="CH;6929384.839997;10"/>
+      <localName value="PO4"/>
+      <low value="2.2"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="canc"/>
+      <resulted value="3110412.130823"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="PO4"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:08 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 54"/>
+      <high value="199"/>
+      <id value="CH;6929384.839997;12"/>
+      <localName value="CHOL"/>
+      <low value="0"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="canc"/>
+      <resulted value="3110412.130823"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="CHOLESTEROL"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:08 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 54"/>
+      <high value="8.5"/>
+      <id value="CH;6929384.839997;11"/>
+      <localName value="URIC AC"/>
+      <low value="4.2"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="canc"/>
+      <resulted value="3110412.130823"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="URIC ACID - SMA"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:08 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 54"/>
+      <high value="32"/>
+      <id value="CH;6929384.839997;19"/>
+      <localName value="SGOT"/>
+      <low value="11"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="24"/>
+      <resulted value="3110412.130823"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="SGOT"/>
+      <type value="CH"/>
+      <units value="U/L"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:08 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 54"/>
+      <high value="66"/>
+      <id value="CH;6929384.839997;20"/>
+      <localName value="SGPT"/>
+      <low value="24"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="60"/>
+      <resulted value="3110412.130823"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="SGPT"/>
+      <type value="CH"/>
+      <units value="U/L"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:08 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 54"/>
+      <high value="128"/>
+      <id value="CH;6929384.839997;17"/>
+      <localName value="ALK PHO"/>
+      <low value="42"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="84"/>
+      <resulted value="3110412.130823"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="ALKALINE PHOSPHATASE"/>
+      <type value="CH"/>
+      <units value="U/L"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:08 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 54"/>
+      <high value="227"/>
+      <id value="CH;6929384.839997;18"/>
+      <localName value="LDH"/>
+      <low value="128"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="canc"/>
+      <resulted value="3110412.130823"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="LDH"/>
+      <type value="CH"/>
+      <units value="U/L"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:08 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 54"/>
+      <high value="65"/>
+      <id value="CH;6929384.839997;21"/>
+      <localName value="G-GTP"/>
+      <low value="0"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="canc"/>
+      <resulted value="3110412.130823"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="GAMMA-GTP"/>
+      <type value="CH"/>
+      <units value="U/L"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160003"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:08 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0412 54"/>
+      <high value="11"/>
+      <id value="CH;6929384.839997;9"/>
+      <localName value="CA"/>
+      <low value="9"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="9.30"/>
+      <resulted value="3110412.130823"/>
+      <specimen code="0X500" name="SERUM"/>
+      <status value="completed"/>
+      <test value="CALCIUM"/>
+      <type value="CH"/>
+      <units value="mg/dL"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160001"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:06 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="DIFFS 0412 17"/>
+      <id value="CH;6929384.839999;405"/>
+      <localName value="PLT.E"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <resulted value="3110412.130637"/>
+      <sample value="BLOOD  "/>
+      <specimen code="0X000" name="BLOOD"/>
+      <status value="completed"/>
+      <test value="PLT (ESTM)"/>
+      <type value="CH"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160001"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:06 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="DIFFS 0412 17"/>
+      <id value="CH;6929384.839999;406"/>
+      <localName value="NORMOCY"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <resulted value="3110412.130637"/>
+      <sample value="BLOOD  "/>
+      <specimen code="0X000" name="BLOOD"/>
+      <status value="completed"/>
+      <test value="NORMOCYTIC"/>
+      <type value="CH"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160001"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:06 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="DIFFS 0412 17"/>
+      <id value="CH;6929384.839999;407"/>
+      <localName value="NORMOCH"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <resulted value="3110412.130637"/>
+      <sample value="BLOOD  "/>
+      <specimen code="0X000" name="BLOOD"/>
+      <status value="completed"/>
+      <test value="NORMOCHROMIC"/>
+      <type value="CH"/>
+    </lab>
+    <lab>
+      <collected value="3070614.160001"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:06 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="DIFFS 0412 17"/>
+      <high value="74"/>
+      <id value="CH;6929384.839999;394"/>
+      <localName value="SEGS"/>
+      <low value="34"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="52"/>
+      <resulted value="3110412.130637"/>
+      <sample value="BLOOD  "/>
+      <specimen code="0X000" name="BLOOD"/>
+      <status value="completed"/>
+      <test value="SEGS"/>
+      <type value="CH"/>
+      <units value="% "/>
+    </lab>
+    <lab>
+      <collected value="3070614.160001"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:06 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="DIFFS 0412 17"/>
+      <high value="49"/>
+      <id value="CH;6929384.839999;396"/>
+      <localName value="LYMPHS"/>
+      <low value="10"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="41"/>
+      <resulted value="3110412.130637"/>
+      <sample value="BLOOD  "/>
+      <specimen code="0X000" name="BLOOD"/>
+      <status value="completed"/>
+      <test value="LYMPHS"/>
+      <type value="CH"/>
+      <units value="% "/>
+    </lab>
+    <lab>
+      <collected value="3070614.160001"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:06 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="DIFFS 0412 17"/>
+      <high value="14"/>
+      <id value="CH;6929384.839999;397"/>
+      <localName value="MONOS"/>
+      <low value="2"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="3"/>
+      <resulted value="3110412.130637"/>
+      <sample value="BLOOD  "/>
+      <specimen code="0X000" name="BLOOD"/>
+      <status value="completed"/>
+      <test value="MONOS"/>
+      <type value="CH"/>
+      <units value="% "/>
+    </lab>
+    <lab>
+      <collected value="3070614.160001"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:06 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="DIFFS 0412 17"/>
+      <high value="8"/>
+      <id value="CH;6929384.839999;398"/>
+      <localName value="EOSINO"/>
+      <low value="0"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="3"/>
+      <resulted value="3110412.130637"/>
+      <sample value="BLOOD  "/>
+      <specimen code="0X000" name="BLOOD"/>
+      <status value="completed"/>
+      <test value="EOSINO"/>
+      <type value="CH"/>
+      <units value="% "/>
+    </lab>
+    <lab>
+      <collected value="3070614.160001"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:06 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="DIFFS 0412 17"/>
+      <high value="2"/>
+      <id value="CH;6929384.839999;399"/>
+      <localName value="BASO"/>
+      <low value="0"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="0.7"/>
+      <resulted value="3110412.130637"/>
+      <sample value="BLOOD  "/>
+      <specimen code="0X000" name="BLOOD"/>
+      <status value="completed"/>
+      <test value="BASO"/>
+      <type value="CH"/>
+      <units value="% "/>
+    </lab>
+    <lab>
+      <collected value="3070614.160001"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:06 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="DIFFS 0412 17"/>
+      <high value="1"/>
+      <id value="CH;6929384.839999;403"/>
+      <localName value="BLASTS"/>
+      <low value="0"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <resulted value="3110412.130637"/>
+      <sample value="BLOOD  "/>
+      <specimen code="0X000" name="BLOOD"/>
+      <status value="completed"/>
+      <test value="BLASTS"/>
+      <type value="CH"/>
+      <units value="% "/>
+    </lab>
+    <lab>
+      <collected value="3070614.16"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:05 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="HE 0412 16"/>
+      <high value="8.3"/>
+      <id value="CH;6929384.84;384"/>
+      <localName value="WBC"/>
+      <low value="3.5"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="6.2"/>
+      <resulted value="3110412.130542"/>
+      <sample value="BLOOD  "/>
+      <specimen code="0X000" name="BLOOD"/>
+      <status value="completed"/>
+      <test value="WBC"/>
+      <type value="CH"/>
+      <units value="k/cmm"/>
+    </lab>
+    <lab>
+      <collected value="3070614.16"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:05 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="HE 0412 16"/>
+      <high value="5.4"/>
+      <id value="CH;6929384.84;385"/>
+      <localName value="RBC"/>
+      <low value="4.2"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="5.00"/>
+      <resulted value="3110412.130542"/>
+      <sample value="BLOOD  "/>
+      <specimen code="0X000" name="BLOOD"/>
+      <status value="completed"/>
+      <test value="RBC"/>
+      <type value="CH"/>
+      <units value="M/cmm"/>
+    </lab>
+    <lab>
+      <collected value="3070614.16"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:05 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="HE 0412 16"/>
+      <high value="16"/>
+      <id value="CH;6929384.84;386"/>
+      <localName value="HGB"/>
+      <low value="12"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="15.7"/>
+      <resulted value="3110412.130542"/>
+      <sample value="BLOOD  "/>
+      <specimen code="0X000" name="BLOOD"/>
+      <status value="completed"/>
+      <test value="HGB"/>
+      <type value="CH"/>
+      <units value="g/dL"/>
+    </lab>
+    <lab>
+      <collected value="3070614.16"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:05 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="HE 0412 16"/>
+      <high value="47"/>
+      <id value="CH;6929384.84;387"/>
+      <localName value="HCT"/>
+      <low value="37"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="45"/>
+      <resulted value="3110412.130542"/>
+      <sample value="BLOOD  "/>
+      <specimen code="0X000" name="BLOOD"/>
+      <status value="completed"/>
+      <test value="HCT"/>
+      <type value="CH"/>
+      <units value="% "/>
+    </lab>
+    <lab>
+      <collected value="3070614.16"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:05 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="HE 0412 16"/>
+      <high value="99"/>
+      <id value="CH;6929384.84;388"/>
+      <localName value="MCV"/>
+      <low value="81"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="92.0"/>
+      <resulted value="3110412.130542"/>
+      <sample value="BLOOD  "/>
+      <specimen code="0X000" name="BLOOD"/>
+      <status value="completed"/>
+      <test value="MCV"/>
+      <type value="CH"/>
+      <units value="cmu"/>
+    </lab>
+    <lab>
+      <collected value="3070614.16"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:05 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="HE 0412 16"/>
+      <high value="35"/>
+      <id value="CH;6929384.84;389"/>
+      <localName value="MCH"/>
+      <low value="27"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="canc"/>
+      <resulted value="3110412.130542"/>
+      <sample value="BLOOD  "/>
+      <specimen code="0X000" name="BLOOD"/>
+      <status value="completed"/>
+      <test value="MCH"/>
+      <type value="CH"/>
+      <units value="uug"/>
+    </lab>
+    <lab>
+      <collected value="3070614.16"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:05 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="HE 0412 16"/>
+      <high value="36"/>
+      <id value="CH;6929384.84;390"/>
+      <localName value="MCHC"/>
+      <low value="33"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="35.4"/>
+      <resulted value="3110412.130542"/>
+      <sample value="BLOOD  "/>
+      <specimen code="0X000" name="BLOOD"/>
+      <status value="completed"/>
+      <test value="MCHC"/>
+      <type value="CH"/>
+      <units value="gm/dL"/>
+    </lab>
+    <lab>
+      <collected value="3070614.16"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:05 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="HE 0412 16"/>
+      <high value="14"/>
+      <id value="CH;6929384.84;391"/>
+      <localName value="RDW"/>
+      <low value="11"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="13.7"/>
+      <resulted value="3110412.130542"/>
+      <sample value="BLOOD  "/>
+      <specimen code="0X000" name="BLOOD"/>
+      <status value="completed"/>
+      <test value="RDW"/>
+      <type value="CH"/>
+      <units value="% "/>
+    </lab>
+    <lab>
+      <collected value="3070614.16"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 12, 2011@13:05 Performing Lab: ALBANY VA MEDICAL CENTER                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097 </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="HE 0412 16"/>
+      <high value="420"/>
+      <id value="CH;6929384.84;392"/>
+      <localName value="PLT"/>
+      <low value="140"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="308"/>
+      <resulted value="3110412.130542"/>
+      <sample value="BLOOD  "/>
+      <specimen code="0X000" name="BLOOD"/>
+      <status value="completed"/>
+      <test value="PLATELET COUNT"/>
+      <type value="CH"/>
+      <units value="K/cmm"/>
+    </lab>
+  </labs>
 </results>
