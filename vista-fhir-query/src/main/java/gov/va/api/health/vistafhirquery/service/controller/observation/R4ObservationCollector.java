@@ -31,7 +31,8 @@ public class R4ObservationCollector {
       return AllowedObservationCodes.allowAll();
     }
     List<String> loincCodes = Arrays.asList(codes().split(",", -1));
-    Map<String, String> vuidToLoinc =
+    // Allowed Vital Codes
+    Map<String, String> allowedCodes =
         loincCodes.stream()
             .flatMap(code -> vitalVuidMapper().mappings().stream().filter(forLoinc(code)))
             .collect(
@@ -42,10 +43,11 @@ public class R4ObservationCollector {
      * supported loinc codes irregardless. For example, the Lab loinc code 1-8 would not have
      * a mapping in the vital table, but should be included in the map of allowed
      * Observation codes. */
+    // Allowed Lab Codes
     loincCodes.stream()
-        .filter(code -> !vuidToLoinc.containsValue(code))
-        .forEach(code -> vuidToLoinc.put(code, code));
-    return AllowedObservationCodes.allowOnly(vuidToLoinc);
+        .filter(code -> !allowedCodes.containsValue(code))
+        .forEach(code -> allowedCodes.put(code, code));
+    return AllowedObservationCodes.allowOnly(allowedCodes);
   }
 
   Stream<Observation> toFhir() {

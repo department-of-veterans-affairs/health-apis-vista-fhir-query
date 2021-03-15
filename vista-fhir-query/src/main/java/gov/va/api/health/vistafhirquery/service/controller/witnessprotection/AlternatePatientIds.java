@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Value;
 
 public interface AlternatePatientIds {
 
@@ -47,6 +48,7 @@ public interface AlternatePatientIds {
     }
   }
 
+  @Value
   class MappedAlternatePatientIds implements AlternatePatientIds {
 
     private final BiMap<String, String> publicToPrivateIds;
