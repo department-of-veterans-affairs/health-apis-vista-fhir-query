@@ -1,13 +1,14 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
 import static gov.va.api.health.vistafhirquery.service.controller.observation.VitalVuidMapper.forLoinc;
-import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toList;
 
 import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.Labs;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.Vitals;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 import lombok.Builder;
@@ -29,14 +30,13 @@ public class R4ObservationCollector {
     if (codes() == null) {
       return AllowedObservationCodes.allowAll();
     }
-    Map<String, String> vuidToLoinc =
-        Arrays.stream(codes().split(",", -1))
+    List<String> loincCodes = Arrays.asList(codes().split(",", -1));
+    List<String> vuidCodes =
+        loincCodes.stream()
             .flatMap(code -> vitalVuidMapper().mappings().stream().filter(forLoinc(code)))
-            .collect(
-                toMap(
-                    VitalVuidMapper.VitalVuidMapping::vuid,
-                    VitalVuidMapper.VitalVuidMapping::code));
-    return AllowedObservationCodes.allowOnly(vuidToLoinc);
+            .map(VitalVuidMapper.VitalVuidMapping::vuid)
+            .collect(toList());
+    return AllowedObservationCodes.allowOnly(vuidCodes, loincCodes);
   }
 
   Stream<Observation> toFhir() {
