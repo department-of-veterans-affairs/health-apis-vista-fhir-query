@@ -3,7 +3,6 @@ package gov.va.api.health.vistafhirquery.service.controller;
 import static gov.va.api.lighthouse.charon.api.RpcResponse.Status.FAILED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -15,82 +14,23 @@ import gov.va.api.lighthouse.charon.api.RpcInvocationResult;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 public class RestVistaApiClientTest {
   RestTemplate rt = mock(RestTemplate.class);
 
-  static Stream<Arguments> clientTypes() {
-    return Stream.of(
-        arguments(
-            VistaApiConfig.builder()
-                .url("http://fugazi.com/")
-                .authenticationType(VistaApiConfig.AuthenticationType.STANDARD_USER)
-                .accessCode("ac")
-                .verifyCode("vc")
-                .clientKey("ck")
-                .build()),
-        arguments(
-            VistaApiConfig.builder()
-                .url("http://fugazi.com/")
-                .authenticationType(VistaApiConfig.AuthenticationType.APPLICATION_PROXY_USER)
-                .applicationProxyUser("apu")
-                .accessCode("ac")
-                .verifyCode("vc")
-                .clientKey("ck")
-                .build()));
-  }
+  VistaApiConfig config =
+      VistaApiConfig.builder()
+          .url("http://fugazi.com/")
+          .accessCode("ac")
+          .verifyCode("vc")
+          .clientKey("ck")
+          .build();
 
-  static Stream<Arguments> getAuthenticationForUserTypeThrowsWhenCriteriaIsNotMet() {
-    return Stream.of(
-        arguments(
-            VistaApiConfig.builder()
-                .authenticationType(VistaApiConfig.AuthenticationType.APPLICATION_PROXY_USER)
-                .accessCode("ac")
-                .verifyCode("vc")
-                .build()),
-        arguments(
-            VistaApiConfig.builder()
-                .authenticationType(VistaApiConfig.AuthenticationType.APPLICATION_PROXY_USER)
-                .applicationProxyUser("apu")
-                .verifyCode("vc")
-                .build()),
-        arguments(
-            VistaApiConfig.builder()
-                .authenticationType(VistaApiConfig.AuthenticationType.APPLICATION_PROXY_USER)
-                .applicationProxyUser("apu")
-                .accessCode("ac")
-                .build()),
-        arguments(
-            VistaApiConfig.builder()
-                .authenticationType(VistaApiConfig.AuthenticationType.APPLICATION_PROXY_USER)
-                .build()),
-        arguments(
-            VistaApiConfig.builder()
-                .authenticationType(VistaApiConfig.AuthenticationType.STANDARD_USER)
-                .accessCode("ac")
-                .build()),
-        arguments(
-            VistaApiConfig.builder()
-                .authenticationType(VistaApiConfig.AuthenticationType.STANDARD_USER)
-                .verifyCode("vc")
-                .build()));
-  }
-
-  private RestVistaApiClient clientFor(VistaApiConfig config) {
+  private RestVistaApiClient client() {
     return RestVistaApiClient.builder().config(config).restTemplate(rt).build();
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void getAuthenticationForUserTypeThrowsWhenCriteriaIsNotMet(VistaApiConfig vistaApiConfig) {
-    assertThatExceptionOfType(ResourceExceptions.ExpectationFailed.class)
-        .isThrownBy(vistaApiConfig::getAuthenticationForUserType);
   }
 
   void mockVistalink200Response() {
@@ -125,12 +65,11 @@ public class RestVistaApiClientTest {
                         .build()));
   }
 
-  @ParameterizedTest
-  @MethodSource(value = "clientTypes")
-  void requestForPatientWithVistalink200Response(VistaApiConfig vistaApiConfig) {
+  @Test
+  void requestForPatientWithVistalink200Response() {
     mockVistalink200Response();
     assertThat(
-            clientFor(vistaApiConfig)
+            client()
                 .requestForPatient(
                     "p1", RpcDetails.builder().name("FAUX RPC").context("FAUX CONTEXT").build()))
         .isEqualTo(
@@ -141,25 +80,23 @@ public class RestVistaApiClientTest {
                 .build());
   }
 
-  @ParameterizedTest
-  @MethodSource(value = "clientTypes")
-  void requestForPatientWithVistalink500Response(VistaApiConfig vistaApiConfig) {
+  @Test
+  void requestForPatientWithVistalink500Response() {
     mockVistalink500Response();
     assertThatExceptionOfType(IllegalStateException.class)
         .isThrownBy(
             () ->
-                clientFor(vistaApiConfig)
+                client()
                     .requestForPatient(
                         "p1",
                         RpcDetails.builder().name("FAUX RPC").context("FAUX CONTEXT").build()));
   }
 
-  @ParameterizedTest
-  @MethodSource(value = "clientTypes")
-  void requestForVistaSiteWithVistalink200Response(VistaApiConfig vistaApiConfig) {
+  @Test
+  void requestForVistaSiteWithVistalink200Response() {
     mockVistalink200Response();
     assertThat(
-            clientFor(vistaApiConfig)
+            client()
                 .requestForVistaSite(
                     "123", RpcDetails.builder().name("FAUX RPC").context("FAUX CONTEXT").build()))
         .isEqualTo(
@@ -170,14 +107,13 @@ public class RestVistaApiClientTest {
                 .build());
   }
 
-  @ParameterizedTest
-  @MethodSource(value = "clientTypes")
-  void requestForVistaSiteWithVistalink500Response(VistaApiConfig vistaApiConfig) {
+  @Test
+  void requestForVistaSiteWithVistalink500Response() {
     mockVistalink500Response();
     assertThatExceptionOfType(IllegalStateException.class)
         .isThrownBy(
             () ->
-                clientFor(vistaApiConfig)
+                client()
                     .requestForVistaSite(
                         "123",
                         RpcDetails.builder().name("FAUX RPC").context("FAUX CONTEXT").build()));
