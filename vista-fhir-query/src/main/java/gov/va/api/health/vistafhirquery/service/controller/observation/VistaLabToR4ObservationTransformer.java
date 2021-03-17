@@ -44,13 +44,15 @@ public class VistaLabToR4ObservationTransformer {
             .build());
   }
 
-  CodeableConcept code(ValueOnlyXmlAttribute maybeLoinc) {
+  CodeableConcept code(ValueOnlyXmlAttribute maybeLoinc, ValueOnlyXmlAttribute maybeTestName) {
     String loinc = valueOfValueOnlyXmlAttribute(maybeLoinc);
+    String testName = valueOfValueOnlyXmlAttribute(maybeTestName);
     if (isBlank(loinc)) {
       return null;
     }
     return CodeableConcept.builder()
         .coding(List.of(Coding.builder().system("http://loinc.org").code(loinc).build()))
+        .text(testName)
         .build();
   }
 
@@ -70,7 +72,7 @@ public class VistaLabToR4ObservationTransformer {
             .note(note(vistaLab.comment()))
             .referenceRange(referenceRange(vistaLab.high(), vistaLab.low()))
             .interpretation(interpretation(vistaLab.interpretation()))
-            .code(code(vistaLab.loinc()))
+            .code(code(vistaLab.loinc(), vistaLab.test()))
             .valueQuantity(valueQuantity(vistaLab.result(), vistaLab.units()))
             .effectiveDateTime(toHumanDateTime(vistaLab.collected()))
             .status(status(vistaLab.status()))

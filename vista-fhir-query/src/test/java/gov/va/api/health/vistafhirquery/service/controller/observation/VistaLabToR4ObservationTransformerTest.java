@@ -76,9 +76,19 @@ public class VistaLabToR4ObservationTransformerTest {
 
   @Test
   void code() {
-    assertThat(tx().code(ValueOnlyXmlAttribute.of("123")).coding().get(0))
-        .isEqualTo(Coding.builder().system("http://loinc.org").code("123").build());
-    assertThat(tx().code(ValueOnlyXmlAttribute.of(null))).isNull();
+    assertThat(tx().code(ValueOnlyXmlAttribute.of("123"), ValueOnlyXmlAttribute.of("abc")))
+        .isEqualTo(
+            CodeableConcept.builder()
+                .coding(List.of(Coding.builder().system("http://loinc.org").code("123").build()))
+                .text("abc")
+                .build());
+    assertThat(tx().code(ValueOnlyXmlAttribute.of("123"), ValueOnlyXmlAttribute.of(null)))
+        .isEqualTo(
+            CodeableConcept.builder()
+                .coding(List.of(Coding.builder().system("http://loinc.org").code("123").build()))
+                .build());
+    assertThat(tx().code(ValueOnlyXmlAttribute.of(null), ValueOnlyXmlAttribute.of("abc"))).isNull();
+    assertThat(tx().code(ValueOnlyXmlAttribute.of(null), ValueOnlyXmlAttribute.of(null))).isNull();
   }
 
   @Test
