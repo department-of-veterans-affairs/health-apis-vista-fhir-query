@@ -2,7 +2,6 @@ package gov.va.api.health.vistafhirquery.service.controller;
 
 import gov.va.api.health.vistafhirquery.service.config.VistaApiConfig;
 import gov.va.api.lighthouse.charon.api.RpcDetails;
-import gov.va.api.lighthouse.charon.api.RpcPrincipal;
 import gov.va.api.lighthouse.charon.api.RpcRequest;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
 import gov.va.api.lighthouse.charon.api.RpcVistaTargets;
@@ -53,7 +52,7 @@ public class RestVistaApiClient implements VistalinkApiClient {
   public RpcResponse requestForPatient(String patient, RpcDetails rpcDetails) {
     RpcRequest rpcRequest =
         RpcRequest.builder()
-            .principal(rpcPrincipal())
+            .principal(config().getAuthenticationForUserType())
             .target(RpcVistaTargets.builder().forPatient(patient).build())
             .rpc(rpcDetails)
             .build();
@@ -64,19 +63,11 @@ public class RestVistaApiClient implements VistalinkApiClient {
   public RpcResponse requestForVistaSite(String vistaSite, RpcDetails rpcDetails) {
     RpcRequest rpcRequest =
         RpcRequest.builder()
-            .principal(rpcPrincipal())
+            .principal(config().getAuthenticationForUserType())
             .target(RpcVistaTargets.builder().include(List.of(vistaSite)).build())
             .rpc(rpcDetails)
             .build();
     return makeRequest(rpcRequest);
-  }
-
-  private RpcPrincipal rpcPrincipal() {
-    return RpcPrincipal.applicationProxyUserBuilder()
-        .accessCode(config.getAccessCode())
-        .verifyCode(config().getVerifyCode())
-        .applicationProxyUser(config.getApplicationProxyUser())
-        .build();
   }
 
   private void verifyVistalinkApiResponse(ResponseEntity<RpcResponse> response) {

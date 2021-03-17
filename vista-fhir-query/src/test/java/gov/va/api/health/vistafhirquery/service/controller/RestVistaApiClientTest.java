@@ -14,23 +14,52 @@ import gov.va.api.lighthouse.charon.api.RpcInvocationResult;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.provider.Arguments;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 public class RestVistaApiClientTest {
   RestTemplate rt = mock(RestTemplate.class);
 
-  VistaApiConfig config =
-      VistaApiConfig.builder()
-          .url("http://fugazi.com/")
-          .accessCode("ac")
-          .verifyCode("vc")
-          .clientKey("ck")
-          .build();
-
-  private RestVistaApiClient client() {
+  private RestVistaApiClient standardClient() {
+    VistaApiConfig config =
+            VistaApiConfig.builder()
+                    .url("http://fugazi.com/")
+                    .authenticationType(VistaApiConfig.AuthenticationType.STANDARD_USER)
+                    .accessCode("ac")
+                    .verifyCode("vc")
+                    .clientKey("ck")
+                    .build();
     return RestVistaApiClient.builder().config(config).restTemplate(rt).build();
+  }
+
+  private RestVistaApiClient applicationProxyClient() {
+    VistaApiConfig config =
+            VistaApiConfig.builder()
+                    .url("http://fugazi.com/")
+                    .authenticationType(VistaApiConfig.AuthenticationType.APPLICATION_PROXY_USER)
+                    .applicationProxyUser("apu")
+                    .accessCode("ac")
+                    .verifyCode("vc")
+                    .clientKey("ck")
+                    .build();
+    return RestVistaApiClient.builder().config(config).restTemplate(rt).build();
+  }
+
+  static Stream<Arguments> getAuthenticationForUserTypeThrowsWhenCriteriaIsNotMet() {
+    return Stream.of(
+
+            
+    );
+  }
+
+  @Test
+  void getAuthenticationForUserTypeThrowsWhenCriteriaIsNotMet(VistaApiConfig c) {
+    assertThatExceptionOfType(ResourceExceptions.ExpectationFailed.class)
+            .isThrownBy(c::getAuthenticationForUserType);
   }
 
   void mockVistalink200Response() {
@@ -69,7 +98,7 @@ public class RestVistaApiClientTest {
   void requestForPatientWithVistalink200Response() {
     mockVistalink200Response();
     assertThat(
-            client()
+            standardClient()
                 .requestForPatient(
                     "p1", RpcDetails.builder().name("FAUX RPC").context("FAUX CONTEXT").build()))
         .isEqualTo(
@@ -86,7 +115,7 @@ public class RestVistaApiClientTest {
     assertThatExceptionOfType(IllegalStateException.class)
         .isThrownBy(
             () ->
-                client()
+                standardClient()
                     .requestForPatient(
                         "p1",
                         RpcDetails.builder().name("FAUX RPC").context("FAUX CONTEXT").build()));
@@ -96,7 +125,7 @@ public class RestVistaApiClientTest {
   void requestForVistaSiteWithVistalink200Response() {
     mockVistalink200Response();
     assertThat(
-            client()
+            standardClient()
                 .requestForVistaSite(
                     "123", RpcDetails.builder().name("FAUX RPC").context("FAUX CONTEXT").build()))
         .isEqualTo(
@@ -113,7 +142,7 @@ public class RestVistaApiClientTest {
     assertThatExceptionOfType(IllegalStateException.class)
         .isThrownBy(
             () ->
-                client()
+                standardClient()
                     .requestForVistaSite(
                         "123",
                         RpcDetails.builder().name("FAUX RPC").context("FAUX CONTEXT").build()));

@@ -52,20 +52,16 @@ main() {
   [ ! -f "$SECRETS" ] && usage "File not found: $SECRETS"
   . $SECRETS
 
-  # Support values as configured in Shanktosecrets
-  if [ -z "${VISTALINK_ACCESS_CODE:-}" ]; then export VISTALINK_ACCESS_CODE=${VISTA_ACCESS_CODE:-}; fi
-  if [ -z "${VISTALINK_VERIFY_CODE:-}" ]; then export VISTALINK_VERIFY_CODE=${VISTA_VERIFY_CODE:-}; fi
-
   MISSING_SECRETS=false
-  requiredParam VISTALINK_URL "$VISTALINK_URL"
-  requiredParam VISTALINK_ACCESS_CODE "$VISTALINK_ACCESS_CODE"
-  requiredParam VISTALINK_VERIFY_CODE "$VISTALINK_VERIFY_CODE"
+  requiredParam VISTALINK_URL "${VISTA_API_URL}"
+  requiredParam VISTALINK_ACCESS_CODE "${VISTA_ACCESS_CODE}"
+  requiredParam VISTALINK_VERIFY_CODE "${VISTA_VERIFY_CODE}"
   requiredParam VFQ_DB_URL "${VFQ_DB_URL}"
   requiredParam VFQ_DB_USER "${VFQ_DB_USER}"
   requiredParam VFQ_DB_PASSWORD "${VFQ_DB_PASSWORD}"
   [ -z "$VISTALINK_CLIENT_KEY" ] && VISTALINK_CLIENT_KEY="not-used"
   [ -z "$WEB_EXCEPTION_KEY" ] && WEB_EXCEPTION_KEY="-shanktopus-for-the-win-"
-  [ $MISSING_SECRETS == true ] && usage "Missing configuration secrets, please update $SECRETS"
+  [ $MISSING_SECRETS == true ] && usage "Missing configuration secrets, please update ${SECRETS}"
 
   populateConfig
 }
@@ -121,15 +117,19 @@ makeConfig() {
 
 populateConfig() {
   makeConfig vista-fhir-query $PROFILE
-  configValue vista-fhir-query $PROFILE vista.api.url "$VISTALINK_URL"
+  configValue vista-fhir-query $PROFILE vista.api.url "${VISTA_API_URL}"
   comment vista-fhir-query $PROFILE <<EOF
 # To populate vista.api.client-key, use the VISTALINK_CLIENT_KEY value in
 # the secrets files used with make-configs.sh
 EOF
   configValue vista-fhir-query $PROFILE vista.api.client-key "$VISTALINK_CLIENT_KEY"
-  configValue vista-fhir-query $PROFILE vista.api.access-code "${VISTA_APP_PROXY_ACCESS_CODE}"
-  configValue vista-fhir-query $PROFILE vista.api.verify-code "${VISTA_APP_PROXY_VERIFY_CODE}"
-  configValue vista-fhir-query $PROFILE vista.api.application-proxy-user "${VISTA_APP_PROXY_VERIFY_CODE}"
+  configValue vista-fhir-query $PROFILE vista.api.access-code "${VISTA_APP_PROXY_ACCESS_CODE:-${VISTA_ACCESS_CODE}}"
+  configValue vista-fhir-query $PROFILE vista.api.verify-code "${VISTA_APP_PROXY_VERIFY_CODE:-${VISTA_VERIFY_CODE}}"
+  if [ -n "${VISTA_APP_PROXY_ACCESS_CODE:-}" ] && [ -n "${VISTA_APP_PROXY_VERIFY_CODE:-}" ]
+  then
+    configValue vista-fhir-query $PROFILE vista.api.application-proxy-user "${VISTA_APP_PROXY_USER}"
+    addValue vista-fhir-query $PROFILE vista.api.authentication-type "APPLICATION_PROXY_USER"
+  fi
   configValue vista-fhir-query $PROFILE vista-fhir-query.internal.client-keys "disabled"
   configValue vista-fhir-query $PROFILE vista-fhir-query.public-url "http://localhost:8095"
   configValue vista-fhir-query $PROFILE vista-fhir-query.public-r4-base-path "r4"
