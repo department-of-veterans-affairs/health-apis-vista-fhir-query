@@ -1,5 +1,6 @@
-package gov.va.api.health.vistafhirquery.service.controller;
+package gov.va.api.health.vistafhirquery.service.controller.ping;
 
+import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
 import gov.va.api.lighthouse.charon.api.RpcDetails;
 import gov.va.api.lighthouse.charon.api.RpcInvocationResult;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
@@ -12,13 +13,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/* This class is temporary.
- * Eventually, controllers will be split based on the fhir resources they represent.
- * Therefore, no tests are necessary for this class. */
 @RestController
 @RequestMapping(value = {"/internal"})
 @AllArgsConstructor(onConstructor_ = @Autowired)
-public class VistaFhirQueryController {
+public class InternalPingController {
 
   private final VistalinkApiClient vistalinkApiClient;
 
