@@ -124,7 +124,7 @@ public class R4Transformers {
     if (maybeInstant == null) {
       return Optional.empty();
     }
-    return Optional.of(String.format("${local-fileman-date(%s)", maybeInstant));
+    return Optional.of(String.format("${local-fileman-date(%s)}", maybeInstant));
   }
 
   /** Create a reference sing the resourceType, an id, and a display. */
