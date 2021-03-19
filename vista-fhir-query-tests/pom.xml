@@ -110,8 +110,10 @@
                 <argument>-Dvista.api.url=http://localhost:8096</argument>
                 <argument>-Dvista-fhir-query.internal.client-keys=~shanktopus~</argument>
                 <argument>-Dvista-fhir-query.public-web-exception-key=-shanktopus-for-the-win-</argument>
-                <argument>-Didentityservice.encodingKey=fhir-query</argument>
-                <argument>-Didentityservice.patientIdPattern=[0-9]+(V[0-9]{6})?</argument>
+                <argument>-Dids-client.encoded-ids.i2-enabled=true</argument>
+                <argument>-Dids-client.encoded-ids.i3-enabled=true</argument>
+                <argument>-Dids-client.encoded-ids.encoding-key=fhir-query</argument>
+                <argument>-Dids-client.patient-icn.id-pattern=[0-9]+(V[0-9]{6})?</argument>
                 <argument>-Dspring.datasource.driver-class-name=org.h2.Driver</argument>
                 <argument>-Dspring.datasource.url=jdbc:h2:${project.basedir}/target/test-classes/mitre</argument>
                 <argument>-Dspring.datasource.username=sa</argument>

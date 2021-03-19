@@ -11,7 +11,7 @@
   <version>0.0.63-SNAPSHOT</version>
   <packaging>jar</packaging>
   <properties>
-    <ids.version>3.0.8</ids.version>
+    <ids.version>3.0.9</ids.version>
   </properties>
   <dependencies>
     <dependency>

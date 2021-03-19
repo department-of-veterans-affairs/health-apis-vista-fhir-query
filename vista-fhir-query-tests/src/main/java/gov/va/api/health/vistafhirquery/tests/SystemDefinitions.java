@@ -37,9 +37,8 @@ public final class SystemDefinitions {
   private static TestIds localIds() {
     return TestIds.builder()
         .patient("1011537977V693883")
-        .observationVitalSign("I2-P2FOYOPRSLZOH4EQTOGZZFS4DPZSSZHRRCGLX64T5C7DZU3GPFHA0000")
-        .observationLaboratory(
-            "I2-P2FOYOPRSLZOH4EQTOGZZFS4DNNQHCAIP3DG2JQVTYXXSXSVFLKSZR4LX7QRJ374IJ4HSNHUN4SYM000")
+        .observationVitalSign("I3-j5wsEbInV30wlYgZeXfkDfHBlp5ogiUVdztpdekbjwk")
+        .observationLaboratory("I3-Fz9SA8tzj9wZ539HlEqFoDkrsVnrJoWOms7WZ4DS26HwWKQg2Kd1BM")
         .build();
   }
 

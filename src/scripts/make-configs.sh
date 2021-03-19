@@ -118,7 +118,6 @@ makeConfig() {
   grep -E '(.*= *unset)' "$REPO/$project/src/main/resources/application.properties" \
     > "$target"
 }
-
 populateConfig() {
   makeConfig vista-fhir-query $PROFILE
   configValue vista-fhir-query $PROFILE vista.api.url "$VISTALINK_URL"
@@ -134,8 +133,8 @@ EOF
   configValue vista-fhir-query $PROFILE vista-fhir-query.public-r4-base-path "r4"
   addValue    vista-fhir-query $PROFILE vista-fhir-query.custom-r4-url-and-path.Patient "http://localhost:8090/data-query/r4"
   configValue vista-fhir-query $PROFILE vista-fhir-query.public-web-exception-key "$WEB_EXCEPTION_KEY"
-  configValue vista-fhir-query $PROFILE identityservice.encodingKey fhir-query
-  configValue vista-fhir-query $PROFILE identityservice.patientIdPattern "[0-9]+(V[0-9]{6})?"
+  configValue vista-fhir-query $PROFILE ids-client.patient-icn.id-pattern "[0-9]+(V[0-9]{6})?"
+  configValue vista-fhir-query $PROFILE ids-client.encoded-ids.encodingKey "fhir-query"
   configValue vista-fhir-query $PROFILE spring.datasource.url "${VFQ_DB_URL}"
   configValue vista-fhir-query $PROFILE spring.datasource.username "${VFQ_DB_USER}"
   configValue vista-fhir-query $PROFILE spring.datasource.password "${VFQ_DB_PASSWORD}"
