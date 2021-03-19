@@ -74,10 +74,10 @@ public class R4ObservationControllerTest {
     results.vitals().vitalResults().get(0).measurements(List.of(vista.weight("456")));
     when(vlClient.requestForVistaSite(eq("123"), any(RpcDetails.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "123", xml(results)));
-    when(wp.toPrivateId("public-Np1+123+456")).thenReturn("Np1+123+456");
-    var actual = controller().read("public-Np1+123+456");
+    when(wp.toPrivateId("public-Np1+123+V456")).thenReturn("Np1+123+V456");
+    var actual = controller().read("public-Np1+123+V456");
     assertThat(json(actual))
-        .isEqualTo(json(ObservationVitalSamples.Fhir.create().weight("Np1+123+456")));
+        .isEqualTo(json(ObservationVitalSamples.Fhir.create().weight("Np1+123+V456")));
   }
 
   @Test
@@ -86,9 +86,9 @@ public class R4ObservationControllerTest {
     VprGetPatientData.Response.Results results = vista.results();
     when(vlClient.requestForVistaSite(eq("123"), any(RpcDetails.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "123", xml(results)));
-    when(wp.toPrivateId("public-Np1+123+456")).thenReturn("Np1+123+456");
+    when(wp.toPrivateId("public-Np1+123+V456")).thenReturn("Np1+123+V456");
     assertThatExceptionOfType(ResourceExceptions.ExpectationFailed.class)
-        .isThrownBy(() -> controller().read("public-Np1+123+456"));
+        .isThrownBy(() -> controller().read("public-Np1+123+V456"));
   }
 
   @Test
@@ -104,9 +104,9 @@ public class R4ObservationControllerTest {
         "<results version='1.13' timeZone='-0500'><vitals total='1'><vital></vital></vitals></results>";
     when(vlClient.requestForVistaSite(eq("123"), any(RpcDetails.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "123", responseBody));
-    when(wp.toPrivateId("public-Np1+123+NOPE")).thenReturn("Np1+123+NOPE");
+    when(wp.toPrivateId("public-Np1+123+VNOPE")).thenReturn("Np1+123+VNOPE");
     assertThatExceptionOfType(ResourceExceptions.NotFound.class)
-        .isThrownBy(() -> controller().read("public-Np1+123+NOPE"));
+        .isThrownBy(() -> controller().read("public-Np1+123+VNOPE"));
   }
 
   private RpcResponse rpcResponse(RpcResponse.Status status, String siteId, String response) {

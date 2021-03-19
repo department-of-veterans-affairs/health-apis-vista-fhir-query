@@ -1,5 +1,9 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
+import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -8,33 +12,47 @@ import lombok.Value;
 
 @Value
 @Builder
-public class VistaIdentifierSegment {
+public class SegmentedVistaIdentifier {
   @NonNull PatientIdentifierType patientIdentifierType;
 
   @NonNull String patientIdentifier;
 
   @NonNull String vistaSiteId;
 
+  @NonNull VprGetPatientData.Domains vprRpcDomain;
+
   @NonNull String vistaRecordId;
 
+  private static BiMap<Character, VprGetPatientData.Domains> domainAbbreviationMappings() {
+    var mappings =
+        Map.of('L', VprGetPatientData.Domains.labs, 'V', VprGetPatientData.Domains.vitals);
+    return HashBiMap.create(mappings);
+  }
+
   /** Parse a VistaIdentifier. */
-  public static VistaIdentifierSegment parse(String id) {
+  public static SegmentedVistaIdentifier parse(String id) {
     String[] segmentParts = id.split("\\+", -1);
     if (segmentParts.length != 3) {
       throw new IllegalArgumentException(
-          "VistaIdentifierSegments are expected to have 3 parts "
+          "SegmentedVistaIdentifier are expected to have 3 parts "
               + "(e.g. patientIdTypeAndId+vistaSiteId+vistaRecordId).");
     }
-    if (segmentParts[0].length() < 2) {
+    if (segmentParts[0].length() < 2 || segmentParts[2].length() < 2) {
       throw new IllegalArgumentException(
-          "The first section of a VistaIdentifierSegment must contain "
+          "The first and third sections of a SegmentedVistaIdentifier must contain "
               + "a type and an identifier value.");
     }
-    return VistaIdentifierSegment.builder()
+    var domainType = domainAbbreviationMappings().get(segmentParts[2].charAt(0));
+    if (domainType == null) {
+      throw new IllegalArgumentException(
+          "Identifier value had invalid domain type abbreviation: " + segmentParts[2].charAt(0));
+    }
+    return SegmentedVistaIdentifier.builder()
         .patientIdentifierType(PatientIdentifierType.fromAbbreviation(segmentParts[0].charAt(0)))
         .patientIdentifier(segmentParts[0].substring(1))
         .vistaSiteId(segmentParts[1])
-        .vistaRecordId(segmentParts[2])
+        .vprRpcDomain(domainType)
+        .vistaRecordId(segmentParts[2].substring(1))
         .build();
   }
 
@@ -44,7 +62,7 @@ public class VistaIdentifierSegment {
         "+",
         patientIdentifierType().abbreviation() + patientIdentifier(),
         vistaSiteId(),
-        vistaRecordId());
+        domainAbbreviationMappings().inverse().get(vprRpcDomain()) + vistaRecordId());
   }
 
   @RequiredArgsConstructor

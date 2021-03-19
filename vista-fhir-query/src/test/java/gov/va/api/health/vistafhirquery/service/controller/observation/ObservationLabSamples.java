@@ -126,7 +126,7 @@ public class ObservationLabSamples {
 
     Observation observation() {
       return Observation.builder()
-          .id("Np1+673+CH;6899283.889996;741")
+          .id("Np1+673+LCH;6899283.889996;741")
           .category(category())
           .subject(Reference.builder().reference("Patient/p1").build())
           .issued("2011-04-12T12:51:56Z")

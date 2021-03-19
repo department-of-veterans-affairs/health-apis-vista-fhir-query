@@ -10,7 +10,7 @@ import gov.va.api.health.vistafhirquery.service.controller.R4BundlerFactory;
 import gov.va.api.health.vistafhirquery.service.controller.R4Bundling;
 import gov.va.api.health.vistafhirquery.service.controller.R4Transformation;
 import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions;
-import gov.va.api.health.vistafhirquery.service.controller.VistaIdentifierSegment;
+import gov.va.api.health.vistafhirquery.service.controller.SegmentedVistaIdentifier;
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
 import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.WitnessProtection;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
@@ -31,7 +31,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,7 +45,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @implSpec
  *     https://build.fhir.org/ig/HL7/US-Core-R4/StructureDefinition-us-core-observation-lab.html
  */
-@Slf4j
 @Validated
 @RestController
 @RequestMapping(
@@ -79,9 +77,9 @@ public class R4ObservationController {
     return toBundle(request).apply(emptyVprResponse);
   }
 
-  private VistaIdentifierSegment parseOrDie(String publicId) {
+  private SegmentedVistaIdentifier parseOrDie(String publicId) {
     try {
-      return VistaIdentifierSegment.parse(witnessProtection.toPrivateId(publicId));
+      return SegmentedVistaIdentifier.parse(witnessProtection.toPrivateId(publicId));
     } catch (IllegalArgumentException e) {
       throw new ResourceExceptions.NotFound(publicId);
     }
@@ -91,14 +89,14 @@ public class R4ObservationController {
   @SneakyThrows
   @GetMapping(value = {"/{publicId}"})
   public Observation read(@PathVariable("publicId") String publicId) {
-    VistaIdentifierSegment ids = parseOrDie(publicId);
+    SegmentedVistaIdentifier ids = parseOrDie(publicId);
     RpcResponse rpcResponse =
         vistalinkApiClient.requestForVistaSite(
             ids.vistaSiteId(),
             VprGetPatientData.Request.builder()
                 .dfn(VprGetPatientData.Request.PatientId.forIcn(ids.patientIdentifier()))
-                .type(Set.of(VprGetPatientData.Domains.labs))
-                    .id(Optional.of(ids.vistaRecordId()))
+                .type(Set.of(ids.vprRpcDomain()))
+                .id(Optional.of(ids.vistaRecordId()))
                 .build()
                 .asDetails());
     VprGetPatientData.Response vprPatientData =
@@ -107,14 +105,6 @@ public class R4ObservationController {
         transformation(ids.patientIdentifier(), null).toResource().apply(vprPatientData);
     if (resources.isEmpty()) {
       ResourceExceptions.NotFound.because("Identifier not found in VistA: " + publicId);
-    }
-    log.info("URL ID: " + ids.toIdentifierSegment());
-    for(Observation obs: resources){
-      log.info(obs.id());
-      if(obs.id().equals(ids.toIdentifierSegment())){
-        log.info("FOUND: " + obs.id());
-        return obs;
-      }
     }
     if (resources.size() != 1) {
       ResourceExceptions.ExpectationFailed.because(
@@ -151,11 +141,7 @@ public class R4ObservationController {
                 .asDetails());
     VprGetPatientData.Response vprPatientData =
         VprGetPatientData.create().fromResults(rpcResponse.results());
-    var bundle = toBundle(request).apply(vprPatientData);
-    for(Observation.Entry e : bundle.entry()){
-      log.info(e.resource().id()); // Track record IDS
-    }
-    return bundle;
+    return toBundle(request).apply(vprPatientData);
   }
 
   private R4Bundler<VprGetPatientData.Response, Observation, Observation.Entry, Observation.Bundle>
