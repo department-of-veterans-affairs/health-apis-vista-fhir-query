@@ -108,9 +108,9 @@ public class R4TransformersTest {
   void optionalLocalDateMacroString() {
     assertThat(toLocalDateMacroString(null)).isEqualTo(Optional.empty());
     assertThat(toLocalDateMacroString(Instant.ofEpochMilli(2000)))
-        .isEqualTo(Optional.of("${local-fileman-date(" + Instant.ofEpochMilli(2000) + ")"));
+        .isEqualTo(Optional.of("${local-fileman-date(" + Instant.ofEpochMilli(2000) + ")}"));
     assertThat(toLocalDateMacroString(Instant.parse("2006-01-01T00:00:00Z")))
-        .isEqualTo(Optional.of("${local-fileman-date(2006-01-01T00:00:00Z)"));
+        .isEqualTo(Optional.of("${local-fileman-date(2006-01-01T00:00:00Z)}"));
   }
 
   @Test
