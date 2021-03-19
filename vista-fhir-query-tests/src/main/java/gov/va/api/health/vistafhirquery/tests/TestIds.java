@@ -8,5 +8,6 @@ import lombok.Value;
 @Builder(toBuilder = true)
 public final class TestIds {
   @NonNull String patient;
-  @NonNull String observation;
+  @NonNull String observationVitalSign;
+  @NonNull String observationLaboratory;
 }

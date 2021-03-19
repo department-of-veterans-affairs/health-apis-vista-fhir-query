@@ -23,7 +23,6 @@ import gov.va.api.lighthouse.charon.api.RpcInvocationResult;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
 import java.util.List;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -67,23 +66,21 @@ public class R4ObservationControllerTest {
   }
 
   @Test
-  @SneakyThrows
-  void read() {
-    var vista = ObservationVitalSamples.Vista.create();
-    VprGetPatientData.Response.Results results = vista.results();
-    results.vitals().vitalResults().get(0).measurements(List.of(vista.weight("456")));
+  void readLabs() {
+    var vistaLabSamples = ObservationLabSamples.Vista.create();
+    var results = vistaLabSamples.results(vistaLabSamples.lab("456"));
     when(vlClient.requestForVistaSite(eq("123"), any(RpcDetails.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "123", xml(results)));
-    when(wp.toPrivateId("public-Np1+123+V456")).thenReturn("Np1+123+V456");
-    var actual = controller().read("public-Np1+123+V456");
+    when(wp.toPrivateId("public-Np1+123+L456")).thenReturn("Np1+123+L456");
+    var actual = controller().read("public-Np1+123+L456");
     assertThat(json(actual))
-        .isEqualTo(json(ObservationVitalSamples.Fhir.create().weight("Np1+123+V456")));
+        .isEqualTo(json(ObservationLabSamples.Fhir.create().observation("Np1+123+L456")));
   }
 
   @Test
   void readReturnsTooManyResultsFromVista() {
     var vista = ObservationVitalSamples.Vista.create();
-    VprGetPatientData.Response.Results results = vista.results();
+    VprGetPatientData.Response.Results results = vista.resultsWithLab();
     when(vlClient.requestForVistaSite(eq("123"), any(RpcDetails.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "123", xml(results)));
     when(wp.toPrivateId("public-Np1+123+V456")).thenReturn("Np1+123+V456");
@@ -96,6 +93,19 @@ public class R4ObservationControllerTest {
     when(wp.toPrivateId("garbage")).thenReturn("garbage");
     assertThatExceptionOfType(ResourceExceptions.NotFound.class)
         .isThrownBy(() -> controller().read("garbage"));
+  }
+
+  @Test
+  void readVitals() {
+    var vista = ObservationVitalSamples.Vista.create();
+    VprGetPatientData.Response.Results results = vista.results();
+    results.vitals().vitalResults().get(0).measurements(List.of(vista.weight("456")));
+    when(vlClient.requestForVistaSite(eq("123"), any(RpcDetails.class)))
+        .thenReturn(rpcResponse(RpcResponse.Status.OK, "123", xml(results)));
+    when(wp.toPrivateId("public-Np1+123+V456")).thenReturn("Np1+123+V456");
+    var actual = controller().read("public-Np1+123+V456");
+    assertThat(json(actual))
+        .isEqualTo(json(ObservationVitalSamples.Fhir.create().weight("Np1+123+V456")));
   }
 
   @Test
@@ -117,7 +127,6 @@ public class R4ObservationControllerTest {
   }
 
   @Test
-  @SneakyThrows
   void searchByPatientAndCategoryKnown() {
     var request = requestFromUri("?category=vital-signs&_count=10&patient=p1");
     var results = ObservationVitalSamples.Vista.create().results();
@@ -139,7 +148,6 @@ public class R4ObservationControllerTest {
   }
 
   @Test
-  @SneakyThrows
   void searchByPatientAndCategoryMultipleKnown() {
     var request = requestFromUri("?category=laboratory,vital-signs&_count=10&patient=p1");
     var results = ObservationVitalSamples.Vista.create().resultsWithLab();
@@ -163,7 +171,6 @@ public class R4ObservationControllerTest {
   }
 
   @Test
-  @SneakyThrows
   void searchByPatientAndCategoryOneKnownAndOneUnknown() {
     var request = requestFromUri("?category=laboratory,ew-david&_count=10&patient=p1");
     var results = ObservationLabSamples.Vista.create().results();
@@ -360,7 +367,6 @@ public class R4ObservationControllerTest {
   }
 
   @Test
-  @SneakyThrows
   void searchByPatientWithVistaPopulatedResults() {
     var request = requestFromUri("?_count=10&patient=p1");
     var results = ObservationVitalSamples.Vista.create().resultsWithLab();

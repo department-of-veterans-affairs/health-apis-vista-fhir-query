@@ -22,7 +22,10 @@ public class ObservationIT {
 
   static Stream<Arguments> read() {
     var testIds = SystemDefinitions.systemDefinition().publicIds();
-    return Stream.of(arguments(testIds.observation(), 200), arguments("I2-404", 404));
+    return Stream.of(
+        arguments(testIds.observationVitalSign(), 200),
+        arguments(testIds.observationLaboratory(), 200),
+        arguments("I2-404", 404));
   }
 
   static Stream<Arguments> search() {
