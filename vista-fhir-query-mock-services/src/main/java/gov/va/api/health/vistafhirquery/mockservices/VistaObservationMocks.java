@@ -31,7 +31,7 @@ public class VistaObservationMocks implements MockService {
   private List<String> supportedQueries = new ArrayList<>();
 
   private List<Consumer<MockServerClient>> supportedRequests =
-      List.of(this::observationRead, this::observationSearch);
+      List.of(this::observationReadVitals, this::observationReadLabs, this::observationSearch);
 
   private void addSupportedQuery(RpcDetails body) {
     supportedQueries.add(
@@ -44,13 +44,12 @@ public class VistaObservationMocks implements MockService {
     return Resources.toString(getClass().getResource(resource), StandardCharsets.UTF_8);
   }
 
-  void observationRead(MockServerClient mock) {
+  void observationReadLabs(MockServerClient mock) {
     var body =
         VprGetPatientData.Request.builder()
-            .dfn(VprGetPatientData.Request.PatientId.forIcn("1011537977V693883"))
-            .type(Set.of(VprGetPatientData.Domains.vitals))
-            .max(Optional.of("1"))
-            .id(Optional.of("32463"))
+            .dfn(VprGetPatientData.Request.PatientId.forIcn("5000000347"))
+            .type(Set.of(VprGetPatientData.Domains.labs))
+            .id(Optional.of("CH;6919171.919997;14"))
             .build()
             .asDetails();
     addSupportedQuery(body);
@@ -60,7 +59,27 @@ public class VistaObservationMocks implements MockService {
                 .withStatusCode(200)
                 .withHeader(contentTypeApplicationJson())
                 .withBody(
-                    rpcResponseOkWithContent("/vistalinkapi-vprgetpatientdata-readresponse.xml")));
+                    rpcResponseOkWithContent(
+                        "/vistalinkapi-vprgetpatientdata-read-labs-response.xml")));
+  }
+
+  void observationReadVitals(MockServerClient mock) {
+    var body =
+        VprGetPatientData.Request.builder()
+            .dfn(VprGetPatientData.Request.PatientId.forIcn("5000000347"))
+            .type(Set.of(VprGetPatientData.Domains.vitals))
+            .id(Optional.of("32071"))
+            .build()
+            .asDetails();
+    addSupportedQuery(body);
+    mock.when(rpcQueryWithExpectedRpcDetails(port(), body))
+        .respond(
+            response()
+                .withStatusCode(200)
+                .withHeader(contentTypeApplicationJson())
+                .withBody(
+                    rpcResponseOkWithContent(
+                        "/vistalinkapi-vprgetpatientdata-read-vitals-response.xml")));
   }
 
   void observationSearch(MockServerClient mock) {
@@ -81,7 +100,7 @@ public class VistaObservationMocks implements MockService {
             .status(RpcResponse.Status.OK)
             .result(
                 RpcInvocationResult.builder()
-                    .vista("ms")
+                    .vista("673")
                     .response(contentOfFile(rpcResponseFile))
                     .build()));
   }
