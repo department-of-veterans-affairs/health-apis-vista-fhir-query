@@ -44,7 +44,11 @@ public final class SystemDefinitions {
   }
 
   private static TestIds productionIds() {
-    return TestIds.builder().patient("1011537977V693883").observationVitalSign("TBD").build();
+    return TestIds.builder()
+        .patient("1011537977V693883")
+        .observationVitalSign("TBD")
+        .observationLaboratory("TBD")
+        .build();
   }
 
   private static SystemDefinition qa() {
