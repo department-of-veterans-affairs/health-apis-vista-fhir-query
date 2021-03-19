@@ -19,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import static org.apache.commons.lang3.StringUtils.trimToNull;
+
 @Value
 @Builder
 @Component
@@ -30,7 +32,7 @@ public class RestVistaApiClient implements VistalinkApiClient {
 
   private RpcPrincipal authenticationCredentials() {
     return RpcPrincipal.builder()
-        .applicationProxyUser(config().getApplicationProxyUser())
+        .applicationProxyUser(trimToNull(config().getApplicationProxyUser()))
         .accessCode(config().getAccessCode())
         .verifyCode(config().getVerifyCode())
         .build();
