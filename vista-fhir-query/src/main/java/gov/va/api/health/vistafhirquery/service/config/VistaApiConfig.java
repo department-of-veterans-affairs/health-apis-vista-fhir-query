@@ -1,6 +1,5 @@
 package gov.va.api.health.vistafhirquery.service.config;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

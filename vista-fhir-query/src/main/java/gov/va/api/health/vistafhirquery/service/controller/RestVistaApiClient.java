@@ -1,5 +1,7 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
+import static org.apache.commons.lang3.StringUtils.trimToNull;
+
 import gov.va.api.health.vistafhirquery.service.config.VistaApiConfig;
 import gov.va.api.lighthouse.charon.api.RpcDetails;
 import gov.va.api.lighthouse.charon.api.RpcPrincipal;
@@ -18,8 +20,6 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 @Value
 @Builder

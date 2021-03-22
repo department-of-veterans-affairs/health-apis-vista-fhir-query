@@ -94,6 +94,7 @@ public class R4ObservationController {
         vistalinkApiClient.requestForVistaSite(
             ids.vistaSiteId(),
             VprGetPatientData.Request.builder()
+                .context(Optional.of("LHS RPC CONTEXT"))
                 .dfn(VprGetPatientData.Request.PatientId.forIcn(ids.patientIdentifier()))
                 .type(Set.of(ids.vprRpcDomain()))
                 .id(Optional.of(ids.vistaRecordId()))
@@ -133,6 +134,7 @@ public class R4ObservationController {
         vistalinkApiClient.requestForPatient(
             patient,
             VprGetPatientData.Request.builder()
+                .context(Optional.of("LHS RPC CONTEXT"))
                 .dfn(VprGetPatientData.Request.PatientId.forIcn(patient))
                 .type(categoryTypes)
                 .start(toLocalDateMacroString(boundaries.start()))
