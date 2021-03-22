@@ -12,7 +12,7 @@
   <packaging>jar</packaging>
   <properties>
     <mockserver.version>5.6.1</mockserver.version>
-    <charon.version>3.0.10-SNAPSHOT</charon.version>
+    <charon.version>3.0.10</charon.version>
   </properties>
   <dependencies>
     <dependency>
