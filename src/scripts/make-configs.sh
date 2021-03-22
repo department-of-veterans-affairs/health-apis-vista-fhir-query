@@ -14,9 +14,9 @@ Options
 
 Secrets Configuration
  This bash file is sourced and expected to set the following variables
- - VISTALINK_URL
- - VISTALINK_ACCESS_CODE
- - VISTALINK_VERIFY_CODE
+ - VISTA_API_URL
+ - VISTA_ACCESS_CODE
+ - VISTA_VERIFY_CODE
 
  Variables that can be used for optional configurations:
  - VISTALINK_CLIENT_KEY
@@ -53,9 +53,9 @@ main() {
   . $SECRETS
 
   MISSING_SECRETS=false
-  requiredParam VISTALINK_URL "${VISTA_API_URL}"
-  requiredParam VISTALINK_ACCESS_CODE "${VISTA_ACCESS_CODE}"
-  requiredParam VISTALINK_VERIFY_CODE "${VISTA_VERIFY_CODE}"
+  requiredParam VISTA_API_URL "${VISTA_API_URL}"
+  requiredParam VISTA_ACCESS_CODE "${VISTA_ACCESS_CODE}"
+  requiredParam VISTA_VERIFY_CODE "${VISTA_VERIFY_CODE}"
   requiredParam VFQ_DB_URL "${VFQ_DB_URL}"
   requiredParam VFQ_DB_USER "${VFQ_DB_USER}"
   requiredParam VFQ_DB_PASSWORD "${VFQ_DB_PASSWORD}"
