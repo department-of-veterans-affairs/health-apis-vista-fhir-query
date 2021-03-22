@@ -173,9 +173,8 @@ public final class WebExceptionHandler {
   }
 
   @ExceptionHandler({
-    BindException.class,
-    UnsatisfiedServletRequestParameterException.class,
-    ResourceExceptions.BadSearchParameters.class
+    BindException.class, HttpClientErrorException.BadRequest.class,
+    ResourceExceptions.BadSearchParameters.class, UnsatisfiedServletRequestParameterException.class
   })
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   OperationOutcome handleBadRequest(Exception e, HttpServletRequest request) {

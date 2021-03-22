@@ -17,6 +17,7 @@ import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.lighthouse.charon.models.ValueOnlyXmlAttribute;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.BloodPressure;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.Vitals;
+import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -126,7 +127,7 @@ public class VistaVitalToR4ObservationTransformer {
     if (isBlank(id)) {
       return null;
     }
-    return toResourceId(patientIcn, vistaSiteId, id);
+    return toResourceId(patientIcn, vistaSiteId, VprGetPatientData.Domains.vitals, id);
   }
 
   Observation observationFromMeasurement(Vitals.Measurement measurement) {

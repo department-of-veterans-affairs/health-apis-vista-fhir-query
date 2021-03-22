@@ -15,6 +15,7 @@ import gov.va.api.health.r4.api.datatypes.Coding;
 import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.lighthouse.charon.models.ValueOnlyXmlAttribute;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.Labs;
+import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
 import java.util.List;
 import java.util.stream.Stream;
 import lombok.Builder;
@@ -93,7 +94,7 @@ public class VistaLabToR4ObservationTransformer {
     if (isBlank(id)) {
       return null;
     }
-    return toResourceId(patientIcn, vistaSiteId, id);
+    return toResourceId(patientIcn, vistaSiteId, VprGetPatientData.Domains.labs, id);
   }
 
   List<CodeableConcept> interpretation(ValueOnlyXmlAttribute maybeInterpretation) {

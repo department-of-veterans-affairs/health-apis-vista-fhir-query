@@ -6,7 +6,7 @@
       <facility code="673" name="TAMPA (JAH VAH)"/>
       <location code="23" name="GENERAL MEDICINE"/>
       <measurements>
-        <measurement id="32463" vuid="4500634" name="BLOOD PRESSURE" value="117/68" units="mm[Hg]" high="210/110" low="100/60">
+        <measurement id="32071" vuid="4500634" name="BLOOD PRESSURE" value="117/68" units="mm[Hg]" high="210/110" low="100/60">
           <qualifiers>
             <qualifier name="-1" vuid="-1"/>
           </qualifiers>

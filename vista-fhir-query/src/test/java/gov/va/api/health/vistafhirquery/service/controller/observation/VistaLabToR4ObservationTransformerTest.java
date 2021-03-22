@@ -95,7 +95,7 @@ public class VistaLabToR4ObservationTransformerTest {
   void idFrom() {
     assertThat(tx().idFrom(ValueOnlyXmlAttribute.of(null))).isNull();
     assertThat(tx().idFrom(ValueOnlyXmlAttribute.of(""))).isNull();
-    assertThat(tx().idFrom(ValueOnlyXmlAttribute.of("id"))).isEqualTo("Np1+123+id");
+    assertThat(tx().idFrom(ValueOnlyXmlAttribute.of("id"))).isEqualTo("Np1+123+Lid");
   }
 
   @ParameterizedTest

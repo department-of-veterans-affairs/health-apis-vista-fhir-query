@@ -4,6 +4,7 @@ import gov.va.api.health.fhir.api.IsReference;
 import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.lighthouse.charon.models.FilemanDate;
 import gov.va.api.lighthouse.charon.models.ValueOnlyXmlAttribute;
+import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -140,14 +141,16 @@ public class R4Transformers {
   }
 
   /** Build an Identifier Segment using patientId, siteId, and the recordId. */
-  public static String toResourceId(String patientId, String siteId, String recordId) {
+  public static String toResourceId(
+      String patientId, String siteId, VprGetPatientData.Domains recordDomain, String recordId) {
     if (isBlank(recordId)) {
       return null;
     }
-    return VistaIdentifierSegment.builder()
-        .patientIdentifierType(VistaIdentifierSegment.PatientIdentifierType.NATIONAL_ICN)
+    return SegmentedVistaIdentifier.builder()
+        .patientIdentifierType(SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
         .patientIdentifier(patientId)
         .vistaSiteId(siteId)
+        .vprRpcDomain(recordDomain)
         .vistaRecordId(recordId)
         .build()
         .toIdentifierSegment();

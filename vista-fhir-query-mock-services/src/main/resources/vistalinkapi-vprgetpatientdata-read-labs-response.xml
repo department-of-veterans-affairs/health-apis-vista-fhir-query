@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<results version="1.13" timeZone="-0500">
+  <labs total="1">
+    <lab>
+      <collected value="3100715.110005"/>
+      <comment xml:space="preserve">Ordering Provider: Eightyeight Vehu Report Released Date/Time: Apr 25, 2011@19:09
+                Performing Lab: ALBANY VA MEDICAL CENTER
+                VA MEDICAL CENTER 1 3RD sT. ALBANY, NY 12180-0097
+            </comment>
+      <facility code="500" name="CAMP MASTER"/>
+      <groupName value="CH 0425 14"/>
+      <id value="CH;6919171.919997;14"/>
+      <localName value="M/C"/>
+      <performingLab value="ALBANY VA MEDICAL CENTER"/>
+      <provider code="20090" name="VEHU,EIGHTYEIGHT" taxonomyCode="203B00000N" providerType="Physicians (M.D. and D.O.)" classification="Physician/Osteopath" service="MEDICINE"/>
+      <result value="11"/>
+      <resulted value="3110425.190958"/>
+      <sample value="URINE"/>
+      <specimen code="7X100" name="URINE"/>
+      <status value="completed"/>
+      <loinc value="1751-7"/>
+      <test value="Microalbumin/Creatinine Ratio"/>
+      <type value="CH"/>
+      <units value="ug/mg"/>
+    </lab>
+  </labs>
+</results>

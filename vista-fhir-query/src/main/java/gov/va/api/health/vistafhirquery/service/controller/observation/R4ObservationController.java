@@ -10,7 +10,7 @@ import gov.va.api.health.vistafhirquery.service.controller.R4BundlerFactory;
 import gov.va.api.health.vistafhirquery.service.controller.R4Bundling;
 import gov.va.api.health.vistafhirquery.service.controller.R4Transformation;
 import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions;
-import gov.va.api.health.vistafhirquery.service.controller.VistaIdentifierSegment;
+import gov.va.api.health.vistafhirquery.service.controller.SegmentedVistaIdentifier;
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
 import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.WitnessProtection;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
@@ -77,9 +77,9 @@ public class R4ObservationController {
     return toBundle(request).apply(emptyVprResponse);
   }
 
-  private VistaIdentifierSegment parseOrDie(String publicId) {
+  private SegmentedVistaIdentifier parseOrDie(String publicId) {
     try {
-      return VistaIdentifierSegment.parse(witnessProtection.toPrivateId(publicId));
+      return SegmentedVistaIdentifier.parse(witnessProtection.toPrivateId(publicId));
     } catch (IllegalArgumentException e) {
       throw new ResourceExceptions.NotFound(publicId);
     }
@@ -89,14 +89,13 @@ public class R4ObservationController {
   @SneakyThrows
   @GetMapping(value = {"/{publicId}"})
   public Observation read(@PathVariable("publicId") String publicId) {
-    VistaIdentifierSegment ids = parseOrDie(publicId);
+    SegmentedVistaIdentifier ids = parseOrDie(publicId);
     RpcResponse rpcResponse =
         vistalinkApiClient.requestForVistaSite(
             ids.vistaSiteId(),
             VprGetPatientData.Request.builder()
                 .dfn(VprGetPatientData.Request.PatientId.forIcn(ids.patientIdentifier()))
-                .type(Set.of(VprGetPatientData.Domains.vitals))
-                .max(Optional.of("1"))
+                .type(Set.of(ids.vprRpcDomain()))
                 .id(Optional.of(ids.vistaRecordId()))
                 .build()
                 .asDetails());

@@ -189,7 +189,7 @@ public class ObservationVitalSamples {
           .component(List.of(bloodPressureSystolic(), bloodPressureDiastolic()))
           .effectiveDateTime("2010-04-06T14:00:00Z")
           .issued("2011-02-25T11:04:28Z")
-          .id("Np1+673+32071")
+          .id("Np1+673+V32071")
           .status(Observation.ObservationStatus._final)
           .build();
     }
@@ -285,7 +285,7 @@ public class ObservationVitalSamples {
     }
 
     public Observation weight() {
-      return weight("Np1+673+32076");
+      return weight("Np1+673+V32076");
     }
 
     public Observation weight(String idSegment) {

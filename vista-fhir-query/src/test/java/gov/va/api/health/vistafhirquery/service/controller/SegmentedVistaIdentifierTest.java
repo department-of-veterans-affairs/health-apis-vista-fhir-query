@@ -3,55 +3,59 @@ package gov.va.api.health.vistafhirquery.service.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-public class VistaIdentifierSegmentTest {
+public class SegmentedVistaIdentifierTest {
   @Test
   void invalidPatientIdentifierTypeThrowsIllegalArgument() {
     assertThatExceptionOfType(IllegalArgumentException.class)
-        .isThrownBy(() -> VistaIdentifierSegment.PatientIdentifierType.fromAbbreviation('Z'));
+        .isThrownBy(() -> SegmentedVistaIdentifier.PatientIdentifierType.fromAbbreviation('Z'));
   }
 
   @Test
   void parseIdSuccessfully() {
-    assertThat(VistaIdentifierSegment.parse("Nicn+siteId+vistaId"))
+    assertThat(SegmentedVistaIdentifier.parse("Nicn+siteId+LvistaId"))
         .isEqualTo(
-            VistaIdentifierSegment.builder()
-                .patientIdentifierType(VistaIdentifierSegment.PatientIdentifierType.NATIONAL_ICN)
+            SegmentedVistaIdentifier.builder()
+                .patientIdentifierType(SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("icn")
                 .vistaSiteId("siteId")
+                .vprRpcDomain(VprGetPatientData.Domains.labs)
                 .vistaRecordId("vistaId")
                 .build());
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"x+123+abc", "+123+abc", "123", "123+abc", "123+abc+456+def"})
+  @ValueSource(
+      strings = {"x+123+Vabc", "+123+abc", "123", "123+abc", "D123+abc+V456+def", "D123+abc+x"})
   void parseInvalidSegmentThrowsIllegalArgument(String segment) {
     assertThatExceptionOfType(IllegalArgumentException.class)
-        .isThrownBy(() -> VistaIdentifierSegment.parse(segment));
+        .isThrownBy(() -> SegmentedVistaIdentifier.parse(segment));
   }
 
   @ParameterizedTest
-  @EnumSource(value = VistaIdentifierSegment.PatientIdentifierType.class)
-  void patientIdentifierTypeRoundTrip(VistaIdentifierSegment.PatientIdentifierType value) {
+  @EnumSource(value = SegmentedVistaIdentifier.PatientIdentifierType.class)
+  void patientIdentifierTypeRoundTrip(SegmentedVistaIdentifier.PatientIdentifierType value) {
     var shortened = value.abbreviation();
-    var fullLength = VistaIdentifierSegment.PatientIdentifierType.fromAbbreviation(shortened);
+    var fullLength = SegmentedVistaIdentifier.PatientIdentifierType.fromAbbreviation(shortened);
     assertThat(fullLength).isEqualTo(value);
   }
 
   @Test
   void toIdentiferSegment() {
     assertThat(
-            VistaIdentifierSegment.builder()
-                .patientIdentifierType(VistaIdentifierSegment.PatientIdentifierType.NATIONAL_ICN)
+            SegmentedVistaIdentifier.builder()
+                .patientIdentifierType(SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("icn")
                 .vistaSiteId("siteId")
+                .vprRpcDomain(VprGetPatientData.Domains.vitals)
                 .vistaRecordId("vistaId")
                 .build()
                 .toIdentifierSegment())
-        .isEqualTo("Nicn+siteId+vistaId");
+        .isEqualTo("Nicn+siteId+VvistaId");
   }
 }

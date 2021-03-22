@@ -37,13 +37,17 @@ public final class SystemDefinitions {
   private static TestIds localIds() {
     return TestIds.builder()
         .patient("1011537977V693883")
-        .observation(
-            "I2-6FYK5ZV4ERKV6Q6R33FN7SQVQGAMBKJVSVI3I6UBSZ4SMKCA3I4YM3QX7EWV6TDY7PNZXQGS5BZHQ000")
+        .observationVitalSign("I3-j5wsEbInV30wlYgZeXfkDfHBlp5ogiUVdztpdekbjwk")
+        .observationLaboratory("I3-Fz9SA8tzj9wZ539HlEqFoDkrsVnrJoWOms7WZ4DS26HwWKQg2Kd1BM")
         .build();
   }
 
   private static TestIds productionIds() {
-    return TestIds.builder().patient("1011537977V693883").observation("TBD").build();
+    return TestIds.builder()
+        .patient("1011537977V693883")
+        .observationVitalSign("TBD")
+        .observationLaboratory("TBD")
+        .build();
   }
 
   private static SystemDefinition qa() {
@@ -91,7 +95,9 @@ public final class SystemDefinitions {
   private static TestIds syntheticIds() {
     return TestIds.builder()
         .patient("1011537977V693883")
-        .observation("I2-IBV5HN7B4CKF4XNL7GXDCWZNPAMK4P2RZU7GULKE5EBQF7WJ6SFA0000")
+        .observationVitalSign("I2-IBV5HN7B4CKF4XNL7GXDCWZNPDVDBRBBQ4OOHUANWIOEQQFGKHOQ0000")
+        .observationLaboratory(
+            "I2-IBV5HN7B4CKF4XNL7GXDCWZNPBFGQRKQYZGV65WQMWE5Q7UMWSVDFL737DUKXBMMYFXGARBJ4CVZ6000")
         .build();
   }
 
