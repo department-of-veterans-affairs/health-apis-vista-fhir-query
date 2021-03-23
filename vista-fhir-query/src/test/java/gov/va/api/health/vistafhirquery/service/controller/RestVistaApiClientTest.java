@@ -12,8 +12,10 @@ import gov.va.api.health.vistafhirquery.service.config.VistaApiConfig;
 import gov.va.api.lighthouse.charon.api.RpcDetails;
 import gov.va.api.lighthouse.charon.api.RpcInvocationResult;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
+import gov.va.api.lighthouse.charon.models.TypeSafeRpcRequest;
 import java.util.List;
 import java.util.Optional;
+import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -68,10 +70,7 @@ public class RestVistaApiClientTest {
   @Test
   void requestForPatientWithVistalink200Response() {
     mockVistalink200Response();
-    assertThat(
-            client()
-                .requestForPatient(
-                    "p1", RpcDetails.builder().name("FAUX RPC").context("FAUX CONTEXT").build()))
+    assertThat(client().requestForPatient("p1", FauxRpc.create()))
         .isEqualTo(
             RpcResponse.builder()
                 .status(RpcResponse.Status.OK)
@@ -84,21 +83,13 @@ public class RestVistaApiClientTest {
   void requestForPatientWithVistalink500Response() {
     mockVistalink500Response();
     assertThatExceptionOfType(IllegalStateException.class)
-        .isThrownBy(
-            () ->
-                client()
-                    .requestForPatient(
-                        "p1",
-                        RpcDetails.builder().name("FAUX RPC").context("FAUX CONTEXT").build()));
+        .isThrownBy(() -> client().requestForPatient("p1", FauxRpc.create()));
   }
 
   @Test
   void requestForVistaSiteWithVistalink200Response() {
     mockVistalink200Response();
-    assertThat(
-            client()
-                .requestForVistaSite(
-                    "123", RpcDetails.builder().name("FAUX RPC").context("FAUX CONTEXT").build()))
+    assertThat(client().requestForVistaSite("123", FauxRpc.create()))
         .isEqualTo(
             RpcResponse.builder()
                 .status(RpcResponse.Status.OK)
@@ -111,11 +102,21 @@ public class RestVistaApiClientTest {
   void requestForVistaSiteWithVistalink500Response() {
     mockVistalink500Response();
     assertThatExceptionOfType(IllegalStateException.class)
-        .isThrownBy(
-            () ->
-                client()
-                    .requestForVistaSite(
-                        "123",
-                        RpcDetails.builder().name("FAUX RPC").context("FAUX CONTEXT").build()));
+        .isThrownBy(() -> client().requestForVistaSite("123", FauxRpc.create()));
+  }
+
+  @NoArgsConstructor(staticName = "create")
+  static class FauxRpc implements TypeSafeRpcRequest {
+    private Optional<String> context;
+
+    @Override
+    public RpcDetails asDetails() {
+      return RpcDetails.builder().name("FAUX RPC").context("FAUX CONTEXT").build();
+    }
+
+    @Override
+    public void updateContext(Optional<String> context) {
+      this.context = context;
+    }
   }
 }

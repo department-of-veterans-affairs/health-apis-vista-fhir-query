@@ -5,9 +5,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
-import gov.va.api.lighthouse.charon.api.RpcDetails;
 import gov.va.api.lighthouse.charon.api.RpcInvocationResult;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
+import gov.va.api.lighthouse.charon.models.xobvtestping.XobvTestPing;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,16 +21,13 @@ public class InternalPingControllerTest {
   @Test
   void ping() {
     var samples = new PingSamples();
-    when(vlClient.requestForPatient(eq("123"), eq(samples.requestDetails())))
+    when(vlClient.requestForPatient(eq("123"), eq(XobvTestPing.Request.builder().build())))
         .thenReturn(samples.rpcResponse());
     assertThat(new InternalPingController(vlClient).ping("123"))
         .isEqualTo(List.of(samples.results()));
   }
 
   static class PingSamples {
-    RpcDetails requestDetails() {
-      return RpcDetails.builder().name("XOBV TEST PING").context("XOBV VISTALINK TESTER").build();
-    }
 
     RpcInvocationResult results() {
       return RpcInvocationResult.builder().vista("test").response("payload").build();

@@ -1,5 +1,7 @@
 package gov.va.api.health.vistafhirquery.service.config;
 
+import static org.apache.commons.lang3.StringUtils.trimToNull;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,4 +29,8 @@ public class VistaApiConfig {
   private String verifyCode;
 
   private String applicationProxyUser;
+
+  public String getApplicationProxyUser() {
+    return trimToNull(applicationProxyUser);
+  }
 }

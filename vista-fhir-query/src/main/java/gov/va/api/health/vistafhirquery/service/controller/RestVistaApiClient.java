@@ -1,15 +1,14 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
-import static org.apache.commons.lang3.StringUtils.trimToNull;
-
 import gov.va.api.health.vistafhirquery.service.config.VistaApiConfig;
-import gov.va.api.lighthouse.charon.api.RpcDetails;
 import gov.va.api.lighthouse.charon.api.RpcPrincipal;
 import gov.va.api.lighthouse.charon.api.RpcRequest;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
 import gov.va.api.lighthouse.charon.api.RpcVistaTargets;
+import gov.va.api.lighthouse.charon.models.TypeSafeRpcRequest;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.SneakyThrows;
@@ -32,7 +31,7 @@ public class RestVistaApiClient implements VistalinkApiClient {
 
   private RpcPrincipal authenticationCredentials() {
     return RpcPrincipal.builder()
-        .applicationProxyUser(trimToNull(config().getApplicationProxyUser()))
+        .applicationProxyUser(config().getApplicationProxyUser())
         .accessCode(config().getAccessCode())
         .verifyCode(config().getVerifyCode())
         .build();
@@ -60,23 +59,25 @@ public class RestVistaApiClient implements VistalinkApiClient {
 
   /** Request an RPC based on a patients ICN. */
   @Override
-  public RpcResponse requestForPatient(String patient, RpcDetails rpcDetails) {
+  public RpcResponse requestForPatient(String patient, TypeSafeRpcRequest rpcRequestDetails) {
+    rpcRequestDetails.updateContext(Optional.ofNullable(config().getApplicationProxyUser()));
     RpcRequest rpcRequest =
         RpcRequest.builder()
             .principal(authenticationCredentials())
             .target(RpcVistaTargets.builder().forPatient(patient).build())
-            .rpc(rpcDetails)
+            .rpc(rpcRequestDetails.asDetails())
             .build();
     return makeRequest(rpcRequest);
   }
 
   /** Request an RPC at a specific VistA site. */
-  public RpcResponse requestForVistaSite(String vistaSite, RpcDetails rpcDetails) {
+  public RpcResponse requestForVistaSite(String vistaSite, TypeSafeRpcRequest rpcRequestDetails) {
+    rpcRequestDetails.updateContext(Optional.ofNullable(config().getApplicationProxyUser()));
     RpcRequest rpcRequest =
         RpcRequest.builder()
             .principal(authenticationCredentials())
             .target(RpcVistaTargets.builder().include(List.of(vistaSite)).build())
-            .rpc(rpcDetails)
+            .rpc(rpcRequestDetails.asDetails())
             .build();
     return makeRequest(rpcRequest);
   }

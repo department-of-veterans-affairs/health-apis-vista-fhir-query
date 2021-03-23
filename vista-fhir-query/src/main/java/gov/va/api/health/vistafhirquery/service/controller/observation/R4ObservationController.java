@@ -94,12 +94,10 @@ public class R4ObservationController {
         vistalinkApiClient.requestForVistaSite(
             ids.vistaSiteId(),
             VprGetPatientData.Request.builder()
-                .context(Optional.of("LHS RPC CONTEXT"))
                 .dfn(VprGetPatientData.Request.PatientId.forIcn(ids.patientIdentifier()))
                 .type(Set.of(ids.vprRpcDomain()))
                 .id(Optional.of(ids.vistaRecordId()))
-                .build()
-                .asDetails());
+                .build());
     VprGetPatientData.Response vprPatientData =
         VprGetPatientData.create().fromResults(rpcResponse.results());
     List<Observation> resources =
@@ -134,13 +132,11 @@ public class R4ObservationController {
         vistalinkApiClient.requestForPatient(
             patient,
             VprGetPatientData.Request.builder()
-                .context(Optional.of("LHS RPC CONTEXT"))
                 .dfn(VprGetPatientData.Request.PatientId.forIcn(patient))
                 .type(categoryTypes)
                 .start(toLocalDateMacroString(boundaries.start()))
                 .stop(toLocalDateMacroString(boundaries.stop()))
-                .build()
-                .asDetails());
+                .build());
     VprGetPatientData.Response vprPatientData =
         VprGetPatientData.create().fromResults(rpcResponse.results());
     return toBundle(request).apply(vprPatientData);

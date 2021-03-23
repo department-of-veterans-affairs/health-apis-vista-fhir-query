@@ -47,7 +47,7 @@ public class VistaObservationMocks implements MockService {
   void observationReadLabs(MockServerClient mock) {
     var body =
         VprGetPatientData.Request.builder()
-            .context(Optional.of("LHS RPC CONTEXT"))
+            .context(Optional.of("MOCKSERVICES"))
             .dfn(VprGetPatientData.Request.PatientId.forIcn("5000000347"))
             .type(Set.of(VprGetPatientData.Domains.labs))
             .id(Optional.of("CH;6919171.919997;14"))
@@ -67,7 +67,7 @@ public class VistaObservationMocks implements MockService {
   void observationReadVitals(MockServerClient mock) {
     var body =
         VprGetPatientData.Request.builder()
-            .context(Optional.of("LHS RPC CONTEXT"))
+            .context(Optional.of("MOCKSERVICES"))
             .dfn(VprGetPatientData.Request.PatientId.forIcn("5000000347"))
             .type(Set.of(VprGetPatientData.Domains.vitals))
             .id(Optional.of("32071"))
