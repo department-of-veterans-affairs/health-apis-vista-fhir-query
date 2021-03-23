@@ -61,7 +61,7 @@ public class ObservationIT {
     assumeEnvironmentNotIn(Environment.STAGING);
     var apiPath = r4.apiPath();
     var request = apiPath + "Observation" + query;
-    log.info("Verify {} has status (200)", request);
+    log.info("Verify {} has status ({})", request, expectedStatus);
     TestClients.r4().get(request).expect(expectedStatus);
   }
 }
