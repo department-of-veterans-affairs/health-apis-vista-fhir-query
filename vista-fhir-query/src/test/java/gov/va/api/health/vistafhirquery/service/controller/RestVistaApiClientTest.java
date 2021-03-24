@@ -113,10 +113,5 @@ public class RestVistaApiClientTest {
     public RpcDetails asDetails() {
       return RpcDetails.builder().name("FAUX RPC").context("FAUX CONTEXT").build();
     }
-
-    @Override
-    public void updateContext(Optional<String> context) {
-      this.context = context;
-    }
   }
 }

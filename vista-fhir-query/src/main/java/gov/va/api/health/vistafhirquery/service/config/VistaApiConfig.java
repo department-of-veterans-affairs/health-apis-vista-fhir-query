@@ -30,7 +30,9 @@ public class VistaApiConfig {
 
   private String applicationProxyUser;
 
-  public String getApplicationProxyUser() {
-    return trimToNull(applicationProxyUser);
+  private String applicationProxyUserContext;
+
+  public String getApplicationProxyUserContext() {
+    return trimToNull(applicationProxyUserContext);
   }
 }

@@ -8,7 +8,6 @@ import gov.va.api.lighthouse.charon.api.RpcVistaTargets;
 import gov.va.api.lighthouse.charon.models.TypeSafeRpcRequest;
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.SneakyThrows;
@@ -60,7 +59,6 @@ public class RestVistaApiClient implements VistalinkApiClient {
   /** Request an RPC based on a patients ICN. */
   @Override
   public RpcResponse requestForPatient(String patient, TypeSafeRpcRequest rpcRequestDetails) {
-    rpcRequestDetails.updateContext(Optional.ofNullable(config().getApplicationProxyUser()));
     RpcRequest rpcRequest =
         RpcRequest.builder()
             .principal(authenticationCredentials())
@@ -72,7 +70,6 @@ public class RestVistaApiClient implements VistalinkApiClient {
 
   /** Request an RPC at a specific VistA site. */
   public RpcResponse requestForVistaSite(String vistaSite, TypeSafeRpcRequest rpcRequestDetails) {
-    rpcRequestDetails.updateContext(Optional.ofNullable(config().getApplicationProxyUser()));
     RpcRequest rpcRequest =
         RpcRequest.builder()
             .principal(authenticationCredentials())
