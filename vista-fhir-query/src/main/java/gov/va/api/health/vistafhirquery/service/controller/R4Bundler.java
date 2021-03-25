@@ -50,6 +50,10 @@ public class R4Bundler<
     bundle.type(AbstractBundle.BundleType.searchset);
     bundle.total(resources.size());
     bundle.link(toLinks());
+    int page = HttpRequestParameters.integer(request, "page", 1);
+    if (page <= 0) {
+      ResourceExceptions.BadSearchParameters.because("page value must be greater than 0");
+    }
     int count =
         HttpRequestParameters.integer(request, "_count", linkProperties.getDefaultPageSize());
     if (resources.size() > count) {
