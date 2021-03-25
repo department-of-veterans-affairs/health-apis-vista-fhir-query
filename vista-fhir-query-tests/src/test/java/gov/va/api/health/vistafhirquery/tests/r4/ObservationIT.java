@@ -1,67 +1,80 @@
 package gov.va.api.health.vistafhirquery.tests.r4;
 
 import static gov.va.api.health.sentinel.EnvironmentAssumptions.assumeEnvironmentNotIn;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
 
+import gov.va.api.health.fhir.testsupport.ResourceVerifier;
+import gov.va.api.health.r4.api.resources.Observation;
+import gov.va.api.health.r4.api.resources.OperationOutcome;
 import gov.va.api.health.sentinel.Environment;
-import gov.va.api.health.sentinel.ServiceDefinition;
-import gov.va.api.health.vistafhirquery.tests.SystemDefinition;
-import gov.va.api.health.vistafhirquery.tests.SystemDefinitions;
-import gov.va.api.health.vistafhirquery.tests.TestClients;
-import java.util.stream.Stream;
+import gov.va.api.health.vistafhirquery.tests.TestIds;
+import gov.va.api.health.vistafhirquery.tests.VistaFhirQueryResourceVerifier;
+import java.util.function.Predicate;
+import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.api.Test;
 
 @Slf4j
 public class ObservationIT {
-  SystemDefinition def = SystemDefinitions.systemDefinition();
+  private static TestIds testIds = VistaFhirQueryResourceVerifier.ids();
 
-  ServiceDefinition r4 = def.r4();
+  @Delegate ResourceVerifier verifier = VistaFhirQueryResourceVerifier.r4();
 
-  static Stream<Arguments> read() {
-    var testIds = SystemDefinitions.systemDefinition().publicIds();
-    return Stream.of(
-        arguments(testIds.observationVitalSign(), 200),
-        arguments(testIds.observationLaboratory(), 200),
-        arguments("I2-404", 404));
+  private Predicate<Observation.Bundle> assertBundleIsNotEmpty() {
+    return obs -> !obs.entry().isEmpty();
   }
 
-  static Stream<Arguments> search() {
-    var testIds = SystemDefinitions.systemDefinition().publicIds();
-    return Stream.of(
-        arguments("?patient=" + testIds.patient(), 200),
-        arguments("?patient=" + testIds.patient() + "&date=ge2010&date=lt2012", 200),
-        arguments("?patient=" + testIds.patient() + "&date=ge2012&date=lt2010", 400),
-        arguments("?patient=" + testIds.patient() + "&code=8310-5", 200),
-        arguments("?patient=" + testIds.patient() + "&category=laboratory", 200),
-        arguments(
-            "?patient="
-                + testIds.patient()
+  @Test
+  void read() {
+    assumeEnvironmentNotIn(Environment.STAGING);
+    var path = "Observation/{observation}";
+    verifyAll(
+        test(200, Observation.class, path, testIds.observationVitalSign()),
+        test(200, Observation.class, path, testIds.observationLaboratory()),
+        test(404, OperationOutcome.class, path, "I2-404"));
+  }
+
+  @Test
+  void search() {
+    assumeEnvironmentNotIn(Environment.STAGING);
+    verifyAll(
+        test(
+            200,
+            Observation.Bundle.class,
+            assertBundleIsNotEmpty(),
+            "Observation?patient={patient}",
+            testIds.patient()),
+        test(
+            200,
+            Observation.Bundle.class,
+            assertBundleIsNotEmpty(),
+            "Observation?patient={patient}&category=laboratory",
+            testIds.patient()),
+        test(
+            200,
+            Observation.Bundle.class,
+            assertBundleIsNotEmpty(),
+            "Observation?patient={patient}&code=8310-5",
+            testIds.patient()),
+        test(
+            200,
+            Observation.Bundle.class,
+            assertBundleIsNotEmpty(),
+            "Observation?patient={patient}&date=ge2010&date=lt2012",
+            testIds.patient()),
+        test(
+            200,
+            Observation.Bundle.class,
+            assertBundleIsNotEmpty(),
+            "Observation?patient={patient}"
                 + "&category=vital-signs"
                 + "&code=8310-5"
                 + "&date=ge2010"
                 + "&date=lt2012",
-            200));
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void read(String id, int expectedStatus) {
-    assumeEnvironmentNotIn(Environment.STAGING);
-    var apiPath = r4.apiPath();
-    log.info("Verify {}Observation/{} has status ({})", apiPath, id, expectedStatus);
-    TestClients.r4().get(apiPath + "Observation/{observation}", id).expect(expectedStatus);
-  }
-
-  @ParameterizedTest
-  @MethodSource
-  void search(String query, int expectedStatus) {
-    assumeEnvironmentNotIn(Environment.STAGING);
-    var apiPath = r4.apiPath();
-    var request = apiPath + "Observation" + query;
-    log.info("Verify {} has status ({})", request, expectedStatus);
-    TestClients.r4().get(request).expect(expectedStatus);
+            testIds.patient()),
+        test(
+            400,
+            OperationOutcome.class,
+            "Observation?patient={patient}&date=ge2012&date=lt2010",
+            testIds.patient()));
   }
 }

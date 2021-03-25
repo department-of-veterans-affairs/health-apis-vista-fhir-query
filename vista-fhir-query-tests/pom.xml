@@ -11,7 +11,7 @@
   <version>0.0.69-SNAPSHOT</version>
   <packaging>jar</packaging>
   <properties>
-    <fhir-resources.version>6.0.6</fhir-resources.version>
+    <fhir-resources.version>6.0.8-SNAPSHOT</fhir-resources.version>
     <sentinel.skipLaunch>false</sentinel.skipLaunch>
   </properties>
   <dependencies>
@@ -30,6 +30,11 @@
       <groupId>gov.va.api.health</groupId>
       <artifactId>sentinel</artifactId>
       <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>gov.va.api.health</groupId>
+      <artifactId>test-support</artifactId>
+      <version>${fhir-resources.version}</version>
     </dependency>
     <dependency>
       <groupId>gov.va.api.health</groupId>
