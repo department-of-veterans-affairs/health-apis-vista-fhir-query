@@ -9,18 +9,21 @@ import gov.va.api.health.sentinel.Environment;
 import gov.va.api.health.vistafhirquery.tests.TestIds;
 import gov.va.api.health.vistafhirquery.tests.VistaFhirQueryResourceVerifier;
 import java.util.function.Predicate;
+import lombok.SneakyThrows;
 import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 @Slf4j
 public class ObservationIT {
-  private static TestIds testIds = VistaFhirQueryResourceVerifier.ids();
+  private final TestIds testIds = VistaFhirQueryResourceVerifier.ids();
 
-  @Delegate ResourceVerifier verifier = VistaFhirQueryResourceVerifier.r4();
+  @Delegate private final ResourceVerifier verifier = VistaFhirQueryResourceVerifier.r4();
 
   private Predicate<Observation.Bundle> assertBundleIsNotEmpty() {
-    return obs -> !obs.entry().isEmpty();
+    return bundle -> !bundle.entry().isEmpty();
   }
 
   @Test
@@ -33,22 +36,22 @@ public class ObservationIT {
         test(404, OperationOutcome.class, path, "I2-404"));
   }
 
+  @ParameterizedTest
+  @SneakyThrows
+  @ValueSource(
+      strings = {
+        "Observation?patient={patient}",
+        "Observation?patient={patient}&category=laboratory"
+      })
+  void sadBoiSearches(String query) {
+    var path = apiPath() + query;
+    testClient().get(path, testIds.patient()).expect(200);
+  }
+
   @Test
   void search() {
     assumeEnvironmentNotIn(Environment.STAGING);
     verifyAll(
-        test(
-            200,
-            Observation.Bundle.class,
-            assertBundleIsNotEmpty(),
-            "Observation?patient={patient}",
-            testIds.patient()),
-        test(
-            200,
-            Observation.Bundle.class,
-            assertBundleIsNotEmpty(),
-            "Observation?patient={patient}&category=laboratory",
-            testIds.patient()),
         test(
             200,
             Observation.Bundle.class,
