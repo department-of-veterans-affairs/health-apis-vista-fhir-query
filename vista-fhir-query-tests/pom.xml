@@ -115,6 +115,7 @@
                 <argument>-Dids-client.encoded-ids.i3-enabled=true</argument>
                 <argument>-Dids-client.encoded-ids.encoding-key=fhir-query</argument>
                 <argument>-Dids-client.patient-icn.id-pattern=[0-9]+(V[0-9]{6})?</argument>
+                <argument>-Dmetadata.statement-type=patient</argument>
                 <argument>-Dspring.datasource.driver-class-name=org.h2.Driver</argument>
                 <argument>-Dspring.datasource.url=jdbc:h2:${project.basedir}/target/test-classes/mitre</argument>
                 <argument>-Dspring.datasource.username=sa</argument>
