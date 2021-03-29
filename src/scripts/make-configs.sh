@@ -68,6 +68,16 @@ main() {
 
 # =====================================================================
 
+addValue() {
+  local project="$1"
+  local profile="$2"
+  local key="$3"
+  local value="$4"
+  local target="$REPO/$project/config/application-${profile}.properties"
+  local escapedValue=$(echo $value | sed -e 's/\\/\\\\/g; s/\//\\\//g; s/&/\\\&/g')
+  echo "$key=$escapedValue" >> $target
+}
+
 checkForUnsetValues() {
   local project="$1"
   local profile="$2"
@@ -84,16 +94,6 @@ comment() {
   local profile="$2"
   local target="$REPO/$project/config/application-${profile}.properties"
   cat >> $target
-}
-
-addValue() {
-  local project="$1"
-  local profile="$2"
-  local key="$3"
-  local value="$4"
-  local target="$REPO/$project/config/application-${profile}.properties"
-  local escapedValue=$(echo $value | sed -e 's/\\/\\\\/g; s/\//\\\//g; s/&/\\\&/g')
-  echo "$key=$escapedValue" >> $target
 }
 
 configValue() {
@@ -134,12 +134,13 @@ EOF
   addValue    vista-fhir-query $PROFILE vista-fhir-query.custom-r4-url-and-path.Patient "http://localhost:8090/data-query/r4"
   configValue vista-fhir-query $PROFILE vista-fhir-query.public-web-exception-key "$WEB_EXCEPTION_KEY"
   configValue vista-fhir-query $PROFILE ids-client.patient-icn.id-pattern "[0-9]+(V[0-9]{6})?"
-  configValue vista-fhir-query $PROFILE ids-client.encoded-ids.encodingKey "fhir-query"
+  configValue vista-fhir-query $PROFILE ids-client.encoded-ids.encoding-key "fhir-query"
   configValue vista-fhir-query $PROFILE spring.datasource.url "${VFQ_DB_URL}"
   configValue vista-fhir-query $PROFILE spring.datasource.username "${VFQ_DB_USER}"
   configValue vista-fhir-query $PROFILE spring.datasource.password "${VFQ_DB_PASSWORD}"
-
   addValue vista-fhir-query $PROFILE management.endpoints.web.exposure.include "health,info,i2"
+
+  # Alternate Patient ID Configs
   addValue vista-fhir-query $PROFILE alternate-patient-ids.enabled true
   addValue vista-fhir-query $PROFILE alternate-patient-ids.id.1011537977V693883 5000000347
   addValue vista-fhir-query $PROFILE alternate-patient-ids.id.32000225 195601
@@ -147,6 +148,19 @@ EOF
   addValue vista-fhir-query $PROFILE alternate-patient-ids.id.5000335 195602
   addValue vista-fhir-query $PROFILE alternate-patient-ids.id.25000126 195603
 
+  # Well-Known Configs
+  configValue vista-fhir-query $PROFILE well-known.capabilities "context-standalone-patient, launch-ehr, permission-offline, permission-patient"
+  configValue vista-fhir-query $PROFILE well-known.response-type-supported "code, refresh_token"
+  configValue vista-fhir-query $PROFILE well-known.scopes-supported "patient/Observation.read, offline_access"
+
+  # Metadata Configs
+  configValue vista-fhir-query $PROFILE metadata.contact.email "$(sendMoarSpams)"
+  configValue vista-fhir-query $PROFILE metadata.contact.name "$(whoDis)"
+  configValue vista-fhir-query $PROFILE metadata.security.token-endpoint http://fake.com/token
+  configValue vista-fhir-query $PROFILE metadata.security.authorize-endpoint http://fake.com/authorize
+  configValue vista-fhir-query $PROFILE metadata.security.management-endpoint http://fake.com/manage
+  configValue vista-fhir-query $PROFILE metadata.security.revocation-endpoint http://fake.com/revoke
+  configValue vista-fhir-query $PROFILE metadata.statement-type patient
 
   checkForUnsetValues vista-fhir-query $PROFILE
 }
@@ -159,6 +173,18 @@ requiredParam() {
     usage "Missing Configuration: $param"
     MISSING_SECRETS=true
   fi
+}
+
+sendMoarSpams() {
+  local spam=$(git config --global --get user.email)
+  [ -z "$spam" ] && spam=$USER@aol.com
+  echo $spam
+}
+
+whoDis() {
+  local me=$(git config --global --get user.name)
+  [ -z "$me" ] && me=$USER
+  echo $me
 }
 
 # =====================================================================

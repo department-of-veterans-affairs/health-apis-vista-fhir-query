@@ -11,6 +11,7 @@ import org.springframework.boot.web.server.LocalServerPort;
 @SpringBootTest(
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {
+      "metadata.statement-type=patient",
       "spring.datasource.driver-class-name=org.h2.Driver",
       "spring.datasource.url=jdbc:h2:mem:db;DB_CLOSE_DELAY=-1;INIT=CREATE SCHEMA app",
       "spring.datasource.username=sa",
