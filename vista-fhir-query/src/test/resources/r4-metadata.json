@@ -1,0 +1,129 @@
+{
+    "resourceType" : "CapabilityStatement",
+    "id" : "fhir-r4-conformance",
+    "version" : "1",
+    "name" : "Fhir R4",
+    "title" : "Fhir R4",
+    "status" : "active",
+    "experimental" : false,
+    "date" : "2018-09-27T19:30:00-05:00",
+    "publisher" : "Unit Test",
+    "contact" : [
+        {
+            "name" : "David",
+            "telecom" : [
+                {
+                    "system" : "email",
+                    "value" : "david@ew.com"
+                }
+            ]
+        }
+    ],
+    "description" : "Conformance Description.",
+    "kind" : "capability",
+    "software" : {
+        "name" : "gov.va.api.health:vista-fhir-query",
+        "version" : "1.2.3",
+        "releaseDate" : "2005-01-21T07:57:00Z"
+    },
+    "implementation" : {
+        "description" : "Fhir R4",
+        "url" : "http://fake.com/r4"
+    },
+    "fhirVersion" : "4.0.1",
+    "format" : [
+        "application/json",
+        "application/fhir+json"
+    ],
+    "rest" : [
+        {
+            "mode" : "server",
+            "security" : {
+                "extension" : [
+                    {
+                        "extension" : [
+                            {
+                                "url" : "token",
+                                "valueUri" : "http://fake.com/token"
+                            },
+                            {
+                                "url" : "authorize",
+                                "valueUri" : "http://fake.com/authorize"
+                            },
+                            {
+                                "url" : "manage",
+                                "valueUri" : "http://fake.com/manage"
+                            },
+                            {
+                                "url" : "revoke",
+                                "valueUri" : "http://fake.com/revoke"
+                            }
+                        ],
+                        "url" : "http://fhir-registry.smarthealthit.org/StructureDefinition/oauth-uris"
+                    }
+                ],
+                "cors" : true,
+                "service" : [
+                    {
+                        "coding" : [
+                            {
+                                "system" : "http://terminology.hl7.org/CodeSystem/restful-security-service",
+                                "code" : "SMART-on-FHIR",
+                                "display" : "SMART-on-FHIR"
+                            }
+                        ],
+                        "text" : "SMART-on-FHIR"
+                    }
+                ],
+                "description" : "Security Description."
+            },
+            "resource" : [
+                {
+                    "type" : "Observation",
+                    "profile" : "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",
+                    "interaction" : [
+                        {
+                            "code" : "search-type",
+                            "documentation" : "Implemented per specification."
+                        },
+                        {
+                            "code" : "read",
+                            "documentation" : "Implemented per specification."
+                        }
+                    ],
+                    "versioning" : "no-version",
+                    "referencePolicy" : [
+                        "literal",
+                        "local"
+                    ],
+                    "searchParam" : [
+                        {
+                            "name" : "_id",
+                            "type" : "token"
+                        },
+                        {
+                            "name" : "category",
+                            "type" : "token"
+                        },
+                        {
+                            "name" : "code",
+                            "type" : "token"
+                        },
+                        {
+                            "name" : "date",
+                            "type" : "date"
+                        },
+                        {
+                            "name" : "identifier",
+                            "type" : "token"
+                        },
+                        {
+                            "name" : "patient",
+                            "type" : "reference"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
