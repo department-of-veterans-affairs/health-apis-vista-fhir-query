@@ -153,7 +153,7 @@ public class R4Transformers {
         .vprRpcDomain(recordDomain)
         .vistaRecordId(recordId)
         .build()
-        .toIdentifierSegment();
+        .pack();
   }
 
   /** Gets value of a ValueOnlyXmlAttribute if it exists. */
