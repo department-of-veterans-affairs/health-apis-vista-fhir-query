@@ -77,78 +77,6 @@ public class ObservationVitalSamples {
   }
 
   @AllArgsConstructor(staticName = "create")
-  public static class Vista {
-    public List<Vitals.Measurement> measurements() {
-      return measurements("32071");
-    }
-
-    public List<Vitals.Measurement> measurements(String vistaId) {
-      return List.of(
-          Vitals.Measurement.builder()
-              .id(vistaId)
-              .vuid("4500634")
-              .name("BLOOD PRESSURE")
-              .value("126/65")
-              .units("mm[Hg]")
-              .high("210/110")
-              .low("100/60")
-              .build(),
-          weight());
-    }
-
-    public VprGetPatientData.Response.Results results() {
-      return VprGetPatientData.Response.Results.builder()
-          .version("1.13")
-          .timeZone("-0500")
-          .vitals(Vitals.builder().total(1).vitalResults(vitals()).build())
-          .build();
-    }
-
-    public Map.Entry<String, VprGetPatientData.Response.Results> resultsByStation() {
-      return Map.entry("673", results());
-    }
-
-    public VprGetPatientData.Response.Results resultsWithLab() {
-      return VprGetPatientData.Response.Results.builder()
-          .version("1.13")
-          .timeZone("-0500")
-          .vitals(Vitals.builder().total(1).vitalResults(vitals()).build())
-          .labs(Labs.builder().labResults(ObservationLabSamples.Vista.create().labs()).build())
-          .build();
-    }
-
-    public List<Vitals.Vital> vitals() {
-      return List.of(
-          Vitals.Vital.builder()
-              .entered(ValueOnlyXmlAttribute.builder().value("3110225.110428").build())
-              .facility(
-                  CodeAndNameXmlAttribute.builder().code("673").name("TAMPA (JAH VAH)").build())
-              .location(
-                  CodeAndNameXmlAttribute.builder().code("23").name("GENERAL MEDICINE").build())
-              .measurements(measurements())
-              .taken(ValueOnlyXmlAttribute.builder().value("3100406.14").build())
-              .build());
-    }
-
-    public Vitals.Measurement weight() {
-      return weight("32076");
-    }
-
-    public Vitals.Measurement weight(String vistaId) {
-      return Vitals.Measurement.builder()
-          .id(vistaId)
-          .vuid("4500639")
-          .name("WEIGHT")
-          .value("190")
-          .units("lb")
-          .metricValue("86.18")
-          .metricUnits("kg")
-          .bmi("25")
-          .build();
-    }
-  }
-
-  @AllArgsConstructor(staticName = "create")
   public static class Fhir {
     static Observation.Bundle asBundle(
         String baseUrl,
@@ -189,7 +117,7 @@ public class ObservationVitalSamples {
           .component(List.of(bloodPressureSystolic(), bloodPressureDiastolic()))
           .effectiveDateTime("2010-04-06T14:00:00Z")
           .issued("2011-02-25T11:04:28Z")
-          .id("Np1+673+V32071")
+          .id("sNp1+673+V32071")
           .status(Observation.ObservationStatus._final)
           .build();
     }
@@ -285,7 +213,7 @@ public class ObservationVitalSamples {
     }
 
     public Observation weight() {
-      return weight("Np1+673+V32076");
+      return weight("sNp1+673+V32076");
     }
 
     public Observation weight(String idSegment) {
@@ -317,6 +245,78 @@ public class ObservationVitalSamples {
                       .code("29463-7")
                       .display("Body weight")
                       .build()))
+          .build();
+    }
+  }
+
+  @AllArgsConstructor(staticName = "create")
+  public static class Vista {
+    public List<Vitals.Measurement> measurements() {
+      return measurements("32071");
+    }
+
+    public List<Vitals.Measurement> measurements(String vistaId) {
+      return List.of(
+          Vitals.Measurement.builder()
+              .id(vistaId)
+              .vuid("4500634")
+              .name("BLOOD PRESSURE")
+              .value("126/65")
+              .units("mm[Hg]")
+              .high("210/110")
+              .low("100/60")
+              .build(),
+          weight());
+    }
+
+    public VprGetPatientData.Response.Results results() {
+      return VprGetPatientData.Response.Results.builder()
+          .version("1.13")
+          .timeZone("-0500")
+          .vitals(Vitals.builder().total(1).vitalResults(vitals()).build())
+          .build();
+    }
+
+    public Map.Entry<String, VprGetPatientData.Response.Results> resultsByStation() {
+      return Map.entry("673", results());
+    }
+
+    public VprGetPatientData.Response.Results resultsWithLab() {
+      return VprGetPatientData.Response.Results.builder()
+          .version("1.13")
+          .timeZone("-0500")
+          .vitals(Vitals.builder().total(1).vitalResults(vitals()).build())
+          .labs(Labs.builder().labResults(ObservationLabSamples.Vista.create().labs()).build())
+          .build();
+    }
+
+    public List<Vitals.Vital> vitals() {
+      return List.of(
+          Vitals.Vital.builder()
+              .entered(ValueOnlyXmlAttribute.builder().value("3110225.110428").build())
+              .facility(
+                  CodeAndNameXmlAttribute.builder().code("673").name("TAMPA (JAH VAH)").build())
+              .location(
+                  CodeAndNameXmlAttribute.builder().code("23").name("GENERAL MEDICINE").build())
+              .measurements(measurements())
+              .taken(ValueOnlyXmlAttribute.builder().value("3100406.14").build())
+              .build());
+    }
+
+    public Vitals.Measurement weight() {
+      return weight("32076");
+    }
+
+    public Vitals.Measurement weight(String vistaId) {
+      return Vitals.Measurement.builder()
+          .id(vistaId)
+          .vuid("4500639")
+          .name("WEIGHT")
+          .value("190")
+          .units("lb")
+          .metricValue("86.18")
+          .metricUnits("kg")
+          .bmi("25")
           .build();
     }
   }

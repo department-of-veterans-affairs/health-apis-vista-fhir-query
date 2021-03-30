@@ -1,17 +1,19 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.leftPad;
+import static org.apache.commons.lang3.StringUtils.rightPad;
+import static org.apache.commons.lang3.StringUtils.strip;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import gov.va.api.health.ids.client.AsciiCompressor;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
-import java.nio.ByteBuffer;
+import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData.Domains;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
@@ -39,10 +41,8 @@ public class SegmentedVistaIdentifier {
     return HashBiMap.create(mappings);
   }
 
-  /** Parse a VistaIdentifier. */
-  @Deprecated
-  public static SegmentedVistaIdentifier parse(String id) {
-    String[] segmentParts = id.split("\\+", -1);
+  private static SegmentedVistaIdentifier fromString(String data) {
+    String[] segmentParts = data.split("\\+", -1);
     if (segmentParts.length != 3) {
       throw new IllegalArgumentException(
           "SegmentedVistaIdentifier are expected to have 3 parts "
@@ -78,8 +78,8 @@ public class SegmentedVistaIdentifier {
   }
 
   /** Build a VistaIdentifier. */
-  @Deprecated
-  public String toIdentifierSegment() {
+  @Override
+  public String toString() {
     return String.join(
         "+",
         patientIdentifierType().abbreviation() + patientIdentifier(),
@@ -99,6 +99,7 @@ public class SegmentedVistaIdentifier {
     @Getter private final char abbreviation;
 
     /** Get an Enum value from an abbreviation. */
+    @SuppressWarnings("EnhancedSwitchMigration")
     public static PatientIdentifierType fromAbbreviation(char abbreviation) {
       switch (abbreviation) {
         case 'D':
@@ -115,109 +116,9 @@ public class SegmentedVistaIdentifier {
   }
 
   private interface Format {
-
     String tryPack(SegmentedVistaIdentifier vis);
 
     SegmentedVistaIdentifier unpack(String data);
-  }
-
-  private static class BinaryFormat implements Format {
-
-    Optional<Integer> asInt(String maybeInt) {
-      try {
-        return Optional.of(Integer.parseInt(maybeInt));
-      } catch (NumberFormatException e) {
-        return Optional.empty();
-      }
-    }
-
-    @Override
-    public String tryPack(SegmentedVistaIdentifier vis) {
-      if (vis.patientIdentifierType() != PatientIdentifierType.NATIONAL_ICN) {
-        return null;
-      }
-      var tenSix = TenVSix.parse(vis.patientIdentifier());
-      if (tenSix.isEmpty()) {
-        return null;
-      }
-      var site = asInt(vis.vistaSiteId());
-      if (site.isEmpty()) {
-        return null;
-      }
-
-      var recordIdChars = vis.vistaRecordId().toCharArray();
-      ByteBuffer binary =
-          ByteBuffer.allocate(
-              /* 10 digits of icn */
-              Long.BYTES
-                  /* 6 digits of icn */
-                  + Integer.BYTES
-                  /* Site ID */
-                  + Short.BYTES
-                  /* vpr rpc domain ordinal */
-                  + Short.BYTES
-                  /* Number of chars in record ID */
-                  + Short.BYTES
-                  /* The record ID */
-                  + (recordIdChars.length * Character.BYTES));
-      binary.putLong(tenSix.get().ten());
-      binary.putInt(tenSix.get().six());
-      binary.putShort(site.get().shortValue());
-      binary.putShort((short) vis.vprRpcDomain().ordinal());
-      binary.putShort((short) recordIdChars.length);
-      for (char c : recordIdChars) {
-        binary.putChar(c);
-      }
-      log.info("at {} of {}", binary.position(), binary.limit());
-      log.info("ARRAY {}", Arrays.toString(binary.array()));
-      return new String(binary.array(), StandardCharsets.ISO_8859_1);
-    }
-
-    @Override
-    public SegmentedVistaIdentifier unpack(String data) {
-      ByteBuffer binary = ByteBuffer.wrap(data.getBytes(StandardCharsets.ISO_8859_1));
-      long ten = binary.getLong();
-      log.info("ten {}", ten);
-      int six = binary.getInt();
-      log.info("siz {}", six);
-      int site = binary.getShort();
-      log.info("site {}", site);
-      int domainOrdinal = binary.getShort();
-      log.info("domain {}", domainOrdinal);
-      int recordIdCharsSize = binary.getShort();
-      log.info("chars {}", recordIdCharsSize);
-      StringBuilder recordId = new StringBuilder(recordIdCharsSize);
-      for (int i = 0; i < recordIdCharsSize; i++) {
-        recordId.append(binary.getChar());
-      }
-      return SegmentedVistaIdentifier.builder()
-          .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
-          .patientIdentifier(TenVSix.builder().ten(ten).six(six).build().asIcn())
-          .vistaSiteId(Integer.toString(site))
-          .vprRpcDomain(VprGetPatientData.Domains.values()[domainOrdinal])
-          .vistaRecordId(recordId.toString())
-          .build();
-    }
-  }
-
-  private static class CompressedAsciiFormat implements Format {
-
-    private final AsciiCompressor compressor = new AsciiCompressor();
-    private Format delegate = new StringFormat();
-
-    @Override
-    public String tryPack(SegmentedVistaIdentifier vis) {
-      return new String(compressor.compress(delegate.tryPack(vis)), StandardCharsets.ISO_8859_1);
-    }
-
-    @Override
-    public SegmentedVistaIdentifier unpack(String data) {
-      log.error("I AM GARBAGE. I EAT YOUR DATAS. LOL.");
-      log.info("Unpacking compressed ID {}", data);
-      String decompressed = compressor.decompress(data.getBytes(StandardCharsets.ISO_8859_1));
-      log.info("ID {}", decompressed);
-      return delegate.unpack(decompressed);
-    }
   }
 
   private static class Encoder {
@@ -225,10 +126,10 @@ public class SegmentedVistaIdentifier {
 
     Encoder() {
       formats = new LinkedHashMap<>();
-      // formats.put('c', new CompressedAsciiFormat());
-      formats.put('b', new BinaryFormat());
+      formats.put('L', new FormatCompressedObservationLab());
+      // formats.put('b', new BinaryFormat());
       /* StringFormat is the failsafe format, this should be last. */
-      formats.put('s', new StringFormat());
+      formats.put('s', new FormatString());
     }
 
     /** Build a VistaIdentifier. */
@@ -238,8 +139,8 @@ public class SegmentedVistaIdentifier {
         if (value != null) {
           log.info(
               "PACK: ({}) {} with {} as ({}) {}",
-              vis.toIdentifierSegment().getBytes(StandardCharsets.UTF_8).length,
-              vis.toIdentifierSegment(),
+              vis.toString().getBytes(StandardCharsets.UTF_8).length,
+              vis.toString(),
               entry.getKey(),
               value.length(),
               value);
@@ -262,42 +163,80 @@ public class SegmentedVistaIdentifier {
         return formats.get('s').unpack(data);
       }
       log.info("UNPACK: {} {}", formatId, data);
-      return format.unpack(data.substring(1));
+      SegmentedVistaIdentifier id = format.unpack(data.substring(1));
+      log.info("UNPACKED: {}", id);
+      return id;
     }
   }
 
-  private static class StringFormat implements Format {
+  private static class FormatCompressedObservationLab implements Format {
+    private static final Pattern SITE = Pattern.compile("[0-9]{3}");
+
+    private static final Pattern RECORD_ID = Pattern.compile("CH;[0-9]{7}\\.[0-9]{1,6};[0-9]{2}");
+
     @Override
     public String tryPack(SegmentedVistaIdentifier vis) {
-      return vis.toIdentifierSegment();
+      if (vis.vprRpcDomain() != Domains.labs) {
+        return null;
+      }
+      if (vis.patientIdentifierType() != PatientIdentifierType.NATIONAL_ICN) {
+        return null;
+      }
+      if (!SITE.matcher(vis.vistaSiteId()).matches()) {
+        return null;
+      }
+      var tenSix = TenVSix.parse(vis.patientIdentifier());
+      if (tenSix.isEmpty()) {
+        return null;
+      }
+      if (!RECORD_ID.matcher(vis.vistaRecordId()).matches()) {
+        return null;
+      }
+      String ten = leftPad(Long.toString(tenSix.get().ten()), 10, 'x');
+      String six = leftPad(Integer.toString(tenSix.get().six()), 6, 'x');
+      String site = vis.vistaSiteId();
+      String date = vis.vistaRecordId().substring(3, 10);
+      int lastSemi = vis.vistaRecordId().lastIndexOf(';');
+      String time = rightPad(vis.vistaRecordId().substring(11, lastSemi), 6, 'x');
+      String remainder = vis.vistaRecordId().substring(lastSemi + 1);
+      // ....10....6....3.......7......6......2........
+      return ten + six + site + date + time + remainder;
     }
 
     @Override
     public SegmentedVistaIdentifier unpack(String data) {
-      String[] segmentParts = data.split("\\+", -1);
-      if (segmentParts.length != 3) {
-        throw new IllegalArgumentException(
-            "SegmentedVistaIdentifier are expected to have 3 parts "
-                + "(e.g. patientIdTypeAndId+vistaSiteId+vistaRecordId).");
-      }
-      if (segmentParts[0].length() < 2 || segmentParts[2].length() < 2) {
-        throw new IllegalArgumentException(
-            "The first and third sections of a SegmentedVistaIdentifier must contain "
-                + "a type and an identifier value.");
-      }
-      var domainType = domainAbbreviationMappings().get(segmentParts[2].charAt(0));
-      if (domainType == null) {
-        throw new IllegalArgumentException(
-            "Identifier value had invalid domain type abbreviation: " + segmentParts[2].charAt(0));
-      }
-      log.info("Parts {}", Arrays.toString(segmentParts));
+      // 10
+      String ten = strip(data.substring(0, 10), "x");
+      // 6
+      String six = strip(data.substring(10, 16), "x");
+      // 3
+      String site = strip(data.substring(16, 19), "x");
+      // 7
+      String date = data.substring(19, 26);
+      // 6
+      String time = data.substring(26, 32);
+      // 2
+      String remainder = data.substring(32);
+      String icn = "0".equals(six) ? ten : ten + "V" + six;
       return SegmentedVistaIdentifier.builder()
-          .patientIdentifierType(PatientIdentifierType.fromAbbreviation(segmentParts[0].charAt(0)))
-          .patientIdentifier(segmentParts[0].substring(1))
-          .vistaSiteId(segmentParts[1])
-          .vprRpcDomain(domainType)
-          .vistaRecordId(segmentParts[2].substring(1))
+          .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
+          .patientIdentifier(icn)
+          .vistaSiteId(site)
+          .vprRpcDomain(Domains.labs)
+          .vistaRecordId("CH;" + date + "." + time + ";" + remainder)
           .build();
+    }
+  }
+
+  private static class FormatString implements Format {
+    @Override
+    public String tryPack(SegmentedVistaIdentifier vis) {
+      return vis.toString();
+    }
+
+    @Override
+    public SegmentedVistaIdentifier unpack(String data) {
+      return fromString(data);
     }
   }
 
@@ -305,6 +244,7 @@ public class SegmentedVistaIdentifier {
   @Builder
   private static class TenVSix {
     long ten;
+
     int six;
 
     static Optional<TenVSix> parse(String icn) {
@@ -327,9 +267,10 @@ public class SegmentedVistaIdentifier {
       }
     }
 
-    String asIcn() {
+    @Override
+    public String toString() {
       if (six == 0) {
-        return "" + ten;
+        return Long.toString(ten);
       }
       return ten + "V" + six;
     }

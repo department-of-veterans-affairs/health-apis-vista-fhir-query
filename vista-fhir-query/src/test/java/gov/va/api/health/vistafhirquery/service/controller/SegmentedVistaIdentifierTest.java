@@ -20,6 +20,20 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 @Slf4j
 public class SegmentedVistaIdentifierTest {
+  @Test
+  void formatOfToString() {
+    assertThat(
+            SegmentedVistaIdentifier.builder()
+                .patientIdentifierType(SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
+                .patientIdentifier("icn")
+                .vistaSiteId("siteId")
+                .vprRpcDomain(VprGetPatientData.Domains.vitals)
+                .vistaRecordId("vistaId")
+                .build()
+                .toString())
+        .isEqualTo("Nicn+siteId+VvistaId");
+  }
+
   @SuppressWarnings("ResultOfMethodCallIgnored")
   @Test
   void invalidPatientIdentifierTypeThrowsIllegalArgument() {
@@ -36,7 +50,7 @@ public class SegmentedVistaIdentifierTest {
             .patientIdentifier("1011537977V693883")
             .vistaSiteId("673")
             .vprRpcDomain(Domains.labs)
-            .vistaRecordId("CH;6929384.839997;14xxx")
+            .vistaRecordId("CH;6929384.839997;14")
             .build();
     String packed = id.pack();
     SegmentedVistaIdentifier unpacked = SegmentedVistaIdentifier.unpack(packed);
@@ -64,12 +78,6 @@ public class SegmentedVistaIdentifierTest {
             .get(0)
             .uuid();
     assertThat(i3.length()).as(packed).isLessThanOrEqualTo(64);
-    log.info(
-        "({}) {} -> ({}) {}",
-        id.toIdentifierSegment().length(),
-        id.toIdentifierSegment(),
-        i3.length(),
-        i3);
   }
 
   @Test
@@ -113,19 +121,5 @@ public class SegmentedVistaIdentifierTest {
     var shortened = value.abbreviation();
     var fullLength = SegmentedVistaIdentifier.PatientIdentifierType.fromAbbreviation(shortened);
     assertThat(fullLength).isEqualTo(value);
-  }
-
-  @Test
-  void toIdentiferSegment() {
-    assertThat(
-            SegmentedVistaIdentifier.builder()
-                .patientIdentifierType(SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
-                .patientIdentifier("icn")
-                .vistaSiteId("siteId")
-                .vprRpcDomain(VprGetPatientData.Domains.vitals)
-                .vistaRecordId("vistaId")
-                .build()
-                .toIdentifierSegment())
-        .isEqualTo("Nicn+siteId+VvistaId");
   }
 }

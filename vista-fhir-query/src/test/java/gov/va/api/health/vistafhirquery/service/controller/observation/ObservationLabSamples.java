@@ -20,6 +20,81 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class ObservationLabSamples {
   @NoArgsConstructor(staticName = "create")
+  public static class Fhir {
+    private List<CodeableConcept> category() {
+      return List.of(
+          CodeableConcept.builder()
+              .coding(
+                  List.of(
+                      Coding.builder()
+                          .system("http://terminology.hl7.org/CodeSystem/observation-category")
+                          .code("laboratory")
+                          .display("Laboratory")
+                          .build()))
+              .text("Laboratory")
+              .build());
+    }
+
+    private CodeableConcept code() {
+      return CodeableConcept.builder()
+          .coding(List.of(Coding.builder().system("http://loinc.org").code("1751-7").build()))
+          .text("TSH")
+          .build();
+    }
+
+    private List<CodeableConcept> interpretation() {
+      return List.of(
+          CodeableConcept.builder()
+              .coding(
+                  List.of(
+                      Coding.builder()
+                          .system(
+                              "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation")
+                          .code("H")
+                          .display("High")
+                          .build()))
+              .text("H")
+              .build());
+    }
+
+    private List<Annotation> note() {
+      return List.of(Annotation.builder().text("Ordering Provider: Eightyeight Vehu").build());
+    }
+
+    Observation observation() {
+      return observation("sNp1+673+LCH;6899283.889996;741");
+    }
+
+    Observation observation(String id) {
+      return Observation.builder()
+          .id(id)
+          .category(category())
+          .subject(Reference.builder().reference("Patient/p1").build())
+          .issued("2011-04-12T12:51:56Z")
+          .note(note())
+          .referenceRange(referenceRange())
+          .interpretation(interpretation())
+          .code(code())
+          .valueQuantity(valueQuantity())
+          .effectiveDateTime("2010-07-15T11:00:04Z")
+          .status(Observation.ObservationStatus._final)
+          .build();
+    }
+
+    private List<Observation.ReferenceRange> referenceRange() {
+      return List.of(
+          Observation.ReferenceRange.builder()
+              .low(SimpleQuantity.builder().value(new BigDecimal("5")).build())
+              .high(SimpleQuantity.builder().value(new BigDecimal("9")).build())
+              .build());
+    }
+
+    private Quantity valueQuantity() {
+      return Quantity.builder().value(new BigDecimal("7.3")).unit("MCIU/ML").build();
+    }
+  }
+
+  @NoArgsConstructor(staticName = "create")
   public static class Vista {
 
     public Labs.Lab lab() {
@@ -79,81 +154,6 @@ public class ObservationLabSamples {
 
     public Map.Entry<String, VprGetPatientData.Response.Results> resultsByStation() {
       return Map.entry("673", results());
-    }
-  }
-
-  @NoArgsConstructor(staticName = "create")
-  public static class Fhir {
-    private List<CodeableConcept> category() {
-      return List.of(
-          CodeableConcept.builder()
-              .coding(
-                  List.of(
-                      Coding.builder()
-                          .system("http://terminology.hl7.org/CodeSystem/observation-category")
-                          .code("laboratory")
-                          .display("Laboratory")
-                          .build()))
-              .text("Laboratory")
-              .build());
-    }
-
-    private CodeableConcept code() {
-      return CodeableConcept.builder()
-          .coding(List.of(Coding.builder().system("http://loinc.org").code("1751-7").build()))
-          .text("TSH")
-          .build();
-    }
-
-    private List<CodeableConcept> interpretation() {
-      return List.of(
-          CodeableConcept.builder()
-              .coding(
-                  List.of(
-                      Coding.builder()
-                          .system(
-                              "http://terminology.hl7.org/CodeSystem/v3-ObservationInterpretation")
-                          .code("H")
-                          .display("High")
-                          .build()))
-              .text("H")
-              .build());
-    }
-
-    private List<Annotation> note() {
-      return List.of(Annotation.builder().text("Ordering Provider: Eightyeight Vehu").build());
-    }
-
-    Observation observation() {
-      return observation("Np1+673+LCH;6899283.889996;741");
-    }
-
-    Observation observation(String id) {
-      return Observation.builder()
-          .id(id)
-          .category(category())
-          .subject(Reference.builder().reference("Patient/p1").build())
-          .issued("2011-04-12T12:51:56Z")
-          .note(note())
-          .referenceRange(referenceRange())
-          .interpretation(interpretation())
-          .code(code())
-          .valueQuantity(valueQuantity())
-          .effectiveDateTime("2010-07-15T11:00:04Z")
-          .status(Observation.ObservationStatus._final)
-          .build();
-    }
-
-    private List<Observation.ReferenceRange> referenceRange() {
-      return List.of(
-          Observation.ReferenceRange.builder()
-              .low(SimpleQuantity.builder().value(new BigDecimal("5")).build())
-              .high(SimpleQuantity.builder().value(new BigDecimal("9")).build())
-              .build());
-    }
-
-    private Quantity valueQuantity() {
-      return Quantity.builder().value(new BigDecimal("7.3")).unit("MCIU/ML").build();
     }
   }
 }
