@@ -124,7 +124,7 @@ public class SegmentedVistaIdentifier {
     Encoder() {
       formats = new LinkedHashMap<>();
       formats.put('L', new FormatCompressedObservationLab());
-      /* StringFormat is the failsafe format, this should be last. */
+      /* FormatString is the failsafe format, this should be last. */
       formats.put('s', new FormatString());
     }
 
@@ -137,7 +137,9 @@ public class SegmentedVistaIdentifier {
         }
       }
       throw new IllegalStateException(
-          "VistaIdentifierSegment should be been encoded by StringFormat");
+          "VistaIdentifierSegment should have been encoded by "
+              + FormatString.class
+              + ", the format mapping is incorrect.");
     }
 
     public SegmentedVistaIdentifier unpack(String data) {
