@@ -9,7 +9,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData.Domains;
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -19,11 +18,9 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
-import lombok.extern.slf4j.Slf4j;
 
 @Value
 @Builder
-@Slf4j
 public class SegmentedVistaIdentifier {
   @NonNull PatientIdentifierType patientIdentifierType;
 
@@ -127,7 +124,6 @@ public class SegmentedVistaIdentifier {
     Encoder() {
       formats = new LinkedHashMap<>();
       formats.put('L', new FormatCompressedObservationLab());
-      // formats.put('b', new BinaryFormat());
       /* StringFormat is the failsafe format, this should be last. */
       formats.put('s', new FormatString());
     }
@@ -137,13 +133,6 @@ public class SegmentedVistaIdentifier {
       for (var entry : formats.entrySet()) {
         String value = entry.getValue().tryPack(vis);
         if (value != null) {
-          log.info(
-              "PACK: ({}) {} with {} as ({}) {}",
-              vis.toString().getBytes(StandardCharsets.UTF_8).length,
-              vis.toString(),
-              entry.getKey(),
-              value.length(),
-              value);
           return entry.getKey() + value;
         }
       }
@@ -155,17 +144,13 @@ public class SegmentedVistaIdentifier {
       if (isBlank(data)) {
         throw new IllegalArgumentException("blank identifier");
       }
-      log.info("DATA {} {}", data, data.length());
       char formatId = data.charAt(0);
       Format format = formats.get(formatId);
       /* Support old format IDs that have no format prefix, but are still string formatted */
       if (format == null) {
         return formats.get('s').unpack(data);
       }
-      log.info("UNPACK: {} {}", formatId, data);
-      SegmentedVistaIdentifier id = format.unpack(data.substring(1));
-      log.info("UNPACKED: {}", id);
-      return id;
+      return format.unpack(data.substring(1));
     }
   }
 
@@ -242,7 +227,7 @@ public class SegmentedVistaIdentifier {
 
   @Value
   @Builder
-  private static class TenVSix {
+  static class TenVSix {
     long ten;
 
     int six;
