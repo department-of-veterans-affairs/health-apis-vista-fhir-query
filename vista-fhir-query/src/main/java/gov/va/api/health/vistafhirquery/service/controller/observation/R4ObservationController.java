@@ -82,7 +82,7 @@ public class R4ObservationController {
 
   private SegmentedVistaIdentifier parseOrDie(String publicId) {
     try {
-      return SegmentedVistaIdentifier.parse(witnessProtection.toPrivateId(publicId));
+      return SegmentedVistaIdentifier.unpack(witnessProtection.toPrivateId(publicId));
     } catch (IllegalArgumentException e) {
       throw new ResourceExceptions.NotFound(publicId);
     }
