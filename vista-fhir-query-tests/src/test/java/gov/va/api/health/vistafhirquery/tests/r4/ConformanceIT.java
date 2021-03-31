@@ -9,7 +9,7 @@ public class ConformanceIT {
 
   @Test
   void metadata() {
-    TestClients.r4()
+    TestClients.internal()
         .get("/r4/.well-known/smart-configuration")
         .expect(200)
         .expectValid(WellKnown.class);
@@ -17,6 +17,6 @@ public class ConformanceIT {
 
   @Test
   void smartConfiguration() {
-    TestClients.r4().get("/r4/metadata").expect(200).expectValid(CapabilityStatement.class);
+    TestClients.internal().get("/r4/metadata").expect(200).expectValid(CapabilityStatement.class);
   }
 }
