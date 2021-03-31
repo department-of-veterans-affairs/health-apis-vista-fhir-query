@@ -38,7 +38,7 @@ public final class SystemDefinitions {
     return TestIds.builder()
         .patient("1011537977V693883")
         .observationVitalSign("I3-j5wsEbInV30wlYgZeXfkDfHBlp5ogiUVdztpdekbjwk")
-        .observationLaboratory("I3-Fz9SA8tzj9wZ539HlEqFoDkrsVnrJoWOms7WZ4DS26HwWKQg2Kd1BM")
+        .observationLaboratory("I3-KqbQBRfPz2QzBYOB9MoX6iis0i7kCY2n5Zn5RQssOEMCd96dST7kj4")
         .build();
   }
 
@@ -95,9 +95,8 @@ public final class SystemDefinitions {
   private static TestIds syntheticIds() {
     return TestIds.builder()
         .patient("1011537977V693883")
-        .observationVitalSign("I2-IBV5HN7B4CKF4XNL7GXDCWZNPDVDBRBBQ4OOHUANWIOEQQFGKHOQ0000")
-        .observationLaboratory(
-            "I2-IBV5HN7B4CKF4XNL7GXDCWZNPBFGQRKQYZGV65WQMWE5Q7UMWSVDFL737DUKXBMMYFXGARBJ4CVZ6000")
+        .observationVitalSign("I3-MzfzyZkSpl9HvWWWuN0JvxF6V2f0fwrUm4Cj381IfxH")
+        .observationLaboratory("I3-IbkbEJ3pceqVRMjceHtk9zfkaWo5B2hFH018sws2KYPDg98RU2fFQC")
         .build();
   }
 
