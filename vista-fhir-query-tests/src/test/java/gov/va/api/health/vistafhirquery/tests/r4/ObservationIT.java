@@ -41,6 +41,18 @@ public class ObservationIT {
             200,
             Observation.Bundle.class,
             assertBundleIsNotEmpty(),
+            "Observation?_id={id}",
+            testIds.observationVitalSign()),
+        test(
+            200,
+            Observation.Bundle.class,
+            assertBundleIsNotEmpty(),
+            "Observation?identifier={id}",
+            testIds.observationLaboratory()),
+        test(
+            200,
+            Observation.Bundle.class,
+            assertBundleIsNotEmpty(),
             "Observation?patient={patient}",
             testIds.patient()),
         test(
@@ -76,5 +88,11 @@ public class ObservationIT {
             OperationOutcome.class,
             "Observation?patient={patient}&date=ge2012&date=lt2010",
             testIds.patient()));
+  }
+
+  @Test
+  void searchNotMe() {
+    assumeEnvironmentNotIn(Environment.LOCAL);
+    verify(test(403, OperationOutcome.class, "Observation?patient={patient}", testIds.unknown()));
   }
 }

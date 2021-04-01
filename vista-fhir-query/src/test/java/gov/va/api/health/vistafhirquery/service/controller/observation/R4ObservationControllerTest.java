@@ -128,12 +128,55 @@ public class R4ObservationControllerTest {
   }
 
   @Test
+  void searchByIdVitals() {
+    var request = requestFromUri("?_id=public-sNp1+123+V456");
+    var vista = ObservationVitalSamples.Vista.create();
+    VprGetPatientData.Response.Results results = vista.results();
+    results.vitals().vitalResults().get(0).measurements(List.of(vista.weight("456")));
+    when(vlClient.requestForVistaSite(eq("123"), any(VprGetPatientData.Request.class)))
+        .thenReturn(rpcResponse(RpcResponse.Status.OK, "123", xml(results)));
+    when(wp.toPrivateId("public-sNp1+123+V456")).thenReturn("sNp1+123+V456");
+    var actual = controller().searchById(request);
+    var expected =
+        ObservationVitalSamples.Fhir.asBundle(
+            "http://fugazi.com/r4",
+            List.of(ObservationVitalSamples.Fhir.create().weight("sNp1+123+V456")),
+            1,
+            link(
+                BundleLink.LinkRelation.self,
+                "http://fugazi.com/r4/Observation",
+                "_id=public-sNp1+123+V456"));
+    assertThat(json(actual)).isEqualTo(json(expected));
+  }
+
+  @Test
+  void searchByIdentifierLabs() {
+    var request = requestFromUri("?identifier=public-sNp1+123+L456");
+    var vistaLabSamples = ObservationLabSamples.Vista.create();
+    var results = vistaLabSamples.results(vistaLabSamples.lab("456"));
+    when(vlClient.requestForVistaSite(eq("123"), any(VprGetPatientData.Request.class)))
+        .thenReturn(rpcResponse(RpcResponse.Status.OK, "123", xml(results)));
+    when(wp.toPrivateId("public-sNp1+123+L456")).thenReturn("sNp1+123+L456");
+    var actual = controller().searchByIdentifier("public-sNp1+123+L456", request);
+    var expected =
+        ObservationVitalSamples.Fhir.asBundle(
+            "http://fugazi.com/r4",
+            List.of(ObservationLabSamples.Fhir.create().observation("sNp1+123+L456")),
+            1,
+            link(
+                BundleLink.LinkRelation.self,
+                "http://fugazi.com/r4/Observation",
+                "identifier=public-sNp1+123+L456"));
+    assertThat(json(actual)).isEqualTo(json(expected));
+  }
+
+  @Test
   void searchByPatientAndCategoryKnown() {
     var request = requestFromUri("?category=vital-signs&_count=10&patient=p1");
     var results = ObservationVitalSamples.Vista.create().results();
     when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
-    var actual = controller().searchByPatient("vital-signs", null, 10, null, "p1", request);
+    var actual = controller().searchByPatient("vital-signs", null, null, "p1", request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
@@ -154,8 +197,7 @@ public class R4ObservationControllerTest {
     var results = ObservationVitalSamples.Vista.create().resultsWithLab();
     when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
-    var actual =
-        controller().searchByPatient("laboratory,vital-signs", null, 10, null, "p1", request);
+    var actual = controller().searchByPatient("laboratory,vital-signs", null, null, "p1", request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
@@ -177,7 +219,7 @@ public class R4ObservationControllerTest {
     var results = ObservationLabSamples.Vista.create().results();
     when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
-    var actual = controller().searchByPatient("laboratory,ew-david", null, 10, null, "p1", request);
+    var actual = controller().searchByPatient("laboratory,ew-david", null, null, "p1", request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
@@ -193,7 +235,7 @@ public class R4ObservationControllerTest {
   @Test
   void searchByPatientAndCategoryUnknown() {
     var request = requestFromUri("?category=ew-david&_count=10&patient=p1");
-    var actual = controller().searchByPatient("ew-david", null, 10, null, "p1", request);
+    var actual = controller().searchByPatient("ew-david", null, null, "p1", request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
@@ -212,7 +254,7 @@ public class R4ObservationControllerTest {
     var results = ObservationVitalSamples.Vista.create().resultsWithLab();
     when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
-    var actual = controller().searchByPatient(null, "29463-7,NOPE", 10, null, "p1", request);
+    var actual = controller().searchByPatient(null, "29463-7,NOPE", null, "p1", request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
@@ -231,7 +273,7 @@ public class R4ObservationControllerTest {
     var results = ObservationVitalSamples.Vista.create().resultsWithLab();
     when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
-    var actual = controller().searchByPatient(null, "1751-7", 10, null, "p1", request);
+    var actual = controller().searchByPatient(null, "1751-7", null, "p1", request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
@@ -250,7 +292,7 @@ public class R4ObservationControllerTest {
     var results = ObservationVitalSamples.Vista.create().resultsWithLab();
     when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
-    var actual = controller().searchByPatient(null, "29463-7", 10, null, "p1", request);
+    var actual = controller().searchByPatient(null, "29463-7", null, "p1", request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
@@ -269,7 +311,7 @@ public class R4ObservationControllerTest {
     var results = ObservationVitalSamples.Vista.create().resultsWithLab();
     when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
-    var actual = controller().searchByPatient(null, "29463-7,1751-7", 10, null, "p1", request);
+    var actual = controller().searchByPatient(null, "29463-7,1751-7", null, "p1", request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
@@ -290,7 +332,7 @@ public class R4ObservationControllerTest {
     var results = ObservationVitalSamples.Vista.create().results();
     when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "123", xml(results)));
-    var actual = controller().searchByPatient(null, "NOPE", 10, null, "p1", request);
+    var actual = controller().searchByPatient(null, "NOPE", null, "p1", request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
@@ -310,7 +352,7 @@ public class R4ObservationControllerTest {
     when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
     var actual =
-        controller().searchByPatient(null, "29463-7", 10, new String[] {"2010"}, "p1", request);
+        controller().searchByPatient(null, "29463-7", new String[] {"2010"}, "p1", request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
@@ -330,8 +372,7 @@ public class R4ObservationControllerTest {
     when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
     var actual =
-        controller()
-            .searchByPatient(null, null, 10, new String[] {"ge2010", "lt2012"}, "p1", request);
+        controller().searchByPatient(null, null, new String[] {"ge2010", "lt2012"}, "p1", request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
@@ -354,7 +395,7 @@ public class R4ObservationControllerTest {
         "<results version='1.13' timeZone='-0500'><vitals total='1'><vital></vital></vitals></results>";
     when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "123", responseBody));
-    var actual = controller().searchByPatient(null, null, 10, null, "p1", request);
+    var actual = controller().searchByPatient(null, null, null, "p1", request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",
@@ -373,7 +414,7 @@ public class R4ObservationControllerTest {
     var results = ObservationVitalSamples.Vista.create().resultsWithLab();
     when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
-    var actual = controller().searchByPatient(null, null, 10, null, "p1", request);
+    var actual = controller().searchByPatient(null, null, null, "p1", request);
     var expected =
         ObservationVitalSamples.Fhir.asBundle(
             "http://fugazi.com/r4",

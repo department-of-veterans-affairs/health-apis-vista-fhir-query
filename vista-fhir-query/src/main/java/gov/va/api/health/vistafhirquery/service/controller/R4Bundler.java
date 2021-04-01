@@ -56,6 +56,10 @@ public class R4Bundler<
     }
     int count =
         HttpRequestParameters.integer(request, "_count", linkProperties.getDefaultPageSize());
+    if (count < 0) {
+      ResourceExceptions.BadSearchParameters.because(
+          "count value must be greater than or equal to 0");
+    }
     if (resources.size() > count) {
       resources = resources.subList(0, count);
     }
