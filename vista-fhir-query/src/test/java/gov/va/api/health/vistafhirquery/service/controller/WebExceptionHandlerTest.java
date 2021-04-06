@@ -23,8 +23,11 @@ import javax.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Value;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 
 public class WebExceptionHandlerTest {
   @Test
@@ -49,6 +52,56 @@ public class WebExceptionHandlerTest {
                         OperationOutcome.Issue.builder()
                             .severity(OperationOutcome.Issue.IssueSeverity.fatal)
                             .code("structure")
+                            .build()))
+                .build());
+  }
+
+  @Test
+  void forbidden() {
+    HttpClientErrorException forbidden =
+        HttpClientErrorException.Forbidden.create(HttpStatus.FORBIDDEN, null, null, null, null);
+    OperationOutcome outcome =
+        new WebExceptionHandler("").handleForbidden(forbidden, mock(HttpServletRequest.class));
+    assertThat(outcome.id(null).extension(null))
+        .isEqualTo(
+            OperationOutcome.builder()
+                .resourceType("OperationOutcome")
+                .text(
+                    Narrative.builder()
+                        .status(Narrative.NarrativeStatus.additional)
+                        .div("<div>Failure: null</div>")
+                        .build())
+                .issue(
+                    List.of(
+                        OperationOutcome.Issue.builder()
+                            .severity(OperationOutcome.Issue.IssueSeverity.fatal)
+                            .code("forbidden")
+                            .build()))
+                .build());
+  }
+
+  @Test
+  void internalServerError() {
+    HttpServerErrorException internalServerError =
+        HttpServerErrorException.InternalServerError.create(
+            HttpStatus.INTERNAL_SERVER_ERROR, null, null, null, null);
+    OperationOutcome outcome =
+        new WebExceptionHandler("")
+            .handleInternalServerError(internalServerError, mock(HttpServletRequest.class));
+    assertThat(outcome.id(null).extension(null))
+        .isEqualTo(
+            OperationOutcome.builder()
+                .resourceType("OperationOutcome")
+                .text(
+                    Narrative.builder()
+                        .status(Narrative.NarrativeStatus.additional)
+                        .div("<div>Failure: null</div>")
+                        .build())
+                .issue(
+                    List.of(
+                        OperationOutcome.Issue.builder()
+                            .severity(OperationOutcome.Issue.IssueSeverity.fatal)
+                            .code("internal-server-error")
                             .build()))
                 .build());
   }
@@ -162,6 +215,32 @@ public class WebExceptionHandlerTest {
                         OperationOutcome.Issue.builder()
                             .severity(OperationOutcome.Issue.IssueSeverity.fatal)
                             .code("database")
+                            .build()))
+                .build());
+  }
+
+  @Test
+  void unauthorized() {
+    HttpClientErrorException unauthorized =
+        HttpClientErrorException.Unauthorized.create(
+            HttpStatus.UNAUTHORIZED, null, null, null, null);
+    OperationOutcome outcome =
+        new WebExceptionHandler("")
+            .handleUnauthorized(unauthorized, mock(HttpServletRequest.class));
+    assertThat(outcome.id(null).extension(null))
+        .isEqualTo(
+            OperationOutcome.builder()
+                .resourceType("OperationOutcome")
+                .text(
+                    Narrative.builder()
+                        .status(Narrative.NarrativeStatus.additional)
+                        .div("<div>Failure: null</div>")
+                        .build())
+                .issue(
+                    List.of(
+                        OperationOutcome.Issue.builder()
+                            .severity(OperationOutcome.Issue.IssueSeverity.fatal)
+                            .code("unauthorized")
                             .build()))
                 .build());
   }
