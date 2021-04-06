@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 
 /**
  * Exceptions that escape the rest controllers will be processed by this handler. It will convert
@@ -195,6 +196,12 @@ public final class WebExceptionHandler {
   @ResponseStatus(HttpStatus.NOT_FOUND)
   OperationOutcome handleNotFound(Exception e, HttpServletRequest request) {
     return responseFor("not-found", e, request, emptyList(), true);
+  }
+
+  @ExceptionHandler({ResourceAccessException.class})
+  @ResponseStatus(HttpStatus.REQUEST_TIMEOUT)
+  OperationOutcome handleRequestTimeout(Exception e, HttpServletRequest request) {
+    return responseFor("request-timeout", e, request, emptyList(), true);
   }
 
   /**

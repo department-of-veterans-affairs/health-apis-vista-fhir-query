@@ -28,6 +28,7 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.UnsatisfiedServletRequestParameterException;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.ResourceAccessException;
 
 public class WebExceptionHandlerTest {
   @Test
@@ -150,6 +151,30 @@ public class WebExceptionHandlerTest {
                         OperationOutcome.Issue.builder()
                             .severity(OperationOutcome.Issue.IssueSeverity.fatal)
                             .code("not-found")
+                            .build()))
+                .build());
+  }
+
+  @Test
+  void requestTimeout() {
+    ResourceAccessException requestTimeout = new ResourceAccessException(null);
+    OperationOutcome outcome =
+        new WebExceptionHandler("")
+            .handleRequestTimeout(requestTimeout, mock(HttpServletRequest.class));
+    assertThat(outcome.id(null).extension(null))
+        .isEqualTo(
+            OperationOutcome.builder()
+                .resourceType("OperationOutcome")
+                .text(
+                    Narrative.builder()
+                        .status(Narrative.NarrativeStatus.additional)
+                        .div("<div>Failure: null</div>")
+                        .build())
+                .issue(
+                    List.of(
+                        OperationOutcome.Issue.builder()
+                            .severity(OperationOutcome.Issue.IssueSeverity.fatal)
+                            .code("request-timeout")
                             .build()))
                 .build());
   }
