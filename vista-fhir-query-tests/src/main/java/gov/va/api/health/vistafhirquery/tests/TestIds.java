@@ -7,7 +7,8 @@ import lombok.Value;
 @Value
 @Builder(toBuilder = true)
 public final class TestIds {
-  @NonNull String patient;
   @NonNull String observationVitalSign;
   @NonNull String observationLaboratory;
+  @NonNull String patient;
+  @Builder.Default String unknown = "5555555555555";
 }
