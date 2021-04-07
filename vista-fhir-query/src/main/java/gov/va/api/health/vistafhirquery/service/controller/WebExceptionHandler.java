@@ -174,15 +174,15 @@ public final class WebExceptionHandler {
     return responseFor("structure", e, request, emptyList(), true);
   }
 
-  @ExceptionHandler({HttpClientErrorException.Forbidden.class})
-  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-  OperationOutcome handleForbidden(Exception e, HttpServletRequest request) {
-    return responseFor("forbidden", e, request, emptyList(), true);
-  }
-
-  @ExceptionHandler({HttpServerErrorException.InternalServerError.class})
+  @ExceptionHandler({
+    HttpServerErrorException.InternalServerError.class,
+    HttpClientErrorException.Forbidden.class
+  })
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   OperationOutcome handleInternalServerError(Exception e, HttpServletRequest request) {
+    if (e instanceof HttpClientErrorException.Forbidden) {
+      log.warn("The application proxy user authorization configuration may be incorrect.");
+    }
     return responseFor("internal-server-error", e, request, emptyList(), true);
   }
 

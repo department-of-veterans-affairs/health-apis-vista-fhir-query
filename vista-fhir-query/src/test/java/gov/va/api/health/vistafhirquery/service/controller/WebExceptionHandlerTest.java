@@ -39,22 +39,7 @@ public class WebExceptionHandlerTest {
                 new UnsatisfiedServletRequestParameterException(
                     new String[] {"hello"}, ImmutableMap.of("foo", new String[] {"bar"})),
                 mock(HttpServletRequest.class));
-    assertThat(outcome.id(null).extension(null))
-        .isEqualTo(
-            OperationOutcome.builder()
-                .resourceType("OperationOutcome")
-                .text(
-                    Narrative.builder()
-                        .status(Narrative.NarrativeStatus.additional)
-                        .div("<div>Failure: null</div>")
-                        .build())
-                .issue(
-                    List.of(
-                        OperationOutcome.Issue.builder()
-                            .severity(OperationOutcome.Issue.IssueSeverity.fatal)
-                            .code("structure")
-                            .build()))
-                .build());
+    assertThat(outcome.id(null).extension(null)).isEqualTo(operationOutcome("structure"));
   }
 
   @Test
@@ -62,23 +47,10 @@ public class WebExceptionHandlerTest {
     HttpClientErrorException forbidden =
         HttpClientErrorException.Forbidden.create(HttpStatus.FORBIDDEN, null, null, null, null);
     OperationOutcome outcome =
-        new WebExceptionHandler("").handleForbidden(forbidden, mock(HttpServletRequest.class));
+        new WebExceptionHandler("")
+            .handleInternalServerError(forbidden, mock(HttpServletRequest.class));
     assertThat(outcome.id(null).extension(null))
-        .isEqualTo(
-            OperationOutcome.builder()
-                .resourceType("OperationOutcome")
-                .text(
-                    Narrative.builder()
-                        .status(Narrative.NarrativeStatus.additional)
-                        .div("<div>Failure: null</div>")
-                        .build())
-                .issue(
-                    List.of(
-                        OperationOutcome.Issue.builder()
-                            .severity(OperationOutcome.Issue.IssueSeverity.fatal)
-                            .code("forbidden")
-                            .build()))
-                .build());
+        .isEqualTo(operationOutcome("internal-server-error"));
   }
 
   @Test
@@ -90,21 +62,7 @@ public class WebExceptionHandlerTest {
         new WebExceptionHandler("")
             .handleInternalServerError(internalServerError, mock(HttpServletRequest.class));
     assertThat(outcome.id(null).extension(null))
-        .isEqualTo(
-            OperationOutcome.builder()
-                .resourceType("OperationOutcome")
-                .text(
-                    Narrative.builder()
-                        .status(Narrative.NarrativeStatus.additional)
-                        .div("<div>Failure: null</div>")
-                        .build())
-                .issue(
-                    List.of(
-                        OperationOutcome.Issue.builder()
-                            .severity(OperationOutcome.Issue.IssueSeverity.fatal)
-                            .code("internal-server-error")
-                            .build()))
-                .build());
+        .isEqualTo(operationOutcome("internal-server-error"));
   }
 
   @Test
@@ -114,22 +72,7 @@ public class WebExceptionHandlerTest {
             .handleNotAllowed(
                 new HttpRequestMethodNotSupportedException("method"),
                 mock(HttpServletRequest.class));
-    assertThat(outcome.id(null).extension(null))
-        .isEqualTo(
-            OperationOutcome.builder()
-                .resourceType("OperationOutcome")
-                .text(
-                    Narrative.builder()
-                        .status(Narrative.NarrativeStatus.additional)
-                        .div("<div>Failure: null</div>")
-                        .build())
-                .issue(
-                    List.of(
-                        OperationOutcome.Issue.builder()
-                            .severity(OperationOutcome.Issue.IssueSeverity.fatal)
-                            .code("not-allowed")
-                            .build()))
-                .build());
+    assertThat(outcome.id(null).extension(null)).isEqualTo(operationOutcome("not-allowed"));
   }
 
   @Test
@@ -137,22 +80,24 @@ public class WebExceptionHandlerTest {
     OperationOutcome outcome =
         new WebExceptionHandler("")
             .handleNotFound(new ResourceExceptions.NotFound("x"), mock(HttpServletRequest.class));
-    assertThat(outcome.id(null).extension(null))
-        .isEqualTo(
-            OperationOutcome.builder()
-                .resourceType("OperationOutcome")
-                .text(
-                    Narrative.builder()
-                        .status(Narrative.NarrativeStatus.additional)
-                        .div("<div>Failure: null</div>")
-                        .build())
-                .issue(
-                    List.of(
-                        OperationOutcome.Issue.builder()
-                            .severity(OperationOutcome.Issue.IssueSeverity.fatal)
-                            .code("not-found")
-                            .build()))
-                .build());
+    assertThat(outcome.id(null).extension(null)).isEqualTo(operationOutcome("not-found"));
+  }
+
+  private OperationOutcome operationOutcome(String code) {
+    return OperationOutcome.builder()
+        .resourceType("OperationOutcome")
+        .text(
+            Narrative.builder()
+                .status(Narrative.NarrativeStatus.additional)
+                .div("<div>Failure: null</div>")
+                .build())
+        .issue(
+            List.of(
+                OperationOutcome.Issue.builder()
+                    .severity(OperationOutcome.Issue.IssueSeverity.fatal)
+                    .code(code)
+                    .build()))
+        .build();
   }
 
   @Test
@@ -161,22 +106,7 @@ public class WebExceptionHandlerTest {
     OperationOutcome outcome =
         new WebExceptionHandler("")
             .handleRequestTimeout(requestTimeout, mock(HttpServletRequest.class));
-    assertThat(outcome.id(null).extension(null))
-        .isEqualTo(
-            OperationOutcome.builder()
-                .resourceType("OperationOutcome")
-                .text(
-                    Narrative.builder()
-                        .status(Narrative.NarrativeStatus.additional)
-                        .div("<div>Failure: null</div>")
-                        .build())
-                .issue(
-                    List.of(
-                        OperationOutcome.Issue.builder()
-                            .severity(OperationOutcome.Issue.IssueSeverity.fatal)
-                            .code("request-timeout")
-                            .build()))
-                .build());
+    assertThat(outcome.id(null).extension(null)).isEqualTo(operationOutcome("request-timeout"));
   }
 
   @Test
@@ -226,22 +156,7 @@ public class WebExceptionHandlerTest {
             .handleSnafu(
                 new JsonParseException(mock(JsonParser.class), "x"),
                 mock(HttpServletRequest.class));
-    assertThat(outcome.id(null).extension(null))
-        .isEqualTo(
-            OperationOutcome.builder()
-                .resourceType("OperationOutcome")
-                .text(
-                    Narrative.builder()
-                        .status(Narrative.NarrativeStatus.additional)
-                        .div("<div>Failure: null</div>")
-                        .build())
-                .issue(
-                    List.of(
-                        OperationOutcome.Issue.builder()
-                            .severity(OperationOutcome.Issue.IssueSeverity.fatal)
-                            .code("database")
-                            .build()))
-                .build());
+    assertThat(outcome.id(null).extension(null)).isEqualTo(operationOutcome("database"));
   }
 
   @Test
@@ -252,22 +167,7 @@ public class WebExceptionHandlerTest {
     OperationOutcome outcome =
         new WebExceptionHandler("")
             .handleUnauthorized(unauthorized, mock(HttpServletRequest.class));
-    assertThat(outcome.id(null).extension(null))
-        .isEqualTo(
-            OperationOutcome.builder()
-                .resourceType("OperationOutcome")
-                .text(
-                    Narrative.builder()
-                        .status(Narrative.NarrativeStatus.additional)
-                        .div("<div>Failure: null</div>")
-                        .build())
-                .issue(
-                    List.of(
-                        OperationOutcome.Issue.builder()
-                            .severity(OperationOutcome.Issue.IssueSeverity.fatal)
-                            .code("unauthorized")
-                            .build()))
-                .build());
+    assertThat(outcome.id(null).extension(null)).isEqualTo(operationOutcome("unauthorized"));
   }
 
   @Test
