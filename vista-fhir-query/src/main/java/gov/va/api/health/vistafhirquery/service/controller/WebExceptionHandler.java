@@ -174,6 +174,10 @@ public final class WebExceptionHandler {
     return responseFor("structure", e, request, emptyList(), true);
   }
 
+  /**
+   * If VFQ has wrong configuration for the charon principal, charon will reject the bad
+   * authorization credentials with a 403.
+   */
   @ExceptionHandler({
     HttpServerErrorException.InternalServerError.class,
     HttpClientErrorException.Forbidden.class
@@ -218,9 +222,16 @@ public final class WebExceptionHandler {
     return responseFor("exception", e, request, emptyList(), true);
   }
 
+  /**
+   * If VFQ has unknown configuration for the charon principal, charon will reject the bad
+   * authorization credentials with a 401.
+   */
   @ExceptionHandler({HttpClientErrorException.Unauthorized.class})
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
   OperationOutcome handleUnauthorized(Exception e, HttpServletRequest request) {
+    if (e instanceof HttpClientErrorException.Unauthorized) {
+      log.warn("The application proxy user authorization configuration may be incorrect.");
+    }
     return responseFor("unauthorized", e, request, emptyList(), true);
   }
 
