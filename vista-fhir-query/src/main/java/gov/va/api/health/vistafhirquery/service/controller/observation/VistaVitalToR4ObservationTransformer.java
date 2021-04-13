@@ -131,9 +131,17 @@ public class VistaVitalToR4ObservationTransformer {
     return toResourceId(patientIcn, vistaSiteId, VprGetPatientData.Domains.vitals, id);
   }
 
+  CodeableConcept method(Vitals.Measurement measurement) {
+    if (isBlank(measurement) || isEmpty(measurement.qualifiers())) {
+      return null;
+    }
+    return MethodMapping.toMethod(measurement.qualifiers());
+  }
+
   Observation observationFromMeasurement(Vitals.Measurement measurement) {
     var patientReference = toReference("Patient", patientIcn, null);
     var code = code(measurement);
+    var method = method(measurement);
     if (measurement.isBloodPressure()) {
       return Observation.builder()
           .resourceType("Observation")
@@ -145,6 +153,7 @@ public class VistaVitalToR4ObservationTransformer {
           .effectiveDateTime(toHumanDateTime(vistaVital.taken()))
           .issued(toHumanDateTime(vistaVital.entered()))
           .status(status(vistaVital.removed()))
+          .method(method)
           .build();
     }
     return Observation.builder()
@@ -158,6 +167,7 @@ public class VistaVitalToR4ObservationTransformer {
         .referenceRange(referenceRange(measurement.high(), measurement.low()))
         .status(status(vistaVital.removed()))
         .valueQuantity(valueQuantity(extractLoinc(code), measurement.value(), measurement.units()))
+        .method(method)
         .build();
   }
 

@@ -14,21 +14,73 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class VistaVitalToR4ObservationTransformerTest {
-
   VitalVuidMapper mapper = mock(VitalVuidMapper.class);
+
+  @Test
+  void methodWithKnownVuidsReturn() {
+    assertThat(
+            tx().method(
+                    Vitals.Measurement.builder()
+                        .qualifiers(
+                            List.of(
+                                Vitals.Qualifier.builder().vuid("4710821").build(),
+                                Vitals.Qualifier.builder().vuid("4711345").build()))
+                        .build()))
+        .isEqualTo(
+            CodeableConcept.builder()
+                .coding(
+                    List.of(
+                        Coding.builder()
+                            .system("http://snomed.info/sct")
+                            .code("303473005")
+                            .display("Does remove prosthesis (finding)")
+                            .build(),
+                        Coding.builder()
+                            .system("http://snomed.info/sct")
+                            .code("258104002")
+                            .display("Measured (qualifier value)")
+                            .build()))
+                .build());
+    assertThat(
+            tx().method(
+                    Vitals.Measurement.builder()
+                        .qualifiers(List.of(Vitals.Qualifier.builder().vuid("4711345").build()))
+                        .build()))
+        .isEqualTo(
+            CodeableConcept.builder()
+                .coding(
+                    List.of(
+                        Coding.builder()
+                            .system("http://snomed.info/sct")
+                            .code("258104002")
+                            .display("Measured (qualifier value)")
+                            .build()))
+                .build());
+  }
+
+  @Test
+  void methodWithUnknownVuidsReturnsNull() {
+    assertThat(
+            tx().method(
+                    Vitals.Measurement.builder()
+                        .qualifiers(List.of(Vitals.Qualifier.builder().vuid("-1").build()))
+                        .build()))
+        .isNull();
+    assertThat(
+            tx().method(
+                    Vitals.Measurement.builder()
+                        .qualifiers(
+                            List.of(
+                                Vitals.Qualifier.builder().vuid("-1").build(),
+                                Vitals.Qualifier.builder().vuid("-2").build()))
+                        .build()))
+        .isNull();
+  }
 
   @Test
   public void nullSafe() {
     when(mapper.mappings()).thenReturn(ObservationVitalSamples.Datamart.create().vuidMappings());
-    assertThat(
-            VistaVitalToR4ObservationTransformer.builder()
-                .patientIcn("p1")
-                .vistaSiteId("123")
-                .vistaVital(Vitals.Vital.builder().build())
-                .vuidMapper(mapper)
-                .build()
-                .conditionallyToFhir())
-        .isEmpty();
+    assertThat(tx().conditionallyToFhir()).isEmpty();
     assertThat(
             VistaVitalToR4ObservationTransformer.builder()
                 .patientIcn("p1")
@@ -36,7 +88,11 @@ public class VistaVitalToR4ObservationTransformerTest {
                 .vistaVital(
                     Vitals.Vital.builder()
                         .removed(List.of(ValueOnlyXmlAttribute.builder().build()))
-                        .measurements(List.of(Vitals.Measurement.builder().build()))
+                        .measurements(
+                            List.of(
+                                Vitals.Measurement.builder()
+                                    .qualifiers(List.of(Vitals.Qualifier.builder().build()))
+                                    .build()))
                         .build())
                 .vuidMapper(mapper)
                 .build()
@@ -61,5 +117,14 @@ public class VistaVitalToR4ObservationTransformerTest {
                                 .text("Vital Signs")
                                 .build()))
                     .build()));
+  }
+
+  private VistaVitalToR4ObservationTransformer tx() {
+    return VistaVitalToR4ObservationTransformer.builder()
+        .patientIcn("p1")
+        .vistaSiteId("123")
+        .vistaVital(Vitals.Vital.builder().build())
+        .vuidMapper(mapper)
+        .build();
   }
 }
