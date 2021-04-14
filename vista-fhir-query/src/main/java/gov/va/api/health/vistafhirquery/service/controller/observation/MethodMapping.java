@@ -17,63 +17,11 @@ public class MethodMapping {
     if (qualifier == null) {
       return null;
     }
-    var coding = Coding.builder().system("http://snomed.info/sct");
-    switch (qualifier) {
-      case ACTUAL:
-        return coding.code("258104002").display("Measured (qualifier value)").build();
-      case AFTER_EXERCISE:
-        return coding.code("255214003").display("After exercise (qualifier value)").build();
-      case AT_REST:
-        return coding.code("263678003").display("At rest (qualifier value)").build();
-      case AUSCULTATE:
-        return coding.code("37931006").display("Auscultation (procedure)").build();
-      case CALCULATED:
-        return coding.code("258090004").display("Calculated (qualifier value)").build();
-      case DRY:
-        return coding.code("445541000").display("Dry body weight (observable entity)").build();
-      case ESTIMATED:
-        // fallthrough
-      case ESTIMATED_BY_ARM_SPAN:
-        return coding.code("414135002").display("Estimated (qualifier value)").build();
-      case INVASIVE:
-        return coding
-            .code("386341005")
-            .display("Invasive hemodynamic monitoring (regime/therapy)")
-            .build();
-      case NON_INVASIVE:
-        return coding
-            .code("704042003")
-            .display("Non-invasive cardiac output monitoring (regime/therapy)")
-            .build();
-      case PALPATED:
-        return coding.code("113011001").display("Palpation (procedure)").build();
-      case ROOM_AIR:
-        return coding.code("15158005").display("Air (substance)").build();
-      case SPONTANEOUS:
-        return coding.code("241700002").display("Spontaneous respiration (finding)").build();
-      case STATED:
-        return coding
-            .code("418799008")
-            .display("Finding reported by subject or history provider (finding)")
-            .build();
-      case TRANSTRACHEAL:
-        return coding
-            .code("426129001")
-            .display("Transtracheal oxygen catheter (physical object)")
-            .build();
-      case WITH_ACTIVITY:
-        return coding.code("309604004").display("During exercise (qualifier value)").build();
-      case WITH_AMBULATION:
-        return coding.code("129006008").display("Walking (observable entity)").build();
-      case WITH_CAST_OR_BRACE:
-        // fallthrough
-      case WITH_PROSTHESIS:
-        return coding.code("303474004").display("Does not remove prosthesis (finding)").build();
-      case WITHOUT_PROSTHESIS:
-        return coding.code("303473005").display("Does remove prosthesis (finding)").build();
-      default:
-        throw new IllegalStateException("Unknown Vista Qualifier : " + qualifier);
-    }
+    return Coding.builder()
+        .system("http://snomed.info/sct")
+        .display(qualifier.display())
+        .code(qualifier.snomed())
+        .build();
   }
 
   /** Iterates over the qualifiers to create the coding list for the Method CodeableConcept. */
@@ -93,28 +41,30 @@ public class MethodMapping {
 
   @AllArgsConstructor
   enum VistaQualifiers {
-    ACTUAL("4711345"),
-    AFTER_EXERCISE("4711309"),
-    AT_REST("4711313"),
-    AUSCULTATE("4711314"),
-    CALCULATED("4712397"),
-    DRY("4711346"),
-    ESTIMATED("4711347"),
-    ESTIMATED_BY_ARM_SPAN("4711348"),
-    INVASIVE("4711325"),
-    NON_INVASIVE("4711335"),
-    PALPATED("4711337"),
-    ROOM_AIR("4711353"),
-    SPONTANEOUS("4711360"),
-    STATED("4711363"),
-    TRANSTRACHEAL("4711368"),
-    WITH_ACTIVITY("4710817"),
-    WITH_AMBULATION("4710818"),
-    WITH_CAST_OR_BRACE("4710819"),
-    WITH_PROSTHESIS("4710820"),
-    WITHOUT_PROSTHESIS("4710821");
+    ACTUAL("4711345", "258104002", "Measured (qualifier value)"),
+    AFTER_EXERCISE("4711309", "255214003", "After exercise (qualifier value)"),
+    AT_REST("4711313", "263678003", "At rest (qualifier value)"),
+    AUSCULTATE("4711314", "37931006", "Auscultation (procedure)"),
+    CALCULATED("4712397", "258090004", "Calculated (qualifier value)"),
+    DRY("4711346", "445541000", "Dry body weight (observable entity)"),
+    ESTIMATED("4711347", "414135002", "Estimated (qualifier value)"),
+    ESTIMATED_BY_ARM_SPAN("4711348", "414135002", "Estimated (qualifier value)"),
+    INVASIVE("4711325", "386341005", "Invasive hemodynamic monitoring (regime/therapy)"),
+    NON_INVASIVE("4711335", "704042003", "Non-invasive cardiac output monitoring (regime/therapy)"),
+    PALPATED("4711337", "113011001", "Palpation (procedure)"),
+    ROOM_AIR("4711353", "15158005", "Air (substance)"),
+    SPONTANEOUS("4711360", "241700002", "Spontaneous respiration (finding)"),
+    STATED("4711363", "418799008", "Finding reported by subject or history provider (finding)"),
+    TRANSTRACHEAL("4711368", "426129001", "Transtracheal oxygen catheter (physical object)"),
+    WITH_ACTIVITY("4710817", "309604004", "During exercise (qualifier value)"),
+    WITH_AMBULATION("4710818", "129006008", "Walking (observable entity)"),
+    WITH_CAST_OR_BRACE("4710819", "303474004", "Does not remove prosthesis (finding)"),
+    WITH_PROSTHESIS("4710820", "303474004", "Does not remove prosthesis (finding)"),
+    WITHOUT_PROSTHESIS("4710821", "303473005", "Does remove prosthesis (finding)");
 
     @Getter private final String vuid;
+    @Getter private final String snomed;
+    @Getter private final String display;
 
     public static Optional<VistaQualifiers> findByVuid(String vuid) {
       for (VistaQualifiers qualifier : VistaQualifiers.values()) {
