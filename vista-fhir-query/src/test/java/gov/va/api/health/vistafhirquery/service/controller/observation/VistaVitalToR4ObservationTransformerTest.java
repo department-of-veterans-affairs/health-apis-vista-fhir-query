@@ -17,6 +17,28 @@ public class VistaVitalToR4ObservationTransformerTest {
   VitalVuidMapper mapper = mock(VitalVuidMapper.class);
 
   @Test
+  void methodWithKnownAndUnknownReturnKnown() {
+    assertThat(
+            tx().method(
+                    Vitals.Measurement.builder()
+                        .qualifiers(
+                            List.of(
+                                Vitals.Qualifier.builder().vuid("-1").build(),
+                                Vitals.Qualifier.builder().vuid("4710821").build()))
+                        .build()))
+        .isEqualTo(
+            CodeableConcept.builder()
+                .coding(
+                    List.of(
+                        Coding.builder()
+                            .system("http://snomed.info/sct")
+                            .code("303473005")
+                            .display("Does remove prosthesis (finding)")
+                            .build()))
+                .build());
+  }
+
+  @Test
   void methodWithKnownVuidsReturn() {
     assertThat(
             tx().method(

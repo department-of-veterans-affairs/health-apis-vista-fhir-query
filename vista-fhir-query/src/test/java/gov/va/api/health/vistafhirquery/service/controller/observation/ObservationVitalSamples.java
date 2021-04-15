@@ -119,6 +119,7 @@ public class ObservationVitalSamples {
           .issued("2011-02-25T11:04:28Z")
           .id("sNp1+673+V32071")
           .status(Observation.ObservationStatus._final)
+          .method(method())
           .build();
     }
 
@@ -204,6 +205,18 @@ public class ObservationVitalSamples {
               .build());
     }
 
+    public CodeableConcept method() {
+      return CodeableConcept.builder()
+          .coding(
+              List.of(
+                  Coding.builder()
+                      .system("http://snomed.info/sct")
+                      .display("Measured (qualifier value)")
+                      .code("258104002")
+                      .build()))
+          .build();
+    }
+
     List<Observation> observations() {
       return List.of(bloodPressure(), weight());
     }
@@ -265,6 +278,8 @@ public class ObservationVitalSamples {
               .units("mm[Hg]")
               .high("210/110")
               .low("100/60")
+              .qualifiers(
+                  List.of(Vitals.Qualifier.builder().vuid("4711345").name("ACTUAL").build()))
               .build(),
           weight());
     }

@@ -132,7 +132,7 @@ public class VistaVitalToR4ObservationTransformer {
   }
 
   CodeableConcept method(Vitals.Measurement measurement) {
-    if (isBlank(measurement) || isEmpty(measurement.qualifiers())) {
+    if (isBlank(measurement) || isBlank(measurement.qualifiers())) {
       return null;
     }
     return MethodMapping.toMethod(measurement.qualifiers());
