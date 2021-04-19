@@ -28,7 +28,7 @@ main() {
   java-tests \
     --module-name "vista-fhir-query-tests" \
     --regression-test-pattern ".*IT\$" \
-    --smoke-test-pattern ".*PingIT\$" \
+    --smoke-test-pattern ".*SmokeTestIT\$" \
     $SYSTEM_PROPERTIES \
     $@
 
