@@ -3,13 +3,26 @@ package gov.va.api.health.vistafhirquery.tests;
 import static gov.va.api.health.sentinel.SentinelProperties.magicAccessToken;
 
 import gov.va.api.health.sentinel.Environment;
+import gov.va.api.health.sentinel.ReducedSpamLogger;
 import gov.va.api.health.sentinel.SentinelProperties;
 import gov.va.api.health.sentinel.ServiceDefinition;
+import gov.va.api.health.vistafhirquery.tests.TestIds.IcnAtSites;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
+import lombok.Synchronized;
 import lombok.experimental.UtilityClass;
+import org.slf4j.LoggerFactory;
 
 @UtilityClass
 public final class SystemDefinitions {
+  private static final ReducedSpamLogger log =
+      ReducedSpamLogger.builder().logger(LoggerFactory.getLogger(SentinelProperties.class)).build();
+
+  private static boolean LOADED_SECRETS = false;
+
   private static Optional<String> clientKey() {
     return Optional.ofNullable(System.getProperty("client-key"));
   }
@@ -22,6 +35,32 @@ public final class SystemDefinitions {
         .publicIds(syntheticIds())
         .clientKey(clientKey())
         .build();
+  }
+
+  /**
+   * Thread safe: Load additional system properties from a secrets file, by default:
+   * config/secrets.properties, but can be specified using the system property' secrets.properties.
+   *
+   * <p>If this file does not exist, a warning is logged and nothing is loaded.
+   */
+  @Synchronized
+  public static void loadConfigSecretsProperties() {
+    if (LOADED_SECRETS) {
+      return;
+    }
+    String secrets = System.getProperty("secrets.properties", "config/secrets.properties");
+    log.error("Attempting to load secrets from {}", secrets);
+    Properties properties = new Properties();
+    try (var in = new FileInputStream(secrets)) {
+      properties.load(in);
+      properties
+          .stringPropertyNames()
+          .forEach(p -> System.setProperty(p, properties.getProperty(p)));
+      log.info("Loaded {} secrets", properties.stringPropertyNames().size());
+    } catch (IOException e) {
+      log.warn("No secrets loaded: {}", e.getMessage());
+    }
+    LOADED_SECRETS = true;
   }
 
   private static SystemDefinition local() {
@@ -39,6 +78,7 @@ public final class SystemDefinitions {
         .patient("1011537977V693883")
         .observationVitalSign("I3-j5wsEbInV30wlYgZeXfkDfHBlp5ogiUVdztpdekbjwk")
         .observationLaboratory("I3-KqbQBRfPz2QzBYOB9MoX6iis0i7kCY2n5Zn5RQssOEMCd96dST7kj4")
+        .patientSites(icnAtSites())
         .build();
   }
 
@@ -47,6 +87,7 @@ public final class SystemDefinitions {
         .patient("1011537977V693883")
         .observationVitalSign("TBD")
         .observationLaboratory("TBD")
+        .patientSites(icnAtSites())
         .build();
   }
 
@@ -97,11 +138,13 @@ public final class SystemDefinitions {
         .patient("1011537977V693883")
         .observationVitalSign("I3-MzfzyZkSpl9HvWWWuN0JvxF6V2f0fwrUm4Cj381IfxH")
         .observationLaboratory("I3-IbkbEJ3pceqVRMjceHtk9zfkaWo5B2hFH018sws2KYPDg98RU2fFQC")
+        .patientSites(icnAtSites())
         .build();
   }
 
   /** Return the applicable system definition for the current environment. */
   public static SystemDefinition systemDefinition() {
+    loadConfigSecretsProperties();
     switch (Environment.get()) {
       case LAB:
         return lab();
@@ -116,5 +159,13 @@ public final class SystemDefinitions {
       default:
         throw new IllegalArgumentException("Unknown sentinel environment: " + Environment.get());
     }
+  }
+
+  private List<IcnAtSites> icnAtSites() {
+    String property = "vista-connectivity.icn-at-sites";
+    var csv = System.getProperty(property, "1011537977V693883@673");
+    log.infoOnce(
+        "Using ICN at Sites {} (Override with -D{}=<icn@site,icn@site,...>)", csv, property);
+    return IcnAtSites.csvOf(csv);
   }
 }
