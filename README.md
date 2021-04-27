@@ -34,3 +34,17 @@ For example,
 # Observation
 
 ![observation-components](vista-fhir-query/src/plantuml/observation-components.png)
+
+
+# Testing
+`vista-fhir-query-tests` provides the integration test suite that can be ran locally. It will automatically start Mock services.
+Some tests are require connectivity to authentication services and can be enabled by setting additional system properties.
+Additionally, this secrets can be defined in the file `vista-fhir-query-tests/config/secrets.properties`, for example:
+
+```
+access-token=not-used
+system-oauth-robot.aud=https://deptva-eval.okta.com/oauth2/1234567890/v1/token
+system-oauth-robot.token-url=https://sandbox-api.va.gov/oauth2/health-insurance/v1/token
+system-oauth-robot.client-id=1234567890
+system-oauth-robot.client-secret=SECRETSECRETIVEGOTASECRET
+```
