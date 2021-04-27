@@ -28,6 +28,7 @@ main() {
   if [ -n "${SYSTEM_OAUTH_ROBOT_TOKEN_URL:-}" ]; then addToSystemProperties "system-oauth-robot.token-url" "${SYSTEM_OAUTH_ROBOT_TOKEN_URL}"; fi
   if [ -n "${SYSTEM_OAUTH_ROBOT_CLIENT_ID:-}" ]; then addToSystemProperties "system-oauth-robot.client-id" "${SYSTEM_OAUTH_ROBOT_CLIENT_ID}"; fi
   if [ -n "${SYSTEM_OAUTH_ROBOT_CLIENT_SECRET:-}" ]; then addToSystemProperties "system-oauth-robot.client-secret" "${SYSTEM_OAUTH_ROBOT_CLIENT_SECRET}"; fi
+  if [ -n "${VISTA_CONNECTIVITY_ICN_AT_SITES:-}" ]; then addToSystemProperties "vista-connectivity.icn-at-sites" "${VISTA_CONNECTIVITY_ICN_AT_SITES}"; fi
 
   java-tests \
     --module-name "vista-fhir-query-tests" \
