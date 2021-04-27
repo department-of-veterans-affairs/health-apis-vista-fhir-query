@@ -1,0 +1,16 @@
+{
+    "principal" : {
+        "applicationProxyUser" : "FAKE:APU@999",
+        "accessCode" : "FAKE:AC@999",
+        "verifyCode" : "FAKE:VC@999"
+    },
+    "siteSpecificPrincipals" : {
+        "999" : {
+            "accessCode" : "FAKE:AC",
+            "verifyCode" : "FAKE:VC"
+        }
+    },
+    "accessCode" : "fake:ac1",
+    "verifyCode" : "fake:vc1",
+    "applicationProxyUser" : "fake:apu1"
+}
