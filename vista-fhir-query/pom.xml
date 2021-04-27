@@ -16,7 +16,7 @@
     <jacoco.coverage>0.94</jacoco.coverage>
     <mssql-jdbc.version>7.4.1.jre8</mssql-jdbc.version>
     <talos.version>0.0.4</talos.version>
-    <charon.version>3.0.25</charon.version>
+    <charon.version>3.0.26</charon.version>
   </properties>
   <dependencies>
     <dependency>
