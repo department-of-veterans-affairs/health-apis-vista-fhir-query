@@ -1,11 +1,13 @@
 package gov.va.api.health.vistafhirquery.tests;
 
+import static gov.va.api.health.sentinel.EnvironmentAssumptions.assumeEnvironmentNotIn;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assumptions.assumeThat;
 
 import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.health.sentinel.AccessTokens;
+import gov.va.api.health.sentinel.Environment;
 import gov.va.api.health.sentinel.ExpectedResponse;
 import gov.va.api.health.vistafhirquery.tests.TestIds.IcnAtSites;
 import io.restassured.RestAssured;
@@ -57,6 +59,7 @@ public class VistaConnectivityIT {
   @ParameterizedTest
   @MethodSource
   void connected(IcnAtSites icnAtSites) {
+    assumeEnvironmentNotIn(Environment.STAGING, Environment.PROD);
     var sd = SystemDefinitions.systemDefinition().r4();
     RequestSpecification request =
         RestAssured.given()
