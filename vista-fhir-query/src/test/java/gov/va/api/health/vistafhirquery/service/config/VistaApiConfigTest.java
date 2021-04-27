@@ -14,14 +14,14 @@ public class VistaApiConfigTest {
     var config =
         VistaApiConfig.builder().principalFile("src/test/resources/principals.json").build();
     config.loadSiteSpecificInfoFromFile();
-    assertThat(config.getPrincipalOrDefault("999"))
+    assertThat(config.getPrincipalOrDefault("123"))
         .isEqualTo(
             RpcPrincipal.builder()
                 .applicationProxyUser("FAKE:APU@999")
                 .accessCode("FAKE:AC@999")
                 .verifyCode("FAKE:VC@999")
                 .build());
-    assertThat(config.getPrincipalOrDefault("123"))
+    assertThat(config.getPrincipalOrDefault("999"))
         .isEqualTo(RpcPrincipal.builder().accessCode("FAKE:AC").verifyCode("FAKE:VC").build());
   }
 }
