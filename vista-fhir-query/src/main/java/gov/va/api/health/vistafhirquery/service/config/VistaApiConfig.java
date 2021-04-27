@@ -43,7 +43,7 @@ public class VistaApiConfig {
 
   private String applicationProxyUserContext;
 
-  private String siteSpecificPrincipalFile;
+  private String principalFile;
 
   private Map<String, SiteSpecificDetails> siteSpecificDetails;
 
@@ -62,16 +62,15 @@ public class VistaApiConfig {
   void loadSiteSpecificInfoFromFile() {
     ObjectMapper mapper = new ObjectMapper();
     JsonNode root;
-    try (FileInputStream fs = new FileInputStream(siteSpecificPrincipalFile)) {
+    try (FileInputStream fs = new FileInputStream(principalFile)) {
       root = mapper.readTree(fs);
     } catch (FileNotFoundException e) {
-      throw new IllegalArgumentException(
-          "Failed to find principals file: " + siteSpecificPrincipalFile);
+      throw new IllegalArgumentException("Failed to find principals file: " + principalFile);
     } catch (IOException e) {
-      throw new IllegalArgumentException("Failed to parse json file: " + siteSpecificPrincipalFile);
+      throw new IllegalArgumentException("Failed to parse json file: " + principalFile);
     }
     if (root.isEmpty()) {
-      throw new IllegalArgumentException("Principal file is empty: " + siteSpecificPrincipalFile);
+      throw new IllegalArgumentException("Principal file is empty: " + principalFile);
     }
     Map<String, SiteSpecificDetails> siteToDetailsMap = new HashMap<>();
     JsonNode siteSpecificPrincipalsNode = root.get("siteSpecificPrincipals");
@@ -81,7 +80,7 @@ public class VistaApiConfig {
     JsonNode defaultPrincipalNode = root.get("principal");
     if (defaultPrincipalNode.isNull()) {
       throw new IllegalArgumentException(
-          "Default rpc principal is not defined in: " + siteSpecificPrincipalFile);
+          "Default rpc principal is not defined in: " + principalFile);
     }
     RpcPrincipal defaultPrincipal = mapper.convertValue(root.get("principal"), RpcPrincipal.class);
     siteToDetailsMap.put(

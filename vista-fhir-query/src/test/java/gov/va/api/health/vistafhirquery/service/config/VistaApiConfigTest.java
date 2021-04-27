@@ -12,9 +12,7 @@ public class VistaApiConfigTest {
   @Test
   void loadSiteSpecificInfoFromFile() {
     var config =
-        VistaApiConfig.builder()
-            .siteSpecificPrincipalFile("src/test/resources/site-specific-details.json")
-            .build();
+        VistaApiConfig.builder().principalFile("src/test/resources/principals.json").build();
     config.loadSiteSpecificInfoFromFile();
     assertThat(config.getPrincipalOrDefault("999"))
         .isEqualTo(

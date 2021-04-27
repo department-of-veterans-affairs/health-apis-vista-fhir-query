@@ -59,11 +59,18 @@ main() {
   requiredParam VFQ_DB_URL "${VFQ_DB_URL}"
   requiredParam VFQ_DB_USER "${VFQ_DB_USER}"
   requiredParam VFQ_DB_PASSWORD "${VFQ_DB_PASSWORD}"
+  requiredParam VFQ_DEFAULT_ACCESS_CODE "${VFQ_DEFAULT_ACCESS_CODE}"
+  requiredParam VFQ_DEFAULT_VERIFY_CODE "${VFQ_DEFAULT_VERIFY_CODE}"
+  requiredParam VFQ_673_ACCESS_CODE "${VFQ_673_ACCESS_CODE}"
+  requiredParam VFQ_673_VERIFY_CODE "${VFQ_673_VERIFY_CODE}"
+  requiredParam VFQ_673_APU "${VFQ_673_APU}"
+
   [ -z "$VISTALINK_CLIENT_KEY" ] && VISTALINK_CLIENT_KEY="not-used"
   [ -z "$WEB_EXCEPTION_KEY" ] && WEB_EXCEPTION_KEY="-shanktopus-for-the-win-"
   [ $MISSING_SECRETS == true ] && usage "Missing configuration secrets, please update ${SECRETS}"
 
   populateConfig
+  populatePrincipalFile
 }
 
 # =====================================================================
@@ -163,6 +170,24 @@ EOF
   configValue vista-fhir-query $PROFILE metadata.statement-type patient
 
   checkForUnsetValues vista-fhir-query $PROFILE
+}
+
+populatePrincipalFile() {
+  cat > $REPO/vista-fhir-query/config/principals.json <<EOF
+{
+    "principal" : {
+        "accessCode" : "${VFQ_DEFAULT_ACCESS_CODE}",
+        "verifyCode" : "${VFQ_DEFAULT_VERIFY_CODE}"
+    },
+    "siteSpecificPrincipals" : {
+        "673" : {
+            "applicationProxyUser" : "${VFQ_673_APU}",
+            "accessCode" : "${VFQ_673_ACCESS_CODE}",
+            "verifyCode" : "${VFQ_673_VERIFY_CODE}"
+        }
+    }
+}
+EOF
 }
 
 requiredParam() {
