@@ -13,7 +13,11 @@
       <Bug pattern="EI_EXPOSE_REP2"/>
     </Or>
   </Match>
-  <!-- To support local testing, we allow the principal-file.json file to be overwritten by user input -->
+  <!--
+  To support local testing, we allow the vista.api.principal-file property to be overwritten by user input.
+  In a real-world environment, the property will be loaded once on start from application.properties
+  preventing user input from affecting application behavior.
+   -->
   <Match>
     <Class name="gov.va.api.health.vistafhirquery.service.config.VistaApiConfig"/>
     <Bug pattern="PATH_TRAVERSAL_IN"/>

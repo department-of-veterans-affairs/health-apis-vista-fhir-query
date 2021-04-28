@@ -5,6 +5,7 @@ import static org.apache.commons.lang3.StringUtils.trimToNull;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gov.va.api.lighthouse.charon.api.RpcPrincipal;
 import java.io.File;
+import java.util.Collections;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
@@ -59,10 +60,17 @@ public class VistaApiConfig {
    * Get the RpcPrincipal for the given site. If it doesn't exist, return the default RpcPrincipal.
    */
   public RpcPrincipal getSiteSpecificPrincipalOrDefault(String site) {
-    if (getSiteSpecificPrincipals() == null) {
-      return defaultPrincipal();
-    }
     return getSiteSpecificPrincipals().getOrDefault(site, defaultPrincipal());
+  }
+
+  /**
+   * Lazy initializer.
+   */
+  private Map<String, RpcPrincipal> getSiteSpecificPrincipals() {
+    if (siteSpecificPrincipals == null) {
+      siteSpecificPrincipals = Collections.emptyMap();
+    }
+    return siteSpecificPrincipals;
   }
 
   @PostConstruct

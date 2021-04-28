@@ -8,6 +8,31 @@ import org.junit.jupiter.api.Test;
 
 @Slf4j
 public class VistaApiConfigTest {
+
+  @Test
+  void defaultPrincipal() {
+    var config = loadConfig("src/test/resources/access-code-and-verify-code-and-apu.json");
+    assertThat(config.defaultPrincipal())
+        .isEqualTo(
+            RpcPrincipal.builder()
+                .accessCode("fake:ac1")
+                .verifyCode("fake:vc1")
+                .applicationProxyUser("fake:apu1")
+                .build());
+
+    config =
+        loadConfig(
+            "src/test/resources/"
+                + "principals-and-site-specific-principals-and-access-code-and-verify-code-and-apu.json");
+    assertThat(config.defaultPrincipal())
+        .isEqualTo(
+            RpcPrincipal.builder()
+                .applicationProxyUser("FAKE:APU@999")
+                .accessCode("FAKE:AC@999")
+                .verifyCode("FAKE:VC@999")
+                .build());
+  }
+
   @Test
   void loadAccessCodeAndVerifyCodeAndApu() {
     var config = loadConfig("src/test/resources/access-code-and-verify-code-and-apu.json");
