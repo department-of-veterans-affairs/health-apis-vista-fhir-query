@@ -24,6 +24,11 @@ main() {
   if [ -n "${VFQ_R4_PORT:-}" ]; then addToSystemProperties "sentinel.r4.port" "${VFQ_R4_PORT}"; fi
   if [ -n "${MAGIC_ACCESS_TOKEN:-}" ]; then addToSystemProperties "access-token" "${MAGIC_ACCESS_TOKEN}"; fi
   if [ -n "${VFQ_CLIENT_KEY:-}" ]; then addToSystemProperties "client-key" "${VFQ_CLIENT_KEY}"; fi
+  if [ -n "${SYSTEM_OAUTH_ROBOT_AUD:-}" ]; then addToSystemProperties "system-oauth-robot.aud" "${SYSTEM_OAUTH_ROBOT_AUD}"; fi
+  if [ -n "${SYSTEM_OAUTH_ROBOT_TOKEN_URL:-}" ]; then addToSystemProperties "system-oauth-robot.token-url" "${SYSTEM_OAUTH_ROBOT_TOKEN_URL}"; fi
+  if [ -n "${SYSTEM_OAUTH_ROBOT_CLIENT_ID:-}" ]; then addToSystemProperties "system-oauth-robot.client-id" "${SYSTEM_OAUTH_ROBOT_CLIENT_ID}"; fi
+  if [ -n "${SYSTEM_OAUTH_ROBOT_CLIENT_SECRET:-}" ]; then addToSystemProperties "system-oauth-robot.client-secret" "${SYSTEM_OAUTH_ROBOT_CLIENT_SECRET}"; fi
+  if [ -n "${VISTA_CONNECTIVITY_ICN_AT_SITES:-}" ]; then addToSystemProperties "vista-connectivity.icn-at-sites" "${VISTA_CONNECTIVITY_ICN_AT_SITES}"; fi
 
   java-tests \
     --module-name "vista-fhir-query-tests" \
