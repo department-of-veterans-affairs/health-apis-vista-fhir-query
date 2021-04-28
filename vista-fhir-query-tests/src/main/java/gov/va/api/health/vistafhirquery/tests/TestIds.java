@@ -21,7 +21,7 @@ public final class TestIds {
 
   @NonNull String patient;
 
-  @Builder.Default String unknown = "5555555555555";
+  @Default String unknown = "5555555555555";
 
   @Default @NonNull List<IcnAtSites> patientSites = new ArrayList<>();
 
