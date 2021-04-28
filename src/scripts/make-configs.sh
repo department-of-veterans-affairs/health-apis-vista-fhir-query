@@ -54,8 +54,6 @@ main() {
 
   MISSING_SECRETS=false
   requiredParam VISTA_API_URL "${VISTA_API_URL}"
-  requiredParam VISTA_ACCESS_CODE "${VISTA_ACCESS_CODE}"
-  requiredParam VISTA_VERIFY_CODE "${VISTA_VERIFY_CODE}"
   requiredParam VFQ_DB_URL "${VFQ_DB_URL}"
   requiredParam VFQ_DB_USER "${VFQ_DB_USER}"
   requiredParam VFQ_DB_PASSWORD "${VFQ_DB_PASSWORD}"
@@ -173,7 +171,7 @@ EOF
 }
 
 populatePrincipalFile() {
-  cat > $REPO/vista-fhir-query/config/principals.json <<EOF
+  cat > $REPO/vista-fhir-query/config/principal.json <<EOF
 {
     "principal" : {
         "accessCode" : "${VFQ_DEFAULT_ACCESS_CODE}",
