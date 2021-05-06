@@ -76,7 +76,7 @@
         <version>${swagger-maven-plugin.version}</version>
         <executions>
           <execution>
-            <id>r4-data-query-swag</id>
+            <id>r4-swag</id>
             <phase>compile</phase>
             <goals>
               <goal>resolve</goal>
