@@ -61,6 +61,7 @@ public class RestVistaApiClient implements VistalinkApiClient {
   }
 
   /** Request an RPC at a specific VistA site. */
+  @Override
   public RpcResponse requestForVistaSite(String vistaSite, TypeSafeRpcRequest rpcRequestDetails) {
     RpcRequest rpcRequest =
         RpcRequest.builder()

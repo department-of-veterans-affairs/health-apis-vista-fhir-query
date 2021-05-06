@@ -61,6 +61,22 @@ public class VistaConnectivityIT {
   void connected(IcnAtSites icnAtSites) {
     assumeEnvironmentNotIn(Environment.STAGING, Environment.PROD);
     var sd = SystemDefinitions.systemDefinition().r4();
+    ExpectedResponse bundleResponse =
+        ExpectedResponse.of(
+            request(sd)
+                .request(Method.GET, sd.apiPath() + "Observation?patient={icn}", icnAtSites.icn()));
+    var bundle = bundleResponse.expect(200).expectValid(Observation.Bundle.class);
+    assertThat(bundle.total()).isGreaterThan(0);
+
+    String id = bundle.entry().get(0).resource().id();
+    var observation =
+        ExpectedResponse.of(request(sd).request(Method.GET, sd.apiPath() + "Observation/" + id))
+            .expect(200)
+            .expectValid(Observation.class);
+    assertThat(observation.id()).isEqualTo(id);
+  }
+
+  private RequestSpecification request(gov.va.api.health.sentinel.ServiceDefinition sd) {
     RequestSpecification request =
         RestAssured.given()
             .baseUri(sd.url())
@@ -69,11 +85,6 @@ public class VistaConnectivityIT {
             .headers(Map.of("Authorization", "Bearer " + token))
             .contentType("application/json")
             .accept("application/json");
-    ExpectedResponse response =
-        ExpectedResponse.of(
-            request.request(
-                Method.GET, sd.apiPath() + "Observation?patient={icn}", icnAtSites.icn()));
-    var bundle = response.expect(200).expectValid(Observation.Bundle.class);
-    assertThat(bundle.total()).isGreaterThan(0);
+    return request;
   }
 }

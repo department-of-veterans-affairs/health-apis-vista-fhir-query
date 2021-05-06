@@ -11,12 +11,12 @@
   <version>0.0.82-SNAPSHOT</version>
   <packaging>jar</packaging>
   <properties>
+    <charon.version>3.0.27</charon.version>
     <fhir-resources.version>6.0.10</fhir-resources.version>
-    <!-- ToDo Increase Coverage -->
     <jacoco.coverage>0.94</jacoco.coverage>
     <mssql-jdbc.version>7.4.1.jre8</mssql-jdbc.version>
+    <swagger-maven-plugin.version>2.1.7</swagger-maven-plugin.version>
     <talos.version>0.0.4</talos.version>
-    <charon.version>3.0.27</charon.version>
   </properties>
   <dependencies>
     <dependency>
@@ -70,6 +70,30 @@
   </dependencies>
   <build>
     <plugins>
+      <plugin>
+        <groupId>io.swagger.core.v3</groupId>
+        <artifactId>swagger-maven-plugin</artifactId>
+        <version>${swagger-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>r4-data-query-swag</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>resolve</goal>
+            </goals>
+            <configuration>
+              <contextId>r4-openapi</contextId>
+              <resourceClasses>
+                <resourceClass>gov.va.api.health.vistafhirquery.service.api.R4VistaFhirQueryService</resourceClass>
+              </resourceClasses>
+              <outputFileName>r4-openapi</outputFileName>
+              <outputPath>${project.build.outputDirectory}</outputPath>
+              <outputFormat>JSON</outputFormat>
+              <prettyPrint>true</prettyPrint>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <!--
         Needed by health-apis-datamart-synthetic-records to
         access entities and populate the database.

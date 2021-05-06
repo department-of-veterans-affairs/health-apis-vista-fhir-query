@@ -76,7 +76,7 @@ public final class SystemDefinitions {
   private static TestIds localIds() {
     return TestIds.builder()
         .patient("1011537977V693883")
-        .observationVitalSign("I3-j5wsEbInV30wlYgZeXfkDfHBlp5ogiUVdztpdekbjwk")
+        .observationVitalSign("I3-nfcGFM5JEsuzapkk9xecju3QH0MrK6tqZKVY9rd7wSk")
         .observationLaboratory("I3-KqbQBRfPz2QzBYOB9MoX6iis0i7kCY2n5Zn5RQssOEMCd96dST7kj4")
         .patientSites(icnAtSites())
         .build();

@@ -68,7 +68,7 @@ public class VistaObservationMocks implements MockService {
     var body =
         VprGetPatientData.Request.builder()
             .context(Optional.of("MOCKSERVICES"))
-            .dfn(VprGetPatientData.Request.PatientId.forIcn("5000000347"))
+            .dfn(VprGetPatientData.Request.PatientId.forIcn("1011537977V693883"))
             .type(Set.of(VprGetPatientData.Domains.vitals))
             .id(Optional.of("32071"))
             .build()

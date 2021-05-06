@@ -187,6 +187,7 @@ public class R4ObservationController {
     if (maybeCategory == null) {
       return null;
     }
+    //noinspection EnhancedSwitchMigration
     switch (maybeCategory) {
       case "vital-signs":
         return VprGetPatientData.Domains.vitals;
