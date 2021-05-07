@@ -131,7 +131,8 @@ EOF
   configValue vista-fhir-query $PROFILE vista.api.verify-code "${VISTA_APP_PROXY_VERIFY_CODE:-${VISTA_VERIFY_CODE}}"
   if [ -n "${VISTA_APP_PROXY_ACCESS_CODE:-}" ] && [ -n "${VISTA_APP_PROXY_VERIFY_CODE:-}" ] && [ -n "${VISTA_APP_PROXY_USER:-}" ]
   then
-    configValue vista-fhir-query $PROFILE vista.api.application-proxy-user "${VISTA_APP_PROXY_USER}"
+    addValue vista-fhir-query $PROFILE vista.api.application-proxy-user "${VISTA_APP_PROXY_USER}"
+    addValue vista-fhir-query $PROFILE vista.api.application-proxy-user-context "${VISTA_APP_PROXY_USER_CONTEXT}"
   fi
   configValue vista-fhir-query $PROFILE vista-fhir-query.internal.client-keys "disabled"
   configValue vista-fhir-query $PROFILE vista-fhir-query.public-url "http://localhost:8095"
