@@ -30,15 +30,15 @@ import org.springframework.web.client.RestTemplate;
 public class BackendHealthController {
   private final AtomicBoolean hasCachedBackendHealth = new AtomicBoolean(false);
 
-  private final String charonBaseUrl;
+  private final String charonHealthCheckUrl;
 
   private final RestTemplate restTemplate;
 
   BackendHealthController(
       @Autowired RestTemplate restTemplate,
-      @Value("${backend-health.charon.base-url}") String charonBaseUrl) {
+      @Value("${backend-health.charon.health-check-url}") String charonHealthCheckUrl) {
     this.restTemplate = restTemplate;
-    this.charonBaseUrl = removeTrailingSlash(charonBaseUrl);
+    this.charonHealthCheckUrl = removeTrailingSlash(charonHealthCheckUrl);
   }
 
   /** Clear cached resources. */
@@ -55,8 +55,7 @@ public class BackendHealthController {
   @Cacheable("backend-health")
   public ResponseEntity<Health> collectBackendHealth() {
     Instant now = Instant.now();
-    List<Health> backendHealths =
-        List.of(testHealth("charon", charonBaseUrl + "/actuator/health", now));
+    List<Health> backendHealths = List.of(testHealth("charon", charonHealthCheckUrl, now));
     Status status =
         backendHealths.stream().anyMatch(h -> h.getStatus().equals(Status.DOWN))
             ? Status.DOWN

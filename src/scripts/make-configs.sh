@@ -121,6 +121,11 @@ makeConfig() {
 }
 populateConfig() {
   makeConfig vista-fhir-query $PROFILE
+
+  #Backend Health Checks
+  configValue vista-fhir-query ${PROFILE} backend-health.charon.health-check-url "${VISTA_API_URL}/actuator/health"
+
+  # Vista API Things
   configValue vista-fhir-query $PROFILE vista.api.url "${VISTA_API_URL}"
   comment vista-fhir-query $PROFILE <<EOF
 # To populate vista.api.client-key, use the VISTALINK_CLIENT_KEY value in

@@ -44,7 +44,7 @@ public class BackendHealthControllerTest {
   }
 
   private BackendHealthController _controller() {
-    return new BackendHealthController(restTemplate, "http://charon");
+    return new BackendHealthController(restTemplate, "http://charon.app/health");
   }
 
   @ParameterizedTest
