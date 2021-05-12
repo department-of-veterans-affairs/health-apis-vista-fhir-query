@@ -17,6 +17,7 @@
     <mssql-jdbc.version>7.4.1.jre8</mssql-jdbc.version>
     <swagger-maven-plugin.version>2.1.7</swagger-maven-plugin.version>
     <talos.version>0.0.4</talos.version>
+    <swagger-examples-maven-plugin.version>2.0.0</swagger-examples-maven-plugin.version>
   </properties>
   <dependencies>
     <dependency>
@@ -90,6 +91,33 @@
               <outputPath>${project.build.outputDirectory}</outputPath>
               <outputFormat>JSON</outputFormat>
               <prettyPrint>true</prettyPrint>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>gov.va.plugin.maven</groupId>
+        <artifactId>swagger-examples-maven-plugin</artifactId>
+        <version>${swagger-examples-maven-plugin.version}</version>
+        <dependencies>
+          <dependency>
+            <groupId>gov.va.api.health</groupId>
+            <artifactId>us-core-r4-examples</artifactId>
+            <version>${fhir-resources.version}</version>
+            <scope>runtime</scope>
+          </dependency>
+        </dependencies>
+        <executions>
+          <execution>
+            <id>inject-examples</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>inject</goal>
+            </goals>
+            <configuration>
+              <files>
+                <file file="${project.build.outputDirectory}/r4-openapi.json" format="JSON"/>
+              </files>
             </configuration>
           </execution>
         </executions>
