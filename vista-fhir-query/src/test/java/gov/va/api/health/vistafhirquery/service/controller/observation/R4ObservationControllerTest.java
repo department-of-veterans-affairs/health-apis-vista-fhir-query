@@ -4,6 +4,8 @@ import static gov.va.api.health.vistafhirquery.service.controller.MockRequests.r
 import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationVitalSamples.Fhir.link;
 import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationVitalSamples.json;
 import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationVitalSamples.xml;
+import static gov.va.api.health.vistafhirquery.service.controller.observation.R4ObservationController.VISTA_EXCLUDE_HEADER;
+import static gov.va.api.health.vistafhirquery.service.controller.observation.R4ObservationController.VISTA_INCLUDE_HEADER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
@@ -21,14 +23,17 @@ import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.Alt
 import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.WitnessProtection;
 import gov.va.api.lighthouse.charon.api.RpcInvocationResult;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
+import gov.va.api.lighthouse.charon.api.RpcVistaTargets;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+@SuppressWarnings("HttpUrlsUsage")
 @ExtendWith(MockitoExtension.class)
 public class R4ObservationControllerTest {
   private static VitalVuidMapper mapper;
@@ -64,6 +69,10 @@ public class R4ObservationControllerTest {
         .bundlerFactory(bundlerFactory)
         .vistaApiConfig(mock(VistaApiConfig.class))
         .build();
+  }
+
+  RpcVistaTargets forPatient(String patient) {
+    return RpcVistaTargets.builder().forPatient(patient).build();
   }
 
   @Test
@@ -174,7 +183,7 @@ public class R4ObservationControllerTest {
   void searchByPatientAndCategoryKnown() {
     var request = requestFromUri("?category=vital-signs&_count=10&patient=p1");
     var results = ObservationVitalSamples.Vista.create().results();
-    when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
+    when(vlClient.requestForTarget(eq(forPatient("p1")), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
     var actual = controller().searchByPatient("vital-signs", null, null, "p1", request);
     var expected =
@@ -195,7 +204,7 @@ public class R4ObservationControllerTest {
   void searchByPatientAndCategoryMultipleKnown() {
     var request = requestFromUri("?category=laboratory,vital-signs&_count=10&patient=p1");
     var results = ObservationVitalSamples.Vista.create().resultsWithLab();
-    when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
+    when(vlClient.requestForTarget(eq(forPatient("p1")), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
     var actual = controller().searchByPatient("laboratory,vital-signs", null, null, "p1", request);
     var expected =
@@ -217,7 +226,7 @@ public class R4ObservationControllerTest {
   void searchByPatientAndCategoryOneKnownAndOneUnknown() {
     var request = requestFromUri("?category=laboratory,ew-david&_count=10&patient=p1");
     var results = ObservationLabSamples.Vista.create().results();
-    when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
+    when(vlClient.requestForTarget(eq(forPatient("p1")), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
     var actual = controller().searchByPatient("laboratory,ew-david", null, null, "p1", request);
     var expected =
@@ -252,7 +261,7 @@ public class R4ObservationControllerTest {
   void searchByPatientAndCodeKnownAndUnknown() {
     var request = requestFromUri("?_count=10&code=29463-7,NOPE&patient=p1");
     var results = ObservationVitalSamples.Vista.create().resultsWithLab();
-    when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
+    when(vlClient.requestForTarget(eq(forPatient("p1")), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
     var actual = controller().searchByPatient(null, "29463-7,NOPE", null, "p1", request);
     var expected =
@@ -271,7 +280,7 @@ public class R4ObservationControllerTest {
   void searchByPatientAndCodeKnownLab() {
     var request = requestFromUri("?_count=10&code=1751-7&patient=p1");
     var results = ObservationVitalSamples.Vista.create().resultsWithLab();
-    when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
+    when(vlClient.requestForTarget(eq(forPatient("p1")), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
     var actual = controller().searchByPatient(null, "1751-7", null, "p1", request);
     var expected =
@@ -290,7 +299,7 @@ public class R4ObservationControllerTest {
   void searchByPatientAndCodeKnownVital() {
     var request = requestFromUri("?_count=10&code=29463-7&patient=p1");
     var results = ObservationVitalSamples.Vista.create().resultsWithLab();
-    when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
+    when(vlClient.requestForTarget(eq(forPatient("p1")), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
     var actual = controller().searchByPatient(null, "29463-7", null, "p1", request);
     var expected =
@@ -309,7 +318,7 @@ public class R4ObservationControllerTest {
   void searchByPatientAndCodeMultipleKnown() {
     var request = requestFromUri("?_count=10&code=29463-7,1751-7&patient=p1");
     var results = ObservationVitalSamples.Vista.create().resultsWithLab();
-    when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
+    when(vlClient.requestForTarget(eq(forPatient("p1")), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
     var actual = controller().searchByPatient(null, "29463-7,1751-7", null, "p1", request);
     var expected =
@@ -330,7 +339,7 @@ public class R4ObservationControllerTest {
   void searchByPatientAndCodeUnknown() {
     var request = requestFromUri("?_count=10&code=NOPE&patient=p1");
     var results = ObservationVitalSamples.Vista.create().results();
-    when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
+    when(vlClient.requestForTarget(eq(forPatient("p1")), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "123", xml(results)));
     var actual = controller().searchByPatient(null, "NOPE", null, "p1", request);
     var expected =
@@ -349,7 +358,7 @@ public class R4ObservationControllerTest {
   void searchByPatientAndDateAndCode() {
     var request = requestFromUri("?_count=10&date=2010&code=29463-7&patient=p1");
     var results = ObservationVitalSamples.Vista.create().results();
-    when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
+    when(vlClient.requestForTarget(eq(forPatient("p1")), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
     var actual =
         controller().searchByPatient(null, "29463-7", new String[] {"2010"}, "p1", request);
@@ -369,7 +378,7 @@ public class R4ObservationControllerTest {
   void searchByPatientAndDateMultiple() {
     var request = requestFromUri("?_count=10&date=ge2010&date=lt2012&patient=p1");
     var results = ObservationVitalSamples.Vista.create().resultsWithLab();
-    when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
+    when(vlClient.requestForTarget(eq(forPatient("p1")), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
     var actual =
         controller().searchByPatient(null, null, new String[] {"ge2010", "lt2012"}, "p1", request);
@@ -393,7 +402,7 @@ public class R4ObservationControllerTest {
     var request = requestFromUri("?_count=10&patient=p1");
     var responseBody =
         "<results version='1.13' timeZone='-0500'><vitals total='1'><vital></vital></vitals></results>";
-    when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
+    when(vlClient.requestForTarget(eq(forPatient("p1")), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "123", responseBody));
     var actual = controller().searchByPatient(null, null, null, "p1", request);
     var expected =
@@ -412,7 +421,7 @@ public class R4ObservationControllerTest {
   void searchByPatientWithVistaPopulatedResults() {
     var request = requestFromUri("?_count=10&patient=p1");
     var results = ObservationVitalSamples.Vista.create().resultsWithLab();
-    when(vlClient.requestForPatient(eq("p1"), any(VprGetPatientData.Request.class)))
+    when(vlClient.requestForTarget(eq(forPatient("p1")), any(VprGetPatientData.Request.class)))
         .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
     var actual = controller().searchByPatient(null, null, null, "p1", request);
     var expected =
@@ -423,6 +432,40 @@ public class R4ObservationControllerTest {
                 ObservationVitalSamples.Fhir.create().weight(),
                 ObservationLabSamples.Fhir.create().observation()),
             3,
+            link(
+                BundleLink.LinkRelation.self,
+                "http://fugazi.com/r4/Observation",
+                "_count=10&patient=p1"));
+    assertThat(json(actual)).isEqualTo(json(expected));
+  }
+
+  @Test
+  void searchByPatientWithVistaSiteHeadersForcesRpcTargets() {
+    var request = requestFromUri("?_count=10&patient=p1");
+    request.addHeader(VISTA_INCLUDE_HEADER, "in1,in2");
+    request.addHeader(VISTA_EXCLUDE_HEADER, "ex1,ex2");
+    var results = ObservationVitalSamples.Vista.create().results();
+
+    ArgumentCaptor<RpcVistaTargets> captor = ArgumentCaptor.forClass(RpcVistaTargets.class);
+    when(vlClient.requestForTarget(captor.capture(), any(VprGetPatientData.Request.class)))
+        .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
+    var actual = controller().searchByPatient(null, null, null, "p1", request);
+
+    var expectedTargets =
+        RpcVistaTargets.builder()
+            .forPatient("p1")
+            .include(List.of("in1", "in2"))
+            .exclude(List.of("ex1", "ex2"))
+            .build();
+
+    assertThat(captor.getValue()).isEqualTo(expectedTargets);
+    var expected =
+        ObservationVitalSamples.Fhir.asBundle(
+            "http://fugazi.com/r4",
+            List.of(
+                ObservationVitalSamples.Fhir.create().bloodPressure(),
+                ObservationVitalSamples.Fhir.create().weight()),
+            2,
             link(
                 BundleLink.LinkRelation.self,
                 "http://fugazi.com/r4/Observation",

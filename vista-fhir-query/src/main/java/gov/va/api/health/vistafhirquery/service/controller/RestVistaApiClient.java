@@ -6,7 +6,6 @@ import gov.va.api.lighthouse.charon.api.RpcResponse;
 import gov.va.api.lighthouse.charon.api.RpcVistaTargets;
 import gov.va.api.lighthouse.charon.models.TypeSafeRpcRequest;
 import java.net.URI;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.SneakyThrows;
@@ -49,24 +48,13 @@ public class RestVistaApiClient implements VistalinkApiClient {
 
   /** Request an RPC based on a patients ICN. */
   @Override
-  public RpcResponse requestForPatient(String patient, TypeSafeRpcRequest rpcRequestDetails) {
+  public RpcResponse requestForTarget(
+      RpcVistaTargets target, TypeSafeRpcRequest rpcRequestDetails) {
     RpcRequest rpcRequest =
         RpcRequest.builder()
             .principal(config().defaultPrincipal())
             .siteSpecificPrincipals(config().siteSpecificPrincipals())
-            .target(RpcVistaTargets.builder().forPatient(patient).build())
-            .rpc(rpcRequestDetails.asDetails())
-            .build();
-    return makeRequest(rpcRequest);
-  }
-
-  /** Request an RPC at a specific VistA site. */
-  @Override
-  public RpcResponse requestForVistaSite(String vistaSite, TypeSafeRpcRequest rpcRequestDetails) {
-    RpcRequest rpcRequest =
-        RpcRequest.builder()
-            .principal(config().getSiteSpecificPrincipalOrDefault(vistaSite))
-            .target(RpcVistaTargets.builder().include(List.of(vistaSite)).build())
+            .target(target)
             .rpc(rpcRequestDetails.asDetails())
             .build();
     return makeRequest(rpcRequest);

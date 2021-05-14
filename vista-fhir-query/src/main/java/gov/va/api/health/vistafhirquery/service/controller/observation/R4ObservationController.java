@@ -1,7 +1,9 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
+import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toLocalDateMacroString;
 import static java.util.stream.Collectors.toSet;
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.health.vistafhirquery.service.config.VistaApiConfig;
@@ -15,6 +17,8 @@ import gov.va.api.health.vistafhirquery.service.controller.SegmentedVistaIdentif
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
 import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.WitnessProtection;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
+import gov.va.api.lighthouse.charon.api.RpcVistaTargets;
+import gov.va.api.lighthouse.charon.api.RpcVistaTargets.RpcVistaTargetsBuilder;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.Labs;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.Vitals;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
@@ -31,6 +35,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,7 +57,13 @@ import org.springframework.web.bind.annotation.RestController;
     produces = {"application/json", "application/fhir+json"})
 @AllArgsConstructor(onConstructor_ = {@Autowired, @NonNull})
 @Builder
+@Slf4j
 public class R4ObservationController {
+
+  public static final String VISTA_INCLUDE_HEADER = "VISTA-INCLUDE";
+
+  public static final String VISTA_EXCLUDE_HEADER = "VISTA-EXCLUDE";
+
   private final R4BundlerFactory bundlerFactory;
 
   private final VistalinkApiClient vistalinkApiClient;
@@ -153,8 +164,8 @@ public class R4ObservationController {
       return emptyBundleFor(request);
     }
     RpcResponse rpcResponse =
-        vistalinkApiClient.requestForPatient(
-            patient,
+        vistalinkApiClient.requestForTarget(
+            targetForPatient(patient, request),
             VprGetPatientData.Request.builder()
                 .context(Optional.ofNullable(vistaApiConfig.getApplicationProxyUserContext()))
                 .dfn(VprGetPatientData.Request.PatientId.forIcn(patient))
@@ -165,6 +176,22 @@ public class R4ObservationController {
     VprGetPatientData.Response vprPatientData =
         VprGetPatientData.create().fromResults(rpcResponse.results());
     return toBundle(request).apply(vprPatientData);
+  }
+
+  private RpcVistaTargets targetForPatient(String patient, HttpServletRequest request) {
+    RpcVistaTargetsBuilder targetBuilder = RpcVistaTargets.builder().forPatient(patient);
+    String forceInclude = request.getHeader(VISTA_INCLUDE_HEADER);
+    if (isNotEmpty(forceInclude)) {
+      log.info("Forcing inclusion of Vista {}", sanitize(forceInclude));
+      targetBuilder.include(List.of(forceInclude.split(",", -1)));
+    }
+    String forceExclude = request.getHeader(VISTA_EXCLUDE_HEADER);
+    if (isNotEmpty(forceExclude)) {
+      log.info("Forcing exclusion of Vista {}", sanitize(forceInclude));
+      targetBuilder.exclude(List.of(forceExclude.split(",", -1)));
+    }
+    RpcVistaTargets target = targetBuilder.build();
+    return target;
   }
 
   private R4Bundler<VprGetPatientData.Response, Observation, Observation.Entry, Observation.Bundle>
