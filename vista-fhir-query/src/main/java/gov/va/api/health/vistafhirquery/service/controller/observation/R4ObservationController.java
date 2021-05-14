@@ -187,7 +187,7 @@ public class R4ObservationController {
     }
     String forceExclude = request.getHeader(VISTA_EXCLUDE_HEADER);
     if (isNotEmpty(forceExclude)) {
-      log.info("Forcing exclusion of Vista {}", sanitize(forceInclude));
+      log.info("Forcing exclusion of Vista {}", sanitize(forceExclude));
       targetBuilder.exclude(List.of(forceExclude.split(",", -1)));
     }
     RpcVistaTargets target = targetBuilder.build();
