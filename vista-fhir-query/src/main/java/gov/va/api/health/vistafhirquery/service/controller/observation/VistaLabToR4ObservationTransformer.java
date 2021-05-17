@@ -20,8 +20,10 @@ import java.util.List;
 import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 @Builder
+@Slf4j
 public class VistaLabToR4ObservationTransformer {
   @NonNull private final String patientIcn;
 
@@ -59,6 +61,25 @@ public class VistaLabToR4ObservationTransformer {
 
   /** Transform a VPR PATIENT DATA VistA Lab result to FHIR Observation. */
   public Stream<Observation> conditionallyToFhir() {
+    try {
+      return conditionallyToFhirUnsafe();
+    } catch (Exception e) {
+      /*
+       * There are a multitude of surprise exceptions that could crop up because data from Vista can
+       * be very unreliable. Since the transformer is interacting strictly with data that is in
+       * memory, (no services, db, etc. are used in this portion of the logic.) Any exceptions
+       * thrown during transformation can be safely caught and the record ignored.
+       */
+      log.warn(
+          "Ignoring malformed record: type=Lab, site={}, id={}, error={}",
+          vistaSiteId,
+          vistaLab.id(),
+          e.getMessage());
+      return Stream.empty();
+    }
+  }
+
+  private Stream<Observation> conditionallyToFhirUnsafe() {
     // References Not Reflected: specimen, performer.facility, and performer.provider
     if (!hasAcceptedCode()) {
       return Stream.empty();

@@ -24,8 +24,10 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 @Builder
+@Slf4j
 public class VistaVitalToR4ObservationTransformer {
   @NonNull private final String patientIcn;
 
@@ -110,7 +112,8 @@ public class VistaVitalToR4ObservationTransformer {
         .filter(Objects::nonNull)
         .filter(
             measurement -> isBlank(conditions) || conditions.isAllowedVuidCode(measurement.vuid()))
-        .map(this::observationFromMeasurement);
+        .map(this::observationFromMeasurement)
+        .filter(Objects::nonNull);
   }
 
   private String extractLoinc(CodeableConcept code) {
@@ -139,6 +142,26 @@ public class VistaVitalToR4ObservationTransformer {
   }
 
   Observation observationFromMeasurement(Vitals.Measurement measurement) {
+    try {
+      return observationFromMeasurementUnsafe(measurement);
+    } catch (Exception e) {
+      /*
+       * There are a multitude of surprise exceptions that could crop up because data from Vista can
+       * be very unreliable. Since the transformer is interacting strictly with data that is in
+       * memory, (no services, db, etc. are used in this portion of the logic.) Any exceptions
+       * thrown during transformation can be safely caught and the record ignored.
+       */
+      log.warn(
+          "Ignoring malformed record: type=Vital, site={}, taken={}, measurement={}, error={}",
+          vistaSiteId,
+          vistaVital.taken(),
+          measurement.id(),
+          e.getMessage());
+      return null;
+    }
+  }
+
+  private Observation observationFromMeasurementUnsafe(Vitals.Measurement measurement) {
     var patientReference = toReference("Patient", patientIcn, null);
     var code = code(measurement);
     var method = method(measurement);

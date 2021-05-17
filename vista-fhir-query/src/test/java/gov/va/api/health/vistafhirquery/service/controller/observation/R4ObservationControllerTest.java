@@ -6,6 +6,7 @@ import static gov.va.api.health.vistafhirquery.service.controller.observation.Ob
 import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationVitalSamples.xml;
 import static gov.va.api.health.vistafhirquery.service.controller.observation.R4ObservationController.VISTA_EXCLUDE_HEADER;
 import static gov.va.api.health.vistafhirquery.service.controller.observation.R4ObservationController.VISTA_INCLUDE_HEADER;
+import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
@@ -24,8 +25,12 @@ import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.Wit
 import gov.va.api.lighthouse.charon.api.RpcInvocationResult;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
 import gov.va.api.lighthouse.charon.api.RpcVistaTargets;
+import gov.va.api.lighthouse.charon.models.ValueOnlyXmlAttribute;
+import gov.va.api.lighthouse.charon.models.vprgetpatientdata.Labs;
+import gov.va.api.lighthouse.charon.models.vprgetpatientdata.Vitals;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
 import java.util.List;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -436,6 +441,65 @@ public class R4ObservationControllerTest {
                 BundleLink.LinkRelation.self,
                 "http://fugazi.com/r4/Observation",
                 "_count=10&patient=p1"));
+    assertThat(json(actual)).isEqualTo(json(expected));
+  }
+
+  @Test
+  void searchByPatientWithVistaPopulatedResultsAndIgnoresInvalidRecords() {
+    var request = requestFromUri("?_count=10&patient=p1");
+    var goodResults = ObservationVitalSamples.Vista.create().resultsWithLab();
+    var badResults = ObservationVitalSamples.Vista.create().resultsWithLab();
+    badResults
+        .vitalStream()
+        .forEach(
+            v -> {
+              v.measurements().forEach(m -> m.id("bad-" + m.id()));
+              v.taken(ValueOnlyXmlAttribute.of("not-a-valid-date"));
+            });
+    badResults
+        .labStream()
+        .forEach(
+            l -> {
+              l.id(ValueOnlyXmlAttribute.of("bad-" + l.id().value()));
+              l.collected(ValueOnlyXmlAttribute.of("not-a-valid-date"));
+            });
+
+    var results =
+        VprGetPatientData.Response.Results.builder()
+            .version(goodResults.version())
+            .timeZone(goodResults.timeZone())
+            .vitals(
+                Vitals.builder()
+                    .total(goodResults.vitals().total() + badResults.vitals().total())
+                    .vitalResults(
+                        Stream.concat(goodResults.vitalStream(), badResults.vitalStream())
+                            .collect(toList()))
+                    .build())
+            .labs(
+                Labs.builder()
+                    .total(goodResults.labs().total() + badResults.labs().total())
+                    .labResults(
+                        Stream.concat(goodResults.labStream(), badResults.labStream())
+                            .collect(toList()))
+                    .build())
+            .build();
+
+    when(vlClient.requestForTarget(eq(forPatient("p1")), any(VprGetPatientData.Request.class)))
+        .thenReturn(rpcResponse(RpcResponse.Status.OK, "673", xml(results)));
+    var actual = controller().searchByPatient(null, null, null, "p1", request);
+    var expected =
+        ObservationVitalSamples.Fhir.asBundle(
+            "http://fugazi.com/r4",
+            List.of(
+                ObservationVitalSamples.Fhir.create().bloodPressure(),
+                ObservationVitalSamples.Fhir.create().weight(),
+                ObservationLabSamples.Fhir.create().observation()),
+            3,
+            link(
+                BundleLink.LinkRelation.self,
+                "http://fugazi.com/r4/Observation",
+                "_count=10&patient=p1"));
+
     assertThat(json(actual)).isEqualTo(json(expected));
   }
 

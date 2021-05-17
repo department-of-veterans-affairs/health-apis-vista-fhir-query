@@ -301,7 +301,11 @@ public class ObservationVitalSamples {
           .version("1.13")
           .timeZone("-0500")
           .vitals(Vitals.builder().total(1).vitalResults(vitals()).build())
-          .labs(Labs.builder().labResults(ObservationLabSamples.Vista.create().labs()).build())
+          .labs(
+              Labs.builder()
+                  .total(1)
+                  .labResults(ObservationLabSamples.Vista.create().labs())
+                  .build())
           .build();
     }
 
