@@ -5,6 +5,7 @@ import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
+import gov.va.api.health.ids.client.IdEncoder;
 import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.health.vistafhirquery.service.config.VistaApiConfig;
 import gov.va.api.health.vistafhirquery.service.controller.DateSearchBoundaries;
@@ -106,7 +107,7 @@ public class R4ObservationController {
   private SegmentedVistaIdentifier parseOrDie(String publicId) {
     try {
       return SegmentedVistaIdentifier.unpack(witnessProtection.toPrivateId(publicId));
-    } catch (IllegalArgumentException e) {
+    } catch (IdEncoder.BadId | IllegalArgumentException e) {
       throw new ResourceExceptions.NotFound(publicId);
     }
   }
