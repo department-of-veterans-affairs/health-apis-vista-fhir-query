@@ -109,7 +109,7 @@ class WitnessProtectionAdviceTest {
     var noF1 =
         WitnessProtectionAdvice.builder()
             .identityService(identityService)
-            .availableAgent(FugaziTwoAgent.of(prf))
+            .availableAgents(List.of(FugaziTwoAgent.of(prf)))
             .alternatePatientIds(new AlternatePatientIds.DisabledAlternatePatientIds())
             .protectedReferenceFactory(prf)
             .build();
@@ -130,8 +130,7 @@ class WitnessProtectionAdviceTest {
         .protectedReferenceFactory(prf)
         .alternatePatientIds(new AlternatePatientIds.DisabledAlternatePatientIds())
         .identityService(identityService)
-        .availableAgent(FugaziOneAgent.of(prf))
-        .availableAgent(FugaziTwoAgent.of(prf))
+        .availableAgents(List.of(FugaziOneAgent.of(prf), FugaziTwoAgent.of(prf)))
         .build();
   }
 

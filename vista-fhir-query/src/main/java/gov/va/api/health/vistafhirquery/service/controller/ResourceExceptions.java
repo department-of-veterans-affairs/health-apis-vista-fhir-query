@@ -2,6 +2,8 @@ package gov.va.api.health.vistafhirquery.service.controller;
 
 import com.google.errorprone.annotations.FormatMethod;
 
+/** The because methods exist to add readability when throwing exceptions. */
+@SuppressWarnings("DoNotCallSuggester")
 public class ResourceExceptions {
 
   public static final class NotFound extends ResourceException {

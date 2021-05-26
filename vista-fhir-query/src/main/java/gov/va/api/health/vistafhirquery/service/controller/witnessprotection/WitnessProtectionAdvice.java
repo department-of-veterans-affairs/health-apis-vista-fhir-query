@@ -20,7 +20,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.NonNull;
-import lombok.Singular;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
@@ -54,7 +53,7 @@ public class WitnessProtectionAdvice extends IdentitySubstitution<ProtectedRefer
       @NonNull ProtectedReferenceFactory protectedReferenceFactory,
       @NonNull AlternatePatientIds alternatePatientIds,
       @NonNull IdentityService identityService,
-      @Singular List<WitnessProtectionAgent<?>> availableAgents) {
+      List<WitnessProtectionAgent<?>> availableAgents) {
     super(identityService, ProtectedReference::asResourceIdentity, NotFound::new);
     this.protectedReferenceFactory = protectedReferenceFactory;
     this.alternatePatientIds = alternatePatientIds;
