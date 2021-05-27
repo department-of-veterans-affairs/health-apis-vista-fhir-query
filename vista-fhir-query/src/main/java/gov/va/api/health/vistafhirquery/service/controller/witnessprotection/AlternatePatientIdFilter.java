@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.lang.NonNull;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+/** Filter for supporting alternate ids. */
 @AllArgsConstructor(staticName = "of")
 public class AlternatePatientIdFilter extends OncePerRequestFilter {
 

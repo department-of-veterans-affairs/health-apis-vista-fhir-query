@@ -18,6 +18,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+/** Rest template without SSL. */
 @Slf4j
 @Component
 public class InsecureRestTemplateProvider {

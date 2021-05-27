@@ -6,6 +6,7 @@ import io.restassured.response.ResponseBody;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 
+/** Helps tests determine if the Operation outcome is the same as what the one that is expected. */
 @Slf4j
 public class OperationOutcomesAreFunctionallyEqual implements ErrorsAreFunctionallyEqual {
   /** Remove fields unique to each instance: generated ID, timestamp, and encrypted data. */

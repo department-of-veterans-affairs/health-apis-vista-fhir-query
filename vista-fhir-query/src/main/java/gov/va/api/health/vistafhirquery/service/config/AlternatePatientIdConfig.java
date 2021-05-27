@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 
+/** Allows configured alternate id replacement. */
 @Configuration
 @Slf4j
 public class AlternatePatientIdConfig {

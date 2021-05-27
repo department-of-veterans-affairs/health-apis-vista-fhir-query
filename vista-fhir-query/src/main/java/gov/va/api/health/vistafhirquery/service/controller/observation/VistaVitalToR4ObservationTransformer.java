@@ -26,6 +26,7 @@ import lombok.Builder;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+/** Transformer to turn Vista Vitals into R4 Observations. */
 @Builder
 @Slf4j
 public class VistaVitalToR4ObservationTransformer {

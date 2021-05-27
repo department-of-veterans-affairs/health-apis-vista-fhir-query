@@ -10,7 +10,7 @@ import gov.va.api.health.ids.client.IdsClientProperties.EncodedIdsFormatProperti
 import gov.va.api.health.ids.client.RestIdentityServiceClientConfig;
 import gov.va.api.health.vistafhirquery.idsmapping.VistaFhirQueryIdsCodebookSupplier;
 import gov.va.api.health.vistafhirquery.service.controller.SegmentedVistaIdentifier.PatientIdentifierType;
-import gov.va.api.health.vistafhirquery.service.controller.SegmentedVistaIdentifier.TenVSix;
+import gov.va.api.health.vistafhirquery.service.controller.SegmentedVistaIdentifier.TenvSix;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData.Domains;
 import java.util.List;
@@ -214,22 +214,22 @@ public class SegmentedVistaIdentifierTest {
 
   @Test
   void tenVSixParsing() {
-    assertThat(TenVSix.parse("1122334455V667788").get())
-        .isEqualTo(TenVSix.builder().ten(1122334455).six(667788).build());
-    assertThat(TenVSix.parse("1122334455").get())
-        .isEqualTo(TenVSix.builder().ten(1122334455).six(0).build());
-    assertThat(TenVSix.parse("12345").get()).isEqualTo(TenVSix.builder().ten(12345).six(0).build());
-    assertThat(TenVSix.parse(null)).isEmpty();
-    assertThat(TenVSix.parse("")).isEmpty();
-    assertThat(TenVSix.parse(Long.MAX_VALUE + "9")).isEmpty();
-    assertThat(TenVSix.parse("1122334455V" + (Integer.MAX_VALUE + 1L))).isEmpty();
-    assertThat(TenVSix.parse("1122334455X667788")).isEmpty();
-    assertThat(TenVSix.parse("112233445V667788")).isEmpty();
-    assertThat(TenVSix.parse("1122334455V67788")).isEmpty();
-    assertThat(TenVSix.parse("112233445aV667788")).isEmpty();
-    assertThat(TenVSix.parse("1122334455Va67788")).isEmpty();
-    assertThat(TenVSix.builder().ten(1122334455).six(667788).build().toString())
+    assertThat(TenvSix.parse("1122334455V667788").get())
+        .isEqualTo(TenvSix.builder().ten(1122334455).six(667788).build());
+    assertThat(TenvSix.parse("1122334455").get())
+        .isEqualTo(TenvSix.builder().ten(1122334455).six(0).build());
+    assertThat(TenvSix.parse("12345").get()).isEqualTo(TenvSix.builder().ten(12345).six(0).build());
+    assertThat(TenvSix.parse(null)).isEmpty();
+    assertThat(TenvSix.parse("")).isEmpty();
+    assertThat(TenvSix.parse(Long.MAX_VALUE + "9")).isEmpty();
+    assertThat(TenvSix.parse("1122334455V" + (Integer.MAX_VALUE + 1L))).isEmpty();
+    assertThat(TenvSix.parse("1122334455X667788")).isEmpty();
+    assertThat(TenvSix.parse("112233445V667788")).isEmpty();
+    assertThat(TenvSix.parse("1122334455V67788")).isEmpty();
+    assertThat(TenvSix.parse("112233445aV667788")).isEmpty();
+    assertThat(TenvSix.parse("1122334455Va67788")).isEmpty();
+    assertThat(TenvSix.builder().ten(1122334455).six(667788).build().toString())
         .isEqualTo("1122334455V667788");
-    assertThat(TenVSix.builder().ten(1122334455).six(0).build().toString()).isEqualTo("1122334455");
+    assertThat(TenvSix.builder().ten(1122334455).six(0).build().toString()).isEqualTo("1122334455");
   }
 }

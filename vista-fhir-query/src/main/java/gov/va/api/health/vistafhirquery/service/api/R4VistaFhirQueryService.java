@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.security.SecuritySchemes;
 import io.swagger.v3.oas.annotations.servers.Server;
 import javax.ws.rs.Path;
 
+/** Resource class for open api. */
 @OpenAPIDefinition(
     security = {
       @SecurityRequirement(

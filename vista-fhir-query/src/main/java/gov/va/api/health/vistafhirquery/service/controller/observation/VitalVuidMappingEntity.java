@@ -12,6 +12,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+/** Entity for the VitalVuidMapping table. */
 @Data
 @Entity
 @Builder

@@ -12,6 +12,7 @@ import lombok.NonNull;
 import lombok.Value;
 import org.apache.commons.lang3.StringUtils;
 
+/** TestIds. */
 @Value
 @Builder(toBuilder = true)
 public final class TestIds {
@@ -25,6 +26,7 @@ public final class TestIds {
 
   @Default @NonNull List<IcnAtSites> patientSites = new ArrayList<>();
 
+  /** Represents an ICN at potentially multiple vista sites. */
   @Value
   @Builder
   public static class IcnAtSites {

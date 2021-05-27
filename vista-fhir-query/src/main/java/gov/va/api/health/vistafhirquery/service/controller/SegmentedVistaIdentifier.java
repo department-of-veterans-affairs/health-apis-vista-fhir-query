@@ -19,6 +19,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
+/** SegmentedVistaIdentifier. */
 @Value
 @Builder
 public class SegmentedVistaIdentifier {
@@ -84,6 +85,7 @@ public class SegmentedVistaIdentifier {
         domainAbbreviationMappings().inverse().get(vprRpcDomain()) + vistaRecordId());
   }
 
+  /** The type of a Vista identifier which can be DFN, local ICN, or National ICN. */
   @RequiredArgsConstructor
   public enum PatientIdentifierType {
     /** A Patients DFN in VistA. */
@@ -112,12 +114,14 @@ public class SegmentedVistaIdentifier {
     }
   }
 
+  /** Format of the vista identifier. */
   private interface Format {
     String tryPack(SegmentedVistaIdentifier vis);
 
     SegmentedVistaIdentifier unpack(String data);
   }
 
+  /** Encoder used for the vista identifier. */
   private static class Encoder {
     private final Map<Character, Format> formats;
 
@@ -172,7 +176,7 @@ public class SegmentedVistaIdentifier {
       if (!SITE.matcher(vis.vistaSiteId()).matches()) {
         return null;
       }
-      var tenSix = TenVSix.parse(vis.patientIdentifier());
+      var tenSix = TenvSix.parse(vis.patientIdentifier());
       if (tenSix.isEmpty()) {
         return null;
       }
@@ -229,12 +233,12 @@ public class SegmentedVistaIdentifier {
 
   @Value
   @Builder
-  static class TenVSix {
+  static class TenvSix {
     long ten;
 
     int six;
 
-    static Optional<TenVSix> parse(String icn) {
+    static Optional<TenvSix> parse(String icn) {
       if (isBlank(icn)) {
         return Optional.empty();
       }
@@ -242,13 +246,13 @@ public class SegmentedVistaIdentifier {
         /* Attempt to find national ICN in 10V6 format. */
         if (icn.length() == 10 + 1 + 6 && icn.charAt(10) == 'V') {
           return Optional.of(
-              TenVSix.builder()
+              TenvSix.builder()
                   .ten(Long.parseLong(icn.substring(0, 10)))
                   .six(Integer.parseInt(icn.substring(11)))
                   .build());
         }
         /* Attempt to find all numeric lab-style ID. */
-        return Optional.of(TenVSix.builder().ten(Long.parseLong(icn)).six(0).build());
+        return Optional.of(TenvSix.builder().ten(Long.parseLong(icn)).six(0).build());
       } catch (NumberFormatException e) {
         return Optional.empty();
       }

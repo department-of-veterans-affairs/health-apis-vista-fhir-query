@@ -15,6 +15,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+/** Properties for defining working links in responses. */
 @Configuration
 @EnableConfigurationProperties
 @ConfigurationProperties("vista-fhir-query")
@@ -53,6 +54,7 @@ public class LinkProperties {
     return new Links(publicUrl, publicR4BasePath, getCustomR4UrlAndPath());
   }
 
+  /** Links. */
   @Accessors(fluent = true)
   public static class Links {
 

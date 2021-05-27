@@ -7,6 +7,7 @@ import gov.va.api.health.sentinel.TestClient;
 import java.util.List;
 import lombok.experimental.UtilityClass;
 
+/** Utility class that defines test clients that can be used across all tests. */
 @UtilityClass
 public final class TestClients {
   /** Can be used when testing things that don't map to fhir objects e.g. Ping. */

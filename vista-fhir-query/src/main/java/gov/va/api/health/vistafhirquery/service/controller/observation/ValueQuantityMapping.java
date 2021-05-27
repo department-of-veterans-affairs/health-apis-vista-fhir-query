@@ -8,10 +8,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 
+/** KBS approved Mappings of Value Quantities. */
 public interface ValueQuantityMapping {
 
   Quantity toQuantity(String value, String unit);
 
+  /** General Value quantity allows pass through of values and units without special mappings. */
   class GeneralValueQuantityMapping implements ValueQuantityMapping {
     @Override
     public Quantity toQuantity(String value, String unit) {
@@ -22,6 +24,7 @@ public interface ValueQuantityMapping {
     }
   }
 
+  /** Value quantity mappings for Vital signs. */
   @AllArgsConstructor
   class VitalSignsValueQuantityMapping implements ValueQuantityMapping {
 

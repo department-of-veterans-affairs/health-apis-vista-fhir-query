@@ -16,6 +16,7 @@ import org.mockserver.model.Header;
 import org.mockserver.model.HttpRequest;
 import org.mockserver.model.JsonBody;
 
+/** MockServiceRequests. */
 @Slf4j
 @UtilityClass
 public class MockServiceRequests {

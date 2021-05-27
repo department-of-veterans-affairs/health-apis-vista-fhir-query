@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 
+/** InterpretationDisplayMapping. */
 @Slf4j
 public class InterpretationDisplayMapping {
   private static final Map<String, String> MAPPINGS = populateMappings();

@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+/** Maps vista qualifiers to Observation methods. */
 public class MethodMapping {
 
   /** Converts qualifier vuids into codings for the Method CodeableConcept. */

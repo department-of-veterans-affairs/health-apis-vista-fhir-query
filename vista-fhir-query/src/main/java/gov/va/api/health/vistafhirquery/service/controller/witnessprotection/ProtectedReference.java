@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
+/** Protected reference of a resource. */
 @Builder
 @Getter
 @ToString

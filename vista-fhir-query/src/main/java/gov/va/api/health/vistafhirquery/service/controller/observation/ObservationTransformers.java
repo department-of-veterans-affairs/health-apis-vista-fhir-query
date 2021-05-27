@@ -12,6 +12,7 @@ import gov.va.api.lighthouse.charon.models.ValueOnlyXmlAttribute;
 import java.util.List;
 import lombok.experimental.UtilityClass;
 
+/** Utility class to help with common Observation transformations. */
 @UtilityClass
 public class ObservationTransformers {
   /** Build a list of ReferenceRanges using Vista value attributes for the high and low values. */

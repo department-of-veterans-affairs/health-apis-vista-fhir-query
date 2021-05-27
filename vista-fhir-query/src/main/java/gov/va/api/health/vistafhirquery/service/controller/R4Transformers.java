@@ -17,6 +17,7 @@ import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 
+/** Utility class for common transformations. */
 @UtilityClass
 public class R4Transformers {
   private static final Pattern BIG_DECIMAL_PATTERN = Pattern.compile("\\d+(\\.\\d+)?");

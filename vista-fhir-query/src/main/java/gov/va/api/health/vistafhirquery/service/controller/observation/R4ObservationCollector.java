@@ -15,6 +15,7 @@ import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
 
+/** Collects Observations, Vitals before Labs. */
 @Value
 @Builder
 public class R4ObservationCollector {

@@ -13,6 +13,7 @@ import org.mockserver.model.Header;
 import org.mockserver.netty.MockServer;
 import org.springframework.stereotype.Component;
 
+/** Defines mock server configuration. */
 @Slf4j
 @Component
 public class MockServices {

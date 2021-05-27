@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
+/** Mapper that gets the mapping from a database and allows interaction with the cached mapping. */
 @Data
 @Component
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -68,6 +69,7 @@ public class VitalVuidMapper {
         .collect(Collectors.toList());
   }
 
+  /** VitalVuidMapping. */
   @Data
   @Builder
   public static class VitalVuidMapping {

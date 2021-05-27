@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+/** Health endpoint that reports on the aggregate backend service health. */
 @Slf4j
 @RestController
 @RequestMapping(

@@ -16,6 +16,7 @@ import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/** ProtectedReferenceFactory. */
 @Component
 @AllArgsConstructor(onConstructor_ = @Autowired)
 public class ProtectedReferenceFactory {
@@ -106,8 +107,10 @@ public class ProtectedReferenceFactory {
     return update -> linkProperties.r4().readUrl(update.resourceType(), update.newResourceId());
   }
 
+  /** NewReferenceValueStrategy. */
   public interface NewReferenceValueStrategy extends Function<ReferenceUpdate, String> {}
 
+  /** ReferenceUpdate. */
   @Builder
   public static class ReferenceUpdate {
     private final String[] uriParts;

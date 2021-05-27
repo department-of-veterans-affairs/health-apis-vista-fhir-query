@@ -5,6 +5,7 @@ import gov.va.api.lighthouse.charon.api.RpcVistaTargets;
 import gov.va.api.lighthouse.charon.models.TypeSafeRpcRequest;
 import java.util.List;
 
+/** Client for using the Vistalink API. */
 public interface VistalinkApiClient {
 
   default RpcResponse requestForPatient(String patient, TypeSafeRpcRequest rpcRequestDetails) {

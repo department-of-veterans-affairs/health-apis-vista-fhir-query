@@ -5,6 +5,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import javax.servlet.http.HttpServletRequest;
 import lombok.experimental.UtilityClass;
 
+/** Utility class for request parameters. */
 @UtilityClass
 public class HttpRequestParameters {
 

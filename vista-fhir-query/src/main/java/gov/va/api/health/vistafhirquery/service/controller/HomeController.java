@@ -12,6 +12,7 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+/** Endpoint for openapi.json and home redirect to open api. */
 @SuppressWarnings("WeakerAccess")
 @Controller
 public class HomeController {

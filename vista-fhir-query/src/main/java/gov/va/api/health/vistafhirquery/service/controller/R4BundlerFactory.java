@@ -14,6 +14,7 @@ import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/** R4BundlerFactory. */
 @Component
 @AllArgsConstructor(onConstructor_ = @Autowired)
 @Builder

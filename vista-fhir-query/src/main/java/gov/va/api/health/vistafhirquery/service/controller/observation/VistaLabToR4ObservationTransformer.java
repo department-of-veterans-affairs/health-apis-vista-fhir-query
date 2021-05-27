@@ -22,6 +22,7 @@ import lombok.Builder;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+/** Transformer to turn Vista Labs into R4 Observations. */
 @Builder
 @Slf4j
 public class VistaLabToR4ObservationTransformer {

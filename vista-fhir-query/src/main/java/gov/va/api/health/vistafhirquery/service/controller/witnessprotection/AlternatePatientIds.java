@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Value;
 
+/** Interface facilitate interaction with with alternate ids. */
 public interface AlternatePatientIds {
 
   /** Return true if the given parameter is a known patient ID type request parameter. */
@@ -30,6 +31,7 @@ public interface AlternatePatientIds {
    */
   String toPublicId(String privateId);
 
+  /** DisabledAlternatePatientIds. */
   class DisabledAlternatePatientIds implements AlternatePatientIds {
 
     @Override
@@ -48,6 +50,7 @@ public interface AlternatePatientIds {
     }
   }
 
+  /** MappedAlternatePatientIds. */
   @Value
   class MappedAlternatePatientIds implements AlternatePatientIds {
 

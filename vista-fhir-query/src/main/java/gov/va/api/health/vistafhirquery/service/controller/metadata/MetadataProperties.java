@@ -9,6 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+/** MetadataProperties. */
 @Data
 @Builder
 @Configuration
@@ -34,6 +35,7 @@ public class MetadataProperties {
     PATIENT
   }
 
+  /** ContactProperties . */
   @Data
   @Builder
   @NoArgsConstructor
@@ -44,6 +46,7 @@ public class MetadataProperties {
     private String email;
   }
 
+  /** SecurityProperties . */
   @Data
   @Builder
   @NoArgsConstructor
@@ -57,6 +60,7 @@ public class MetadataProperties {
     private String description;
   }
 
+  /** VersionSpecificProperties . */
   @Data
   @Builder
   @NoArgsConstructor

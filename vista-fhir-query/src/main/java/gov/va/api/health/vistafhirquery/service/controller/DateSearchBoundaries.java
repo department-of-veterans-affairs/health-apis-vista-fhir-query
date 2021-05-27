@@ -4,6 +4,7 @@ import gov.va.api.health.fhir.api.FhirDateTimeParameter;
 import java.time.Instant;
 import lombok.Getter;
 
+/** Deals with these certain date searches defined by fhir : EQ, SA, GT, EB, LT, GE, LE. */
 public class DateSearchBoundaries {
   private final FhirDateTimeParameter date1;
 

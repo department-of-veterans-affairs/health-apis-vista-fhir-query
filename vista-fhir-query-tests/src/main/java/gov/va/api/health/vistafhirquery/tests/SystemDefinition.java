@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.NonNull;
 import lombok.Value;
 
+/** SystemDefinition. */
 @Value
 @Builder
 public final class SystemDefinition {

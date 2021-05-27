@@ -6,6 +6,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Value;
 
+/** Defines vuid codes allowed by VistA and loinc codes allowed by R4 Observation. */
 public interface AllowedObservationCodes {
 
   static AllowedObservationCodes allowAll() {
@@ -23,6 +24,7 @@ public interface AllowedObservationCodes {
   /** Test a Vista VUID and check it matches one of the allowed codes. */
   boolean isAllowedVuidCode(String vuid);
 
+  /** Allows all codes. */
   class AllowAllObservationCodes implements AllowedObservationCodes {
     @Override
     public boolean isAllowedLoincCode(String loinc) {
@@ -35,6 +37,7 @@ public interface AllowedObservationCodes {
     }
   }
 
+  /** Allows specific set of codes. */
   @Value
   @RequiredArgsConstructor
   class AllowOnlyTheseObservationCodes implements AllowedObservationCodes {

@@ -5,6 +5,7 @@ import gov.va.api.lighthouse.charon.api.RpcResponse;
 import java.util.List;
 import lombok.experimental.UtilityClass;
 
+/** Utility class for verifying vistalink api results and throwing exceptions if not acceptable. */
 @UtilityClass
 public class RpcResponseVerifier {
 
@@ -29,6 +30,7 @@ public class RpcResponseVerifier {
     }
   }
 
+  /** Flavor of runtime exception for a vistalink api request failure. */
   public static class VistalinkApiRequestFailure extends RuntimeException {
     public VistalinkApiRequestFailure(String message) {
       super(message);

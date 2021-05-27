@@ -16,6 +16,7 @@ import lombok.Synchronized;
 import lombok.experimental.UtilityClass;
 import org.slf4j.LoggerFactory;
 
+/** System definitions that can be used by tests. */
 @UtilityClass
 public final class SystemDefinitions {
   private static final ReducedSpamLogger log =

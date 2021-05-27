@@ -22,6 +22,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.mockserver.client.MockServerClient;
 
+/** Mocked Observations from VPRGETPATIENTDATA. */
 @Data
 @Slf4j
 @RequiredArgsConstructor(staticName = "using")
