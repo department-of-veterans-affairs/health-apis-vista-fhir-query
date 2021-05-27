@@ -12,12 +12,12 @@
   <packaging>jar</packaging>
   <properties>
     <charon.version>3.0.30</charon.version>
-    <fhir-resources.version>6.0.10</fhir-resources.version>
+    <fhir-resources.version>7.0.0</fhir-resources.version>
     <jacoco.coverage>0.94</jacoco.coverage>
     <mssql-jdbc.version>7.4.1.jre8</mssql-jdbc.version>
-    <swagger-maven-plugin.version>2.1.7</swagger-maven-plugin.version>
-    <talos.version>0.0.4</talos.version>
-    <swagger-examples-maven-plugin.version>2.0.0</swagger-examples-maven-plugin.version>
+    <swagger-maven-plugin.version>2.1.9</swagger-maven-plugin.version>
+    <talos.version>1.0.0</talos.version>
+    <swagger-examples-maven-plugin.version>3.0.0</swagger-examples-maven-plugin.version>
   </properties>
   <dependencies>
     <dependency>

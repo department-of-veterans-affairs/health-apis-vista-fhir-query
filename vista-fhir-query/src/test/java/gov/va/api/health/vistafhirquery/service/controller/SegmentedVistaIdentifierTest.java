@@ -154,8 +154,7 @@ public class SegmentedVistaIdentifierTest {
                             .i3Enabled(true)
                             .encodingKey("some-longish-key-here")
                             .build())
-                    .build(),
-                null)
+                    .build())
             .encodingIdentityServiceClient(new VistaFhirQueryIdsCodebookSupplier().get());
     String i3 =
         ids.register(
