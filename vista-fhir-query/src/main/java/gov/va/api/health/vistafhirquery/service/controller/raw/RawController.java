@@ -1,4 +1,4 @@
-package gov.va.api.health.vistafhirquery.service.controller.organization;
+package gov.va.api.health.vistafhirquery.service.controller.raw;
 
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
@@ -12,24 +12,22 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * Request Mappings for Organization Profile using a VistA backend.
- *
- * @implSpec http://hl7.org/fhir/us/carin-bb/2020Feb/StructureDefinition-CARIN-BB-Organization.html
- */
+/** Internal endpoint for getting raw payloads directly from vista. */
 @Validated
 @RestController
 @RequestMapping(
-    value = "/r4/Organization",
+    value = "/raw",
     produces = {"application/json", "application/fhir+json"})
 @AllArgsConstructor(onConstructor_ = {@Autowired, @NonNull})
 @Builder
-public class R4OrganizationController {
+public class RawController {
 
   private final VistalinkApiClient vistalinkApiClient;
 
-  @GetMapping(params = {"site", "icn"})
-  public RpcResponse searchRaw(String site, String icn) {
+  @GetMapping(
+      value = "/Organization",
+      params = {"site", "icn"})
+  public RpcResponse organization(String site, String icn) {
     return vistalinkApiClient.requestForVistaSite(
         site, IblhsAmcmsGetIns.Request.builder().icn(icn).build());
   }
