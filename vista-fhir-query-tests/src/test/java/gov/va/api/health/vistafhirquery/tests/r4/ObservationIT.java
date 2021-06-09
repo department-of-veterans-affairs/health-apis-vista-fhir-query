@@ -25,7 +25,7 @@ public class ObservationIT {
 
   @Test
   void read() {
-    assumeEnvironmentNotIn(Environment.STAGING);
+    assumeEnvironmentNotIn(Environment.STAGING, Environment.PROD);
     var path = "Observation/{observation}";
     verifyAll(
         test(200, Observation.class, path, testIds.observationVitalSign()),
@@ -35,7 +35,7 @@ public class ObservationIT {
 
   @Test
   void search() {
-    assumeEnvironmentNotIn(Environment.STAGING);
+    assumeEnvironmentNotIn(Environment.STAGING, Environment.PROD);
     verifyAll(
         test(
             200,

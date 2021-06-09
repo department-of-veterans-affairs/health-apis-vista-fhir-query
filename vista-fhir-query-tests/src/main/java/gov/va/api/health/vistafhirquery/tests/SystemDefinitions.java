@@ -83,6 +83,16 @@ public final class SystemDefinitions {
         .build();
   }
 
+  private static SystemDefinition production() {
+    String url = "https://blue.production.lighthouse.va.gov";
+    return SystemDefinition.builder()
+        .internal(serviceDefinition("internal", url, 443, null, "/vista-fhir-query/"))
+        .r4(serviceDefinition("r4", url, 443, magicAccessToken(), "/vista-fhir-query/r4"))
+        .publicIds(productionIds())
+        .clientKey(clientKey())
+        .build();
+  }
+
   private static TestIds productionIds() {
     return TestIds.builder()
         .patient("1011537977V693883")
@@ -147,6 +157,8 @@ public final class SystemDefinitions {
   public static SystemDefinition systemDefinition() {
     loadConfigSecretsProperties();
     switch (Environment.get()) {
+      case PROD:
+        return production();
       case LAB:
         return lab();
       case LOCAL:
