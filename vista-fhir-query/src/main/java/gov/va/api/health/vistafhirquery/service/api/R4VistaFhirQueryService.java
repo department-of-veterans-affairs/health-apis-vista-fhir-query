@@ -1,6 +1,5 @@
 package gov.va.api.health.vistafhirquery.service.api;
 
-import gov.va.api.health.r4.api.ObservationApi;
 import io.swagger.v3.oas.annotations.ExternalDocumentation;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
@@ -86,4 +85,4 @@ import javax.ws.rs.Path;
                       })))
 })
 @Path("/")
-public interface R4VistaFhirQueryService extends ObservationApi {}
+public interface R4VistaFhirQueryService extends R4ObservationApi {}
