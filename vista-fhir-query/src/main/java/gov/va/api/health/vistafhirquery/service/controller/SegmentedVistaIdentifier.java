@@ -163,7 +163,7 @@ public class SegmentedVistaIdentifier {
   private static class FormatCompressedObservationLab implements Format {
     private static final Pattern SITE = Pattern.compile("[0-9]{3}");
 
-    private static final Pattern RECORD_ID = Pattern.compile("CH;[0-9]{7}\\.[0-9]{1,6};[0-9]{2}");
+    private static final Pattern RECORD_ID = Pattern.compile("CH;[0-9]{7}\\.[0-9]{1,6};[0-9]+");
 
     @Override
     public String tryPack(SegmentedVistaIdentifier vis) {
