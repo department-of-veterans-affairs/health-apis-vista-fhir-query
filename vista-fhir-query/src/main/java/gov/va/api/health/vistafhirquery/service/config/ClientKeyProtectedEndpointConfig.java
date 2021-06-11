@@ -49,7 +49,8 @@ public class ClientKeyProtectedEndpointConfig {
             .unauthorizedResponse(unauthorizedResponse())
             .build());
 
-    registration.addUrlPatterns("/raw/*", PathRewriteConfig.leadingPath() + "raw/*");
+    registration.addUrlPatterns(
+        "/internal/raw/*", PathRewriteConfig.leadingPath() + "/internal/raw/*");
 
     return registration;
   }

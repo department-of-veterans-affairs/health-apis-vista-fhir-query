@@ -4,10 +4,10 @@
   <parent>
     <groupId>gov.va.api.health</groupId>
     <artifactId>health-apis-parent</artifactId>
-    <version>8.0.9</version>
+    <version>8.0.20</version>
   </parent>
   <artifactId>vista-fhir-query-parent</artifactId>
-  <version>1.0.2-SNAPSHOT</version>
+  <version>1.0.3-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
     <module>vista-fhir-query-ids-mapping</module>

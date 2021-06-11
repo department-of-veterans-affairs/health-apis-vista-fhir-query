@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Validated
 @RestController
 @RequestMapping(
-    value = "/raw",
+    value = "/internal/raw",
     produces = {"application/json", "application/fhir+json"})
 @AllArgsConstructor(onConstructor_ = {@Autowired, @NonNull})
 @Builder

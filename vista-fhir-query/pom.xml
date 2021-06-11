@@ -1,126 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>gov.va.api.health</groupId>
-    <artifactId>service-starter</artifactId>
-    <version>8.0.9</version>
-    <relativePath/>
-  </parent>
   <artifactId>vista-fhir-query</artifactId>
-  <version>1.0.2-SNAPSHOT</version>
-  <packaging>jar</packaging>
-  <properties>
-    <charon.version>4.0.3</charon.version>
-    <fhir-resources.version>7.0.0</fhir-resources.version>
-    <jacoco.coverage>0.94</jacoco.coverage>
-    <mssql-jdbc.version>9.2.1.jre15</mssql-jdbc.version>
-    <swagger-maven-plugin.version>2.1.9</swagger-maven-plugin.version>
-    <talos.version>1.0.0</talos.version>
-    <swagger-examples-maven-plugin.version>3.0.0</swagger-examples-maven-plugin.version>
-  </properties>
-  <dependencies>
-    <dependency>
-      <groupId>gov.va.api.lighthouse</groupId>
-      <artifactId>charon-api</artifactId>
-      <version>${charon.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>gov.va.api.lighthouse</groupId>
-      <artifactId>charon-models</artifactId>
-      <version>${charon.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>gov.va.api.health</groupId>
-      <artifactId>us-core-r4</artifactId>
-      <version>${fhir-resources.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.microsoft.sqlserver</groupId>
-      <artifactId>mssql-jdbc</artifactId>
-      <version>${mssql-jdbc.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>gov.va.api.health</groupId>
-      <artifactId>service-auto-config</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>gov.va.api.lighthouse</groupId>
-      <artifactId>talos</artifactId>
-      <version>${talos.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>vista-fhir-query-ids-mapping</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-configuration-processor</artifactId>
-      <optional>true</optional>
-    </dependency>
-  </dependencies>
   <build>
     <plugins>
       <plugin>
-        <groupId>io.swagger.core.v3</groupId>
         <artifactId>swagger-maven-plugin</artifactId>
-        <version>${swagger-maven-plugin.version}</version>
         <executions>
           <execution>
-            <id>r4-swag</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>resolve</goal>
-            </goals>
             <configuration>
               <contextId>r4-openapi</contextId>
+              <outputFileName>r4-openapi</outputFileName>
+              <outputFormat>JSON</outputFormat>
+              <outputPath>${project.build.outputDirectory}</outputPath>
+              <prettyPrint>true</prettyPrint>
               <resourceClasses>
                 <resourceClass>gov.va.api.health.vistafhirquery.service.api.R4VistaFhirQueryService</resourceClass>
               </resourceClasses>
-              <outputFileName>r4-openapi</outputFileName>
-              <outputPath>${project.build.outputDirectory}</outputPath>
-              <outputFormat>JSON</outputFormat>
-              <prettyPrint>true</prettyPrint>
             </configuration>
+            <goals>
+              <goal>resolve</goal>
+            </goals>
+            <id>r4-swag</id>
+            <phase>compile</phase>
           </execution>
         </executions>
+        <groupId>io.swagger.core.v3</groupId>
+        <version>${swagger-maven-plugin.version}</version>
       </plugin>
       <plugin>
-        <groupId>gov.va.plugin.maven</groupId>
         <artifactId>swagger-examples-maven-plugin</artifactId>
-        <version>${swagger-examples-maven-plugin.version}</version>
         <dependencies>
           <dependency>
-            <groupId>gov.va.api.health</groupId>
             <artifactId>us-core-r4-examples</artifactId>
-            <version>${fhir-resources.version}</version>
+            <groupId>gov.va.api.health</groupId>
             <scope>runtime</scope>
+            <version>${fhir-resources.version}</version>
           </dependency>
         </dependencies>
         <executions>
           <execution>
-            <id>inject-examples</id>
-            <phase>compile</phase>
-            <goals>
-              <goal>inject</goal>
-            </goals>
             <configuration>
               <files>
                 <file file="${project.build.outputDirectory}/r4-openapi.json" format="JSON"/>
               </files>
             </configuration>
+            <goals>
+              <goal>inject</goal>
+            </goals>
+            <id>inject-examples</id>
+            <phase>compile</phase>
           </execution>
         </executions>
+        <groupId>gov.va.plugin.maven</groupId>
+        <version>${swagger-examples-maven-plugin.version}</version>
       </plugin>
       <!--
         Needed by health-apis-datamart-synthetic-records to
@@ -130,43 +62,111 @@
         <artifactId>maven-jar-plugin</artifactId>
         <executions>
           <execution>
-            <id>library-jar</id>
-            <phase>package</phase>
-            <goals>
-              <goal>jar</goal>
-            </goals>
             <configuration>
               <classifier>library</classifier>
             </configuration>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+            <id>library-jar</id>
+            <phase>package</phase>
           </execution>
           <execution>
-            <id>test-jar</id>
-            <phase>package</phase>
             <goals>
               <goal>test-jar</goal>
             </goals>
+            <id>test-jar</id>
+            <phase>package</phase>
           </execution>
         </executions>
       </plugin>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <executions>
           <execution>
-            <id>metadata-timestamp</id>
-            <goals>
-              <goal>timestamp-property</goal>
-            </goals>
             <configuration>
+              <locale>en_US</locale>
               <name>metadata.publication-date</name>
               <pattern>yyyy-MM-dd'T'HH:mm:ss'Z'</pattern>
               <timeZone>UTC</timeZone>
-              <locale>en_US</locale>
               <unit>second</unit>
             </configuration>
+            <goals>
+              <goal>timestamp-property</goal>
+            </goals>
+            <id>metadata-timestamp</id>
           </execution>
         </executions>
+        <groupId>org.codehaus.mojo</groupId>
       </plugin>
     </plugins>
   </build>
+  <dependencies>
+    <dependency>
+      <artifactId>charon-api</artifactId>
+      <groupId>gov.va.api.lighthouse</groupId>
+      <version>${charon.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>charon-models</artifactId>
+      <groupId>gov.va.api.lighthouse</groupId>
+      <version>${charon.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>us-core-r4</artifactId>
+      <groupId>gov.va.api.health</groupId>
+      <version>${fhir-resources.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>mssql-jdbc</artifactId>
+      <groupId>com.microsoft.sqlserver</groupId>
+      <version>${mssql-jdbc.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>service-auto-config</artifactId>
+      <groupId>gov.va.api.health</groupId>
+    </dependency>
+    <dependency>
+      <artifactId>spring-beans</artifactId>
+      <groupId>org.springframework</groupId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+      <groupId>org.springframework.boot</groupId>
+    </dependency>
+    <dependency>
+      <artifactId>talos</artifactId>
+      <groupId>gov.va.api.lighthouse</groupId>
+      <version>${talos.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>vista-fhir-query-ids-mapping</artifactId>
+      <groupId>${project.groupId}</groupId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <groupId>org.springframework.boot</groupId>
+      <optional>true</optional>
+    </dependency>
+  </dependencies>
+  <modelVersion>4.0.0</modelVersion>
+  <packaging>jar</packaging>
+  <parent>
+    <artifactId>service-starter</artifactId>
+    <groupId>gov.va.api.health</groupId>
+    <relativePath/>
+    <version>8.0.20</version>
+  </parent>
+  <properties>
+    <charon.version>4.0.3</charon.version>
+    <fhir-resources.version>7.0.5</fhir-resources.version>
+    <jacoco.coverage>0.94</jacoco.coverage>
+    <mssql-jdbc.version>9.2.1.jre15</mssql-jdbc.version>
+    <swagger-examples-maven-plugin.version>3.0.0</swagger-examples-maven-plugin.version>
+    <swagger-maven-plugin.version>2.1.9</swagger-maven-plugin.version>
+    <talos.version>1.0.0</talos.version>
+  </properties>
+  <version>1.0.3-SNAPSHOT</version>
 </project>
