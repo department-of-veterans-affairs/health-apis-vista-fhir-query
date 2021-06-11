@@ -14,7 +14,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 /** ObservationApi swagger documentation for VFQ. */
-public interface VistaFhirQueryObservationApi {
+public interface R4ObservationApi {
   @Operation(
       summary = "Observation Read",
       description = "http://hl7.org/fhir/us/core/StructureDefinition/us-core-observation-lab",

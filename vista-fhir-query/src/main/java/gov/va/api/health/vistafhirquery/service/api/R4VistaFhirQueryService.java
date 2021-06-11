@@ -85,4 +85,4 @@ import javax.ws.rs.Path;
                       })))
 })
 @Path("/")
-public interface R4VistaFhirQueryService extends VistaFhirQueryObservationApi {}
+public interface R4VistaFhirQueryService extends R4ObservationApi {}
