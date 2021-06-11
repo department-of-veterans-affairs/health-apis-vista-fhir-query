@@ -140,7 +140,7 @@ public class SegmentedVistaIdentifierTest {
             .patientIdentifier("1011537977V693883")
             .vistaSiteId("673")
             .vprRpcDomain(Domains.labs)
-            .vistaRecordId("CH;6929384.839997;14")
+            .vistaRecordId("CH;6909685.886779;643214")
             .build();
     String packed = id.pack();
     SegmentedVistaIdentifier unpacked = SegmentedVistaIdentifier.unpack(packed);
