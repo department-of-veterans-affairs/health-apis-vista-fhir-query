@@ -1,67 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <artifactId>vista-fhir-query</artifactId>
-  <version>1.0.5-SNAPSHOT</version>
-  <packaging>jar</packaging>
-  <properties>
-    <charon.version>4.0.4</charon.version>
-    <fhir-resources.version>7.0.7</fhir-resources.version>
-    <jacoco.coverage>0.94</jacoco.coverage>
-    <mssql-jdbc.version>9.2.1.jre15</mssql-jdbc.version>
-    <swagger-maven-plugin.version>2.1.9</swagger-maven-plugin.version>
-    <talos.version>1.0.0</talos.version>
-    <swagger-examples-maven-plugin.version>3.0.0</swagger-examples-maven-plugin.version>
-  </properties>
-  <dependencies>
-    <dependency>
-      <groupId>gov.va.api.lighthouse</groupId>
-      <artifactId>charon-api</artifactId>
-      <version>${charon.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>gov.va.api.lighthouse</groupId>
-      <artifactId>charon-models</artifactId>
-      <version>${charon.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>gov.va.api.health</groupId>
-      <artifactId>us-core-r4</artifactId>
-      <version>${fhir-resources.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.microsoft.sqlserver</groupId>
-      <artifactId>mssql-jdbc</artifactId>
-      <version>${mssql-jdbc.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>gov.va.api.health</groupId>
-      <artifactId>service-auto-config</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>gov.va.api.lighthouse</groupId>
-      <artifactId>talos</artifactId>
-      <version>${talos.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>vista-fhir-query-ids-mapping</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-configuration-processor</artifactId>
-      <optional>true</optional>
-    </dependency>
-  </dependencies>
   <build>
     <plugins>
       <plugin>
@@ -229,5 +168,5 @@
     <swagger-maven-plugin.version>2.1.9</swagger-maven-plugin.version>
     <talos.version>1.0.0</talos.version>
   </properties>
-  <version>1.0.3-SNAPSHOT</version>
+  <version>1.0.5-SNAPSHOT</version>
 </project>
