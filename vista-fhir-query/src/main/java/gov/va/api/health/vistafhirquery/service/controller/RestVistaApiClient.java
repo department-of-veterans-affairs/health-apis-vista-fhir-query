@@ -39,8 +39,9 @@ public class RestVistaApiClient implements VistalinkApiClient {
         .body(body);
   }
 
+  /** Make a request using a full RPC Request. */
   @SneakyThrows
-  private RpcResponse makeRequest(RpcRequest rpcRequest) {
+  public RpcResponse makeRequest(RpcRequest rpcRequest) {
     RequestEntity<RpcRequest> request = buildRequestEntity(rpcRequest);
     ResponseEntity<RpcResponse> response = restTemplate.exchange(request, RpcResponse.class);
     verifyVistalinkApiResponse(response);
