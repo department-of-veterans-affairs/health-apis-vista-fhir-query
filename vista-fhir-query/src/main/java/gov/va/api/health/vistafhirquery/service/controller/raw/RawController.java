@@ -9,7 +9,6 @@ import gov.va.api.lighthouse.charon.models.iblhsamcmsgetins.IblhsAmcmsGetIns;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /** Internal endpoint for getting raw payloads directly from vista. */
 @Validated
@@ -42,9 +43,7 @@ public class RawController {
       @RequestParam(name = "verifyCode", required = false) String verifyCode,
       @RequestParam(name = "apu", required = false) String apu) {
 
-    if (StringUtils.isBlank(accessCode)
-        || StringUtils.isBlank(verifyCode)
-        || StringUtils.isBlank(apu)) {
+    if (isBlank(accessCode) || isBlank(verifyCode) || isBlank(apu)) {
       return vistalinkApiClient.requestForVistaSite(
           site, IblhsAmcmsGetIns.Request.builder().icn(icn).build());
     }
