@@ -2,6 +2,7 @@ package gov.va.api.health.vistafhirquery.service.controller.raw;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
+import gov.va.api.health.autoconfig.logging.Redact;
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
 import gov.va.api.lighthouse.charon.api.RpcPrincipal;
 import gov.va.api.lighthouse.charon.api.RpcRequest;
@@ -38,9 +39,9 @@ public class RawController {
   public RpcResponse organization(
       @RequestParam(name = "site") String site,
       @RequestParam(name = "icn") String icn,
-      @RequestParam(name = "accessCode", required = false) String accessCode,
-      @RequestParam(name = "verifyCode", required = false) String verifyCode,
-      @RequestParam(name = "apu", required = false) String apu) {
+      @Redact @RequestParam(name = "accessCode", required = false) String accessCode,
+      @Redact @RequestParam(name = "verifyCode", required = false) String verifyCode,
+      @Redact @RequestParam(name = "apu", required = false) String apu) {
 
     if (isBlank(accessCode) || isBlank(verifyCode) || isBlank(apu)) {
       return vistalinkApiClient.requestForVistaSite(
