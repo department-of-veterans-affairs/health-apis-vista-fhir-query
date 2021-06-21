@@ -36,7 +36,7 @@ public class RawControllerTest {
                             .response("hey itME results")
                             .build()))
                 .build());
-    assertThat(_controller().organization("666", "itME", null, null, null))
+    assertThat(_controller().rawResponse("666", "itME", null, null, null))
         .isEqualTo(
             RpcResponse.builder()
                 .results(
@@ -57,7 +57,7 @@ public class RawControllerTest {
                             .response("hey itME results")
                             .build()))
                 .build());
-    assertThat(_controller().organization("666", "itME", "123", "456", "WHOdis?"))
+    assertThat(_controller().rawResponse("666", "itME", "123", "456", "WHOdis?"))
         .isEqualTo(
             RpcResponse.builder()
                 .results(

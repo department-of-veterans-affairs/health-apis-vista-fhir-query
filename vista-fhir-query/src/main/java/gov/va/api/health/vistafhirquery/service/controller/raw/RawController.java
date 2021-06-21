@@ -34,9 +34,9 @@ public class RawController {
 
   /** Get the raw data. */
   @GetMapping(
-      value = "/Organization",
+      value = {"/Organization", "/Coverage"},
       params = {"site", "icn"})
-  public RpcResponse organization(
+  public RpcResponse rawResponse(
       @RequestParam(name = "site") String site,
       @RequestParam(name = "icn") String icn,
       @Redact @RequestParam(name = "accessCode", required = false) String accessCode,
