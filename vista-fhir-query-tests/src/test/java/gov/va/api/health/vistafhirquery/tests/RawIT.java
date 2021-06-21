@@ -15,7 +15,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 public class RawIT {
 
   @ParameterizedTest
-  @ValueSource(strings = {"/internal/raw/Organization"})
+  @ValueSource(strings = {"/internal/raw/Organization", "/internal/raw/Coverage"})
   void clientKeyIsMissing(String path) {
     assumeEnvironmentIn(Environment.LOCAL);
     var response =
@@ -31,7 +31,7 @@ public class RawIT {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"/internal/raw/Organization"})
+  @ValueSource(strings = {"/internal/raw/Organization", "/internal/raw/Coverage"})
   void goodRequest(String path) {
     assumeEnvironmentIn(Environment.LOCAL);
     var response =
