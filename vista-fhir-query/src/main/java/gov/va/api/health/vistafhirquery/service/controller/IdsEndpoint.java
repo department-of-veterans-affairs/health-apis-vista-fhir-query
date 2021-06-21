@@ -12,11 +12,11 @@ import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
 import org.springframework.stereotype.Component;
 
-/** Endpoint for converting i2 ids between public and private. */
+/** Endpoint for converting ids between public and private. */
 @Component
-@Endpoint(id = "i2")
+@Endpoint(id = "ids")
 @AllArgsConstructor(onConstructor_ = @Autowired)
-public class I2Endpoint {
+public class IdsEndpoint {
 
   private final IdentityService identityService;
 
