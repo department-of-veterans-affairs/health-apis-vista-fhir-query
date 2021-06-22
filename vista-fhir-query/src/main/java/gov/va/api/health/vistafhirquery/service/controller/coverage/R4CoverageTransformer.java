@@ -9,6 +9,7 @@ import gov.va.api.health.r4.api.datatypes.Period;
 import gov.va.api.health.r4.api.elements.Extension;
 import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Coverage;
+import gov.va.api.lighthouse.charon.models.iblhsamcmsgetins.GetInsEntry;
 import gov.va.api.lighthouse.charon.models.iblhsamcmsgetins.GetInsRpcResults;
 import java.util.ArrayList;
 import java.util.List;
@@ -52,7 +53,7 @@ public class R4CoverageTransformer {
   }
 
   private List<Coverage.CoverageClass> classes() {
-    if (isBlank(rpcResult.getValue().insTypeGroupPlan())) {
+    if (isEntryBlank(rpcResult.getValue().insTypeGroupPlan())) {
       return null;
     }
     return List.of(
@@ -73,7 +74,7 @@ public class R4CoverageTransformer {
   private List<Extension> extensions() {
     // ToDo update urls (needs to substitute host/base-path per env)
     List<Extension> extensions = new ArrayList<>();
-    if (!isBlank(rpcResult.getValue().insTypePharmacyPersonCode())) {
+    if (!isEntryBlank(rpcResult.getValue().insTypePharmacyPersonCode())) {
       try {
         extensions.add(
             Extension.builder()
@@ -90,7 +91,7 @@ public class R4CoverageTransformer {
             "Bad VistA pharmacy person code: " + rpcResult.getValue().insTypePharmacyPersonCode());
       }
     }
-    if (!isBlank(rpcResult.getValue().insTypeStopPolicyFromBilling())) {
+    if (!isEntryBlank(rpcResult.getValue().insTypeStopPolicyFromBilling())) {
       extensions.add(
           Extension.builder()
               .url("http://va.gov/fhir/StructureDefinition/coverage-stopPolicyFromBilling")
@@ -108,8 +109,12 @@ public class R4CoverageTransformer {
     return extensions;
   }
 
+  private boolean isEntryBlank(GetInsEntry insEntry) {
+    return isBlank(insEntry) || isBlank(insEntry.internalValueRepresentation());
+  }
+
   private Integer order() {
-    if (isBlank(rpcResult.getValue().insTypeCoordinationOfBenefits())) {
+    if (isEntryBlank(rpcResult.getValue().insTypeCoordinationOfBenefits())) {
       return null;
     }
     try {
@@ -123,7 +128,7 @@ public class R4CoverageTransformer {
   }
 
   private List<Reference> payors() {
-    if (isBlank(rpcResult.getValue().insTypeInsuranceType())) {
+    if (isEntryBlank(rpcResult.getValue().insTypeInsuranceType())) {
       return null;
     }
     // ToDo this needs more parts for easier identification
@@ -137,11 +142,11 @@ public class R4CoverageTransformer {
 
   private Period period() {
     Period period = Period.builder().build();
-    if (!isBlank(rpcResult.getValue().insTypeEffectiveDateOfPolicy())) {
+    if (!isEntryBlank(rpcResult.getValue().insTypeEffectiveDateOfPolicy())) {
       period.start(
           rpcResult.getValue().insTypeEffectiveDateOfPolicy().externalValueRepresentation());
     }
-    if (!isBlank(rpcResult.getValue().insTypeInsuranceExpirationDate())) {
+    if (!isEntryBlank(rpcResult.getValue().insTypeInsuranceExpirationDate())) {
       period.end(
           rpcResult.getValue().insTypeInsuranceExpirationDate().externalValueRepresentation());
     }
@@ -152,7 +157,7 @@ public class R4CoverageTransformer {
   }
 
   private CodeableConcept relationship() {
-    if (isBlank(rpcResult.getValue().insTypePtRelationshipHipaa())) {
+    if (isEntryBlank(rpcResult.getValue().insTypePtRelationshipHipaa())) {
       return null;
     }
     var fhirTerm =
@@ -174,7 +179,7 @@ public class R4CoverageTransformer {
   }
 
   private String subscriberId() {
-    if (isBlank(rpcResult.getValue().insTypeSubscriberId())) {
+    if (isEntryBlank(rpcResult.getValue().insTypeSubscriberId())) {
       return null;
     }
     return rpcResult.getValue().insTypeSubscriberId().externalValueRepresentation();
