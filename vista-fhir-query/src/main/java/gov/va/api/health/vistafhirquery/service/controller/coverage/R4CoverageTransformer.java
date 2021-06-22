@@ -161,6 +161,7 @@ public class R4CoverageTransformer {
   public Coverage toFhir() {
     return Coverage.builder()
         .extension(extensions())
+        .status(Coverage.Status.active)
         .subscriberId(subscriberId())
         .relationship(relationship())
         .period(period())

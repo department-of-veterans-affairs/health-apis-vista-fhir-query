@@ -17,7 +17,7 @@ public class R4CoverageTransformerTest {
   @Test
   void empty() {
     assertThat(R4CoverageTransformer.builder().vista(GetInsRpcResults.empty()).build().toFhir())
-        .isEqualTo(Coverage.builder().build());
+        .isEqualTo(Coverage.builder().status(Coverage.Status.active).build());
   }
 
   private GetInsEntry entry(String value) {
@@ -72,6 +72,7 @@ public class R4CoverageTransformerTest {
                                                 .build()))
                                     .build())
                             .build()))
+                .status(Coverage.Status.active)
                 .subscriberId("24680")
                 .relationship(
                     CodeableConcept.builder()
