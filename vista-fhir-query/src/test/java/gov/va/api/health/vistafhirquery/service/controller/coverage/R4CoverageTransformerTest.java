@@ -47,7 +47,12 @@ public class R4CoverageTransformerTest {
             .insTypeEffectiveDateOfPolicy(entry("2021-01-20T21:36:00Z"))
             .insTypeStopPolicyFromBilling(entry("1"))
             .build();
-    assertThat(R4CoverageTransformer.builder().vista(vistaSample).build().toFhir())
+    assertThat(
+            R4CoverageTransformer.builder()
+                .patientIcn("1010101010V666666")
+                .vista(vistaSample)
+                .build()
+                .toFhir())
         .isEqualTo(
             Coverage.builder()
                 .extension(
@@ -60,20 +65,11 @@ public class R4CoverageTransformerTest {
                         Extension.builder()
                             .url(
                                 "http://va.gov/fhir/StructureDefinition/coverage-stopPolicyFromBilling")
-                            .valueCodeableConcept(
-                                CodeableConcept.builder()
-                                    .coding(
-                                        List.of(
-                                            Coding.builder()
-                                                .system(
-                                                    "http://terminology.hl7.org/ValueSet/v2-0136")
-                                                .code("Y")
-                                                .display("Yes")
-                                                .build()))
-                                    .build())
+                            .valueBoolean(true)
                             .build()))
                 .status(Coverage.Status.active)
                 .subscriberId("24680")
+                .beneficiary(Reference.builder().reference("Patient/1010101010V666666").build())
                 .relationship(
                     CodeableConcept.builder()
                         .coding(

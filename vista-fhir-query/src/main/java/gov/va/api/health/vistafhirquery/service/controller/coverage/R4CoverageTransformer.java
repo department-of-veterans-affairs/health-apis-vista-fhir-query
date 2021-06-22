@@ -38,8 +38,17 @@ public class R4CoverageTransformer {
 
   GetInsRpcResults vista;
 
+  String patientIcn;
+
   private static Coding codeAndDisplay(String code, String display) {
     return Coding.builder().code(code).display(display).build();
+  }
+
+  private Reference beneficiary() {
+    if (isBlank(patientIcn)) {
+      return null;
+    }
+    return Reference.builder().reference("Patient/" + patientIcn).build();
   }
 
   private List<Coverage.CoverageClass> classes() {
@@ -82,7 +91,7 @@ public class R4CoverageTransformer {
       extensions.add(
           Extension.builder()
               .url("http://va.gov/fhir/StructureDefinition/coverage-stopPolicyFromBilling")
-              .valueCodeableConcept(
+              .valueBoolean(
                   yesNo(vista.insTypeStopPolicyFromBilling().internalValueRepresentation()))
               .build());
     }
@@ -163,6 +172,7 @@ public class R4CoverageTransformer {
         .extension(extensions())
         .status(Coverage.Status.active)
         .subscriberId(subscriberId())
+        .beneficiary(beneficiary())
         .relationship(relationship())
         .period(period())
         .payor(payors())
@@ -171,17 +181,12 @@ public class R4CoverageTransformer {
         .build();
   }
 
-  private CodeableConcept yesNo(String zeroOrOne) {
-    String yesNoSystem = "http://terminology.hl7.org/ValueSet/v2-0136";
+  private boolean yesNo(String zeroOrOne) {
     switch (zeroOrOne) {
       case "0":
-        return CodeableConcept.builder()
-            .coding(List.of(Coding.builder().system(yesNoSystem).code("N").display("No").build()))
-            .build();
+        return false;
       case "1":
-        return CodeableConcept.builder()
-            .coding(List.of(Coding.builder().system(yesNoSystem).code("Y").display("Yes").build()))
-            .build();
+        return true;
       default:
         throw new IllegalArgumentException("Unknown Yes/No code: " + zeroOrOne);
     }
