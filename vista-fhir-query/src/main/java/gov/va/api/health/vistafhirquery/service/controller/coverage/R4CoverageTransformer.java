@@ -12,11 +12,35 @@ import gov.va.api.health.r4.api.resources.Coverage;
 import gov.va.api.lighthouse.charon.models.iblhsamcmsgetins.GetInsRpcResults;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import lombok.Builder;
 
 @Builder
 public class R4CoverageTransformer {
+  private static final Map<String, Coding> RELATIONSHIP_MAPPING =
+      Map.of(
+          "HIPAA 18 SELF",
+          codeAndDisplay("self", "Self"),
+          "HIPAA 01 SPOUSE",
+          codeAndDisplay("spouse", "Spouse"),
+          "HIPAA 19 CHILD",
+          codeAndDisplay("child", "Child"),
+          "HIPAA 41 INJURED PLAINTIFF",
+          codeAndDisplay("injured", "Injured Party"),
+          "HIPAA 32 MOTHER",
+          codeAndDisplay("parent", "Parent"),
+          "HIPAA 33 FATHER",
+          codeAndDisplay("parent", "Parent"),
+          "HIPAA 53 LIFE PARTNER",
+          codeAndDisplay("common", "Common Law Spouse"),
+          "HIPAA G8 OTHER RELATIONSHIP",
+          codeAndDisplay("other", "Other"));
+
   GetInsRpcResults vista;
+
+  private static Coding codeAndDisplay(String code, String display) {
+    return Coding.builder().code(code).display(display).build();
+  }
 
   private List<Coverage.CoverageClass> classes() {
     if (isBlank(vista.insTypeGroupPlan())) {
@@ -38,15 +62,28 @@ public class R4CoverageTransformer {
   }
 
   private List<Extension> extensions() {
+    // ToDo update urls (needs to substitute host/base-path per env)
     List<Extension> extensions = new ArrayList<>();
     if (!isBlank(vista.insTypePharmacyPersonCode())) {
-      // ToDo update url
-      // ToDo if parse int fails, don't add?
+      try {
+        extensions.add(
+            Extension.builder()
+                .url("http://va.gov/fhir/StructureDefinition/coverage-pharmacyPersonCode")
+                .valueInteger(
+                    Integer.parseInt(
+                        vista.insTypePharmacyPersonCode().externalValueRepresentation()))
+                .build());
+      } catch (NumberFormatException e) {
+        throw new IllegalArgumentException(
+            "Bad VistA pharmacy person code: " + vista.insTypePharmacyPersonCode());
+      }
+    }
+    if (!isBlank(vista.insTypeStopPolicyFromBilling())) {
       extensions.add(
           Extension.builder()
-              .url("http://va.gov/fhir/StructureDefinition/coverage-pharmacyPersonCode")
-              .valueInteger(
-                  Integer.parseInt(vista.insTypePharmacyPersonCode().externalValueRepresentation()))
+              .url("http://va.gov/fhir/StructureDefinition/coverage-stopPolicyFromBilling")
+              .valueCodeableConcept(
+                  yesNo(vista.insTypeStopPolicyFromBilling().internalValueRepresentation()))
               .build());
     }
     if (extensions.isEmpty()) {
@@ -59,15 +96,19 @@ public class R4CoverageTransformer {
     if (isBlank(vista.insTypeCoordinationOfBenefits())) {
       return null;
     }
-    // ToDo if number can't be parsed, log and return null?
-    return Integer.parseInt(vista.insTypeCoordinationOfBenefits().externalValueRepresentation());
+    try {
+      return Integer.parseInt(vista.insTypeCoordinationOfBenefits().externalValueRepresentation());
+    } catch (NumberFormatException e) {
+      throw new IllegalArgumentException(
+          "Unable to determine coverage order from: " + vista.insTypeCoordinationOfBenefits());
+    }
   }
 
   private List<Reference> payors() {
     if (isBlank(vista.insTypeInsuranceType())) {
       return null;
     }
-    // ToDo this needs more parts that can be identified
+    // ToDo this needs more parts for easier identification
     return List.of(
         Reference.builder()
             .reference("Coverage/" + vista.insTypeInsuranceType().internalValueRepresentation())
@@ -92,12 +133,19 @@ public class R4CoverageTransformer {
     if (isBlank(vista.insTypePtRelationshipHipaa())) {
       return null;
     }
-    // ToDo map code
+    var fhirTerm =
+        RELATIONSHIP_MAPPING.get(vista.insTypePtRelationshipHipaa().internalValueRepresentation());
+    if (isBlank(fhirTerm)) {
+      throw new IllegalArgumentException(
+          "Unknown Vista Relationship Code: " + vista.insTypePtRelationshipHipaa());
+    }
     return CodeableConcept.builder()
         .coding(
             List.of(
                 Coding.builder()
                     .system("http://terminology.hl7.org/CodeSystem/subscriber-relationship")
+                    .code(fhirTerm.code())
+                    .display(fhirTerm.display())
                     .build()))
         .build();
   }
@@ -120,5 +168,21 @@ public class R4CoverageTransformer {
         .coverageClass(classes())
         .order(order())
         .build();
+  }
+
+  private CodeableConcept yesNo(String zeroOrOne) {
+    String yesNoSystem = "http://terminology.hl7.org/ValueSet/v2-0136";
+    switch (zeroOrOne) {
+      case "0":
+        return CodeableConcept.builder()
+            .coding(List.of(Coding.builder().system(yesNoSystem).code("N").display("No").build()))
+            .build();
+      case "1":
+        return CodeableConcept.builder()
+            .coding(List.of(Coding.builder().system(yesNoSystem).code("Y").display("Yes").build()))
+            .build();
+      default:
+        throw new IllegalArgumentException("Unknown Yes/No code: " + zeroOrOne);
+    }
   }
 }

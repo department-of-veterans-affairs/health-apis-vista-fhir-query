@@ -40,11 +40,12 @@ public class R4CoverageTransformerTest {
             .insTypeSendBillToEmployer(entry("0"))
             .insTypeEsghp(entry("3"))
             .insTypeInsuranceExpirationDate(entry("2021-06-21T15:42:00Z"))
-            .insTypePtRelationshipHipaa(entry("sibling"))
+            .insTypePtRelationshipHipaa(entry("HIPAA 53 LIFE PARTNER"))
             .insTypePharmacyPersonCode(entry("67890"))
             .insTypePatientId(entry("13579"))
             .insTypeSubscriberId(entry("24680"))
             .insTypeEffectiveDateOfPolicy(entry("2021-01-20T21:36:00Z"))
+            .insTypeStopPolicyFromBilling(entry("1"))
             .build();
     assertThat(R4CoverageTransformer.builder().vista(vistaSample).build().toFhir())
         .isEqualTo(
@@ -55,6 +56,21 @@ public class R4CoverageTransformerTest {
                             .url(
                                 "http://va.gov/fhir/StructureDefinition/coverage-pharmacyPersonCode")
                             .valueInteger(67890)
+                            .build(),
+                        Extension.builder()
+                            .url(
+                                "http://va.gov/fhir/StructureDefinition/coverage-stopPolicyFromBilling")
+                            .valueCodeableConcept(
+                                CodeableConcept.builder()
+                                    .coding(
+                                        List.of(
+                                            Coding.builder()
+                                                .system(
+                                                    "http://terminology.hl7.org/ValueSet/v2-0136")
+                                                .code("Y")
+                                                .display("Yes")
+                                                .build()))
+                                    .build())
                             .build()))
                 .subscriberId("24680")
                 .relationship(
@@ -64,6 +80,8 @@ public class R4CoverageTransformerTest {
                                 Coding.builder()
                                     .system(
                                         "http://terminology.hl7.org/CodeSystem/subscriber-relationship")
+                                    .code("common")
+                                    .display("Common Law Spouse")
                                     .build()))
                         .build())
                 .period(
