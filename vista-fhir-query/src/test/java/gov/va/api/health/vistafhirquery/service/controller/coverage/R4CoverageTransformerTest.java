@@ -11,12 +11,17 @@ import gov.va.api.health.r4.api.resources.Coverage;
 import gov.va.api.lighthouse.charon.models.iblhsamcmsgetins.GetInsEntry;
 import gov.va.api.lighthouse.charon.models.iblhsamcmsgetins.GetInsRpcResults;
 import java.util.List;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 public class R4CoverageTransformerTest {
   @Test
   void empty() {
-    assertThat(R4CoverageTransformer.builder().vista(GetInsRpcResults.empty()).build().toFhir())
+    assertThat(
+            R4CoverageTransformer.builder()
+                .rpcResult(Map.entry("666", GetInsRpcResults.empty()))
+                .build()
+                .toFhir())
         .isEqualTo(Coverage.builder().status(Coverage.Status.active).build());
   }
 
@@ -50,7 +55,7 @@ public class R4CoverageTransformerTest {
     assertThat(
             R4CoverageTransformer.builder()
                 .patientIcn("1010101010V666666")
-                .vista(vistaSample)
+                .rpcResult(Map.entry("666", vistaSample))
                 .build()
                 .toFhir())
         .isEqualTo(

@@ -36,7 +36,7 @@ public class R4CoverageTransformer {
           "HIPAA G8 OTHER RELATIONSHIP",
           codeAndDisplay("other", "Other"));
 
-  GetInsRpcResults vista;
+  Map.Entry<String, GetInsRpcResults> rpcResult;
 
   String patientIcn;
 
@@ -52,12 +52,12 @@ public class R4CoverageTransformer {
   }
 
   private List<Coverage.CoverageClass> classes() {
-    if (isBlank(vista.insTypeGroupPlan())) {
+    if (isBlank(rpcResult.getValue().insTypeGroupPlan())) {
       return null;
     }
     return List.of(
         Coverage.CoverageClass.builder()
-            .value(vista.insTypeGroupPlan().externalValueRepresentation())
+            .value(rpcResult.getValue().insTypeGroupPlan().externalValueRepresentation())
             .type(
                 CodeableConcept.builder()
                     .coding(
@@ -73,26 +73,33 @@ public class R4CoverageTransformer {
   private List<Extension> extensions() {
     // ToDo update urls (needs to substitute host/base-path per env)
     List<Extension> extensions = new ArrayList<>();
-    if (!isBlank(vista.insTypePharmacyPersonCode())) {
+    if (!isBlank(rpcResult.getValue().insTypePharmacyPersonCode())) {
       try {
         extensions.add(
             Extension.builder()
                 .url("http://va.gov/fhir/StructureDefinition/coverage-pharmacyPersonCode")
                 .valueInteger(
                     Integer.parseInt(
-                        vista.insTypePharmacyPersonCode().externalValueRepresentation()))
+                        rpcResult
+                            .getValue()
+                            .insTypePharmacyPersonCode()
+                            .externalValueRepresentation()))
                 .build());
       } catch (NumberFormatException e) {
         throw new IllegalArgumentException(
-            "Bad VistA pharmacy person code: " + vista.insTypePharmacyPersonCode());
+            "Bad VistA pharmacy person code: " + rpcResult.getValue().insTypePharmacyPersonCode());
       }
     }
-    if (!isBlank(vista.insTypeStopPolicyFromBilling())) {
+    if (!isBlank(rpcResult.getValue().insTypeStopPolicyFromBilling())) {
       extensions.add(
           Extension.builder()
               .url("http://va.gov/fhir/StructureDefinition/coverage-stopPolicyFromBilling")
               .valueBoolean(
-                  yesNo(vista.insTypeStopPolicyFromBilling().internalValueRepresentation()))
+                  yesNo(
+                      rpcResult
+                          .getValue()
+                          .insTypeStopPolicyFromBilling()
+                          .internalValueRepresentation()))
               .build());
     }
     if (extensions.isEmpty()) {
@@ -102,35 +109,41 @@ public class R4CoverageTransformer {
   }
 
   private Integer order() {
-    if (isBlank(vista.insTypeCoordinationOfBenefits())) {
+    if (isBlank(rpcResult.getValue().insTypeCoordinationOfBenefits())) {
       return null;
     }
     try {
-      return Integer.parseInt(vista.insTypeCoordinationOfBenefits().externalValueRepresentation());
+      return Integer.parseInt(
+          rpcResult.getValue().insTypeCoordinationOfBenefits().externalValueRepresentation());
     } catch (NumberFormatException e) {
       throw new IllegalArgumentException(
-          "Unable to determine coverage order from: " + vista.insTypeCoordinationOfBenefits());
+          "Unable to determine coverage order from: "
+              + rpcResult.getValue().insTypeCoordinationOfBenefits());
     }
   }
 
   private List<Reference> payors() {
-    if (isBlank(vista.insTypeInsuranceType())) {
+    if (isBlank(rpcResult.getValue().insTypeInsuranceType())) {
       return null;
     }
     // ToDo this needs more parts for easier identification
     return List.of(
         Reference.builder()
-            .reference("Coverage/" + vista.insTypeInsuranceType().internalValueRepresentation())
+            .reference(
+                "Coverage/"
+                    + rpcResult.getValue().insTypeInsuranceType().internalValueRepresentation())
             .build());
   }
 
   private Period period() {
     Period period = Period.builder().build();
-    if (!isBlank(vista.insTypeEffectiveDateOfPolicy())) {
-      period.start(vista.insTypeEffectiveDateOfPolicy().externalValueRepresentation());
+    if (!isBlank(rpcResult.getValue().insTypeEffectiveDateOfPolicy())) {
+      period.start(
+          rpcResult.getValue().insTypeEffectiveDateOfPolicy().externalValueRepresentation());
     }
-    if (!isBlank(vista.insTypeInsuranceExpirationDate())) {
-      period.end(vista.insTypeInsuranceExpirationDate().externalValueRepresentation());
+    if (!isBlank(rpcResult.getValue().insTypeInsuranceExpirationDate())) {
+      period.end(
+          rpcResult.getValue().insTypeInsuranceExpirationDate().externalValueRepresentation());
     }
     if (allBlank(period.start(), period.end())) {
       return null;
@@ -139,14 +152,15 @@ public class R4CoverageTransformer {
   }
 
   private CodeableConcept relationship() {
-    if (isBlank(vista.insTypePtRelationshipHipaa())) {
+    if (isBlank(rpcResult.getValue().insTypePtRelationshipHipaa())) {
       return null;
     }
     var fhirTerm =
-        RELATIONSHIP_MAPPING.get(vista.insTypePtRelationshipHipaa().internalValueRepresentation());
+        RELATIONSHIP_MAPPING.get(
+            rpcResult.getValue().insTypePtRelationshipHipaa().internalValueRepresentation());
     if (isBlank(fhirTerm)) {
       throw new IllegalArgumentException(
-          "Unknown Vista Relationship Code: " + vista.insTypePtRelationshipHipaa());
+          "Unknown Vista Relationship Code: " + rpcResult.getValue().insTypePtRelationshipHipaa());
     }
     return CodeableConcept.builder()
         .coding(
@@ -160,10 +174,10 @@ public class R4CoverageTransformer {
   }
 
   private String subscriberId() {
-    if (isBlank(vista.insTypeSubscriberId())) {
+    if (isBlank(rpcResult.getValue().insTypeSubscriberId())) {
       return null;
     }
-    return vista.insTypeSubscriberId().externalValueRepresentation();
+    return rpcResult.getValue().insTypeSubscriberId().externalValueRepresentation();
   }
 
   /** Transform an RPC response to fhir. */
