@@ -219,7 +219,6 @@ populateRpcPrincipalFile() {
             ]
         },
         {
-        {
             "rpcNames" : [
                 "IBLHS AMCMS GET INS"
             ],
@@ -233,7 +232,7 @@ populateRpcPrincipalFile() {
                     "verifyCode" : "${VFQ_673_VERIFY_CODE}"
                 }
             ]
-        },
+        }
     ]
 }
 EOF
