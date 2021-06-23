@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.Builder;
+import lombok.NonNull;
 
 @Builder
 public class R4CoverageTransformer {
@@ -37,9 +38,9 @@ public class R4CoverageTransformer {
           "HIPAA G8 OTHER RELATIONSHIP",
           codeAndDisplay("other", "Other"));
 
-  Map.Entry<String, GetInsRpcResults> rpcResult;
+  @NonNull Map.Entry<String, GetInsRpcResults> rpcResult;
 
-  String patientIcn;
+  @NonNull String patientIcn;
 
   private static Coding codeAndDisplay(String code, String display) {
     return Coding.builder().code(code).display(display).build();
@@ -132,10 +133,11 @@ public class R4CoverageTransformer {
       return null;
     }
     // ToDo this needs more parts for easier identification
+    // ToDo needs to be uniform across vista sites
     return List.of(
         Reference.builder()
             .reference(
-                "Coverage/"
+                "Organization/"
                     + rpcResult.getValue().insTypeInsuranceType().internalValueRepresentation())
             .build());
   }
@@ -188,6 +190,7 @@ public class R4CoverageTransformer {
   /** Transform an RPC response to fhir. */
   public Coverage toFhir() {
     return Coverage.builder()
+        .id(patientIcn + "^" + rpcResult.getKey())
         .extension(extensions())
         .status(Coverage.Status.active)
         .subscriberId(subscriberId())
