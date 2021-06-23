@@ -205,10 +205,9 @@ populateRpcPrincipalFile() {
     "entries" : [
         {
             "rpcNames" : [
-                "VPR GET PATIENT DATA",
-                "IBLHS AMCMS GET INS"
+                "VPR GET PATIENT DATA"
             ],
-            "applicationProxyUser" : "${VFQ_673_APU}",
+            "applicationProxyUser" : "LHS,APPLICATION PROXY",
             "codes" : [
                 {
                     "sites" : [
@@ -218,7 +217,23 @@ populateRpcPrincipalFile() {
                     "verifyCode" : "${VFQ_673_VERIFY_CODE}"
                 }
             ]
-        }
+        },
+        {
+        {
+            "rpcNames" : [
+                "IBLHS AMCMS GET INS"
+            ],
+            "applicationProxyUser" : "IBLHS,APPLICATION PROXY",
+            "codes" : [
+                {
+                    "sites" : [
+                        "673"
+                    ],
+                    "accessCode" : "${VFQ_673_ACCESS_CODE}",
+                    "verifyCode" : "${VFQ_673_VERIFY_CODE}"
+                }
+            ]
+        },
     ]
 }
 EOF
