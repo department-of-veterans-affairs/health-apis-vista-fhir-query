@@ -1,2 +1,3 @@
 *.properties*
 principal.json
+principals-dev.json
