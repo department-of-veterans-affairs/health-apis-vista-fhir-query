@@ -57,7 +57,6 @@ public class RestVistaApiClient implements VistalinkApiClient {
       RpcVistaTargets target, TypeSafeRpcRequest rpcRequestDetails) {
     RpcRequest rpcRequest =
         RpcRequest.builder()
-            .principal(config().defaultPrincipal())
             .siteSpecificPrincipals(
                 rpcPrincipalLookup.findByName(rpcRequestDetails.asDetails().name()))
             .target(target)

@@ -20,7 +20,6 @@ import org.springframework.boot.web.server.LocalServerPort;
       "spring.jpa.hibernate.ddl-auto=none",
       "vista-fhir-query.public-web-exception-key=set",
       "vista-fhir-query.rpc-principals.file=src/test/resources/principals.json",
-      "vista.api.principal-file=src/test/resources/principal-and-site-specific-principals.json"
     })
 public class PathRewriteConfigTest {
   @Autowired TestRestTemplate restTemplate;

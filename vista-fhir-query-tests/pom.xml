@@ -118,8 +118,7 @@
                 <argument>-Dlogging.level.root=INFO</argument>
                 <argument>-Dloader=gov.va.api.health.vistafhirquery.service.Application</argument>
                 <argument>-Dvista.api.url=http://localhost:8096</argument>
-                <argument>-Dvista.api.application-proxy-user-context=MOCKSERVICES</argument>
-                <argument>-Dvista.api.principal-file=${project.basedir}/../vista-fhir-query/src/test/resources/principal-and-site-specific-principals.json</argument>
+                <argument>-Dvista.api.vpr-get-patient-data-context=MOCKSERVICES</argument>
                 <argument>-Dvista-fhir-query.rpc-principals.file=${project.basedir}/../vista-fhir-query/src/test/resources/principals.json</argument>
                 <argument>-Dvista-fhir-query.internal.client-keys=~shanktopus~</argument>
                 <argument>-Dvista-fhir-query.public-web-exception-key=-shanktopus-for-the-win-</argument>

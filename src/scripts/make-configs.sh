@@ -71,7 +71,6 @@ main() {
   [ $MISSING_SECRETS == true ] && usage "Missing configuration secrets, please update ${SECRETS}"
 
   populateConfig
-  populatePrincipalFile
   populateRpcPrincipalFile
 }
 
@@ -136,13 +135,8 @@ populateConfig() {
 # the secrets files used with make-configs.sh
 EOF
   configValue vista-fhir-query $PROFILE vista.api.client-key "$VISTALINK_CLIENT_KEY"
-  configValue vista-fhir-query $PROFILE vista.api.access-code "${VISTA_APP_PROXY_ACCESS_CODE:-${VISTA_ACCESS_CODE}}"
-  configValue vista-fhir-query $PROFILE vista.api.verify-code "${VISTA_APP_PROXY_VERIFY_CODE:-${VISTA_VERIFY_CODE}}"
-  if [ -n "${VISTA_APP_PROXY_ACCESS_CODE:-}" ] && [ -n "${VISTA_APP_PROXY_VERIFY_CODE:-}" ] && [ -n "${VISTA_APP_PROXY_USER:-}" ]
-  then
-    addValue vista-fhir-query $PROFILE vista.api.application-proxy-user "${VISTA_APP_PROXY_USER}"
-    addValue vista-fhir-query $PROFILE vista.api.application-proxy-user-context "${VISTA_APP_PROXY_USER_CONTEXT}"
-  fi
+  addValue vista-fhir-query $PROFILE vista.api.vpr-get-patient-data-context "${VISTA_API_VPR_GET_PATIENT_DATA_CONTEXT}"
+
   configValue vista-fhir-query $PROFILE vista-fhir-query.rpc-principals.file "config\/principals-$PROFILE.json"
   configValue vista-fhir-query $PROFILE vista-fhir-query.internal.client-keys "disabled"
   configValue vista-fhir-query $PROFILE vista-fhir-query.public-url "http://localhost:8095"
@@ -179,24 +173,6 @@ EOF
   configValue vista-fhir-query $PROFILE metadata.statement-type patient
 
   checkForUnsetValues vista-fhir-query $PROFILE
-}
-
-populatePrincipalFile() {
-  cat > $REPO/vista-fhir-query/config/principal.json <<EOF
-{
-    "principal" : {
-        "accessCode" : "${VFQ_DEFAULT_ACCESS_CODE}",
-        "verifyCode" : "${VFQ_DEFAULT_VERIFY_CODE}"
-    },
-    "siteSpecificPrincipals" : {
-        "673" : {
-            "applicationProxyUser" : "${VFQ_673_APU}",
-            "accessCode" : "${VFQ_673_ACCESS_CODE}",
-            "verifyCode" : "${VFQ_673_VERIFY_CODE}"
-        }
-    }
-}
-EOF
 }
 
 populateRpcPrincipalFile() {
