@@ -19,6 +19,7 @@ Secrets Configuration
 - VFQ_673_ACCESS_CODE
 - VFQ_673_VERIFY_CODE
 - VFQ_673_APU
+- VISTA_API_VPR_GET_PATIENT_DATA_CONTEXT
 
  Variables that can be used for optional configurations:
  - VISTALINK_CLIENT_KEY
@@ -61,6 +62,7 @@ main() {
   requiredParam VFQ_673_ACCESS_CODE "${VFQ_673_ACCESS_CODE}"
   requiredParam VFQ_673_VERIFY_CODE "${VFQ_673_VERIFY_CODE}"
   requiredParam VFQ_673_APU "${VFQ_673_APU}"
+  requiredParam VISTA_API_VPR_GET_PATIENT_DATA_CONTEXT "${VISTA_API_VPR_GET_PATIENT_DATA_CONTEXT}"
 
   [ -z "${VISTA_API_URL:-}" ] && VISTA_API_URL="http://localhost:8050"
   [ -z "${VFQ_DB_URL:-}" ] && VFQ_DB_URL="jdbc:sqlserver://localhost:1433;database=dq;sendStringParametersAsUnicode=false"
@@ -135,7 +137,7 @@ populateConfig() {
 # the secrets files used with make-configs.sh
 EOF
   configValue vista-fhir-query $PROFILE vista.api.client-key "$VISTALINK_CLIENT_KEY"
-  addValue vista-fhir-query $PROFILE vista.api.vpr-get-patient-data-context "${VISTA_API_VPR_GET_PATIENT_DATA_CONTEXT}"
+  configValue vista-fhir-query $PROFILE vista.api.vpr-get-patient-data-context "${VISTA_API_VPR_GET_PATIENT_DATA_CONTEXT}"
 
   configValue vista-fhir-query $PROFILE vista-fhir-query.rpc-principals.file "config\/principals-$PROFILE.json"
   configValue vista-fhir-query $PROFILE vista-fhir-query.internal.client-keys "disabled"
