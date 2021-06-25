@@ -27,6 +27,12 @@ public class VistaApiConfig {
 
   private String vprGetPatientDataContext;
 
+  private String lomaLindaHackContext;
+
+  public String getLomaLindaHackContext() {
+    return trimToNull(lomaLindaHackContext);
+  }
+
   public String getVprGetPatientDataContext() {
     return trimToNull(vprGetPatientDataContext);
   }
