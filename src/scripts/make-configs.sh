@@ -64,7 +64,6 @@ main() {
   requiredParam VFQ_673_APU "${VFQ_673_APU}"
   requiredParam VISTA_API_VPR_GET_PATIENT_DATA_CONTEXT "${VISTA_API_VPR_GET_PATIENT_DATA_CONTEXT}"
 
-
   [ -z "${VISTA_API_URL:-}" ] && VISTA_API_URL="http://localhost:8050"
   [ -z "${VFQ_DB_URL:-}" ] && VFQ_DB_URL="jdbc:sqlserver://localhost:1433;database=dq;sendStringParametersAsUnicode=false"
   [ -z "${VFQ_DB_USER:-}" ] && VFQ_DB_USER="SA"
@@ -139,7 +138,11 @@ populateConfig() {
 EOF
   configValue vista-fhir-query $PROFILE vista.api.client-key "$VISTALINK_CLIENT_KEY"
   configValue vista-fhir-query $PROFILE vista.api.vpr-get-patient-data-context "${VISTA_API_VPR_GET_PATIENT_DATA_CONTEXT}"
+
+  if [ -n "${VISTA_API_LOMA_LINDA_HACK_CONTEXT:-}" ]
+  then
   configValue vista-fhir-query $PROFILE vista.api.loma-linda-hack-context "${VISTA_API_LOMA_LINDA_HACK_CONTEXT}"
+  fi
 
 
   configValue vista-fhir-query $PROFILE vista-fhir-query.rpc-principals.file "config\/principals-$PROFILE.json"
