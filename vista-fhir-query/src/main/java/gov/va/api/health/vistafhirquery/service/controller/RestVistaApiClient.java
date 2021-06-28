@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.SneakyThrows;
 import lombok.Value;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
@@ -25,6 +26,7 @@ import org.springframework.web.client.RestTemplate;
 @Builder
 @Component
 @AllArgsConstructor(onConstructor_ = @Autowired)
+@Slf4j
 public class RestVistaApiClient implements VistalinkApiClient {
   private RestTemplate restTemplate;
 
@@ -49,7 +51,10 @@ public class RestVistaApiClient implements VistalinkApiClient {
         rpcPrincipalLookup.findByName(rpcRequestDetails.asDetails().name());
     // Loma Linda context hack
     RpcPrincipal maybeLomaLinda = principals.get("605");
-    if (maybeLomaLinda != null) {
+    if (maybeLomaLinda != null
+        && !"unset".equals(config().getLomaLindaHackContext())
+        && "VPR GET PATIENT DATA".equals(rpcRequestDetails.asDetails().name())) {
+      log.info("Performing Loma Linda context override.");
       principals.put("605", maybeLomaLinda.contextOverride(config.getLomaLindaHackContext()));
     }
     return principals;
