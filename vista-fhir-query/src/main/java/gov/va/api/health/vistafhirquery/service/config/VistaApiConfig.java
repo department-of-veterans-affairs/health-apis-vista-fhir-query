@@ -1,5 +1,7 @@
 package gov.va.api.health.vistafhirquery.service.config;
 
+import static org.apache.commons.lang3.StringUtils.equalsAnyIgnoreCase;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 import lombok.AllArgsConstructor;
@@ -35,5 +37,10 @@ public class VistaApiConfig {
 
   public String getVprGetPatientDataContext() {
     return trimToNull(vprGetPatientDataContext);
+  }
+
+  public boolean isLomaLindaHackContextSet() {
+    return isBlank(lomaLindaHackContext)
+        || equalsAnyIgnoreCase(lomaLindaHackContext, "unset", "disabled", "disable", "off", "no");
   }
 }

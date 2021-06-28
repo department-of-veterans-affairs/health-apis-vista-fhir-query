@@ -156,6 +156,7 @@ EOF
   configValue vista-fhir-query $PROFILE spring.datasource.url "${VFQ_DB_URL}"
   configValue vista-fhir-query $PROFILE spring.datasource.username "${VFQ_DB_USER}"
   configValue vista-fhir-query $PROFILE spring.datasource.password "${VFQ_DB_PASSWORD}"
+  configValue vista-fhir-query $PROFILE
   addValue vista-fhir-query $PROFILE management.endpoints.web.exposure.include "health,info,i2"
 
   # Alternate Patient ID Configs

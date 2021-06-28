@@ -28,11 +28,32 @@ import org.springframework.web.client.RestTemplate;
 @AllArgsConstructor(onConstructor_ = @Autowired)
 @Slf4j
 public class RestVistaApiClient implements VistalinkApiClient {
+
   private RestTemplate restTemplate;
 
   private VistaApiConfig config;
 
   private RpcPrincipalLookup rpcPrincipalLookup;
+
+  private void applyLomaLindaHack(
+      TypeSafeRpcRequest rpcRequestDetails, Map<String, RpcPrincipal> principals) {
+    if (!config().isLomaLindaHackContextSet()) {
+      return;
+    }
+    if ("VPR GET PATIENT DATA".equals(rpcRequestDetails.asDetails().name())) {
+      return;
+    }
+    RpcPrincipal maybeLomaLinda = principals.get("605");
+    if (maybeLomaLinda == null) {
+      return;
+    }
+    log.info("Performing Loma Linda context override.");
+    principals.put(
+        "605",
+        maybeLomaLinda
+            .contextOverride(config.getLomaLindaHackContext())
+            .applicationProxyUser(null));
+  }
 
   @SneakyThrows
   private RequestEntity<RpcRequest> buildRequestEntity(RpcRequest body) {
@@ -49,22 +70,12 @@ public class RestVistaApiClient implements VistalinkApiClient {
   private Map<String, RpcPrincipal> getPrincipals(TypeSafeRpcRequest rpcRequestDetails) {
     Map<String, RpcPrincipal> principals =
         rpcPrincipalLookup.findByName(rpcRequestDetails.asDetails().name());
-    // Loma Linda context hack
-    RpcPrincipal maybeLomaLinda = principals.get("605");
-    if (maybeLomaLinda != null
-        && !"unset".equals(config().getLomaLindaHackContext())
-        && "VPR GET PATIENT DATA".equals(rpcRequestDetails.asDetails().name())) {
-      log.info("Performing Loma Linda context override.");
-      principals.put(
-          "605",
-          maybeLomaLinda
-              .contextOverride(config.getLomaLindaHackContext())
-              .applicationProxyUser(null));
-    }
+    applyLomaLindaHack(rpcRequestDetails, principals);
     return principals;
   }
 
   /** Make a request using a full RPC Request. */
+  @Override
   @SneakyThrows
   public RpcResponse makeRequest(RpcRequest rpcRequest) {
     RequestEntity<RpcRequest> request = buildRequestEntity(rpcRequest);
