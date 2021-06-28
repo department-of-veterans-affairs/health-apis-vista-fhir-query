@@ -55,7 +55,11 @@ public class RestVistaApiClient implements VistalinkApiClient {
         && !"unset".equals(config().getLomaLindaHackContext())
         && "VPR GET PATIENT DATA".equals(rpcRequestDetails.asDetails().name())) {
       log.info("Performing Loma Linda context override.");
-      principals.put("605", maybeLomaLinda.contextOverride(config.getLomaLindaHackContext()));
+      principals.put(
+          "605",
+          maybeLomaLinda
+              .contextOverride(config.getLomaLindaHackContext())
+              .applicationProxyUser(null));
     }
     return principals;
   }
