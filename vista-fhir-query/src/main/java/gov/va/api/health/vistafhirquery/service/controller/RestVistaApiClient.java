@@ -40,7 +40,7 @@ public class RestVistaApiClient implements VistalinkApiClient {
     if (!config().isLomaLindaHackContextSet()) {
       return;
     }
-    if ("VPR GET PATIENT DATA".equals(rpcRequestDetails.asDetails().name())) {
+    if (!"VPR GET PATIENT DATA".equals(rpcRequestDetails.asDetails().name())) {
       return;
     }
     RpcPrincipal maybeLomaLinda = principals.get("605");
