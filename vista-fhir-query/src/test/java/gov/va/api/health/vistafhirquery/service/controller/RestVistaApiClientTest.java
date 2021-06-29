@@ -11,7 +11,9 @@ import static org.mockito.Mockito.when;
 import gov.va.api.health.vistafhirquery.service.config.VistaApiConfig;
 import gov.va.api.lighthouse.charon.api.*;
 import gov.va.api.lighthouse.charon.models.TypeSafeRpcRequest;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.NoArgsConstructor;
 import org.junit.jupiter.api.Test;
@@ -33,6 +35,13 @@ public class RestVistaApiClientTest {
         .config(config)
         .restTemplate(rt)
         .build();
+  }
+
+  void mockLomaLindaPrincipal() {
+    Map<String, RpcPrincipal> lomaLinda =
+        new HashMap<String, RpcPrincipal>(
+            Map.of("605", RpcPrincipal.builder().accessCode("123").verifyCode("321").build()));
+    when(lookup.findByName("VPR GET PATIENT DATA")).thenReturn((lomaLinda));
   }
 
   void mockVistalink200Response() {
@@ -106,6 +115,14 @@ public class RestVistaApiClientTest {
         .isThrownBy(() -> client().requestForVistaSite("123", FauxRpc.create()));
   }
 
+  @Test
+  void successfulRequestWithLomaLindaHack() {
+    mockVistalink200Response();
+    mockLomaLindaPrincipal();
+    assertThat(client().requestForVistaSite("605", FauxmaLindaRpc.create()))
+        .isEqualTo(successfulResponse());
+  }
+
   private RpcResponse successfulResponse() {
     return RpcResponse.builder()
         .status(RpcResponse.Status.OK)
@@ -120,6 +137,16 @@ public class RestVistaApiClientTest {
     @Override
     public RpcDetails asDetails() {
       return RpcDetails.builder().name("FAUX RPC").context("FAUX CONTEXT").build();
+    }
+  }
+
+  @NoArgsConstructor(staticName = "create")
+  static class FauxmaLindaRpc implements TypeSafeRpcRequest {
+    private Optional<String> context;
+
+    @Override
+    public RpcDetails asDetails() {
+      return RpcDetails.builder().name("VPR GET PATIENT DATA").context("FAUX CONTEXT").build();
     }
   }
 }

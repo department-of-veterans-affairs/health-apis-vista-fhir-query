@@ -39,8 +39,10 @@ public class VistaApiConfig {
     return trimToNull(vprGetPatientDataContext);
   }
 
+  /** Checks if the Loma Linda Hack Context has been intentionally set. */
   public boolean isLomaLindaHackContextSet() {
     return isBlank(lomaLindaHackContext)
-        || equalsAnyIgnoreCase(lomaLindaHackContext, "disable","disabled","nah","no","off","unset");
+        || equalsAnyIgnoreCase(
+            lomaLindaHackContext, "disable", "disabled", "nah", "no", "off", "unset");
   }
 }
