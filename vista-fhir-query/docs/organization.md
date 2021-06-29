@@ -17,7 +17,13 @@ ___
           "param^FILE^literal^${file-insCo-or-payor}",
           "param^IENS^literal^${file-ien}",
           "param^FIELDS^literal^${fields-depending-on-file}",
-          "param^FLAGS^literal^NIER"
+          "param^FLAGS^literal^NIER",
+          "param^NUMBER^literal^",
+          "param^FROM^literal^",
+          "param^PART^literal^",
+          "param^INDEX^literal^",
+          "param^SCREEN^literal^",
+          "param^ID^literal^"
         ]
      }
   ]

@@ -15,7 +15,13 @@ ___
           "param^FILE^literal^2.312",
           "param^IENS^literal^${ien}",
           "param^FIELDS^literal^.01;.18;.2;3;3.04;4.03;4.06;7.02;8",
-          "param^FLAGS^literal^NIER"
+          "param^FLAGS^literal^NIE",
+          "param^NUMBER^literal^",
+          "param^FROM^literal^",
+          "param^PART^literal^",
+          "param^INDEX^literal^",
+          "param^SCREEN^literal^",
+          "param^ID^literal^"
         ]
      }
   ]
@@ -24,7 +30,6 @@ ___
 ___
 `GET   /Coverage?patient={ICN}`
 - Insurance Type is a sub-file of the Patient file
-    - Will likely need to get a DFN to search file #2 to get results
 - RpcRequest:
 ```
 "rpc":{
@@ -36,9 +41,15 @@ ___
           "debugmode^1",
           "api^manifest^gets",
           "param^FILE^literal^2",
-          "param^IENS^literal^${patientDfn}",
+          "param^IENS^literal^${dfn}",
           "param^FIELDS^literal^.3121*",
-          "param^FLAGS^literal^NIER"
+          "param^FLAGS^literal^NIE",
+          "param^NUMBER^literal^",
+          "param^FROM^literal^",
+          "param^PART^literal^",
+          "param^INDEX^literal^",
+          "param^SCREEN^literal^",
+          "param^ID^literal^"
         ]
      }
   ]
