@@ -25,7 +25,11 @@ import org.springframework.web.client.RestTemplate;
 public class RestVistaApiClientTest {
   RestTemplate rt = mock(RestTemplate.class);
 
-  VistaApiConfig config = VistaApiConfig.builder().url("http://fugazi.com/").build();
+  VistaApiConfig config =
+      VistaApiConfig.builder()
+          .url("http://fugazi.com/")
+          .lomaLindaHackContext("LOMA LINDA CONTEXT")
+          .build();
 
   RpcPrincipalLookup lookup = mock(RpcPrincipalLookup.class);
 
