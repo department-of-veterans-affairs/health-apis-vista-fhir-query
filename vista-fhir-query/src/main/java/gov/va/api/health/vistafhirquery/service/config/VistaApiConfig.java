@@ -41,8 +41,8 @@ public class VistaApiConfig {
 
   /** Checks if the Loma Linda Hack Context has been intentionally set. */
   public boolean isLomaLindaHackContextSet() {
-    return isBlank(lomaLindaHackContext)
-        || equalsAnyIgnoreCase(
+    return !isBlank(lomaLindaHackContext)
+        || !equalsAnyIgnoreCase(
             lomaLindaHackContext, "disable", "disabled", "nah", "no", "off", "unset");
   }
 }
