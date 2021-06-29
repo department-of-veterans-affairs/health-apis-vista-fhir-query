@@ -41,6 +41,6 @@ public class VistaApiConfig {
 
   public boolean isLomaLindaHackContextSet() {
     return isBlank(lomaLindaHackContext)
-        || equalsAnyIgnoreCase(lomaLindaHackContext, "unset", "disabled", "disable", "off", "no");
+        || equalsAnyIgnoreCase(lomaLindaHackContext, "disable","disabled","nah","no","off","unset");
   }
 }
