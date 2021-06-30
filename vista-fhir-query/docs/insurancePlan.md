@@ -31,7 +31,7 @@ ___
 ```
 ___
 `GET   /InsurancePlan?identifier={group-plan-number}`
-- Post-process (Filter) using Group Number (355.3-2.02) in the API
+- Post-process using Group Number (field 2.02) in the response
 - RpcRequest:
 ```
 "rpc":{

@@ -29,7 +29,6 @@ ___
 ```
 ___
 `GET   /Coverage?patient={ICN}`
-- Insurance Type is a sub-file of the Patient file
 - RpcRequest:
 ```
 "rpc":{
