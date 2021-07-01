@@ -139,6 +139,12 @@ EOF
   configValue vista-fhir-query $PROFILE vista.api.client-key "$VISTALINK_CLIENT_KEY"
   configValue vista-fhir-query $PROFILE vista.api.vpr-get-patient-data-context "${VISTA_API_VPR_GET_PATIENT_DATA_CONTEXT}"
 
+  if [ -n "${VISTA_API_LOMA_LINDA_HACK_CONTEXT:-}" ]
+  then
+  configValue vista-fhir-query $PROFILE vista.api.loma-linda-hack-context "${VISTA_API_LOMA_LINDA_HACK_CONTEXT}"
+  fi
+
+
   configValue vista-fhir-query $PROFILE vista-fhir-query.rpc-principals.file "config\/principals-$PROFILE.json"
   configValue vista-fhir-query $PROFILE vista-fhir-query.internal.client-keys "disabled"
   configValue vista-fhir-query $PROFILE vista-fhir-query.public-url "http://localhost:8095"
