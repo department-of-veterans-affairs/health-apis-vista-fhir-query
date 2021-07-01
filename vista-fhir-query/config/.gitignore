@@ -1,2 +1,2 @@
-*.properties*
-principal.json
+# Ignore everything in this directory
+*

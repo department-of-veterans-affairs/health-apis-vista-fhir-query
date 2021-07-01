@@ -96,7 +96,7 @@ public class R4ObservationController {
         vistalinkApiClient.requestForVistaSite(
             ids.vistaSiteId(),
             VprGetPatientData.Request.builder()
-                .context(Optional.ofNullable(vistaApiConfig.getApplicationProxyUserContext()))
+                .context(Optional.ofNullable(vistaApiConfig.getVprGetPatientDataContext()))
                 .dfn(VprGetPatientData.Request.PatientId.forIcn(ids.patientIdentifier()))
                 .type(Set.of(ids.vprRpcDomain()))
                 .id(Optional.of(ids.vistaRecordId()))
@@ -168,7 +168,7 @@ public class R4ObservationController {
         vistalinkApiClient.requestForTarget(
             targetForPatient(patient, request),
             VprGetPatientData.Request.builder()
-                .context(Optional.ofNullable(vistaApiConfig.getApplicationProxyUserContext()))
+                .context(Optional.ofNullable(vistaApiConfig.getVprGetPatientDataContext()))
                 .dfn(VprGetPatientData.Request.PatientId.forIcn(patient))
                 .type(categoryTypes)
                 .start(toLocalDateMacroString(boundaries.start()))

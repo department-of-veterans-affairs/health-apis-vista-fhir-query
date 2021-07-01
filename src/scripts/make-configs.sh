@@ -14,9 +14,12 @@ Options
 
 Secrets Configuration
  This bash file is sourced and expected to set the following variables
- - VISTA_API_URL
- - VISTA_ACCESS_CODE
- - VISTA_VERIFY_CODE
+- VFQ_DEFAULT_ACCESS_CODE
+- VFQ_DEFAULT_VERIFY_CODE
+- VFQ_673_ACCESS_CODE
+- VFQ_673_VERIFY_CODE
+- VFQ_673_APU
+- VISTA_API_VPR_GET_PATIENT_DATA_CONTEXT
 
  Variables that can be used for optional configurations:
  - VISTALINK_CLIENT_KEY
@@ -53,22 +56,24 @@ main() {
   . $SECRETS
 
   MISSING_SECRETS=false
-  requiredParam VISTA_API_URL "${VISTA_API_URL}"
-  requiredParam VFQ_DB_URL "${VFQ_DB_URL}"
-  requiredParam VFQ_DB_USER "${VFQ_DB_USER}"
-  requiredParam VFQ_DB_PASSWORD "${VFQ_DB_PASSWORD}"
+
   requiredParam VFQ_DEFAULT_ACCESS_CODE "${VFQ_DEFAULT_ACCESS_CODE}"
   requiredParam VFQ_DEFAULT_VERIFY_CODE "${VFQ_DEFAULT_VERIFY_CODE}"
   requiredParam VFQ_673_ACCESS_CODE "${VFQ_673_ACCESS_CODE}"
   requiredParam VFQ_673_VERIFY_CODE "${VFQ_673_VERIFY_CODE}"
   requiredParam VFQ_673_APU "${VFQ_673_APU}"
+  requiredParam VISTA_API_VPR_GET_PATIENT_DATA_CONTEXT "${VISTA_API_VPR_GET_PATIENT_DATA_CONTEXT}"
 
+  [ -z "${VISTA_API_URL:-}" ] && VISTA_API_URL="http://localhost:8050"
+  [ -z "${VFQ_DB_URL:-}" ] && VFQ_DB_URL="jdbc:sqlserver://localhost:1433;database=dq;sendStringParametersAsUnicode=false"
+  [ -z "${VFQ_DB_USER:-}" ] && VFQ_DB_USER="SA"
+  [ -z "${VFQ_DB_PASSWORD:-}" ] && VFQ_DB_PASSWORD="<YourStrong!Passw0rd>"
   [ -z "$VISTALINK_CLIENT_KEY" ] && VISTALINK_CLIENT_KEY="not-used"
   [ -z "$WEB_EXCEPTION_KEY" ] && WEB_EXCEPTION_KEY="-shanktopus-for-the-win-"
   [ $MISSING_SECRETS == true ] && usage "Missing configuration secrets, please update ${SECRETS}"
 
   populateConfig
-  populatePrincipalFile
+  populateRpcPrincipalFile
 }
 
 # =====================================================================
@@ -132,13 +137,15 @@ populateConfig() {
 # the secrets files used with make-configs.sh
 EOF
   configValue vista-fhir-query $PROFILE vista.api.client-key "$VISTALINK_CLIENT_KEY"
-  configValue vista-fhir-query $PROFILE vista.api.access-code "${VISTA_APP_PROXY_ACCESS_CODE:-${VISTA_ACCESS_CODE}}"
-  configValue vista-fhir-query $PROFILE vista.api.verify-code "${VISTA_APP_PROXY_VERIFY_CODE:-${VISTA_VERIFY_CODE}}"
-  if [ -n "${VISTA_APP_PROXY_ACCESS_CODE:-}" ] && [ -n "${VISTA_APP_PROXY_VERIFY_CODE:-}" ] && [ -n "${VISTA_APP_PROXY_USER:-}" ]
+  configValue vista-fhir-query $PROFILE vista.api.vpr-get-patient-data-context "${VISTA_API_VPR_GET_PATIENT_DATA_CONTEXT}"
+
+  if [ -n "${VISTA_API_LOMA_LINDA_HACK_CONTEXT:-}" ]
   then
-    addValue vista-fhir-query $PROFILE vista.api.application-proxy-user "${VISTA_APP_PROXY_USER}"
-    addValue vista-fhir-query $PROFILE vista.api.application-proxy-user-context "${VISTA_APP_PROXY_USER_CONTEXT}"
+  configValue vista-fhir-query $PROFILE vista.api.loma-linda-hack-context "${VISTA_API_LOMA_LINDA_HACK_CONTEXT}"
   fi
+
+
+  configValue vista-fhir-query $PROFILE vista-fhir-query.rpc-principals.file "config\/principals-$PROFILE.json"
   configValue vista-fhir-query $PROFILE vista-fhir-query.internal.client-keys "disabled"
   configValue vista-fhir-query $PROFILE vista-fhir-query.public-url "http://localhost:8095"
   configValue vista-fhir-query $PROFILE vista-fhir-query.public-r4-base-path "r4"
@@ -176,20 +183,41 @@ EOF
   checkForUnsetValues vista-fhir-query $PROFILE
 }
 
-populatePrincipalFile() {
-  cat > $REPO/vista-fhir-query/config/principal.json <<EOF
+populateRpcPrincipalFile() {
+  cat > $REPO/vista-fhir-query/config/principals-$PROFILE.json << EOF
 {
-    "principal" : {
-        "accessCode" : "${VFQ_DEFAULT_ACCESS_CODE}",
-        "verifyCode" : "${VFQ_DEFAULT_VERIFY_CODE}"
-    },
-    "siteSpecificPrincipals" : {
-        "673" : {
-            "applicationProxyUser" : "${VFQ_673_APU}",
-            "accessCode" : "${VFQ_673_ACCESS_CODE}",
-            "verifyCode" : "${VFQ_673_VERIFY_CODE}"
+    "entries" : [
+        {
+            "rpcNames" : [
+                "VPR GET PATIENT DATA"
+            ],
+            "applicationProxyUser" : "LHS,APPLICATION PROXY",
+            "codes" : [
+                {
+                    "sites" : [
+                        "673"
+                    ],
+                    "accessCode" : "${VFQ_673_ACCESS_CODE}",
+                    "verifyCode" : "${VFQ_673_VERIFY_CODE}"
+                }
+            ]
+        },
+        {
+            "rpcNames" : [
+                "IBLHS AMCMS GET INS"
+            ],
+            "applicationProxyUser" : "IBLHS,APPLICATION PROXY",
+            "codes" : [
+                {
+                    "sites" : [
+                        "673"
+                    ],
+                    "accessCode" : "${VFQ_673_ACCESS_CODE}",
+                    "verifyCode" : "${VFQ_673_VERIFY_CODE}"
+                }
+            ]
         }
-    }
+    ]
 }
 EOF
 }
