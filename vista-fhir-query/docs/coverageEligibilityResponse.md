@@ -16,13 +16,7 @@ ___
           "param^FILE^literal^2",
           "param^IENS^literal^${patientDfn}",
           "param^FIELDS^literal^.3121*",
-          "param^FLAGS^literal^NIE",
-          "param^NUMBER^literal^",
-          "param^FROM^literal^",
-          "param^PART^literal^",
-          "param^INDEX^literal^",
-          "param^SCREEN^literal^",
-          "param^ID^literal^"
+          "param^FLAGS^literal^NIE"
         ]
      }
   ]
@@ -43,7 +37,7 @@ ___
           "param^FILE^literal^355.32",
           "param^IENS^literal^",
           "param^FIELDS^literal^@;.01IE;.02IE;.03IE;.04IE;2IE",
-          "param^FLAGS^literal^NIER",
+          "param^FLAGS^literal^",
           "param^NUMBER^literal^",
           "param^FROM^literal^",
           "param^PART^literal^",

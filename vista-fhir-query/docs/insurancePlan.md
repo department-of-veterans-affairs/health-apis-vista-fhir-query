@@ -17,13 +17,7 @@ ___
           "param^FILE^literal^355.3",
           "param^IENS^literal^${ien}",
           "param^FIELDS^literal^.01;.05;.06;.07;.08;.09;.12;.14;.15;.16;.17;2.01;2.02;6.01;6.02;6.03",
-          "param^FLAGS^literal^NIE",
-          "param^NUMBER^literal^",
-          "param^FROM^literal^",
-          "param^PART^literal^",
-          "param^INDEX^literal^",
-          "param^SCREEN^literal^",
-          "param^ID^literal^"
+          "param^FLAGS^literal^NIE"
         ]
      }
   ]

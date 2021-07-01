@@ -17,13 +17,7 @@ ___
           "param^FILE^literal^${file-insCo-or-payor}",
           "param^IENS^literal^${file-ien}",
           "param^FIELDS^literal^${fields-depending-on-file}",
-          "param^FLAGS^literal^NIER",
-          "param^NUMBER^literal^",
-          "param^FROM^literal^",
-          "param^PART^literal^",
-          "param^INDEX^literal^",
-          "param^SCREEN^literal^",
-          "param^ID^literal^"
+          "param^FLAGS^literal^NIE"
         ]
      }
   ]
@@ -32,7 +26,7 @@ ___
 ___
 `GET   /Organization?type=pay`
 - Payer (#365.12) may be better for this query than file #36
-    - If that's not possible, what's the best way to verify a company in file #36 is a payor?
+ k
 - RPC Request:
 ```
 "rpc":{
@@ -46,7 +40,7 @@ ___
           "param^FILE^literal^${file-insCo-or-payor}",
           "param^IENS^literal^",
           "param^FIELDS^literal^${fields-depending-on-file}",
-          "param^FLAGS^literal^NIER",
+          "param^FLAGS^literal^",
           "param^NUMBER^literal^",
           "param^FROM^literal^",
           "param^PART^literal^",
