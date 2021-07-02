@@ -35,8 +35,6 @@ public class R4CoverageTransformer {
     if (isBlank(patientIcn)) {
       return null;
     }
-    /* ToDo QUESTION: Jay maps name of insured to beneficiary.name (i assume display)
-     *        should we assume the icn given and that name are the same? */
     return Reference.builder().reference("Patient/" + patientIcn).build();
   }
 
@@ -64,7 +62,7 @@ public class R4CoverageTransformer {
   private List<Extension> extensions(
       LhsLighthouseRpcGatewayResponse.Values pharmacyPersonCode,
       LhsLighthouseRpcGatewayResponse.Values stopPolicyFromBilling) {
-    // ToDo update urls (needs to substitute host/base-path per env)
+    // ToDo update urls (needs to substitute host/base-path per env) and use the correct host
     List<Extension> extensions = new ArrayList<>();
     if (!isBlank(pharmacyPersonCode) && !isBlank(pharmacyPersonCode.in())) {
       try {
@@ -142,6 +140,7 @@ public class R4CoverageTransformer {
     return period;
   }
 
+  @SuppressWarnings("UnnecessaryParentheses")
   private CodeableConcept relationship(LhsLighthouseRpcGatewayResponse.Values relationship) {
     if (isBlank(relationship) || isBlank(relationship.in())) {
       return null;
@@ -149,29 +148,15 @@ public class R4CoverageTransformer {
     var relationshipCoding =
         Coding.builder().system("http://terminology.hl7.org/CodeSystem/subscriber-relationship");
     switch (relationship.in()) {
-      case "01":
-        relationshipCoding.code("spouse").display("Spouse");
-        break;
-      case "18":
-        relationshipCoding.code("self").display("Self");
-        break;
-      case "19":
-        relationshipCoding.code("child").display("Child");
-        break;
-      case "32", "33":
-        relationshipCoding.code("parent").display("Parent");
-        break;
-      case "41":
-        relationshipCoding.code("injured").display("Injured Party");
-        break;
-      case "53":
-        relationshipCoding.code("common").display("Common Law Spouse");
-        break;
-      case "G8":
-        relationshipCoding.code("other").display("Other");
-        break;
-      default:
-        throw new IllegalArgumentException("Unknown Vista Relationship Code: " + relationship);
+      case "01" -> relationshipCoding.code("spouse").display("Spouse");
+      case "18" -> relationshipCoding.code("self").display("Self");
+      case "19" -> relationshipCoding.code("child").display("Child");
+      case "32", "33" -> relationshipCoding.code("parent").display("Parent");
+      case "41" -> relationshipCoding.code("injured").display("Injured Party");
+      case "53" -> relationshipCoding.code("common").display("Common Law Spouse");
+      case "G8" -> relationshipCoding.code("other").display("Other");
+      default -> throw new IllegalArgumentException(
+          "Unknown Vista Relationship Code: " + relationship);
     }
     return CodeableConcept.builder().coding(List.of(relationshipCoding.build())).build();
   }
@@ -216,14 +201,12 @@ public class R4CoverageTransformer {
         .filter(Objects::nonNull);
   }
 
+  @SuppressWarnings("UnnecessaryParentheses")
   private boolean yesNo(String zeroOrOne) {
-    switch (zeroOrOne) {
-      case "0":
-        return false;
-      case "1":
-        return true;
-      default:
-        throw new IllegalArgumentException("Unknown Yes/No code: " + zeroOrOne);
-    }
+    return switch (zeroOrOne) {
+      case "0" -> false;
+      case "1" -> true;
+      default -> throw new IllegalArgumentException("Unknown Yes/No code: " + zeroOrOne);
+    };
   }
 }
