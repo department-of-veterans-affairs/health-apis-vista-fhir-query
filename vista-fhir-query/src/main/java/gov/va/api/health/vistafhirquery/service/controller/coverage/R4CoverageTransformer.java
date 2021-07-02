@@ -141,7 +141,7 @@ public class R4CoverageTransformer {
   }
 
   @SuppressWarnings("UnnecessaryParentheses")
-  private CodeableConcept relationship(LhsLighthouseRpcGatewayResponse.Values relationship) {
+  CodeableConcept relationship(LhsLighthouseRpcGatewayResponse.Values relationship) {
     if (isBlank(relationship) || isBlank(relationship.in())) {
       return null;
     }
@@ -202,7 +202,7 @@ public class R4CoverageTransformer {
   }
 
   @SuppressWarnings("UnnecessaryParentheses")
-  private boolean yesNo(String zeroOrOne) {
+  boolean yesNo(String zeroOrOne) {
     return switch (zeroOrOne) {
       case "0" -> false;
       case "1" -> true;
