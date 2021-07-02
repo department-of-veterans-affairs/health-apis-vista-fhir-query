@@ -42,7 +42,6 @@ public class R4CoverageTransformer {
     if (isBlank(groupPlan) || isBlank(groupPlan.in())) {
       return null;
     }
-    // ToDo encode the group plan pointer as I3
     // Fhir InsurancePlan
     return List.of(
         Coverage.CoverageClass.builder()
@@ -112,6 +111,8 @@ public class R4CoverageTransformer {
     if (isBlank(insuranceCompany) || isBlank(insuranceCompany.in())) {
       return null;
     }
+    /* The organization controller is likely to need to support Organization from both the
+     * InsuranceCompany file _and_ the payer file. */
     return List.of(
         Reference.builder()
             .reference(
