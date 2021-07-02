@@ -34,6 +34,8 @@ public class RawIT {
   @ValueSource(strings = {"/internal/raw/Organization", "/internal/raw/Coverage"})
   void goodRequest(String path) {
     assumeEnvironmentIn(Environment.LOCAL);
+    var requestUrl = path + "?icn=9999998&site=673";
+    log.info("Verify raw response for {} is [200]", requestUrl);
     var response =
         RestAssured.given()
             .baseUri("http://localhost")
@@ -42,7 +44,7 @@ public class RawIT {
             .headers(Map.of("client-key", "~shanktopus~"))
             .contentType("application/json")
             .accept("application/json")
-            .request(Method.GET, path + "?icn=9999998&site=673");
+            .request(Method.GET, requestUrl);
     assertThat(response.getStatusCode()).isEqualTo(200);
   }
 }
