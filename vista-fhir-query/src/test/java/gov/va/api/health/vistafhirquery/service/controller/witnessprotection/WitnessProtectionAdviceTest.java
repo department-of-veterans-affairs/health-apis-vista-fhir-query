@@ -10,6 +10,7 @@ import gov.va.api.health.ids.api.ResourceIdentity;
 import gov.va.api.health.r4.api.bundle.AbstractBundle;
 import gov.va.api.health.r4.api.bundle.AbstractEntry;
 import gov.va.api.health.r4.api.elements.Meta;
+import gov.va.api.health.r4.api.resources.Patient;
 import gov.va.api.health.r4.api.resources.Resource;
 import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
 import java.util.List;
@@ -33,11 +34,13 @@ class WitnessProtectionAdviceTest {
     var f12 = FugaziOne.builder().id("private-f12").build();
     var f21 = FugaziTwo.builder().id("private-f21").build();
     var f22 = FugaziTwo.builder().id("private-f22").build();
+    var p1 = Patient.builder().id("p1").build();
     FugaziEntry ef11 = new FugaziEntry(f11);
     FugaziEntry ef12 = new FugaziEntry(f12);
     FugaziEntry ef21 = new FugaziEntry(f21);
     FugaziEntry ef22 = new FugaziEntry(f22);
-    FugaziBundle bundle = new FugaziBundle(List.of(ef11, ef12, ef21, ef22));
+    FugaziEntry ep1 = new FugaziEntry(p1);
+    FugaziBundle bundle = new FugaziBundle(List.of(ef11, ef12, ef21, ef22, ep1));
 
     when(identityService.register(any()))
         .thenReturn(
@@ -45,7 +48,8 @@ class WitnessProtectionAdviceTest {
                 registration("FugaziOne", "f11"),
                 registration("FugaziOne", "f12"),
                 registration("FugaziTwo", "f21"),
-                registration("FugaziTwo", "f22")));
+                registration("FugaziTwo", "f22"),
+                registration("Patient", "p1")));
 
     wp().protect(bundle);
     assertThat(f11.id()).isEqualTo("public-f11");
@@ -56,6 +60,8 @@ class WitnessProtectionAdviceTest {
     assertThat(ef21.fullUrl()).isEqualTo("http://fugazi.com/fugazi/FugaziTwo/public-f21");
     assertThat(f22.id()).isEqualTo("public-f22");
     assertThat(ef22.fullUrl()).isEqualTo("http://fugazi.com/fugazi/FugaziTwo/public-f22");
+    assertThat(p1.id()).isEqualTo("p1");
+    assertThat(ep1.fullUrl()).isEqualTo("http://fugazi.com/fugazi/Patient/p1");
   }
 
   private ResourceIdentity identity(String resource, String baseId) {
@@ -93,6 +99,11 @@ class WitnessProtectionAdviceTest {
     var f2 = FugaziTwo.builder().id("private-f2").build();
     wp().protect(f2);
     assertThat(f2.id()).isEqualTo("public-f2");
+
+    when(identityService.register(any())).thenReturn(List.of(registration("Patient", "p1")));
+    var p = Patient.builder().id("p1").build();
+    wp().protect(p);
+    assertThat(p.id()).isEqualTo("p1");
   }
 
   @Test
@@ -130,7 +141,8 @@ class WitnessProtectionAdviceTest {
         .protectedReferenceFactory(prf)
         .alternatePatientIds(new AlternatePatientIds.DisabledAlternatePatientIds())
         .identityService(identityService)
-        .availableAgents(List.of(FugaziOneAgent.of(prf), FugaziTwoAgent.of(prf)))
+        .availableAgents(
+            List.of(FugaziOneAgent.of(prf), FugaziTwoAgent.of(prf), PatientAgent.of(prf)))
         .build();
   }
 
@@ -183,6 +195,17 @@ class WitnessProtectionAdviceTest {
 
     @Override
     public Stream<ProtectedReference> referencesOf(FugaziTwo resource) {
+      return Stream.of(prf.forResource(resource, resource::id));
+    }
+  }
+
+  @AllArgsConstructor(staticName = "of")
+  static class PatientAgent implements WitnessProtectionAgent<Patient> {
+
+    ProtectedReferenceFactory prf;
+
+    @Override
+    public Stream<ProtectedReference> referencesOf(Patient resource) {
       return Stream.of(prf.forResource(resource, resource::id));
     }
   }

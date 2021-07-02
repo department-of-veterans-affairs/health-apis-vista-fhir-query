@@ -1,5 +1,9 @@
 package gov.va.api.health.vistafhirquery.service.controller.coverage;
 
+import gov.va.api.health.autoconfig.configuration.JacksonConfig;
+import gov.va.api.health.r4.api.bundle.AbstractBundle;
+import gov.va.api.health.r4.api.bundle.AbstractEntry;
+import gov.va.api.health.r4.api.bundle.BundleLink;
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
 import gov.va.api.health.r4.api.datatypes.Coding;
 import gov.va.api.health.r4.api.datatypes.Period;
@@ -7,14 +11,24 @@ import gov.va.api.health.r4.api.elements.Extension;
 import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Coverage;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class CoverageSamples {
+
+  @SneakyThrows
+  public static String json(Object o) {
+    return JacksonConfig.createMapper().writeValueAsString(o);
+  }
+
   @NoArgsConstructor(staticName = "create")
   public static class VistaLhsLighthouseRpcGateway {
     private Map<String, LhsLighthouseRpcGatewayResponse.Values> fields() {
@@ -49,6 +63,34 @@ public class CoverageSamples {
 
   @NoArgsConstructor(staticName = "create")
   public static class R4 {
+
+    static Coverage.Bundle asBundle(
+        String baseUrl, Collection<Coverage> resources, int totalRecords, BundleLink... links) {
+      return Coverage.Bundle.builder()
+          .resourceType("Bundle")
+          .type(AbstractBundle.BundleType.searchset)
+          .total(totalRecords)
+          .link(Arrays.asList(links))
+          .entry(
+              resources.stream()
+                  .map(
+                      resource ->
+                          Coverage.Entry.builder()
+                              .fullUrl(baseUrl + "/Coverage/" + resource.id())
+                              .resource(resource)
+                              .search(
+                                  AbstractEntry.Search.builder()
+                                      .mode(AbstractEntry.SearchMode.match)
+                                      .build())
+                              .build())
+                  .collect(Collectors.toList()))
+          .build();
+    }
+
+    static BundleLink link(BundleLink.LinkRelation rel, String base, String query) {
+      return BundleLink.builder().relation(rel).url(base + "?" + query).build();
+    }
+
     private List<Coverage.CoverageClass> classes(String station, String patient) {
       return List.of(
           Coverage.CoverageClass.builder()

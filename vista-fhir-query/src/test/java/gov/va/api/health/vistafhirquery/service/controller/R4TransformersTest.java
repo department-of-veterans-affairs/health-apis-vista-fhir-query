@@ -1,6 +1,7 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.allBlank;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.getReferenceId;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.ifPresent;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toBigDecimal;
@@ -11,6 +12,7 @@ import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.lighthouse.charon.models.FilemanDate;
 import gov.va.api.lighthouse.charon.models.ValueOnlyXmlAttribute;
 import java.math.BigDecimal;
@@ -75,6 +77,13 @@ public class R4TransformersTest {
   @MethodSource
   void blankOne(Object value, boolean expected) {
     assertThat(isBlank(value)).isEqualTo(expected);
+  }
+
+  @Test
+  void getReferenceIds() {
+    assertThat(getReferenceId(Reference.builder().reference("Patient/p1").build()).get())
+        .isEqualTo("p1");
+    assertThat(getReferenceId(Reference.builder().reference("p1").build())).isEmpty();
   }
 
   @Test
