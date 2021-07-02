@@ -4,10 +4,12 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import gov.va.api.health.r4.api.resources.Coverage;
+import gov.va.api.health.vistafhirquery.service.api.R4CoverageApi;
 import gov.va.api.health.vistafhirquery.service.controller.R4Bundler;
 import gov.va.api.health.vistafhirquery.service.controller.R4BundlerFactory;
 import gov.va.api.health.vistafhirquery.service.controller.R4Bundling;
 import gov.va.api.health.vistafhirquery.service.controller.R4Transformation;
+import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions;
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayGetsManifest;
@@ -34,12 +36,19 @@ import org.springframework.web.bind.annotation.RestController;
     value = "/r4/Coverage",
     produces = {"application/json", "application/fhir+json"})
 @AllArgsConstructor(onConstructor_ = {@Autowired, @NonNull})
-public class R4CoverageController {
+public class R4CoverageController implements R4CoverageApi {
   private final R4BundlerFactory bundlerFactory;
 
   private final VistalinkApiClient vistalinkApiClient;
 
+  @Override
+  public Coverage coverageRead(String id) {
+    // This will go away when read is implemented
+    throw new ResourceExceptions.NotFound("Not Found");
+  }
+
   /** Search support. */
+  @Override
   @GetMapping
   public Coverage.Bundle coverageSearch(
       HttpServletRequest request,
