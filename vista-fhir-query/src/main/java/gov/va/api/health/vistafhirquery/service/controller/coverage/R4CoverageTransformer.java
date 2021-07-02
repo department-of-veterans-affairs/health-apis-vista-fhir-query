@@ -169,7 +169,7 @@ public class R4CoverageTransformer {
   }
 
   private Coverage toCoverage(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
-    if (entry.fields() == null) {
+    if (isBlank(entry.fields())) {
       return null;
     }
     return Coverage.builder()
