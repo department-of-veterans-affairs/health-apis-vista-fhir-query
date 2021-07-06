@@ -26,7 +26,11 @@ public class R4CoverageResponseIncludesIcnHeaderAdvice implements ResponseBodyAd
             .type(Coverage.class)
             .bundleType(Coverage.Bundle.class)
             .extractResources(bundle -> bundle.entry().stream().map(AbstractEntry::resource))
-            .extractIcns(resource -> getReferenceId(resource.beneficiary()).stream())
+            .extractIcns(
+                resource ->
+                    getReferenceId(resource.beneficiary())
+                        .map(alternatePatientIds::toPublicId)
+                        .stream())
             .build();
   }
 }

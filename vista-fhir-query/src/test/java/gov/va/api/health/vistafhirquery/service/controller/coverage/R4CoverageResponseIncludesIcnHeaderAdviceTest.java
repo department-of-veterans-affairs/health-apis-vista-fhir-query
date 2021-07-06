@@ -57,6 +57,7 @@ public class R4CoverageResponseIncludesIcnHeaderAdviceTest {
                             .resource(CoverageSamples.R4.create().coverage("666", "p1"))
                             .build()))
                 .build());
+    when(alternatePatientIds.toPublicId(eq("p1"))).thenReturn("p1");
     mockMvc
         .perform(get("/r4/Coverage?patient=p1&_count=15"))
         .andExpect(MockMvcResultMatchers.header().string("X-VA-INCLUDES-ICN", "p1"));
