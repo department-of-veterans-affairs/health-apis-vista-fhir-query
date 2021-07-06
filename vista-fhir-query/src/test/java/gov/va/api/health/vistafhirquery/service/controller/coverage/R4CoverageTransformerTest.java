@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
+import gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
 import java.util.List;
 import java.util.Map;
@@ -104,8 +105,9 @@ public class R4CoverageTransformerTest {
 
   @Test
   void yesNo() {
-    assertThat(tx().yesNo("0")).isFalse();
-    assertThat(tx().yesNo("1")).isTrue();
-    assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> tx().yesNo("2"));
+    assertThat(RpcGatewayTransformers.yesNoToBoolean("0")).isFalse();
+    assertThat(RpcGatewayTransformers.yesNoToBoolean("1")).isTrue();
+    assertThatExceptionOfType(IllegalArgumentException.class)
+        .isThrownBy(() -> RpcGatewayTransformers.yesNoToBoolean("2"));
   }
 }

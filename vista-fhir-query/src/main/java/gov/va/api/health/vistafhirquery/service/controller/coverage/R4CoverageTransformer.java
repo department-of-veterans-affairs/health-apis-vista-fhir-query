@@ -2,6 +2,10 @@ package gov.va.api.health.vistafhirquery.service.controller.coverage;
 
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.allBlank;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
+import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.internalValueAsIntegerOrDie;
+import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.isInternalValueBlank;
+import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.isInternalValueNotBlank;
+import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.yesNoToBoolean;
 
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
 import gov.va.api.health.r4.api.datatypes.Coding;
@@ -9,6 +13,7 @@ import gov.va.api.health.r4.api.datatypes.Period;
 import gov.va.api.health.r4.api.elements.Extension;
 import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Coverage;
+import gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.UnexpectedVistaValue;
 import gov.va.api.lighthouse.charon.models.FilemanDate;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.InsuranceType;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
@@ -39,7 +44,7 @@ public class R4CoverageTransformer {
   }
 
   private List<Coverage.CoverageClass> classes(LhsLighthouseRpcGatewayResponse.Values groupPlan) {
-    if (isBlank(groupPlan) || isBlank(groupPlan.in())) {
+    if (isInternalValueBlank(groupPlan)) {
       return null;
     }
     // Fhir InsurancePlan
@@ -63,22 +68,18 @@ public class R4CoverageTransformer {
       LhsLighthouseRpcGatewayResponse.Values stopPolicyFromBilling) {
     // ToDo update urls (needs to substitute host/base-path per env) and use the correct host
     List<Extension> extensions = new ArrayList<>();
-    if (!isBlank(pharmacyPersonCode) && !isBlank(pharmacyPersonCode.in())) {
-      try {
-        extensions.add(
-            Extension.builder()
-                .url("http://va.gov/fhir/StructureDefinition/coverage-pharmacyPersonCode")
-                .valueInteger(Integer.parseInt(pharmacyPersonCode.in()))
-                .build());
-      } catch (NumberFormatException e) {
-        throw new IllegalArgumentException("Bad VistA pharmacy person code: " + pharmacyPersonCode);
-      }
+    if (isInternalValueNotBlank(pharmacyPersonCode)) {
+      extensions.add(
+          Extension.builder()
+              .url("http://va.gov/fhir/StructureDefinition/coverage-pharmacyPersonCode")
+              .valueInteger(internalValueAsIntegerOrDie(pharmacyPersonCode, "Pharmacy person code"))
+              .build());
     }
-    if (!isBlank(stopPolicyFromBilling) && !isBlank(stopPolicyFromBilling.in())) {
+    if (isInternalValueNotBlank(stopPolicyFromBilling)) {
       extensions.add(
           Extension.builder()
               .url("http://va.gov/fhir/StructureDefinition/coverage-stopPolicyFromBilling")
-              .valueBoolean(yesNo(stopPolicyFromBilling.in()))
+              .valueBoolean(yesNoToBoolean(stopPolicyFromBilling.in()))
               .build());
     }
     if (extensions.isEmpty()) {
@@ -96,19 +97,15 @@ public class R4CoverageTransformer {
   }
 
   private Integer order(LhsLighthouseRpcGatewayResponse.Values coordinationOfBenefits) {
-    if (isBlank(coordinationOfBenefits) || isBlank(coordinationOfBenefits.in())) {
+    if (isInternalValueBlank(coordinationOfBenefits)) {
       return null;
     }
-    try {
-      return Integer.parseInt(coordinationOfBenefits.in());
-    } catch (NumberFormatException e) {
-      throw new IllegalArgumentException(
-          "Unable to determine coverage order from: " + coordinationOfBenefits);
-    }
+    return internalValueAsIntegerOrDie(
+        coordinationOfBenefits, "Unable to determine coverage order");
   }
 
   private List<Reference> payors(LhsLighthouseRpcGatewayResponse.Values insuranceCompany) {
-    if (isBlank(insuranceCompany) || isBlank(insuranceCompany.in())) {
+    if (isInternalValueBlank(insuranceCompany)) {
       return null;
     }
     /* The organization controller is likely to need to support Organization from both the
@@ -129,10 +126,10 @@ public class R4CoverageTransformer {
       LhsLighthouseRpcGatewayResponse.Values effectiveDate,
       LhsLighthouseRpcGatewayResponse.Values expirationDate) {
     Period period = Period.builder().build();
-    if (!isBlank(effectiveDate) && !isBlank(effectiveDate.in())) {
+    if (isInternalValueNotBlank(effectiveDate)) {
       period.start(fromFilemanDate(effectiveDate.in()));
     }
-    if (!isBlank(expirationDate) && !isBlank(expirationDate.in())) {
+    if (isInternalValueNotBlank(expirationDate)) {
       period.end(fromFilemanDate(expirationDate.in()));
     }
     if (allBlank(period.start(), period.end())) {
@@ -143,7 +140,7 @@ public class R4CoverageTransformer {
 
   @SuppressWarnings("UnnecessaryParentheses")
   CodeableConcept relationship(LhsLighthouseRpcGatewayResponse.Values relationship) {
-    if (isBlank(relationship) || isBlank(relationship.in())) {
+    if (isInternalValueBlank(relationship)) {
       return null;
     }
     var relationshipCoding =
@@ -156,8 +153,7 @@ public class R4CoverageTransformer {
       case "41" -> relationshipCoding.code("injured").display("Injured Party");
       case "53" -> relationshipCoding.code("common").display("Common Law Spouse");
       case "G8" -> relationshipCoding.code("other").display("Other");
-      default -> throw new IllegalArgumentException(
-          "Unknown Vista Relationship Code: " + relationship);
+      default -> throw new UnexpectedVistaValue("Unknown Vista Relationship Code", relationship);
     }
     return CodeableConcept.builder().coding(List.of(relationshipCoding.build())).build();
   }
@@ -202,12 +198,4 @@ public class R4CoverageTransformer {
         .filter(Objects::nonNull);
   }
 
-  @SuppressWarnings("UnnecessaryParentheses")
-  boolean yesNo(String zeroOrOne) {
-    return switch (zeroOrOne) {
-      case "0" -> false;
-      case "1" -> true;
-      default -> throw new IllegalArgumentException("Unknown Yes/No code: " + zeroOrOne);
-    };
-  }
 }
