@@ -42,7 +42,14 @@ public interface R4CoverageApi {
           @Content(
               mediaType = "application/fhir+json",
               schema = @Schema(implementation = OperationOutcome.class)))
-  Coverage coverageRead(@Parameter(in = ParameterIn.PATH, name = "id", required = true) String id);
+  Coverage coverageRead(
+      @Parameter(
+              in = ParameterIn.PATH,
+              name = "id",
+              required = true,
+              description =
+                  "The logical id of the resource. Once assigned, this value never changes.")
+          String id);
 
   @Operation(
       summary = "Coverage Search",
@@ -72,7 +79,20 @@ public interface R4CoverageApi {
               mediaType = "application/fhir+json",
               schema = @Schema(implementation = OperationOutcome.class)))
   Coverage.Bundle coverageSearch(
-      HttpServletRequest request,
-      @Parameter(in = ParameterIn.QUERY, name = "patient") String icn,
-      @Parameter(in = ParameterIn.QUERY, name = "_count") @DefaultValue("30") Integer count);
+      @Parameter(hidden = true) HttpServletRequest request,
+      @Parameter(
+              in = ParameterIn.QUERY,
+              name = "patient",
+              description =
+                  "The Integration Control Number (ICN) assigned by the Master Patient Index (MPI) "
+                      + "that refers to the patient that is described by the observation")
+          String icn,
+      @Parameter(
+              in = ParameterIn.QUERY,
+              name = "_count",
+              description =
+                  "The number of resources that should be returned in a single page. "
+                      + "The maximum count size is 100.")
+          @DefaultValue("30")
+          Integer count);
 }
