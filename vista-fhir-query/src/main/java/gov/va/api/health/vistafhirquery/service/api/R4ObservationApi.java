@@ -93,8 +93,8 @@ public interface R4ObservationApi {
               in = ParameterIn.QUERY,
               name = "patient",
               description =
-                  "The Integration Control Number (ICN) assigned by the Master Patient Index (MPI) "
-                      + "that refers to the patient that is described by the observation")
+                  "The patient's Integration Control Number (ICN)"
+                      + " assigned by the Master Patient Index (MPI).")
           String patient,
       @Parameter(
               in = ParameterIn.QUERY,
