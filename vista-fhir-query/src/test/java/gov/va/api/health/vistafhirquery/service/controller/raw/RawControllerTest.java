@@ -9,7 +9,7 @@ import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
 import gov.va.api.lighthouse.charon.api.RpcInvocationResult;
 import gov.va.api.lighthouse.charon.api.RpcRequest;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
-import gov.va.api.lighthouse.charon.models.iblhsamcmsgetins.IblhsAmcmsGetIns;
+import gov.va.api.lighthouse.charon.models.TypeSafeRpcRequest;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,47 +25,52 @@ public class RawControllerTest {
   }
 
   @Test
-  void organization() {
-    when(vistalinkApiClient.requestForVistaSite(eq("666"), any(IblhsAmcmsGetIns.Request.class)))
-        .thenReturn(
-            RpcResponse.builder()
-                .results(
-                    List.of(
-                        RpcInvocationResult.builder()
-                            .vista("666")
-                            .response("hey itME results")
-                            .build()))
-                .build());
-    assertThat(_controller().rawResponse("666", "itME", null, null, null))
-        .isEqualTo(
-            RpcResponse.builder()
-                .results(
-                    List.of(
-                        RpcInvocationResult.builder()
-                            .vista("666")
-                            .response("hey itME results")
-                            .build()))
-                .build());
+  void coverage() {
+    initMocks();
+    var expected =
+        RpcResponse.builder()
+            .results(
+                List.of(
+                    RpcInvocationResult.builder()
+                        .vista("666")
+                        .response("hey itME results")
+                        .build()))
+            .build();
+    assertThat(_controller().rawCoverageResponse("666", "itME", null, null, null))
+        .isEqualTo(expected);
+    assertThat(_controller().rawCoverageResponse("666", "itME", "123", "456", "WHOdis?"))
+        .isEqualTo(expected);
+  }
 
-    when(vistalinkApiClient.makeRequest(any(RpcRequest.class)))
-        .thenReturn(
-            RpcResponse.builder()
-                .results(
-                    List.of(
-                        RpcInvocationResult.builder()
-                            .vista("666")
-                            .response("hey itME results")
-                            .build()))
-                .build());
+  void initMocks() {
+    var rpcResponse =
+        RpcResponse.builder()
+            .results(
+                List.of(
+                    RpcInvocationResult.builder()
+                        .vista("666")
+                        .response("hey itME results")
+                        .build()))
+            .build();
+    when(vistalinkApiClient.requestForVistaSite(eq("666"), any(TypeSafeRpcRequest.class)))
+        .thenReturn(rpcResponse);
+    when(vistalinkApiClient.makeRequest(any(RpcRequest.class))).thenReturn(rpcResponse);
+  }
+
+  @Test
+  void organization() {
+    initMocks();
+    var expected =
+        RpcResponse.builder()
+            .results(
+                List.of(
+                    RpcInvocationResult.builder()
+                        .vista("666")
+                        .response("hey itME results")
+                        .build()))
+            .build();
+    assertThat(_controller().rawResponse("666", "itME", null, null, null)).isEqualTo(expected);
     assertThat(_controller().rawResponse("666", "itME", "123", "456", "WHOdis?"))
-        .isEqualTo(
-            RpcResponse.builder()
-                .results(
-                    List.of(
-                        RpcInvocationResult.builder()
-                            .vista("666")
-                            .response("hey itME results")
-                            .build()))
-                .build());
+        .isEqualTo(expected);
   }
 }

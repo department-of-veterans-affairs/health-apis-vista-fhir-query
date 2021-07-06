@@ -9,6 +9,7 @@ import gov.va.api.lighthouse.charon.api.RpcRequest;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
 import gov.va.api.lighthouse.charon.api.RpcVistaTargets;
 import gov.va.api.lighthouse.charon.models.iblhsamcmsgetins.IblhsAmcmsGetIns;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayGetsManifest;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,12 +30,51 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor(onConstructor_ = {@Autowired, @NonNull})
 @Builder
 public class RawController {
-
   private final VistalinkApiClient vistalinkApiClient;
+
+  /** Get the raw response that the coverage controller transforms to fhir. */
+  @GetMapping(
+      value = "/Coverage",
+      params = {"site", "icn"})
+  public RpcResponse rawCoverageResponse(
+      @RequestParam(name = "site") String site,
+      @RequestParam(name = "icn") String icn,
+      @Redact @RequestParam(name = "accessCode", required = false) String accessCode,
+      @Redact @RequestParam(name = "verifyCode", required = false) String verifyCode,
+      @Redact @RequestParam(name = "apu", required = false) String apu) {
+    // ToDo dfn macro?
+    LhsLighthouseRpcGatewayGetsManifest.Request lhsGetsManifestRequest =
+        LhsLighthouseRpcGatewayGetsManifest.Request.builder()
+            .file("2")
+            .iens(icn)
+            .fields(List.of(".3121*"))
+            .flags(
+                List.of(
+                    LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags.OMIT_NULL_VALUES,
+                    LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags
+                        .RETURN_INTERNAL_VALUES,
+                    LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags
+                        .RETURN_EXTERNAL_VALUES))
+            .build();
+    if (isBlank(accessCode) || isBlank(verifyCode) || isBlank(apu)) {
+      return vistalinkApiClient.requestForVistaSite(site, lhsGetsManifestRequest);
+    }
+    return vistalinkApiClient.makeRequest(
+        RpcRequest.builder()
+            .principal(
+                RpcPrincipal.builder()
+                    .accessCode(accessCode)
+                    .verifyCode(verifyCode)
+                    .applicationProxyUser(apu)
+                    .build())
+            .target(RpcVistaTargets.builder().include(List.of(site)).build())
+            .rpc(lhsGetsManifestRequest.asDetails())
+            .build());
+  }
 
   /** Get the raw data. */
   @GetMapping(
-      value = {"/Organization", "/Coverage"},
+      value = {"/Organization"},
       params = {"site", "icn"})
   public RpcResponse rawResponse(
       @RequestParam(name = "site") String site,
@@ -42,7 +82,6 @@ public class RawController {
       @Redact @RequestParam(name = "accessCode", required = false) String accessCode,
       @Redact @RequestParam(name = "verifyCode", required = false) String verifyCode,
       @Redact @RequestParam(name = "apu", required = false) String apu) {
-
     if (isBlank(accessCode) || isBlank(verifyCode) || isBlank(apu)) {
       return vistalinkApiClient.requestForVistaSite(
           site, IblhsAmcmsGetIns.Request.builder().icn(icn).build());
