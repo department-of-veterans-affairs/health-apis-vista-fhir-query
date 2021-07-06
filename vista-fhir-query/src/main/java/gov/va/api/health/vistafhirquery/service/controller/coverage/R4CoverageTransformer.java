@@ -197,5 +197,4 @@ public class R4CoverageTransformer {
         .map(this::toCoverage)
         .filter(Objects::nonNull);
   }
-
 }
