@@ -34,10 +34,13 @@ public class RpcGatewayTransformers {
 
   /** Return true for "1", false for "0", otherwise throw an unexpected vista value exception. */
   public static boolean yesNoToBoolean(String zeroOrOne) {
+    if (isBlank(zeroOrOne)) {
+      throw new UnexpectedVistaValue("Yes/No code",null);
+    }
     return switch (zeroOrOne) {
       case "0" -> false;
       case "1" -> true;
-      default -> throw new IllegalArgumentException("Unknown Yes/No code: " + zeroOrOne);
+      default -> throw new UnexpectedVistaValue("Yes/No code", zeroOrOne);
     };
   }
 
