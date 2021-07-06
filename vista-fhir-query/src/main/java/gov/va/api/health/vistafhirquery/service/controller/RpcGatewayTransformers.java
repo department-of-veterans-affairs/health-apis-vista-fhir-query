@@ -32,6 +32,7 @@ public class RpcGatewayTransformers {
     return !isInternalValueBlank(values);
   }
 
+  /** Return true for "1", false for "0", otherwise throw an unexpected vista value exception. */
   public static boolean yesNoToBoolean(String zeroOrOne) {
     return switch (zeroOrOne) {
       case "0" -> false;
