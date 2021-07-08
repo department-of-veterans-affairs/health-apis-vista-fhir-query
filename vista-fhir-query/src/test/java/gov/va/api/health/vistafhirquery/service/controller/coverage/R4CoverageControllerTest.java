@@ -46,6 +46,36 @@ public class R4CoverageControllerTest {
   }
 
   @Test
+  void searchByPatientWithCoverageHackEnabled() {
+    var request = requestFromUri("?_count=10&patient=p1");
+    var results = CoverageSamples.VistaLhsLighthouseRpcGateway.create().getsManifestResults();
+    when(vlClient.requestForPatient(
+            eq("69"), any(LhsLighthouseRpcGatewayGetsManifest.Request.class)))
+        .thenReturn(
+            RpcResponse.builder()
+                .status(RpcResponse.Status.OK)
+                .results(
+                    List.of(
+                        RpcInvocationResult.builder().vista("888").response(json(results)).build(),
+                        RpcInvocationResult.builder()
+                            .vista("666")
+                            .error(Optional.of("I'm a failed response who'll get ignored."))
+                            .build()))
+                .build());
+    var actual = controller().coverageSearch(request, "true", "p1", 10);
+    var expected =
+        CoverageSamples.R4.asBundle(
+            "http://fugazi.com/r4",
+            List.of(CoverageSamples.R4.create().coverage("888", "p1")),
+            1,
+            link(
+                BundleLink.LinkRelation.self,
+                "http://fugazi.com/r4/Coverage",
+                "_count=10&patient=p1"));
+    assertThat(json(actual)).isEqualTo(json(expected));
+  }
+
+  @Test
   void searchByPatientWithResults() {
     var request = requestFromUri("?_count=10&patient=p1");
     var results = CoverageSamples.VistaLhsLighthouseRpcGateway.create().getsManifestResults();
@@ -62,7 +92,7 @@ public class R4CoverageControllerTest {
                             .error(Optional.of("I'm a failed response who'll get ignored."))
                             .build()))
                 .build());
-    var actual = controller().coverageSearch(request, "p1", 10);
+    var actual = controller().coverageSearch(request, "false", "p1", 10);
     var expected =
         CoverageSamples.R4.asBundle(
             "http://fugazi.com/r4",
@@ -88,7 +118,7 @@ public class R4CoverageControllerTest {
                     List.of(
                         RpcInvocationResult.builder().vista("888").response(json(results)).build()))
                 .build());
-    var actual = controller().coverageSearch(request, "p1", 10);
+    var actual = controller().coverageSearch(request, "false", "p1", 10);
     var expected =
         CoverageSamples.R4.asBundle(
             "http://fugazi.com/r4",

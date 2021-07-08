@@ -38,7 +38,7 @@ public class R4CoverageResponseIncludesIcnHeaderAdviceTest {
   @Test
   @SneakyThrows
   public void subjectNotPopulated() {
-    when(controller.coverageSearch(any(HttpServletRequest.class), eq("p1"), eq(15)))
+    when(controller.coverageSearch(any(HttpServletRequest.class), eq("false"), eq("p1"), eq(15)))
         .thenReturn(Coverage.Bundle.builder().entry(List.of()).build());
     mockMvc
         .perform(get("/r4/Coverage?patient=p1&_count=15"))
@@ -48,7 +48,7 @@ public class R4CoverageResponseIncludesIcnHeaderAdviceTest {
   @Test
   @SneakyThrows
   public void subjectPopulated() {
-    when(controller.coverageSearch(any(HttpServletRequest.class), eq("p1"), eq(15)))
+    when(controller.coverageSearch(any(HttpServletRequest.class), eq("false"), eq("p1"), eq(15)))
         .thenReturn(
             Coverage.Bundle.builder()
                 .entry(
@@ -66,7 +66,7 @@ public class R4CoverageResponseIncludesIcnHeaderAdviceTest {
   @Test
   @SneakyThrows
   public void subjectPopulatedWithAlternateId() {
-    when(controller.coverageSearch(any(HttpServletRequest.class), eq("p1"), eq(15)))
+    when(controller.coverageSearch(any(HttpServletRequest.class), eq("false"), eq("p1"), eq(15)))
         .thenReturn(
             Coverage.Bundle.builder()
                 .entry(

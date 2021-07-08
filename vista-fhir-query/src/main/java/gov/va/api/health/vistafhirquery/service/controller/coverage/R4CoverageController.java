@@ -22,9 +22,11 @@ import javax.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,8 +54,13 @@ public class R4CoverageController implements R4CoverageApi {
   @GetMapping
   public Coverage.Bundle coverageSearch(
       HttpServletRequest request,
+      @RequestHeader(value = "coverageHack", required = false, defaultValue = "false")
+          String coverageHack,
       @RequestParam(value = "patient") String patient,
       @RequestParam(value = "_count", required = false) Integer count) {
+    if (CoverageHack.isEnabled(coverageHack)) {
+      patient = CoverageHack.dfn();
+    }
     // ToDo dfn macro on the iens field
     LhsLighthouseRpcGatewayGetsManifest.Request rpcRequest =
         LhsLighthouseRpcGatewayGetsManifest.Request.builder()
@@ -106,5 +113,15 @@ public class R4CoverageController implements R4CoverageApi {
                                 .toFhir())
                     .collect(toList()))
         .build();
+  }
+
+  static class CoverageHack {
+    static String dfn() {
+      return "69";
+    }
+
+    static boolean isEnabled(String header) {
+      return StringUtils.equals(header, "true");
+    }
   }
 }
