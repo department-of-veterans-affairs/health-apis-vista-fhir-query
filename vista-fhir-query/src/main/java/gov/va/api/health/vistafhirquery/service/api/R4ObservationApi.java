@@ -78,7 +78,7 @@ public interface R4ObservationApi {
               required = true,
               description =
                   "The logical id of the resource. Once assigned, this value never changes.",
-              example = "I3-87aih87KJHaMAuy89PKA90AOIJL897QHJKNaPZha9jLJKHAO8hkja")
+              example = "I3-MzfzyZkSpl9HvWWWuN0JvqjgiFQ5tiiW8byiF9rjOpg")
           String id);
 
   @Operation(
@@ -144,14 +144,14 @@ public interface R4ObservationApi {
               description =
                   "The patient's Integration Control Number (ICN)"
                       + " assigned by the Master Patient Index (MPI).",
-              example = "1010101010V66666")
+              example = "1011537977V693883")
           String patient,
       @Parameter(
               in = ParameterIn.QUERY,
               name = "_id",
               description =
                   "The logical id of the resource. Once assigned, this value never changes.",
-              example = "I3-87aih87KJHaMAuy89PKA90AOIJL897QHJKNaPZha9jLJKHAO8hkja")
+              example = "I3-MzfzyZkSpl9HvWWWuN0JvqjgiFQ5tiiW8byiF9rjOpg")
           String id,
       @Parameter(
               in = ParameterIn.QUERY,
@@ -159,7 +159,7 @@ public interface R4ObservationApi {
               description =
                   "The logical identifier of the resource. "
                       + "Once assigned, this value never changes.",
-              example = "I3-87aih87KJHaMAuy89PKA90AOIJL897QHJKNaPZha9jLJKHAO8hkja")
+              example = "I3-MzfzyZkSpl9HvWWWuN0JvqjgiFQ5tiiW8byiF9rjOpg")
           String identifier,
       @Parameter(
               in = ParameterIn.QUERY,
@@ -167,7 +167,7 @@ public interface R4ObservationApi {
               description =
                   "The general classification of the type of observation. "
                       + "[Observation Category Codes](https://www.hl7.org/fhir/valueset-observation-category.html)",
-              example = "laboratory")
+              example = "vital-signs")
           String category,
       @Parameter(
               in = ParameterIn.QUERY,
@@ -175,7 +175,7 @@ public interface R4ObservationApi {
               description =
                   "A code that indicates the type of information contained within the observation. "
                       + "[LOINC Observation Codes](https://www.hl7.org/fhir/valueset-observation-codes.html)",
-              example = "8310-5")
+              example = "85354-9")
           String code,
       @Parameter(
               in = ParameterIn.QUERY,
@@ -183,7 +183,7 @@ public interface R4ObservationApi {
               description =
                   "A date or range of dates (maximum of 2) that describes the date that "
                       + "the observation was recorded.",
-              example = "ge2018-03-14T00:00:00Z")
+              example = "ge2010-04-06T14:00:00Z")
           String[] date,
       @Parameter(
               in = ParameterIn.QUERY,
