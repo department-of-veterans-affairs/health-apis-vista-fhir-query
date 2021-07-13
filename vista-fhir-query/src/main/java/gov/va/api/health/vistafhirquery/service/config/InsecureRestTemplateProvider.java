@@ -44,17 +44,16 @@ public class InsecureRestTemplateProvider {
   @Bean
   public RestTemplate restTemplate(
       @Autowired RestTemplateBuilder restTemplateBuilder,
-      @Value("${rest-template.connection-timeout:#{null}}") Long connectionTimeout,
-      @Value("${rest-template.read-timeout:#{null}}") Long readTimeout) {
+      @Value("${rest-template.connection-timeout:#{null}}") Duration connectionTimeout,
+      @Value("${rest-template.read-timeout:#{null}}") Duration readTimeout) {
     log.info("Creating RestTemplate using: {}", getClass().getSimpleName());
     if (connectionTimeout != null) {
       log.info("Setting connection timeout to {} seconds.", connectionTimeout);
-      restTemplateBuilder =
-          restTemplateBuilder.setReadTimeout(Duration.ofSeconds(connectionTimeout));
+      restTemplateBuilder = restTemplateBuilder.setReadTimeout(connectionTimeout);
     }
     if (readTimeout != null) {
       log.info("Setting read timeout to {} seconds.", readTimeout);
-      restTemplateBuilder = restTemplateBuilder.setReadTimeout(Duration.ofSeconds(readTimeout));
+      restTemplateBuilder = restTemplateBuilder.setReadTimeout(readTimeout);
     }
     return restTemplateBuilder
         .requestFactory(bufferingRequestFactory(httpClientWithoutSsl()))
