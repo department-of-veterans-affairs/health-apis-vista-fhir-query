@@ -78,7 +78,7 @@ public interface R4ObservationApi {
               required = true,
               description =
                   "The logical id of the resource. Once assigned, this value never changes.",
-              example = "I3-MzfzyZkSpl9HvWWWuN0JvqjgiFQ5tiiW8byiF9rjOpg")
+              example = "I3-MzfzyZkSpl9HvWWWuN0JvxF6V2f0fwrUm4Cj381IfxH")
           String id);
 
   @Operation(
@@ -151,7 +151,7 @@ public interface R4ObservationApi {
               name = "_id",
               description =
                   "The logical id of the resource. Once assigned, this value never changes.",
-              example = "I3-MzfzyZkSpl9HvWWWuN0JvqjgiFQ5tiiW8byiF9rjOpg")
+              example = "I3-MzfzyZkSpl9HvWWWuN0JvxF6V2f0fwrUm4Cj381IfxH")
           String id,
       @Parameter(
               in = ParameterIn.QUERY,
@@ -159,7 +159,7 @@ public interface R4ObservationApi {
               description =
                   "The logical identifier of the resource. "
                       + "Once assigned, this value never changes.",
-              example = "I3-MzfzyZkSpl9HvWWWuN0JvqjgiFQ5tiiW8byiF9rjOpg")
+              example = "I3-MzfzyZkSpl9HvWWWuN0JvxF6V2f0fwrUm4Cj381IfxH")
           String identifier,
       @Parameter(
               in = ParameterIn.QUERY,
@@ -167,7 +167,7 @@ public interface R4ObservationApi {
               description =
                   "The general classification of the type of observation. "
                       + "[Observation Category Codes](https://www.hl7.org/fhir/valueset-observation-category.html)",
-              example = "vital-signs")
+              example = "laboratory")
           String category,
       @Parameter(
               in = ParameterIn.QUERY,
@@ -175,7 +175,7 @@ public interface R4ObservationApi {
               description =
                   "A code that indicates the type of information contained within the observation. "
                       + "[LOINC Observation Codes](https://www.hl7.org/fhir/valueset-observation-codes.html)",
-              example = "85354-9")
+              example = "8310-5")
           String code,
       @Parameter(
               in = ParameterIn.QUERY,
@@ -183,7 +183,7 @@ public interface R4ObservationApi {
               description =
                   "A date or range of dates (maximum of 2) that describes the date that "
                       + "the observation was recorded.",
-              example = "ge2010-04-06T14:00:00Z")
+              example = "ge2010")
           String[] date,
       @Parameter(
               in = ParameterIn.QUERY,
