@@ -25,7 +25,8 @@ ___
 ```
 ___
 `GET   /InsurancePlan?identifier={group-plan-number}`
-- Post-process using Group Number (field 2.02) in the response
+- Do we want systems? Should the api be able to distinguish an IDS id and plan number?
+- Post-process vista results using Group Number (field 2.02) in the response
 - RpcRequest:
 ```
 "rpc":{

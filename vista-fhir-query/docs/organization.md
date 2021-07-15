@@ -26,7 +26,6 @@ ___
 ___
 `GET   /Organization?type=pay`
 - Payer (#365.12) may be better for this query than file #36
- k
 - RPC Request:
 ```
 "rpc":{

@@ -1,0 +1,22 @@
+@startuml
+
+
+actor consumer
+
+consumer -> vfq: Makes Request for CoverageEligibilityResponse
+vfq -> vista: Request Insurance Type #2.312 using patient dfn (GETS)
+vista -> vfq: Returns Insurance Type File Entries
+vfq -> vfq: Collect Group Insurance Plans (Field .18)
+vfq -> vista: Request Plan Coverage Limitations #355.32 (LIST)
+vista -> vfq: Returns _all_ Plan Coverage Limitations
+vfq -> vfq: Filter Plan Coverage Limitations by\n Group Insurance Plans (collected previously)\n using field .01
+vfq o-> consumer: Optionally return results
+note right
+Data can be returned for any combination of patient
+and the following:
+end note
+vfq -> vfq: If param "created"\n Filter Plan Coverage Limitations by\n Date Entered (Field 1.01)
+vfq o-> consumer: Optionally return results
+vfq -> vfq: if param "insurer"\n Filter Plan Coverage Limitations by\n Plan (Field .01)
+vfq -> consumer: Return results
+@enduml

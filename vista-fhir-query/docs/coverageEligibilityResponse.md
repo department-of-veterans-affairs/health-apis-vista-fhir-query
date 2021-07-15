@@ -2,6 +2,9 @@
 `POST  /CoverageEligibilityResponse`
 ___
 `GET   /CoverageEligibilityResponse?patient={ICN}`
+
+[Sequence Diagram](../plantuml/coverageEligibilityResponseSearch.png)
+
 1. Get the InsuranceType File (#2.312) by patient
 - RpcRequest:
 ```
@@ -22,7 +25,7 @@ ___
   ]
 }
 ```
-2. Collect InsuranceCompany File (#355.3) IENs from response (field .18)
+2. Collect Group Insurance Plan File (#355.3) IENs from response (field .18)
 3. List the Plan Coverage Limitations File (#355.32)
 - RpcRequest:
 ```
