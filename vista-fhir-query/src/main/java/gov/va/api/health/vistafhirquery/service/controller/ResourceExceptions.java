@@ -23,7 +23,7 @@ public class ResourceExceptions {
       super(message);
     }
 
-    public static void because(String message) {
+    public static BadSearchParameters because(String message) {
       throw new BadSearchParameters(message);
     }
   }
@@ -34,13 +34,13 @@ public class ResourceExceptions {
       super(message);
     }
 
-    public static void because(String message) {
-      throw new ExpectationFailed(message);
+    public static ExpectationFailed because(String message) {
+      return new ExpectationFailed(message);
     }
 
     @FormatMethod
-    public static void because(String message, Object... values) {
-      because(String.format(message, values));
+    public static ExpectationFailed because(String message, Object... values) {
+      return because(String.format(message, values));
     }
   }
 

@@ -18,7 +18,7 @@ public class R4Controllers {
   /** Verifies that a list of resources has only one result and returns that result. */
   public static <R> R verifyAndGetResult(List<R> resources, String publicId) {
     if (resources.size() > 1) {
-      ResourceExceptions.ExpectationFailed.because(
+      throw ResourceExceptions.ExpectationFailed.because(
           "Too many results returned. Expected 1 but found %d.", resources.size());
     }
     return resources.stream()
