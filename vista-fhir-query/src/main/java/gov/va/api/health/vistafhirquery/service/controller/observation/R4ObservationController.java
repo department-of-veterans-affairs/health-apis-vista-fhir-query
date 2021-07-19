@@ -1,11 +1,12 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
 import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Controllers.parseOrDie;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Controllers.verifyAndGetResult;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toLocalDateMacroString;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
-import gov.va.api.health.ids.client.IdEncoder;
 import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.health.vistafhirquery.service.config.VistaApiConfig;
 import gov.va.api.health.vistafhirquery.service.controller.DateSearchBoundaries;
@@ -104,30 +105,15 @@ public class R4ObservationController {
     return VprGetPatientData.create().fromResults(rpcResponse.results());
   }
 
-  private SegmentedVistaIdentifier parseOrDie(String publicId) {
-    try {
-      return SegmentedVistaIdentifier.unpack(witnessProtection.toPrivateId(publicId));
-    } catch (IdEncoder.BadId | IllegalArgumentException e) {
-      throw new ResourceExceptions.NotFound(publicId);
-    }
-  }
-
   /** Read by publicId. */
   @SneakyThrows
   @GetMapping(value = {"/{publicId}"})
   public Observation read(@PathVariable("publicId") String publicId) {
-    SegmentedVistaIdentifier ids = parseOrDie(publicId);
+    SegmentedVistaIdentifier ids = parseOrDie(witnessProtection, publicId);
     VprGetPatientData.Response vprPatientData = getPatientDataByIdentifier(ids);
     List<Observation> resources =
         transformation(ids.patientIdentifier(), null).toResource().apply(vprPatientData);
-    if (resources.isEmpty()) {
-      ResourceExceptions.NotFound.because(publicId);
-    }
-    if (resources.size() != 1) {
-      ResourceExceptions.ExpectationFailed.because(
-          "Too many results returned. Expected 1 but found %d.", resources.size());
-    }
-    return resources.get(0);
+    return verifyAndGetResult(resources, publicId);
   }
 
   @GetMapping(params = {"_id"})
@@ -141,7 +127,7 @@ public class R4ObservationController {
       @RequestParam(name = "identifier") String identifier, HttpServletRequest request) {
     SegmentedVistaIdentifier ids;
     try {
-      ids = parseOrDie(identifier);
+      ids = parseOrDie(witnessProtection, identifier);
     } catch (ResourceExceptions.NotFound e) {
       return emptyBundleFor(request);
     }

@@ -1,5 +1,7 @@
 package gov.va.api.health.vistafhirquery.service.controller.coverage;
 
+import static gov.va.api.health.vistafhirquery.service.controller.R4Controllers.parseOrDie;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Controllers.verifyAndGetResult;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -9,8 +11,9 @@ import gov.va.api.health.vistafhirquery.service.controller.R4Bundler;
 import gov.va.api.health.vistafhirquery.service.controller.R4BundlerFactory;
 import gov.va.api.health.vistafhirquery.service.controller.R4Bundling;
 import gov.va.api.health.vistafhirquery.service.controller.R4Transformation;
-import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions;
+import gov.va.api.health.vistafhirquery.service.controller.SegmentedVistaIdentifier;
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
+import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.WitnessProtection;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayGetsManifest;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
@@ -26,6 +29,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,10 +47,41 @@ public class R4CoverageController implements R4CoverageApi {
 
   private final VistalinkApiClient vistalinkApiClient;
 
+  private final WitnessProtection witnessProtection;
+
+  /** Uses the metadata in the RpcResponse to map sites to timezones. */
+  private Map<String, ZoneId> collectTimezones(RpcResponse rpcResponse) {
+    return rpcResponse.results().stream()
+        .filter(r -> r.metadata() != null)
+        .collect(toMap(r -> r.vista(), r -> ZoneId.of(r.metadata().timezone())));
+  }
+
   @Override
-  public Coverage coverageRead(String id) {
-    // This will go away when read is implemented
-    throw new ResourceExceptions.NotFound("Not Found");
+  @GetMapping(value = "/{publicId}")
+  public Coverage coverageRead(@PathVariable(value = "publicId") String id) {
+    SegmentedVistaIdentifier svi = parseOrDie(witnessProtection, id);
+    LhsLighthouseRpcGatewayGetsManifest.Request rpcRequest =
+        LhsLighthouseRpcGatewayGetsManifest.Request.builder()
+            .file("2.312")
+            .iens(svi.vistaRecordId())
+            .fields(List.of(".01", ".18", ".2", "3", "3.04", "4.03", "4.06", "7.02", "8"))
+            .flags(
+                List.of(
+                    LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags.OMIT_NULL_VALUES,
+                    LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags
+                        .RETURN_INTERNAL_VALUES,
+                    LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags
+                        .RETURN_EXTERNAL_VALUES))
+            .build();
+    RpcResponse rpcResponse = vistalinkApiClient.requestForVistaSite(svi.vistaSiteId(), rpcRequest);
+    Map<String, ZoneId> vistaZoneIds = collectTimezones(rpcResponse);
+    LhsLighthouseRpcGatewayResponse getsManifestResults =
+        LhsLighthouseRpcGatewayGetsManifest.create().fromResults(rpcResponse.results());
+    List<Coverage> resources =
+        transformation(vistaZoneIds, svi.patientIdentifier())
+            .toResource()
+            .apply(getsManifestResults);
+    return verifyAndGetResult(resources, id);
   }
 
   /** Search support. */
@@ -76,11 +111,7 @@ public class R4CoverageController implements R4CoverageApi {
                         .RETURN_EXTERNAL_VALUES))
             .build();
     RpcResponse rpcResponse = vistalinkApiClient.requestForPatient(patient, rpcRequest);
-    // Gather the time zones from the response for use during transformation
-    Map<String, ZoneId> vistaZoneIds =
-        rpcResponse.results().stream()
-            .filter(r -> r.metadata() != null)
-            .collect(toMap(r -> r.vista(), r -> ZoneId.of(r.metadata().timezone())));
+    Map<String, ZoneId> vistaZoneIds = collectTimezones(rpcResponse);
     LhsLighthouseRpcGatewayResponse getsManifestResults =
         LhsLighthouseRpcGatewayGetsManifest.create().fromResults(rpcResponse.results());
     return toBundle(request, vistaZoneIds).apply(getsManifestResults);
