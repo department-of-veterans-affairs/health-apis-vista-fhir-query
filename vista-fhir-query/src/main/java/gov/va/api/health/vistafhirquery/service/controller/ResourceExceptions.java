@@ -12,8 +12,8 @@ public class ResourceExceptions {
       super(message);
     }
 
-    public static void because(String message) {
-      throw new NotFound(message);
+    public static NotFound because(String message) {
+      return new NotFound(message);
     }
   }
 

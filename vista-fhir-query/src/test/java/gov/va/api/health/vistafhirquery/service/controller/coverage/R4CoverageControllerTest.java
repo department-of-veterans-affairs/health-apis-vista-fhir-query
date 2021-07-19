@@ -13,6 +13,7 @@ import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
 import gov.va.api.health.vistafhirquery.service.controller.R4BundlerFactory;
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
 import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.AlternatePatientIds;
+import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.WitnessProtection;
 import gov.va.api.lighthouse.charon.api.RpcInvocationResult;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayGetsManifest;
@@ -28,6 +29,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public class R4CoverageControllerTest {
   @Mock VistalinkApiClient vlClient;
 
+  @Mock WitnessProtection witnessProtection;
+
   private R4CoverageController controller() {
     return R4CoverageController.builder()
         .bundlerFactory(
@@ -42,7 +45,27 @@ public class R4CoverageControllerTest {
                 .alternatePatientIds(new AlternatePatientIds.DisabledAlternatePatientIds())
                 .build())
         .vistalinkApiClient(vlClient)
+        .witnessProtection(witnessProtection)
         .build();
+  }
+
+  @Test
+  void read() {
+    var samples = CoverageSamples.VistaLhsLighthouseRpcGateway.create();
+    var results = samples.getsManifestResults("ip1");
+    when(vlClient.requestForVistaSite(
+            eq("123"), any(LhsLighthouseRpcGatewayGetsManifest.Request.class)))
+        .thenReturn(
+            RpcResponse.builder()
+                .status(RpcResponse.Status.OK)
+                .results(
+                    List.of(
+                        RpcInvocationResult.builder().vista("123").response(json(results)).build()))
+                .build());
+    when(witnessProtection.toPrivateId("pubCover1")).thenReturn("sNp1+123+*ip1");
+    var actual = controller().coverageRead("pubCover1");
+    var expected = CoverageSamples.R4.create().coverage("123", "ip1", "p1");
+    assertThat(json(actual)).isEqualTo(json(expected));
   }
 
   @Test
@@ -66,7 +89,7 @@ public class R4CoverageControllerTest {
     var expected =
         CoverageSamples.R4.asBundle(
             "http://fugazi.com/r4",
-            List.of(CoverageSamples.R4.create().coverage("888", "p1")),
+            List.of(CoverageSamples.R4.create().coverage("888", "1,8,", "p1")),
             1,
             link(
                 BundleLink.LinkRelation.self,
@@ -96,7 +119,7 @@ public class R4CoverageControllerTest {
     var expected =
         CoverageSamples.R4.asBundle(
             "http://fugazi.com/r4",
-            List.of(CoverageSamples.R4.create().coverage("888", "p1")),
+            List.of(CoverageSamples.R4.create().coverage("888", "1,8,", "p1")),
             1,
             link(
                 BundleLink.LinkRelation.self,

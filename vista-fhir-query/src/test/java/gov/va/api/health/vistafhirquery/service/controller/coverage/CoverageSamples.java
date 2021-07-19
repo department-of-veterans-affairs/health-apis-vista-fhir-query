@@ -10,6 +10,7 @@ import gov.va.api.health.r4.api.datatypes.Period;
 import gov.va.api.health.r4.api.elements.Extension;
 import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Coverage;
+import gov.va.api.health.vistafhirquery.service.controller.SegmentedVistaIdentifier;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
 import java.util.Arrays;
 import java.util.Collection;
@@ -49,12 +50,16 @@ public class CoverageSamples {
     }
 
     LhsLighthouseRpcGatewayResponse.Results getsManifestResults() {
+      return getsManifestResults("1,8,");
+    }
+
+    LhsLighthouseRpcGatewayResponse.Results getsManifestResults(String id) {
       return LhsLighthouseRpcGatewayResponse.Results.builder()
           .results(
               List.of(
                   LhsLighthouseRpcGatewayResponse.FilemanEntry.builder()
                       .file("2.312")
-                      .ien("1,8,")
+                      .ien(id)
                       .fields(fields())
                       .build()))
           .build();
@@ -94,7 +99,15 @@ public class CoverageSamples {
     private List<Coverage.CoverageClass> classes(String station, String patient) {
       return List.of(
           Coverage.CoverageClass.builder()
-              .value(patient + "^" + station + "^87")
+              .value(
+                  SegmentedVistaIdentifier.builder()
+                      .patientIdentifierType(
+                          SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
+                      .patientIdentifier(patient)
+                      .vistaSiteId(station)
+                      .vistaRecordId("87")
+                      .build()
+                      .pack())
               .type(
                   CodeableConcept.builder()
                       .coding(
@@ -108,12 +121,20 @@ public class CoverageSamples {
     }
 
     Coverage coverage() {
-      return coverage("666", "1010101010V666666");
+      return coverage("666", "1,8,", "1010101010V666666");
     }
 
-    Coverage coverage(String station, String patient) {
+    Coverage coverage(String station, String ien, String patient) {
       return Coverage.builder()
-          .id(patient + "^" + station + "^1,8,")
+          .id(
+              SegmentedVistaIdentifier.builder()
+                  .patientIdentifierType(
+                      SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
+                  .patientIdentifier(patient)
+                  .vistaSiteId(station)
+                  .vistaRecordId(ien)
+                  .build()
+                  .pack())
           .extension(extensions())
           .status(Coverage.Status.active)
           .subscriberId("R50797108")
@@ -123,7 +144,16 @@ public class CoverageSamples {
           .payor(
               List.of(
                   Reference.builder()
-                      .reference("Organization/" + patient + "^" + station + "^36;4")
+                      .reference(
+                          "Organization/"
+                              + SegmentedVistaIdentifier.builder()
+                                  .patientIdentifierType(
+                                      SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
+                                  .patientIdentifier(patient)
+                                  .vistaSiteId(station)
+                                  .vistaRecordId("36;4")
+                                  .build()
+                                  .pack())
                       .build()))
           .coverageClass(classes(station, patient))
           .order(1)

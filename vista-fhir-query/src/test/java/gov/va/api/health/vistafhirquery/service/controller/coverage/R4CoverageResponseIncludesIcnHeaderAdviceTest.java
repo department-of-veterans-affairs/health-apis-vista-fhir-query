@@ -54,7 +54,7 @@ public class R4CoverageResponseIncludesIcnHeaderAdviceTest {
                 .entry(
                     List.of(
                         Coverage.Entry.builder()
-                            .resource(CoverageSamples.R4.create().coverage("666", "p1"))
+                            .resource(CoverageSamples.R4.create().coverage("666", "1,8,", "p1"))
                             .build()))
                 .build());
     when(alternatePatientIds.toPublicId(eq("p1"))).thenReturn("p1");
@@ -72,7 +72,7 @@ public class R4CoverageResponseIncludesIcnHeaderAdviceTest {
                 .entry(
                     List.of(
                         Coverage.Entry.builder()
-                            .resource(CoverageSamples.R4.create().coverage("666", "p1"))
+                            .resource(CoverageSamples.R4.create().coverage("666", "1,8,", "p1"))
                             .build()))
                 .build());
     when(alternatePatientIds.toPublicId(eq("p1"))).thenReturn("p99");
