@@ -2,6 +2,8 @@ package gov.va.api.health.vistafhirquery.service.controller.coverage;
 
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.allBlank;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toReference;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toResourceId;
 import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.internalValueAsIntegerOrDie;
 import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.isInternalValueBlank;
 import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.isInternalValueNotBlank;
@@ -36,13 +38,6 @@ public class R4CoverageTransformer {
   /** Assumes UTC if zoneId is not provided. */
   @Builder.Default ZoneId vistaZoneId = ZoneOffset.UTC;
 
-  private Reference beneficiary() {
-    if (isBlank(patientIcn)) {
-      return null;
-    }
-    return Reference.builder().reference("Patient/" + patientIcn).build();
-  }
-
   private List<Coverage.CoverageClass> classes(LhsLighthouseRpcGatewayResponse.Values groupPlan) {
     if (isInternalValueBlank(groupPlan)) {
       return null;
@@ -50,7 +45,7 @@ public class R4CoverageTransformer {
     // Fhir InsurancePlan
     return List.of(
         Coverage.CoverageClass.builder()
-            .value(patientIcn + "^" + rpcResults.getKey() + "^" + groupPlan.in())
+            .value(toResourceId(patientIcn, rpcResults.getKey(), groupPlan.in()))
             .type(
                 CodeableConcept.builder()
                     .coding(
@@ -111,15 +106,10 @@ public class R4CoverageTransformer {
     /* The organization controller is likely to need to support Organization from both the
      * InsuranceCompany file _and_ the payer file. */
     return List.of(
-        Reference.builder()
-            .reference(
-                "Organization/"
-                    + patientIcn
-                    + "^"
-                    + rpcResults.getKey()
-                    + "^36;"
-                    + insuranceCompany.in())
-            .build());
+        toReference(
+            "Organization",
+            toResourceId(patientIcn, rpcResults.getKey(), "36;" + insuranceCompany.in()),
+            null));
   }
 
   private Period period(
@@ -170,14 +160,14 @@ public class R4CoverageTransformer {
       return null;
     }
     return Coverage.builder()
-        .id(patientIcn + "^" + rpcResults.getKey() + "^" + entry.ien())
+        .id(toResourceId(patientIcn, rpcResults.getKey(), entry.ien()))
         .extension(
             extensions(
                 entry.fields().get(InsuranceType.PHARMACY_PERSON_CODE),
                 entry.fields().get(InsuranceType.STOP_POLICY_FROM_BILLING)))
         .status(Coverage.Status.active)
         .subscriberId(subscriberId(entry.fields().get(InsuranceType.SUBSCRIBER_ID)))
-        .beneficiary(beneficiary())
+        .beneficiary(toReference("Patient", patientIcn, null))
         .relationship(relationship(entry.fields().get(InsuranceType.PT_RELATIONSHIP_HIPAA)))
         .period(
             period(

@@ -29,7 +29,7 @@ public class SegmentedVistaIdentifier {
 
   @NonNull String vistaSiteId;
 
-  @NonNull VprGetPatientData.Domains vprRpcDomain;
+  VprGetPatientData.Domains vprRpcDomain;
 
   @NonNull String vistaRecordId;
 
@@ -51,11 +51,9 @@ public class SegmentedVistaIdentifier {
           "The first and third sections of a SegmentedVistaIdentifier must contain "
               + "a type and an identifier value.");
     }
+    // Coverage ids are iens, so any id that doesn't match a domain mapping (L, V) can be ignored
+    // ToDo the above statement may not always hold true as new RPCs/fhir-resources are added.
     var domainType = domainAbbreviationMappings().get(segmentParts[2].charAt(0));
-    if (domainType == null) {
-      throw new IllegalArgumentException(
-          "Identifier value had invalid domain type abbreviation: " + segmentParts[2].charAt(0));
-    }
     return SegmentedVistaIdentifier.builder()
         .patientIdentifierType(PatientIdentifierType.fromAbbreviation(segmentParts[0].charAt(0)))
         .patientIdentifier(segmentParts[0].substring(1))
@@ -82,7 +80,7 @@ public class SegmentedVistaIdentifier {
         "+",
         patientIdentifierType().abbreviation() + patientIdentifier(),
         vistaSiteId(),
-        domainAbbreviationMappings().inverse().get(vprRpcDomain()) + vistaRecordId());
+        domainAbbreviationMappings().inverse().getOrDefault(vprRpcDomain(), '*') + vistaRecordId());
   }
 
   /** The type of a Vista identifier which can be DFN, local ICN, or National ICN. */

@@ -157,6 +157,10 @@ public class R4Transformers {
         .pack();
   }
 
+  public static String toResourceId(String patientId, String siteId, String recordId) {
+    return toResourceId(patientId, siteId, null, recordId);
+  }
+
   /** Gets value of a ValueOnlyXmlAttribute if it exists. */
   public static String valueOfValueOnlyXmlAttribute(ValueOnlyXmlAttribute valueOnlyXmlAttribute) {
     if (isBlank(valueOnlyXmlAttribute)) {
