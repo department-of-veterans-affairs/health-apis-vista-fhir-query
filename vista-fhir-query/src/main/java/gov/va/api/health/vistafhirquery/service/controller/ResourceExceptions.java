@@ -24,7 +24,7 @@ public class ResourceExceptions {
     }
 
     public static BadSearchParameters because(String message) {
-      throw new BadSearchParameters(message);
+      return new BadSearchParameters(message);
     }
   }
 
