@@ -4,9 +4,9 @@ import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toHumanDateTime;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toReference;
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toResourceId;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.valueOfValueOnlyXmlAttribute;
 import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationTransformers.referenceRange;
+import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationTransformers.toResourceId;
 import static gov.va.api.health.vistafhirquery.service.controller.observation.ObservationTransformers.valueQuantity;
 
 import gov.va.api.health.r4.api.datatypes.Annotation;

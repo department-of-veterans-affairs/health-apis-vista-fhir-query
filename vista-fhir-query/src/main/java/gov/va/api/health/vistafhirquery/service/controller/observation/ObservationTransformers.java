@@ -8,8 +8,12 @@ import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers
 import gov.va.api.health.r4.api.datatypes.Quantity;
 import gov.va.api.health.r4.api.datatypes.SimpleQuantity;
 import gov.va.api.health.r4.api.resources.Observation;
+import gov.va.api.health.vistafhirquery.service.controller.SegmentedVistaIdentifier;
 import gov.va.api.lighthouse.charon.models.ValueOnlyXmlAttribute;
 import java.util.List;
+import java.util.Map;
+
+import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
 import lombok.experimental.UtilityClass;
 
 /** Utility class to help with common Observation transformations. */
@@ -33,6 +37,22 @@ public class ObservationTransformers {
             .high(simpleQuantityFor(high))
             .low(simpleQuantityFor(low))
             .build());
+  }
+
+  /** Build a VPR RPC Identifier Segment using patientId, siteId, Domain, and the recordId. */
+  public static String toResourceId(
+          String patientId, String siteId, VprGetPatientData.Domains recordDomain, String recordId) {
+    if (isBlank(recordId)) {
+      return null;
+    }
+    var domainVal = FormatCompressedObservationLab.domainAbbreviationMappings().inverse().get(recordDomain);
+    return SegmentedVistaIdentifier.builder()
+            .patientIdentifierType(SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
+            .patientIdentifier(patientId)
+            .vistaSiteId(siteId)
+            .vistaRecordId(domainVal + recordId)
+            .build()
+            .pack(ObservationIdentifiers.FORMATS);
   }
 
   /** Build an R4 SimpleQuantity given a string value. */

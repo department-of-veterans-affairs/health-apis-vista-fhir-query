@@ -2,6 +2,7 @@ package gov.va.api.health.vistafhirquery.service.controller;
 
 import gov.va.api.health.fhir.api.IsReference;
 import gov.va.api.health.r4.api.elements.Reference;
+import gov.va.api.health.vistafhirquery.service.controller.observation.FormatCompressedObservationLab;
 import gov.va.api.lighthouse.charon.models.FilemanDate;
 import gov.va.api.lighthouse.charon.models.ValueOnlyXmlAttribute;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
@@ -141,24 +142,18 @@ public class R4Transformers {
         .build();
   }
 
-  /** Build an Identifier Segment using patientId, siteId, and the recordId. */
-  public static String toResourceId(
-      String patientId, String siteId, VprGetPatientData.Domains recordDomain, String recordId) {
+  /** Build a generic identifier segment using patientId, siteId, and recordId. */
+  public static String toResourceId(String patientId, String siteId, String recordId) {
     if (isBlank(recordId)) {
       return null;
     }
     return SegmentedVistaIdentifier.builder()
-        .patientIdentifierType(SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
-        .patientIdentifier(patientId)
-        .vistaSiteId(siteId)
-        .vprRpcDomain(recordDomain)
-        .vistaRecordId(recordId)
-        .build()
-        .pack();
-  }
-
-  public static String toResourceId(String patientId, String siteId, String recordId) {
-    return toResourceId(patientId, siteId, null, recordId);
+            .patientIdentifierType(SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
+            .patientIdentifier(patientId)
+            .vistaSiteId(siteId)
+            .vistaRecordId(recordId)
+            .build()
+            .pack();
   }
 
   /** Gets value of a ValueOnlyXmlAttribute if it exists. */

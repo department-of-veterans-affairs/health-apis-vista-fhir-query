@@ -93,14 +93,15 @@ public class R4ObservationController {
   }
 
   private VprGetPatientData.Response getPatientDataByIdentifier(SegmentedVistaIdentifier ids) {
+    var domain = FormatCompressedObservationLab.domainAbbreviationMappings().get(ids.vistaRecordId().charAt(0));
     RpcResponse rpcResponse =
         vistalinkApiClient.requestForVistaSite(
             ids.vistaSiteId(),
             VprGetPatientData.Request.builder()
                 .context(Optional.ofNullable(vistaApiConfig.getVprGetPatientDataContext()))
                 .dfn(VprGetPatientData.Request.PatientId.forIcn(ids.patientIdentifier()))
-                .type(Set.of(ids.vprRpcDomain()))
-                .id(Optional.of(ids.vistaRecordId()))
+                .type(Set.of(domain))
+                .id(Optional.of(ids.vistaRecordId().substring(1)))
                 .build());
     return VprGetPatientData.create().fromResults(rpcResponse.results());
   }
@@ -109,7 +110,7 @@ public class R4ObservationController {
   @SneakyThrows
   @GetMapping(value = {"/{publicId}"})
   public Observation read(@PathVariable("publicId") String publicId) {
-    SegmentedVistaIdentifier ids = parseOrDie(witnessProtection, publicId);
+    SegmentedVistaIdentifier ids = parseOrDie(witnessProtection, publicId, ObservationIdentifiers.FORMATS);
     VprGetPatientData.Response vprPatientData = getPatientDataByIdentifier(ids);
     List<Observation> resources =
         transformation(ids.patientIdentifier(), null).toResource().apply(vprPatientData);
@@ -127,7 +128,7 @@ public class R4ObservationController {
       @RequestParam(name = "identifier") String identifier, HttpServletRequest request) {
     SegmentedVistaIdentifier ids;
     try {
-      ids = parseOrDie(witnessProtection, identifier);
+      ids = parseOrDie(witnessProtection, identifier, ObservationIdentifiers.FORMATS);
     } catch (ResourceExceptions.NotFound e) {
       return emptyBundleFor(request);
     }
