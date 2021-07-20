@@ -26,8 +26,6 @@ public class SegmentedVistaIdentifier {
 
   @NonNull String vistaRecordId;
 
-  Map<Character, VistaIdentifierFormat> identifierFormats;
-
   /** Parse a VistaIdentifier. */
   public static SegmentedVistaIdentifier unpack(String id, Map<Character, VistaIdentifierFormat> formats) {
     return new Encoder(formats).unpack(id);

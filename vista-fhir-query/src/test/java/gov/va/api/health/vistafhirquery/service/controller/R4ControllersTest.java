@@ -34,7 +34,6 @@ public class R4ControllersTest {
             .patientIdentifierType(SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
             .patientIdentifier("p1")
             .vistaSiteId("123")
-            .vprRpcDomain(VprGetPatientData.Domains.vitals)
             .vistaRecordId("456")
             .build();
     assertThat(parseOrDie(witnessProtection, "sweetCaroline")).isEqualTo(expected);

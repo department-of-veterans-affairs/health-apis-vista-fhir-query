@@ -32,7 +32,6 @@ public class SegmentedVistaIdentifierTest {
                 .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("1011537977V693883")
                 .vistaSiteId("673")
-                .vprRpcDomain(Domains.labs)
                 .vistaRecordId("CH;6929384.839997;14")
                 .build(),
             "L1011537977693883673692938483999714"),
@@ -41,7 +40,6 @@ public class SegmentedVistaIdentifierTest {
                 .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("1011537977")
                 .vistaSiteId("673")
-                .vprRpcDomain(Domains.labs)
                 .vistaRecordId("CH;6929384.839997;14")
                 .build(),
             "L1011537977xxxxx0673692938483999714"),
@@ -50,7 +48,6 @@ public class SegmentedVistaIdentifierTest {
                 .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("1011537977V693883")
                 .vistaSiteId("673")
-                .vprRpcDomain(Domains.labs)
                 .vistaRecordId("CH;6929384.83;14")
                 .build(),
             "L1011537977693883673692938483xxxx14"),
@@ -59,7 +56,6 @@ public class SegmentedVistaIdentifierTest {
                 .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("1011537977V693883")
                 .vistaSiteId("673")
-                .vprRpcDomain(Domains.vitals)
                 .vistaRecordId("CH;6929384.839997;14")
                 .build(),
             "sN1011537977V693883+673+VCH;6929384.839997;14"),
@@ -68,7 +64,6 @@ public class SegmentedVistaIdentifierTest {
                 .patientIdentifierType(PatientIdentifierType.VISTA_PATIENT_FILE_ID)
                 .patientIdentifier("1011537977V693883")
                 .vistaSiteId("673")
-                .vprRpcDomain(Domains.labs)
                 .vistaRecordId("CH;6929384.839997;14")
                 .build(),
             "sD1011537977V693883+673+LCH;6929384.839997;14"),
@@ -77,7 +72,6 @@ public class SegmentedVistaIdentifierTest {
                 .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("1011537977V693883")
                 .vistaSiteId("673a")
-                .vprRpcDomain(Domains.labs)
                 .vistaRecordId("CH;6929384.839997;14")
                 .build(),
             "sN1011537977V693883+673a+LCH;6929384.839997;14"),
@@ -86,7 +80,6 @@ public class SegmentedVistaIdentifierTest {
                 .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("1011537977V693883")
                 .vistaSiteId("673")
-                .vprRpcDomain(Domains.labs)
                 .vistaRecordId("XH;6929384.839997;14")
                 .build(),
             "sN1011537977V693883+673+LXH;6929384.839997;14"),
@@ -95,7 +88,6 @@ public class SegmentedVistaIdentifierTest {
                 .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("a1011537977V693883")
                 .vistaSiteId("673")
-                .vprRpcDomain(Domains.labs)
                 .vistaRecordId("CH;6929384.839997;14")
                 .build(),
             "sNa1011537977V693883+673+LCH;6929384.839997;14")
@@ -110,7 +102,6 @@ public class SegmentedVistaIdentifierTest {
                 .patientIdentifierType(SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("icn")
                 .vistaSiteId("siteId")
-                .vprRpcDomain(VprGetPatientData.Domains.vitals)
                 .vistaRecordId("vistaId")
                 .build()
                 .toString())
@@ -139,7 +130,6 @@ public class SegmentedVistaIdentifierTest {
             .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
             .patientIdentifier("1011537977V693883")
             .vistaSiteId("673")
-            .vprRpcDomain(Domains.labs)
             .vistaRecordId("CH;6909685.886779;643214")
             .build();
     String packed = id.pack();
@@ -176,7 +166,6 @@ public class SegmentedVistaIdentifierTest {
                 .patientIdentifierType(SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("icn")
                 .vistaSiteId("siteId")
-                .vprRpcDomain(VprGetPatientData.Domains.vitals)
                 .vistaRecordId("vistaId")
                 .build()
                 .pack())
@@ -191,7 +180,6 @@ public class SegmentedVistaIdentifierTest {
                 .patientIdentifierType(SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("icn")
                 .vistaSiteId("siteId")
-                .vprRpcDomain(VprGetPatientData.Domains.labs)
                 .vistaRecordId("vistaId")
                 .build());
   }

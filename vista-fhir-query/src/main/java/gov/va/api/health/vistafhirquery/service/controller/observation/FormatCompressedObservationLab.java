@@ -27,8 +27,10 @@ public class FormatCompressedObservationLab implements VistaIdentifierFormat {
 
   @Override
   public String tryPack(SegmentedVistaIdentifier vis) {
-    if (vis.vistaRecordId().length() > 2) {
-        throw ResourceExceptions.ExpectationFailed.because("Expected record id to have length > 2 to encode " + FormatCompressedObservationLab.class.getSimpleName());
+    if (vis.vistaRecordId().length() < 2) {
+        throw ResourceExceptions.ExpectationFailed.because("Expected record id " + vis.vistaRecordId() + " to have " +
+                "length > 2 to encode" +
+                " " + FormatCompressedObservationLab.class.getSimpleName());
     }
     if (domainAbbreviationMappings().get(vis.vistaRecordId().charAt(0)) != VprGetPatientData.Domains.labs) {
       return null;
