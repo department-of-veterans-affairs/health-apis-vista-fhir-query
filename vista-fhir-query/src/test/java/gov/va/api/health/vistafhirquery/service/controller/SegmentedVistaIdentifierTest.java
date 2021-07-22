@@ -11,8 +11,7 @@ import gov.va.api.health.ids.client.RestIdentityServiceClientConfig;
 import gov.va.api.health.vistafhirquery.idsmapping.VistaFhirQueryIdsCodebookSupplier;
 import gov.va.api.health.vistafhirquery.service.controller.SegmentedVistaIdentifier.PatientIdentifierType;
 import gov.va.api.health.vistafhirquery.service.controller.SegmentedVistaIdentifier.TenvSix;
-import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
-import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData.Domains;
+import gov.va.api.health.vistafhirquery.service.controller.observation.ObservationIdentifiers;
 import java.util.List;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +31,7 @@ public class SegmentedVistaIdentifierTest {
                 .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("1011537977V693883")
                 .vistaSiteId("673")
-                .vistaRecordId("CH;6929384.839997;14")
+                .vistaRecordId("LCH;6929384.839997;14")
                 .build(),
             "L1011537977693883673692938483999714"),
         arguments(
@@ -40,7 +39,7 @@ public class SegmentedVistaIdentifierTest {
                 .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("1011537977")
                 .vistaSiteId("673")
-                .vistaRecordId("CH;6929384.839997;14")
+                .vistaRecordId("LCH;6929384.839997;14")
                 .build(),
             "L1011537977xxxxx0673692938483999714"),
         arguments(
@@ -48,7 +47,7 @@ public class SegmentedVistaIdentifierTest {
                 .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("1011537977V693883")
                 .vistaSiteId("673")
-                .vistaRecordId("CH;6929384.83;14")
+                .vistaRecordId("LCH;6929384.83;14")
                 .build(),
             "L1011537977693883673692938483xxxx14"),
         arguments(
@@ -56,7 +55,7 @@ public class SegmentedVistaIdentifierTest {
                 .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("1011537977V693883")
                 .vistaSiteId("673")
-                .vistaRecordId("CH;6929384.839997;14")
+                .vistaRecordId("VCH;6929384.839997;14")
                 .build(),
             "sN1011537977V693883+673+VCH;6929384.839997;14"),
         arguments(
@@ -64,7 +63,7 @@ public class SegmentedVistaIdentifierTest {
                 .patientIdentifierType(PatientIdentifierType.VISTA_PATIENT_FILE_ID)
                 .patientIdentifier("1011537977V693883")
                 .vistaSiteId("673")
-                .vistaRecordId("CH;6929384.839997;14")
+                .vistaRecordId("LCH;6929384.839997;14")
                 .build(),
             "sD1011537977V693883+673+LCH;6929384.839997;14"),
         arguments(
@@ -72,7 +71,7 @@ public class SegmentedVistaIdentifierTest {
                 .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("1011537977V693883")
                 .vistaSiteId("673a")
-                .vistaRecordId("CH;6929384.839997;14")
+                .vistaRecordId("LCH;6929384.839997;14")
                 .build(),
             "sN1011537977V693883+673a+LCH;6929384.839997;14"),
         arguments(
@@ -80,7 +79,7 @@ public class SegmentedVistaIdentifierTest {
                 .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("1011537977V693883")
                 .vistaSiteId("673")
-                .vistaRecordId("XH;6929384.839997;14")
+                .vistaRecordId("LXH;6929384.839997;14")
                 .build(),
             "sN1011537977V693883+673+LXH;6929384.839997;14"),
         arguments(
@@ -88,7 +87,7 @@ public class SegmentedVistaIdentifierTest {
                 .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("a1011537977V693883")
                 .vistaSiteId("673")
-                .vistaRecordId("CH;6929384.839997;14")
+                .vistaRecordId("LCH;6929384.839997;14")
                 .build(),
             "sNa1011537977V693883+673+LCH;6929384.839997;14")
         //
@@ -105,7 +104,7 @@ public class SegmentedVistaIdentifierTest {
                 .vistaRecordId("vistaId")
                 .build()
                 .toString())
-        .isEqualTo("Nicn+siteId+VvistaId");
+        .isEqualTo("Nicn+siteId+vistaId");
   }
 
   @SuppressWarnings("ResultOfMethodCallIgnored")
@@ -119,7 +118,7 @@ public class SegmentedVistaIdentifierTest {
   @MethodSource
   void packWithCompactedObservationLabFormatIsOnlyForLabs(
       SegmentedVistaIdentifier id, String expected) {
-    assertThat(id.pack()).isEqualTo(expected);
+    assertThat(id.pack(ObservationIdentifiers.FORMATS)).isEqualTo(expected);
   }
 
   @Test
@@ -130,10 +129,11 @@ public class SegmentedVistaIdentifierTest {
             .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
             .patientIdentifier("1011537977V693883")
             .vistaSiteId("673")
-            .vistaRecordId("CH;6909685.886779;643214")
+            .vistaRecordId("LCH;6909685.886779;643214")
             .build();
-    String packed = id.pack();
-    SegmentedVistaIdentifier unpacked = SegmentedVistaIdentifier.unpack(packed);
+    String packed = id.pack(ObservationIdentifiers.FORMATS);
+    SegmentedVistaIdentifier unpacked =
+        SegmentedVistaIdentifier.unpack(packed, ObservationIdentifiers.FORMATS);
     assertThat(unpacked).isEqualTo(id);
     var ids =
         new RestIdentityServiceClientConfig(
@@ -169,7 +169,7 @@ public class SegmentedVistaIdentifierTest {
                 .vistaRecordId("vistaId")
                 .build()
                 .pack())
-        .isEqualTo("sNicn+siteId+VvistaId");
+        .isEqualTo("sNicn+siteId+vistaId");
   }
 
   @Test
@@ -180,13 +180,12 @@ public class SegmentedVistaIdentifierTest {
                 .patientIdentifierType(SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("icn")
                 .vistaSiteId("siteId")
-                .vistaRecordId("vistaId")
+                .vistaRecordId("LvistaId")
                 .build());
   }
 
   @ParameterizedTest
-  @ValueSource(
-      strings = {"x+123+Vabc", "+123+abc", "123", "123+abc", "D123+abc+V456+def", "D123+abc+x"})
+  @ValueSource(strings = {"x+123+Vabc", "+123+abc", "123", "123+abc", "D123+abc+V456+def"})
   void parseInvalidSegmentThrowsIllegalArgument(String segment) {
     assertThatExceptionOfType(IllegalArgumentException.class)
         .isThrownBy(() -> SegmentedVistaIdentifier.unpack(segment));

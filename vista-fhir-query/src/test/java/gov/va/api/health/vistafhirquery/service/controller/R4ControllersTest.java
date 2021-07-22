@@ -7,7 +7,6 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.when;
 
 import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.WitnessProtection;
-import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +33,7 @@ public class R4ControllersTest {
             .patientIdentifierType(SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
             .patientIdentifier("p1")
             .vistaSiteId("123")
-            .vistaRecordId("456")
+            .vistaRecordId("V456")
             .build();
     assertThat(parseOrDie(witnessProtection, "sweetCaroline")).isEqualTo(expected);
   }

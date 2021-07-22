@@ -2,9 +2,6 @@ package gov.va.api.health.vistafhirquery.service.controller;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -27,7 +24,8 @@ public class SegmentedVistaIdentifier {
   @NonNull String vistaRecordId;
 
   /** Parse a VistaIdentifier. */
-  public static SegmentedVistaIdentifier unpack(String id, Map<Character, VistaIdentifierFormat> formats) {
+  public static SegmentedVistaIdentifier unpack(
+      String id, Map<Character, VistaIdentifierFormat> formats) {
     return new Encoder(formats).unpack(id);
   }
 
@@ -131,6 +129,7 @@ public class SegmentedVistaIdentifier {
 
     int six;
 
+    /** Parse an icn to a TenvSix. */
     public static Optional<TenvSix> parse(String icn) {
       if (isBlank(icn)) {
         return Optional.empty();

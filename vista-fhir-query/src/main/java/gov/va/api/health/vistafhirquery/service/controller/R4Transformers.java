@@ -2,10 +2,8 @@ package gov.va.api.health.vistafhirquery.service.controller;
 
 import gov.va.api.health.fhir.api.IsReference;
 import gov.va.api.health.r4.api.elements.Reference;
-import gov.va.api.health.vistafhirquery.service.controller.observation.FormatCompressedObservationLab;
 import gov.va.api.lighthouse.charon.models.FilemanDate;
 import gov.va.api.lighthouse.charon.models.ValueOnlyXmlAttribute;
-import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -148,12 +146,12 @@ public class R4Transformers {
       return null;
     }
     return SegmentedVistaIdentifier.builder()
-            .patientIdentifierType(SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
-            .patientIdentifier(patientId)
-            .vistaSiteId(siteId)
-            .vistaRecordId(recordId)
-            .build()
-            .pack();
+        .patientIdentifierType(SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
+        .patientIdentifier(patientId)
+        .vistaSiteId(siteId)
+        .vistaRecordId(recordId)
+        .build()
+        .pack();
   }
 
   /** Gets value of a ValueOnlyXmlAttribute if it exists. */

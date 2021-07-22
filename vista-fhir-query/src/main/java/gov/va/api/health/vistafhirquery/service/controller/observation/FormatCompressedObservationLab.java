@@ -10,7 +10,6 @@ import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions;
 import gov.va.api.health.vistafhirquery.service.controller.SegmentedVistaIdentifier;
 import gov.va.api.health.vistafhirquery.service.controller.VistaIdentifierFormat;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
-
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -19,20 +18,26 @@ public class FormatCompressedObservationLab implements VistaIdentifierFormat {
 
   private static final Pattern RECORD_ID = Pattern.compile("CH;[0-9]{7}\\.[0-9]{1,6};[0-9]+");
 
-    public static BiMap<Character, VprGetPatientData.Domains> domainAbbreviationMappings() {
-        var mappings =
-                Map.of('L', VprGetPatientData.Domains.labs, 'V', VprGetPatientData.Domains.vitals);
-        return HashBiMap.create(mappings);
-    }
+  /** Mappings from VPR RPC domains to abbreviated characters. */
+  public static BiMap<Character, VprGetPatientData.Domains> domainAbbreviationMappings() {
+    var mappings =
+        Map.of('L', VprGetPatientData.Domains.labs, 'V', VprGetPatientData.Domains.vitals);
+    return HashBiMap.create(mappings);
+  }
 
   @Override
   public String tryPack(SegmentedVistaIdentifier vis) {
     if (vis.vistaRecordId().length() < 2) {
-        throw ResourceExceptions.ExpectationFailed.because("Expected record id " + vis.vistaRecordId() + " to have " +
-                "length > 2 to encode" +
-                " " + FormatCompressedObservationLab.class.getSimpleName());
+      throw ResourceExceptions.ExpectationFailed.because(
+          "Expected record id "
+              + vis.vistaRecordId()
+              + " to have "
+              + "length > 2 to encode"
+              + " "
+              + FormatCompressedObservationLab.class.getSimpleName());
     }
-    if (domainAbbreviationMappings().get(vis.vistaRecordId().charAt(0)) != VprGetPatientData.Domains.labs) {
+    if (domainAbbreviationMappings().get(vis.vistaRecordId().charAt(0))
+        != VprGetPatientData.Domains.labs) {
       return null;
     }
     if (vis.patientIdentifierType()
@@ -79,8 +84,14 @@ public class FormatCompressedObservationLab implements VistaIdentifierFormat {
         .patientIdentifierType(SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
         .patientIdentifier(icn)
         .vistaSiteId(site)
-        .vistaRecordId(domainAbbreviationMappings().inverse().get(VprGetPatientData.Domains.labs) + "CH;" + date +
-                "." + time + ";" + remainder)
+        .vistaRecordId(
+            domainAbbreviationMappings().inverse().get(VprGetPatientData.Domains.labs)
+                + "CH;"
+                + date
+                + "."
+                + time
+                + ";"
+                + remainder)
         .build();
   }
 }

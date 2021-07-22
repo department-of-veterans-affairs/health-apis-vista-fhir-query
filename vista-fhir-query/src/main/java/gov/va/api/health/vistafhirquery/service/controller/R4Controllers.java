@@ -8,16 +8,18 @@ import java.util.Map;
 public class R4Controllers {
   /** Try to parse a Segmented Vista Identifier, else throw NotFound. */
   public static SegmentedVistaIdentifier parseOrDie(
-      WitnessProtection witnessProtection, String publicId, Map<Character, VistaIdentifierFormat> formats) {
+      WitnessProtection witnessProtection,
+      String publicId,
+      Map<Character, VistaIdentifierFormat> formats) {
     try {
-      return SegmentedVistaIdentifier.unpack(witnessProtection.toPrivateId(publicId));
+      return SegmentedVistaIdentifier.unpack(witnessProtection.toPrivateId(publicId), formats);
     } catch (IdEncoder.BadId | IllegalArgumentException e) {
       throw ResourceExceptions.NotFound.because("Could not unpack id: " + publicId);
     }
   }
 
   public static SegmentedVistaIdentifier parseOrDie(
-          WitnessProtection witnessProtection, String publicId) {
+      WitnessProtection witnessProtection, String publicId) {
     return parseOrDie(witnessProtection, publicId, null);
   }
 
