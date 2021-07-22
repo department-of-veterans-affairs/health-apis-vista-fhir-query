@@ -8,7 +8,6 @@ import gov.va.api.health.r4.api.datatypes.Coding;
 import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.lighthouse.charon.models.FilemanDate;
 import gov.va.api.lighthouse.charon.models.ValueOnlyXmlAttribute;
-import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
 import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -99,14 +98,6 @@ public class R4Transformers {
       return null;
     }
     return extract.apply(object);
-  }
-
-  /** Gets the internal value if available. */
-  public static String internalValueOf(LhsLighthouseRpcGatewayResponse.Values values) {
-    if (isBlank(values) || isBlank(values.in())) {
-      return null;
-    }
-    return values.in();
   }
 
   /** Return true if the value is a blank string, or any other object that is null. */

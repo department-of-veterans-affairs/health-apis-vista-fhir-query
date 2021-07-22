@@ -1,7 +1,7 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
-
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse.Values;
 import lombok.experimental.UtilityClass;
 
@@ -22,26 +22,46 @@ public class RpcGatewayTransformers {
     }
   }
 
-  /** Return true if the internal value is not available or blank. */
+  /**
+   * Gets the internal value if available.
+   */
+  public static String internalValueOf(LhsLighthouseRpcGatewayResponse.Values values) {
+    if (isBlank(values) || isBlank(values.in())) {
+      return null;
+    }
+    return values.in();
+  }
+
+  /**
+   * Return true if the internal value is not available or blank.
+   */
   public static boolean isInternalValueBlank(Values values) {
     return isBlank(values) || isBlank(values.in());
   }
 
-  /** Return true if the internal value is available and not blank. */
+  /**
+   * Return true if the internal value is available and not blank.
+   */
   public static boolean isInternalValueNotBlank(Values values) {
     return !isInternalValueBlank(values);
   }
 
-  /** Return true for "1", false for "0", otherwise throw an unexpected vista value exception. */
-  @SuppressWarnings("UnnecessaryParentheses") // ErrorProne confused by switch
+  /**
+   * Return true for "1", false for "0", otherwise throw an unexpected vista value exception.
+   */
+  // ErrorProne confused by switch
+  @SuppressWarnings("UnnecessaryParentheses")
   public static boolean yesNoToBoolean(String zeroOrOne) {
     if (isBlank(zeroOrOne)) {
       throw new UnexpectedVistaValue("Yes/No code", null);
     }
-    return switch (zeroOrOne) {
-      case "0" -> false;
-      case "1" -> true;
-      default -> throw new UnexpectedVistaValue("Yes/No code", zeroOrOne);
+    return switch(zeroOrOne) {
+      case "0":
+        false;
+      case "1":
+        true;
+      default:
+        throw new UnexpectedVistaValue("Yes/No code", zeroOrOne);
     };
   }
 
