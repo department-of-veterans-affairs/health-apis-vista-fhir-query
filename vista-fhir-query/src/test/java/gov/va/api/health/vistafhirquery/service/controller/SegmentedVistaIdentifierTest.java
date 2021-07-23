@@ -31,72 +31,72 @@ public class SegmentedVistaIdentifierTest {
             SegmentedVistaIdentifier.builder()
                 .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("1011537977V693883")
-                .vistaSiteId("673")
+                .siteId("673")
                 .vprRpcDomain(Domains.labs)
-                .vistaRecordId("CH;6929384.839997;14")
+                .recordId("CH;6929384.839997;14")
                 .build(),
             "L1011537977693883673692938483999714"),
         arguments(
             SegmentedVistaIdentifier.builder()
                 .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("1011537977")
-                .vistaSiteId("673")
+                .siteId("673")
                 .vprRpcDomain(Domains.labs)
-                .vistaRecordId("CH;6929384.839997;14")
+                .recordId("CH;6929384.839997;14")
                 .build(),
             "L1011537977xxxxx0673692938483999714"),
         arguments(
             SegmentedVistaIdentifier.builder()
                 .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("1011537977V693883")
-                .vistaSiteId("673")
+                .siteId("673")
                 .vprRpcDomain(Domains.labs)
-                .vistaRecordId("CH;6929384.83;14")
+                .recordId("CH;6929384.83;14")
                 .build(),
             "L1011537977693883673692938483xxxx14"),
         arguments(
             SegmentedVistaIdentifier.builder()
                 .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("1011537977V693883")
-                .vistaSiteId("673")
+                .siteId("673")
                 .vprRpcDomain(Domains.vitals)
-                .vistaRecordId("CH;6929384.839997;14")
+                .recordId("CH;6929384.839997;14")
                 .build(),
             "sN1011537977V693883+673+VCH;6929384.839997;14"),
         arguments(
             SegmentedVistaIdentifier.builder()
                 .patientIdentifierType(PatientIdentifierType.VISTA_PATIENT_FILE_ID)
                 .patientIdentifier("1011537977V693883")
-                .vistaSiteId("673")
+                .siteId("673")
                 .vprRpcDomain(Domains.labs)
-                .vistaRecordId("CH;6929384.839997;14")
+                .recordId("CH;6929384.839997;14")
                 .build(),
             "sD1011537977V693883+673+LCH;6929384.839997;14"),
         arguments(
             SegmentedVistaIdentifier.builder()
                 .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("1011537977V693883")
-                .vistaSiteId("673a")
+                .siteId("673a")
                 .vprRpcDomain(Domains.labs)
-                .vistaRecordId("CH;6929384.839997;14")
+                .recordId("CH;6929384.839997;14")
                 .build(),
             "sN1011537977V693883+673a+LCH;6929384.839997;14"),
         arguments(
             SegmentedVistaIdentifier.builder()
                 .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("1011537977V693883")
-                .vistaSiteId("673")
+                .siteId("673")
                 .vprRpcDomain(Domains.labs)
-                .vistaRecordId("XH;6929384.839997;14")
+                .recordId("XH;6929384.839997;14")
                 .build(),
             "sN1011537977V693883+673+LXH;6929384.839997;14"),
         arguments(
             SegmentedVistaIdentifier.builder()
                 .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("a1011537977V693883")
-                .vistaSiteId("673")
+                .siteId("673")
                 .vprRpcDomain(Domains.labs)
-                .vistaRecordId("CH;6929384.839997;14")
+                .recordId("CH;6929384.839997;14")
                 .build(),
             "sNa1011537977V693883+673+LCH;6929384.839997;14")
         //
@@ -109,9 +109,9 @@ public class SegmentedVistaIdentifierTest {
             SegmentedVistaIdentifier.builder()
                 .patientIdentifierType(SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("icn")
-                .vistaSiteId("siteId")
+                .siteId("siteId")
                 .vprRpcDomain(VprGetPatientData.Domains.vitals)
-                .vistaRecordId("vistaId")
+                .recordId("vistaId")
                 .build()
                 .toString())
         .isEqualTo("Nicn+siteId+VvistaId");
@@ -138,9 +138,9 @@ public class SegmentedVistaIdentifierTest {
         SegmentedVistaIdentifier.builder()
             .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
             .patientIdentifier("1011537977V693883")
-            .vistaSiteId("673")
+            .siteId("673")
             .vprRpcDomain(Domains.labs)
-            .vistaRecordId("CH;6909685.886779;643214")
+            .recordId("CH;6909685.886779;643214")
             .build();
     String packed = id.pack();
     SegmentedVistaIdentifier unpacked = SegmentedVistaIdentifier.unpack(packed);
@@ -175,9 +175,9 @@ public class SegmentedVistaIdentifierTest {
             SegmentedVistaIdentifier.builder()
                 .patientIdentifierType(SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("icn")
-                .vistaSiteId("siteId")
+                .siteId("siteId")
                 .vprRpcDomain(VprGetPatientData.Domains.vitals)
-                .vistaRecordId("vistaId")
+                .recordId("vistaId")
                 .build()
                 .pack())
         .isEqualTo("sNicn+siteId+VvistaId");
@@ -190,9 +190,9 @@ public class SegmentedVistaIdentifierTest {
             SegmentedVistaIdentifier.builder()
                 .patientIdentifierType(SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
                 .patientIdentifier("icn")
-                .vistaSiteId("siteId")
+                .siteId("siteId")
                 .vprRpcDomain(VprGetPatientData.Domains.labs)
-                .vistaRecordId("vistaId")
+                .recordId("vistaId")
                 .build());
   }
 

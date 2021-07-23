@@ -10,7 +10,8 @@ import gov.va.api.health.r4.api.datatypes.Period;
 import gov.va.api.health.r4.api.elements.Extension;
 import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Coverage;
-import gov.va.api.health.vistafhirquery.service.controller.VistaFhirQueryIdentifier;
+import gov.va.api.health.vistafhirquery.service.controller.PatientTypeCoordinates;
+import gov.va.api.health.vistafhirquery.service.controller.ProviderTypeCoordinates;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
 import java.util.Arrays;
 import java.util.Collection;
@@ -100,10 +101,9 @@ public class CoverageSamples {
       return List.of(
           Coverage.CoverageClass.builder()
               .value(
-                  VistaFhirQueryIdentifier.builder()
-                      .patientIcn(patient)
-                      .vistaSiteNumber(station)
-                      .vistaRecordIdentifier("87")
+                  ProviderTypeCoordinates.builder()
+                      .siteId(station)
+                      .recordId("87")
                       .build()
                       .toString())
               .type(
@@ -125,10 +125,10 @@ public class CoverageSamples {
     Coverage coverage(String station, String ien, String patient) {
       return Coverage.builder()
           .id(
-              VistaFhirQueryIdentifier.builder()
-                  .patientIcn(patient)
-                  .vistaSiteNumber(station)
-                  .vistaRecordIdentifier(ien)
+              PatientTypeCoordinates.builder()
+                  .icn(patient)
+                  .siteId(station)
+                  .recordId(ien)
                   .build()
                   .toString())
           .extension(extensions())
@@ -142,10 +142,9 @@ public class CoverageSamples {
                   Reference.builder()
                       .reference(
                           "Organization/"
-                              + VistaFhirQueryIdentifier.builder()
-                                  .patientIcn(patient)
-                                  .vistaSiteNumber(station)
-                                  .vistaRecordIdentifier("36;4")
+                              + ProviderTypeCoordinates.builder()
+                                  .siteId(station)
+                                  .recordId("36;4")
                                   .build()
                                   .toString())
                       .build()))

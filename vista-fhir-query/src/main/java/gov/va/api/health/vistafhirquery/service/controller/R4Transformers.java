@@ -93,6 +93,22 @@ public class R4Transformers {
     return value == null;
   }
 
+  /** Build an identifier from a patient icn, site, and vista record id. */
+  public static String patientCoordinateStringFrom(
+      String patientIcn, String siteId, String recordId) {
+    return PatientTypeCoordinates.builder()
+        .icn(patientIcn)
+        .siteId(siteId)
+        .recordId(recordId)
+        .build()
+        .toString();
+  }
+
+  /** Build an identifier from a site and vista record id. */
+  public static String providerCoordinateStringFrom(String siteId, String recordId) {
+    return ProviderTypeCoordinates.builder().siteId(siteId).recordId(recordId).build().toString();
+  }
+
   /** Creates a BigDecimal from a string if possible, otherwise returns null. */
   public static BigDecimal toBigDecimal(String string) {
     if (isBlank(string)) {
@@ -150,21 +166,11 @@ public class R4Transformers {
     return SegmentedVistaIdentifier.builder()
         .patientIdentifierType(SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
         .patientIdentifier(patientId)
-        .vistaSiteId(siteId)
+        .siteId(siteId)
         .vprRpcDomain(recordDomain)
-        .vistaRecordId(recordId)
+        .recordId(recordId)
         .build()
         .pack();
-  }
-
-  /** Build an identifier from a patient icn, site, and vista record id. */
-  public static String toResourceId(String patientIcn, String siteId, String recordId) {
-    return VistaFhirQueryIdentifier.builder()
-        .patientIcn(patientIcn)
-        .vistaSiteNumber(siteId)
-        .vistaRecordIdentifier(recordId)
-        .build()
-        .toString();
   }
 
   /** Gets value of a ValueOnlyXmlAttribute if it exists. */

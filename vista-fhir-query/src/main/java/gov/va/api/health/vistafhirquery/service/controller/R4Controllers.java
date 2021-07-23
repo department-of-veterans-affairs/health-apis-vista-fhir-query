@@ -5,9 +5,9 @@ import java.util.List;
 public class R4Controllers {
 
   /** Try to parse an identifier, else throw NotFound. */
-  public static VistaFhirQueryIdentifier parseOrDie(String identifier) {
+  public static PatientTypeCoordinates parseOrDie(String identifier) {
     try {
-      return VistaFhirQueryIdentifier.fromString(identifier);
+      return PatientTypeCoordinates.fromString(identifier);
     } catch (IllegalArgumentException e) {
       throw ResourceExceptions.NotFound.because("Could not parse id: " + identifier);
     }

@@ -94,12 +94,12 @@ public class R4ObservationController {
   private VprGetPatientData.Response getPatientDataByIdentifier(SegmentedVistaIdentifier ids) {
     RpcResponse rpcResponse =
         vistalinkApiClient.requestForVistaSite(
-            ids.vistaSiteId(),
+            ids.siteId(),
             VprGetPatientData.Request.builder()
                 .context(Optional.ofNullable(vistaApiConfig.getVprGetPatientDataContext()))
                 .dfn(VprGetPatientData.Request.PatientId.forIcn(ids.patientIdentifier()))
                 .type(Set.of(ids.vprRpcDomain()))
-                .id(Optional.of(ids.vistaRecordId()))
+                .id(Optional.of(ids.recordId()))
                 .build());
     return VprGetPatientData.create().fromResults(rpcResponse.results());
   }

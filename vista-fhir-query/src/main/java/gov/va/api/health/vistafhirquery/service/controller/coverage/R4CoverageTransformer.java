@@ -2,8 +2,9 @@ package gov.va.api.health.vistafhirquery.service.controller.coverage;
 
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.allBlank;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.patientCoordinateStringFrom;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.providerCoordinateStringFrom;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toReference;
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toResourceId;
 import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.internalValueAsIntegerOrDie;
 import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.isInternalValueBlank;
 import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.isInternalValueNotBlank;
@@ -45,7 +46,7 @@ public class R4CoverageTransformer {
     // Fhir InsurancePlan
     return List.of(
         Coverage.CoverageClass.builder()
-            .value(toResourceId(patientIcn, rpcResults.getKey(), groupPlan.in()))
+            .value(providerCoordinateStringFrom(rpcResults.getKey(), groupPlan.in()))
             .type(
                 CodeableConcept.builder()
                     .coding(
@@ -108,7 +109,7 @@ public class R4CoverageTransformer {
     return List.of(
         toReference(
             "Organization",
-            toResourceId(patientIcn, rpcResults.getKey(), "36;" + insuranceCompany.in()),
+            providerCoordinateStringFrom(rpcResults.getKey(), "36;" + insuranceCompany.in()),
             null));
   }
 
@@ -160,7 +161,7 @@ public class R4CoverageTransformer {
       return null;
     }
     return Coverage.builder()
-        .id(toResourceId(patientIcn, rpcResults.getKey(), entry.ien()))
+        .id(patientCoordinateStringFrom(patientIcn, rpcResults.getKey(), entry.ien()))
         .extension(
             extensions(
                 entry.fields().get(InsuranceType.PHARMACY_PERSON_CODE),

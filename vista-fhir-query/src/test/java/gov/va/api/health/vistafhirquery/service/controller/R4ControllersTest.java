@@ -24,12 +24,7 @@ public class R4ControllersTest {
 
   @Test
   void parseOrDieUsableIdReturnsIdSegment() {
-    var expected =
-        VistaFhirQueryIdentifier.builder()
-            .patientIcn("p1")
-            .vistaSiteNumber("123")
-            .vistaRecordIdentifier("456")
-            .build();
+    var expected = PatientTypeCoordinates.builder().icn("p1").siteId("123").recordId("456").build();
     assertThat(parseOrDie("p1+123+456")).isEqualTo(expected);
   }
 
