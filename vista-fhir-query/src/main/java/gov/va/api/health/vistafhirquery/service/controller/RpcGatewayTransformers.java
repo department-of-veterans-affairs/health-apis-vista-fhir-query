@@ -49,6 +49,7 @@ public class RpcGatewayTransformers {
    * A illegal argument exception that indicates the value from Vista is unexpected, e.g. receiving
    * a non-numeric value in a field that is 'guaranteed' to be a number.
    */
+  @Deprecated
   public static class UnexpectedVistaValue extends IllegalArgumentException {
     public UnexpectedVistaValue(String message, Object unexpectedValue) {
       super(String.format("%s, got: %s", message, unexpectedValue));

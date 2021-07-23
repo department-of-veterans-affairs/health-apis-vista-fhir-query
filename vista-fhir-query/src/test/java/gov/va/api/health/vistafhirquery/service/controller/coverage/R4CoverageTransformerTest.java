@@ -5,7 +5,10 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
 import gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.InsuranceType;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse.FilemanEntry;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse.Values;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -29,11 +32,12 @@ public class R4CoverageTransformerTest {
 
   @Test
   void badRelationship() {
+    var entry =
+        FilemanEntry.builder()
+            .fields(Map.of(InsuranceType.PT_RELATIONSHIP_HIPAA, Values.of("ignored", "00")))
+            .build();
     assertThatExceptionOfType(IllegalArgumentException.class)
-        .isThrownBy(
-            () ->
-                tx().relationship(
-                        LhsLighthouseRpcGatewayResponse.Values.builder().in("00").build()));
+        .isThrownBy(() -> tx().relationship(entry));
   }
 
   @Test
@@ -71,12 +75,11 @@ public class R4CoverageTransformerTest {
   @ParameterizedTest
   @MethodSource
   void relationship(String vista, String fhir) {
-    assertThat(
-            tx().relationship(LhsLighthouseRpcGatewayResponse.Values.builder().in(vista).build())
-                .coding()
-                .get(0)
-                .code())
-        .isEqualTo(fhir);
+    var entry =
+        FilemanEntry.builder()
+            .fields(Map.of(InsuranceType.PT_RELATIONSHIP_HIPAA, Values.of("ignored", vista)))
+            .build();
+    assertThat(tx().relationship(entry).coding().get(0).code()).isEqualTo(fhir);
   }
 
   @Test
