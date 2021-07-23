@@ -1,12 +1,12 @@
 package gov.va.api.health.vistafhirquery.service.controller.observation;
 
 import static gov.va.api.health.autoconfig.logging.LogSanitizer.sanitize;
-import static gov.va.api.health.vistafhirquery.service.controller.R4Controllers.parseOrDie;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Controllers.verifyAndGetResult;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toLocalDateMacroString;
 import static java.util.stream.Collectors.toSet;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
+import gov.va.api.health.ids.client.IdEncoder;
 import gov.va.api.health.r4.api.resources.Observation;
 import gov.va.api.health.vistafhirquery.service.config.VistaApiConfig;
 import gov.va.api.health.vistafhirquery.service.controller.DateSearchBoundaries;
@@ -61,7 +61,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Builder
 @Slf4j
 public class R4ObservationController {
-
   public static final String VISTA_INCLUDE_HEADER = "VISTA-INCLUDE";
 
   public static final String VISTA_EXCLUDE_HEADER = "VISTA-EXCLUDE";
@@ -95,21 +94,30 @@ public class R4ObservationController {
   private VprGetPatientData.Response getPatientDataByIdentifier(SegmentedVistaIdentifier ids) {
     RpcResponse rpcResponse =
         vistalinkApiClient.requestForVistaSite(
-            ids.vistaSiteId(),
+            ids.siteId(),
             VprGetPatientData.Request.builder()
                 .context(Optional.ofNullable(vistaApiConfig.getVprGetPatientDataContext()))
                 .dfn(VprGetPatientData.Request.PatientId.forIcn(ids.patientIdentifier()))
                 .type(Set.of(ids.vprRpcDomain()))
-                .id(Optional.of(ids.vistaRecordId()))
+                .id(Optional.of(ids.recordId()))
                 .build());
     return VprGetPatientData.create().fromResults(rpcResponse.results());
+  }
+
+  /** Try to parse a Segmented Vista Identifier, else throw NotFound. */
+  private SegmentedVistaIdentifier parseOrDie(String publicId) {
+    try {
+      return SegmentedVistaIdentifier.unpack(witnessProtection.toPrivateId(publicId));
+    } catch (IdEncoder.BadId | IllegalArgumentException e) {
+      throw ResourceExceptions.NotFound.because("Could not unpack id: " + publicId);
+    }
   }
 
   /** Read by publicId. */
   @SneakyThrows
   @GetMapping(value = {"/{publicId}"})
   public Observation read(@PathVariable("publicId") String publicId) {
-    SegmentedVistaIdentifier ids = parseOrDie(witnessProtection, publicId);
+    SegmentedVistaIdentifier ids = parseOrDie(publicId);
     VprGetPatientData.Response vprPatientData = getPatientDataByIdentifier(ids);
     List<Observation> resources =
         transformation(ids.patientIdentifier(), null).toResource().apply(vprPatientData);
@@ -127,7 +135,7 @@ public class R4ObservationController {
       @RequestParam(name = "identifier") String identifier, HttpServletRequest request) {
     SegmentedVistaIdentifier ids;
     try {
-      ids = parseOrDie(witnessProtection, identifier);
+      ids = parseOrDie(identifier);
     } catch (ResourceExceptions.NotFound e) {
       return emptyBundleFor(request);
     }
@@ -201,7 +209,7 @@ public class R4ObservationController {
     if (maybeCategory == null) {
       return null;
     }
-    //noinspection EnhancedSwitchMigration
+    // noinspection EnhancedSwitchMigration
     switch (maybeCategory) {
       case "vital-signs":
         return VprGetPatientData.Domains.vitals;

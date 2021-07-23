@@ -62,7 +62,7 @@ public class R4CoverageControllerTest {
                     List.of(
                         RpcInvocationResult.builder().vista("123").response(json(results)).build()))
                 .build());
-    when(witnessProtection.toPrivateId("pubCover1")).thenReturn("sNp1+123+*ip1");
+    when(witnessProtection.toPrivateId("pubCover1")).thenReturn("p1+123+ip1");
     var actual = controller().coverageRead("pubCover1");
     var expected = CoverageSamples.R4.create().coverage("123", "ip1", "p1");
     assertThat(json(actual)).isEqualTo(json(expected));

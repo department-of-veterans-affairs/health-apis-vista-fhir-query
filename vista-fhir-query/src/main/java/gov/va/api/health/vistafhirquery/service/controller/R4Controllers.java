@@ -1,17 +1,15 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
-import gov.va.api.health.ids.client.IdEncoder;
-import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.WitnessProtection;
 import java.util.List;
 
 public class R4Controllers {
-  /** Try to parse a Segmented Vista Identifier, else throw NotFound. */
-  public static SegmentedVistaIdentifier parseOrDie(
-      WitnessProtection witnessProtection, String publicId) {
+
+  /** Try to parse an identifier, else throw NotFound. */
+  public static PatientTypeCoordinates patientTypeCoordinatesOrDie(String identifier) {
     try {
-      return SegmentedVistaIdentifier.unpack(witnessProtection.toPrivateId(publicId));
-    } catch (IdEncoder.BadId | IllegalArgumentException e) {
-      throw ResourceExceptions.NotFound.because("Could not unpack id: " + publicId);
+      return PatientTypeCoordinates.fromString(identifier);
+    } catch (IllegalArgumentException e) {
+      throw ResourceExceptions.NotFound.because("Could not parse id: " + identifier);
     }
   }
 

@@ -5,11 +5,11 @@
   <parent>
     <groupId>gov.va.api.health</groupId>
     <artifactId>service-starter</artifactId>
-    <version>8.0.22</version>
+    <version>8.0.23</version>
     <relativePath/>
   </parent>
   <artifactId>vista-fhir-query</artifactId>
-  <version>1.0.28-SNAPSHOT</version>
+  <version>1.0.29-SNAPSHOT</version>
   <packaging>jar</packaging>
   <properties>
     <charon.version>4.0.18</charon.version>

@@ -1,17 +1,17 @@
 package gov.va.api.health.vistafhirquery.service.controller.coverage;
 
-import static gov.va.api.health.vistafhirquery.service.controller.R4Controllers.parseOrDie;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Controllers.patientTypeCoordinatesOrDie;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Controllers.verifyAndGetResult;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import gov.va.api.health.r4.api.resources.Coverage;
 import gov.va.api.health.vistafhirquery.service.api.R4CoverageApi;
+import gov.va.api.health.vistafhirquery.service.controller.PatientTypeCoordinates;
 import gov.va.api.health.vistafhirquery.service.controller.R4Bundler;
 import gov.va.api.health.vistafhirquery.service.controller.R4BundlerFactory;
 import gov.va.api.health.vistafhirquery.service.controller.R4Bundling;
 import gov.va.api.health.vistafhirquery.service.controller.R4Transformation;
-import gov.va.api.health.vistafhirquery.service.controller.SegmentedVistaIdentifier;
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
 import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.WitnessProtection;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
@@ -59,11 +59,12 @@ public class R4CoverageController implements R4CoverageApi {
   @Override
   @GetMapping(value = "/{publicId}")
   public Coverage coverageRead(@PathVariable(value = "publicId") String id) {
-    SegmentedVistaIdentifier svi = parseOrDie(witnessProtection, id);
+    PatientTypeCoordinates coordinates =
+        patientTypeCoordinatesOrDie(witnessProtection.toPrivateId(id));
     LhsLighthouseRpcGatewayGetsManifest.Request rpcRequest =
         LhsLighthouseRpcGatewayGetsManifest.Request.builder()
             .file("2.312")
-            .iens(svi.vistaRecordId())
+            .iens(coordinates.recordId())
             .fields(List.of(".01", ".18", ".2", "3", "3.04", "4.03", "4.06", "7.02", "8"))
             .flags(
                 List.of(
@@ -73,14 +74,13 @@ public class R4CoverageController implements R4CoverageApi {
                     LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags
                         .RETURN_EXTERNAL_VALUES))
             .build();
-    RpcResponse rpcResponse = vistalinkApiClient.requestForVistaSite(svi.vistaSiteId(), rpcRequest);
+    RpcResponse rpcResponse =
+        vistalinkApiClient.requestForVistaSite(coordinates.siteId(), rpcRequest);
     Map<String, ZoneId> vistaZoneIds = collectTimezones(rpcResponse);
     LhsLighthouseRpcGatewayResponse getsManifestResults =
         LhsLighthouseRpcGatewayGetsManifest.create().fromResults(rpcResponse.results());
     List<Coverage> resources =
-        transformation(vistaZoneIds, svi.patientIdentifier())
-            .toResource()
-            .apply(getsManifestResults);
+        transformation(vistaZoneIds, coordinates.icn()).toResource().apply(getsManifestResults);
     return verifyAndGetResult(resources, id);
   }
 

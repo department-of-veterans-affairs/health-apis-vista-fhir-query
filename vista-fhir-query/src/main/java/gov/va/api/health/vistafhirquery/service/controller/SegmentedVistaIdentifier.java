@@ -27,11 +27,11 @@ public class SegmentedVistaIdentifier {
 
   @NonNull String patientIdentifier;
 
-  @NonNull String vistaSiteId;
+  @NonNull String siteId;
 
-  VprGetPatientData.Domains vprRpcDomain;
+  @NonNull VprGetPatientData.Domains vprRpcDomain;
 
-  @NonNull String vistaRecordId;
+  @NonNull String recordId;
 
   private static BiMap<Character, VprGetPatientData.Domains> domainAbbreviationMappings() {
     var mappings =
@@ -51,15 +51,17 @@ public class SegmentedVistaIdentifier {
           "The first and third sections of a SegmentedVistaIdentifier must contain "
               + "a type and an identifier value.");
     }
-    // Coverage ids are iens, so any id that doesn't match a domain mapping (L, V) can be ignored
-    // ToDo the above statement may not always hold true as new RPCs/fhir-resources are added.
     var domainType = domainAbbreviationMappings().get(segmentParts[2].charAt(0));
+    if (domainType == null) {
+      throw new IllegalArgumentException(
+          "Identifier value had invalid domain type abbreviation: " + segmentParts[2].charAt(0));
+    }
     return SegmentedVistaIdentifier.builder()
         .patientIdentifierType(PatientIdentifierType.fromAbbreviation(segmentParts[0].charAt(0)))
         .patientIdentifier(segmentParts[0].substring(1))
-        .vistaSiteId(segmentParts[1])
+        .siteId(segmentParts[1])
         .vprRpcDomain(domainType)
-        .vistaRecordId(segmentParts[2].substring(1))
+        .recordId(segmentParts[2].substring(1))
         .build();
   }
 
@@ -79,8 +81,8 @@ public class SegmentedVistaIdentifier {
     return String.join(
         "+",
         patientIdentifierType().abbreviation() + patientIdentifier(),
-        vistaSiteId(),
-        domainAbbreviationMappings().inverse().getOrDefault(vprRpcDomain(), '*') + vistaRecordId());
+        siteId(),
+        domainAbbreviationMappings().inverse().get(vprRpcDomain()) + recordId());
   }
 
   /** The type of a Vista identifier which can be DFN, local ICN, or National ICN. */
@@ -171,23 +173,23 @@ public class SegmentedVistaIdentifier {
       if (vis.patientIdentifierType() != PatientIdentifierType.NATIONAL_ICN) {
         return null;
       }
-      if (!SITE.matcher(vis.vistaSiteId()).matches()) {
+      if (!SITE.matcher(vis.siteId()).matches()) {
         return null;
       }
       var tenSix = TenvSix.parse(vis.patientIdentifier());
       if (tenSix.isEmpty()) {
         return null;
       }
-      if (!RECORD_ID.matcher(vis.vistaRecordId()).matches()) {
+      if (!RECORD_ID.matcher(vis.recordId()).matches()) {
         return null;
       }
       String ten = leftPad(Long.toString(tenSix.get().ten()), 10, 'x');
       String six = leftPad(Integer.toString(tenSix.get().six()), 6, 'x');
-      String site = vis.vistaSiteId();
-      String date = vis.vistaRecordId().substring(3, 10);
-      int lastSemi = vis.vistaRecordId().lastIndexOf(';');
-      String time = rightPad(vis.vistaRecordId().substring(11, lastSemi), 6, 'x');
-      String remainder = vis.vistaRecordId().substring(lastSemi + 1);
+      String site = vis.siteId();
+      String date = vis.recordId().substring(3, 10);
+      int lastSemi = vis.recordId().lastIndexOf(';');
+      String time = rightPad(vis.recordId().substring(11, lastSemi), 6, 'x');
+      String remainder = vis.recordId().substring(lastSemi + 1);
       // ....10....6....3.......7......6......2........
       return ten + six + site + date + time + remainder;
     }
@@ -210,9 +212,9 @@ public class SegmentedVistaIdentifier {
       return SegmentedVistaIdentifier.builder()
           .patientIdentifierType(PatientIdentifierType.NATIONAL_ICN)
           .patientIdentifier(icn)
-          .vistaSiteId(site)
+          .siteId(site)
           .vprRpcDomain(Domains.labs)
-          .vistaRecordId("CH;" + date + "." + time + ";" + remainder)
+          .recordId("CH;" + date + "." + time + ";" + remainder)
           .build();
     }
   }
