@@ -91,7 +91,7 @@ public class SegmentedVistaIdentifier {
         formats.putAll(withFormats);
       }
       /* FormatString is the failsafe format, this should be last. */
-      formats.put('s', new VistaIdentifierFormat.FormatString());
+      formats.put('s', new VistaIdentifierFormat.StringFormat());
     }
 
     /** Build a VistaIdentifier. */
@@ -104,7 +104,7 @@ public class SegmentedVistaIdentifier {
       }
       throw new IllegalStateException(
           "VistaIdentifierSegment should have been encoded by "
-              + VistaIdentifierFormat.FormatString.class
+              + VistaIdentifierFormat.StringFormat.class
               + ", the format mapping is incorrect.");
     }
 

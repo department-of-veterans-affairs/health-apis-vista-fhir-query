@@ -52,7 +52,7 @@ public class ObservationTransformers {
       return null;
     }
     var domainVal =
-        FormatCompressedObservationLab.domainAbbreviationMappings().inverse().get(recordDomain);
+        CompressedObservationLabFormat.domainAbbreviationMappings().inverse().get(recordDomain);
     return SegmentedVistaIdentifier.builder()
         .patientIdentifierType(SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
         .patientIdentifier(patientId)

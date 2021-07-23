@@ -13,7 +13,7 @@ import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class FormatCompressedObservationLab implements VistaIdentifierFormat {
+public class CompressedObservationLabFormat implements VistaIdentifierFormat {
   private static final Pattern SITE = Pattern.compile("[0-9]{3}");
 
   private static final Pattern RECORD_ID = Pattern.compile("CH;[0-9]{7}\\.[0-9]{1,6};[0-9]+");
@@ -34,7 +34,7 @@ public class FormatCompressedObservationLab implements VistaIdentifierFormat {
               + " to have "
               + "length > 2 to encode"
               + " "
-              + FormatCompressedObservationLab.class.getSimpleName());
+              + CompressedObservationLabFormat.class.getSimpleName());
     }
     if (domainAbbreviationMappings().get(vis.vistaRecordId().charAt(0))
         != VprGetPatientData.Domains.labs) {

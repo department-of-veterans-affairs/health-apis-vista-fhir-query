@@ -5,7 +5,7 @@ public interface VistaIdentifierFormat {
 
   SegmentedVistaIdentifier unpack(String data);
 
-  class FormatString implements VistaIdentifierFormat {
+  class StringFormat implements VistaIdentifierFormat {
     private static SegmentedVistaIdentifier fromString(String data) {
       String[] segmentParts = data.split("\\+", -1);
       if (segmentParts.length != 3) {
@@ -15,7 +15,7 @@ public interface VistaIdentifierFormat {
       }
       if (segmentParts[0].length() < 2) {
         throw new IllegalArgumentException(
-            "The first and section of a SegmentedVistaIdentifier must contain "
+            "The first section of a SegmentedVistaIdentifier must contain "
                 + "a type and an identifier value.");
       }
       return SegmentedVistaIdentifier.builder()

@@ -5,5 +5,5 @@ import java.util.Map;
 
 public class ObservationIdentifiers {
   public static final Map<Character, VistaIdentifierFormat> FORMATS =
-      Map.of('L', new FormatCompressedObservationLab());
+      Map.of('L', new CompressedObservationLabFormat());
 }

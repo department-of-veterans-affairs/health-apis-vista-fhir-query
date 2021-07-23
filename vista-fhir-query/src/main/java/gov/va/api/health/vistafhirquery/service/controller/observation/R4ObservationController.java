@@ -94,7 +94,7 @@ public class R4ObservationController {
 
   private VprGetPatientData.Response getPatientDataByIdentifier(SegmentedVistaIdentifier ids) {
     var domain =
-        FormatCompressedObservationLab.domainAbbreviationMappings()
+        CompressedObservationLabFormat.domainAbbreviationMappings()
             .get(ids.vistaRecordId().charAt(0));
     RpcResponse rpcResponse =
         vistalinkApiClient.requestForVistaSite(
