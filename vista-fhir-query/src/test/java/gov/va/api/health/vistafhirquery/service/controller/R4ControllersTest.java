@@ -1,6 +1,6 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
-import static gov.va.api.health.vistafhirquery.service.controller.R4Controllers.parseOrDie;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Controllers.patientTypeCoordinatesOrDie;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Controllers.verifyAndGetResult;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -19,13 +19,13 @@ public class R4ControllersTest {
   @Test
   void parseOrDieUnusableIdReturnsNotFound() {
     assertThatExceptionOfType(ResourceExceptions.NotFound.class)
-        .isThrownBy(() -> parseOrDie("garbage"));
+        .isThrownBy(() -> patientTypeCoordinatesOrDie("garbage"));
   }
 
   @Test
   void parseOrDieUsableIdReturnsIdSegment() {
     var expected = PatientTypeCoordinates.builder().icn("p1").siteId("123").recordId("456").build();
-    assertThat(parseOrDie("p1+123+456")).isEqualTo(expected);
+    assertThat(patientTypeCoordinatesOrDie("p1+123+456")).isEqualTo(expected);
   }
 
   @Test

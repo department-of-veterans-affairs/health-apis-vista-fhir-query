@@ -5,7 +5,7 @@ import java.util.List;
 public class R4Controllers {
 
   /** Try to parse an identifier, else throw NotFound. */
-  public static PatientTypeCoordinates parseOrDie(String identifier) {
+  public static PatientTypeCoordinates patientTypeCoordinatesOrDie(String identifier) {
     try {
       return PatientTypeCoordinates.fromString(identifier);
     } catch (IllegalArgumentException e) {
