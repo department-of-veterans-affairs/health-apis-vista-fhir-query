@@ -17,13 +17,13 @@ public class R4ControllersTest {
   @Mock WitnessProtection witnessProtection;
 
   @Test
-  void parseOrDieUnusableIdReturnsNotFound() {
+  void patientTypeCoordinatesOrDieUnusableIdReturnsNotFound() {
     assertThatExceptionOfType(ResourceExceptions.NotFound.class)
         .isThrownBy(() -> patientTypeCoordinatesOrDie("garbage"));
   }
 
   @Test
-  void parseOrDieUsableIdReturnsIdSegment() {
+  void patientTypeCoordinatesOrDieUsableIdReturnsIdSegment() {
     var expected = PatientTypeCoordinates.builder().icn("p1").siteId("123").recordId("456").build();
     assertThat(patientTypeCoordinatesOrDie("p1+123+456")).isEqualTo(expected);
   }

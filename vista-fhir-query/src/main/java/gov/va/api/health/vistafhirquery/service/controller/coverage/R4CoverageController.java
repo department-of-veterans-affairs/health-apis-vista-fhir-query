@@ -59,11 +59,12 @@ public class R4CoverageController implements R4CoverageApi {
   @Override
   @GetMapping(value = "/{publicId}")
   public Coverage coverageRead(@PathVariable(value = "publicId") String id) {
-    PatientTypeCoordinates svi = patientTypeCoordinatesOrDie(witnessProtection.toPrivateId(id));
+    PatientTypeCoordinates coordinates =
+        patientTypeCoordinatesOrDie(witnessProtection.toPrivateId(id));
     LhsLighthouseRpcGatewayGetsManifest.Request rpcRequest =
         LhsLighthouseRpcGatewayGetsManifest.Request.builder()
             .file("2.312")
-            .iens(svi.recordId())
+            .iens(coordinates.recordId())
             .fields(List.of(".01", ".18", ".2", "3", "3.04", "4.03", "4.06", "7.02", "8"))
             .flags(
                 List.of(
@@ -73,12 +74,13 @@ public class R4CoverageController implements R4CoverageApi {
                     LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags
                         .RETURN_EXTERNAL_VALUES))
             .build();
-    RpcResponse rpcResponse = vistalinkApiClient.requestForVistaSite(svi.siteId(), rpcRequest);
+    RpcResponse rpcResponse =
+        vistalinkApiClient.requestForVistaSite(coordinates.siteId(), rpcRequest);
     Map<String, ZoneId> vistaZoneIds = collectTimezones(rpcResponse);
     LhsLighthouseRpcGatewayResponse getsManifestResults =
         LhsLighthouseRpcGatewayGetsManifest.create().fromResults(rpcResponse.results());
     List<Coverage> resources =
-        transformation(vistaZoneIds, svi.icn()).toResource().apply(getsManifestResults);
+        transformation(vistaZoneIds, coordinates.icn()).toResource().apply(getsManifestResults);
     return verifyAndGetResult(resources, id);
   }
 
