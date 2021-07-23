@@ -1,19 +1,17 @@
 package gov.va.api.health.vistafhirquery.service.controller.organization;
 
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.allBlank;
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.asCodeableConcept;
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.emptyToNull;
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toResourceId;
-import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.internalValueOf;
-
 import gov.va.api.health.r4.api.datatypes.Address;
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
 import gov.va.api.health.r4.api.datatypes.Coding;
 import gov.va.api.health.r4.api.datatypes.ContactPoint;
+import gov.va.api.health.r4.api.elements.Extension;
 import gov.va.api.health.r4.api.resources.Organization;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.InsuranceCompany;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
+import lombok.Builder;
+import lombok.NonNull;
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -21,9 +19,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import lombok.Builder;
-import lombok.NonNull;
-import org.apache.commons.lang3.StringUtils;
+
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.allBlank;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.asCodeableConcept;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.emptyToNull;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toResourceId;
+import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.internalValueOf;
+import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.isInternalValueNotBlank;
+import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.yesNoToBoolean;
 
 @Builder
 public class R4OrganizationTransformer {
@@ -140,6 +144,31 @@ public class R4OrganizationTransformer {
         fields.get(InsuranceCompany.CLAIMS_OPT_FAX));
   }
 
+  private Organization.Contact claimsRxContact(
+      Map<String, LhsLighthouseRpcGatewayResponse.Values> fields) {
+    return contact(
+        fields.get(InsuranceCompany.CLAIMS_RX_STREET_ADDRESS_1),
+        fields.get(InsuranceCompany.CLAIMS_RX_STREET_ADDRESS_2),
+        fields.get(InsuranceCompany.CLAIMS_RX_STREET_ADDRESS_3),
+        fields.get(InsuranceCompany.CLAIMS_RX_CITY),
+        fields.get(InsuranceCompany.CLAIMS_RX_STATE),
+        fields.get(InsuranceCompany.CLAIMS_RX_ZIP),
+        "RXCLAIMS",
+        fields.get(InsuranceCompany.CLAIMS_RX_PHONE_NUMBER),
+        fields.get(InsuranceCompany.CLAIMS_RX_FAX));
+  }
+
+  private List<Address> collectAddress(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
+    return Collections.singletonList(
+        address(
+            internalValueOf(entry.fields().get(InsuranceCompany.STREET_ADDRESS_LINE_1_)),
+            internalValueOf(entry.fields().get(InsuranceCompany.STREET_ADDRESS_LINE_2_)),
+            internalValueOf(entry.fields().get(InsuranceCompany.STREET_ADDRESS_LINE_3_)),
+            internalValueOf(entry.fields().get(InsuranceCompany.CITY)),
+            internalValueOf(entry.fields().get(InsuranceCompany.STATE)),
+            internalValueOf(entry.fields().get(InsuranceCompany.ZIP_CODE))));
+  }
+
   private Organization.Contact contact(
       LhsLighthouseRpcGatewayResponse.Values streetAddressLine1,
       LhsLighthouseRpcGatewayResponse.Values streetAddressLine2,
@@ -208,8 +237,49 @@ public class R4OrganizationTransformer {
         billingContact(fields),
         claimsDentalContact(fields),
         claimsInptContact(fields),
+        claimsOptContact(fields),
+        claimsRxContact(fields),
         inquiryContact(fields),
         precertificationContact(fields));
+  }
+
+  private List<Extension> extensions(Map<String, LhsLighthouseRpcGatewayResponse.Values> fields) {
+    List<Extension> extensions = new ArrayList<>();
+    var maybeBedsections = fields.get(InsuranceCompany.ALLOW_MULTIPLE_BEDSECTIONS);
+    if (isInternalValueNotBlank(maybeBedsections)) {
+      extensions.add(
+          Extension.builder()
+              .url("http://va.gov/fhir/StructureDefinition/organization-allowMultipleBedsections")
+              .valueBoolean(yesNoToBoolean(maybeBedsections.in()))
+              .build());
+    }
+    var maybeOneOptVisit = fields.get(InsuranceCompany.ONE_OPT_VISIT_ON_BILL_ONLY);
+    if (isInternalValueNotBlank(maybeOneOptVisit)) {
+      extensions.add(
+          Extension.builder()
+              .url("http://va.gov/fhir/StructureDefinition/organization-oneOutpatVisitOnBillOnly")
+              .valueBoolean(yesNoToBoolean(maybeOneOptVisit.in()))
+              .build());
+    }
+    var maybeAmbulatorySurgeryRevenueCode = fields.get(InsuranceCompany.AMBULATORY_SURG_REV_CODE);
+    if (isInternalValueNotBlank(maybeAmbulatorySurgeryRevenueCode)) {
+      extensions.add(
+          Extension.builder()
+              .url(
+                  "http://va.gov/fhir/StructureDefinition/organization-ambulatorySurgeryRevenueCode")
+              .valueCodeableConcept(
+                  CodeableConcept.builder()
+                      .coding(
+                          List.of(
+                              Coding.builder()
+                                  .code(maybeAmbulatorySurgeryRevenueCode.in())
+                                  .system("urn:oid:2.16.840.1.113883.6.301.3")
+                                  .build()))
+                      .build())
+              .build());
+    }
+
+    return extensions;
   }
 
   private Organization.Contact inquiryContact(
@@ -281,17 +351,10 @@ public class R4OrganizationTransformer {
     Map<String, LhsLighthouseRpcGatewayResponse.Values> fields = entry.fields();
     return Organization.builder()
         .id(toResourceId(patientIcn, rpcResults.getKey(), "36;" + entry.ien()))
+        .extension(extensions(fields))
         .name(internalValueOf(fields.get(InsuranceCompany.NAME)))
         .type(insuranceCompanyType())
-        .address(
-            Collections.singletonList(
-                address(
-                    internalValueOf(entry.fields().get(InsuranceCompany.STREET_ADDRESS_LINE_1_)),
-                    internalValueOf(fields.get(InsuranceCompany.STREET_ADDRESS_LINE_2_)),
-                    internalValueOf(fields.get(InsuranceCompany.STREET_ADDRESS_LINE_3_)),
-                    internalValueOf(fields.get(InsuranceCompany.CITY)),
-                    internalValueOf(fields.get(InsuranceCompany.STATE)),
-                    internalValueOf(fields.get(InsuranceCompany.ZIP_CODE)))))
+        .address(collectAddress(entry))
         .contact(contacts(fields))
         .telecom(organizationTelecom(internalValueOf(fields.get(InsuranceCompany.PHONE_NUMBER))))
         .build();
