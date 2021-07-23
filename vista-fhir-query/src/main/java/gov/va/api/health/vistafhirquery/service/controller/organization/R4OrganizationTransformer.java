@@ -25,10 +25,11 @@ import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.asCodeableConcept;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.emptyToNull;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toResourceId;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.providerCoordinateStringFrom;
 import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.internalValueOf;
 import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.isInternalValueNotBlank;
 import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.yesNoToBoolean;
+import static gov.va.api.health.vistafhirquery.service.controller.organization.OrganizationCoordinates.insuranceCompany;
 
 @Builder
 public class R4OrganizationTransformer {
@@ -361,7 +362,9 @@ public class R4OrganizationTransformer {
     }
     Map<String, LhsLighthouseRpcGatewayResponse.Values> fields = entry.fields();
     return Organization.builder()
-        .id(toResourceId(patientIcn, rpcResults.getKey(), "36;" + entry.ien()))
+        .id(
+            providerCoordinateStringFrom(
+                rpcResults.getKey(), insuranceCompany(entry.ien()).toString()))
         // TODO: MORE EXTENSIONS
         .extension(extensions(fields))
         .name(internalValueOf(fields.get(InsuranceCompany.NAME)))
