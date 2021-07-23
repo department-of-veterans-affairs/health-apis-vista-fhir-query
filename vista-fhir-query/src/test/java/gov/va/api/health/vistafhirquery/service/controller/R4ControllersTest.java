@@ -4,10 +4,8 @@ import static gov.va.api.health.vistafhirquery.service.controller.R4Controllers.
 import static gov.va.api.health.vistafhirquery.service.controller.R4Controllers.verifyAndGetResult;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Mockito.when;
 
 import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.WitnessProtection;
-import gov.va.api.lighthouse.charon.models.vprgetpatientdata.VprGetPatientData;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,24 +18,19 @@ public class R4ControllersTest {
 
   @Test
   void parseOrDieUnusableIdReturnsNotFound() {
-    when(witnessProtection.toPrivateId("garbage")).thenReturn("garbage");
     assertThatExceptionOfType(ResourceExceptions.NotFound.class)
-        .isThrownBy(() -> parseOrDie(witnessProtection, "garbage"));
+        .isThrownBy(() -> parseOrDie("garbage"));
   }
 
   @Test
   void parseOrDieUsableIdReturnsIdSegment() {
-    // So good! So good! So good!
-    when(witnessProtection.toPrivateId("sweetCaroline")).thenReturn("sNp1+123+V456");
     var expected =
-        SegmentedVistaIdentifier.builder()
-            .patientIdentifierType(SegmentedVistaIdentifier.PatientIdentifierType.NATIONAL_ICN)
-            .patientIdentifier("p1")
-            .vistaSiteId("123")
-            .vprRpcDomain(VprGetPatientData.Domains.vitals)
-            .vistaRecordId("456")
+        VistaFhirQueryIdentifier.builder()
+            .patientIcn("p1")
+            .vistaSiteNumber("123")
+            .vistaRecordIdentifier("456")
             .build();
-    assertThat(parseOrDie(witnessProtection, "sweetCaroline")).isEqualTo(expected);
+    assertThat(parseOrDie("p1+123+456")).isEqualTo(expected);
   }
 
   @Test

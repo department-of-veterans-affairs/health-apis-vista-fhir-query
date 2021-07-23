@@ -157,8 +157,14 @@ public class R4Transformers {
         .pack();
   }
 
-  public static String toResourceId(String patientId, String siteId, String recordId) {
-    return toResourceId(patientId, siteId, null, recordId);
+  /** Build an identifier from a patient icn, site, and vista record id. */
+  public static String toResourceId(String patientIcn, String siteId, String recordId) {
+    return VistaFhirQueryIdentifier.builder()
+        .patientIcn(patientIcn)
+        .vistaSiteNumber(siteId)
+        .vistaRecordIdentifier(recordId)
+        .build()
+        .toString();
   }
 
   /** Gets value of a ValueOnlyXmlAttribute if it exists. */
