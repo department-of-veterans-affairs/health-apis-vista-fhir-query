@@ -9,6 +9,7 @@ import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTran
 import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.isInternalValueBlank;
 import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.isInternalValueNotBlank;
 import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.yesNoToBoolean;
+import static gov.va.api.health.vistafhirquery.service.controller.organization.OrganizationCoordinates.insuranceCompany;
 
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
 import gov.va.api.health.r4.api.datatypes.Coding;
@@ -109,7 +110,8 @@ public class R4CoverageTransformer {
     return List.of(
         toReference(
             "Organization",
-            providerCoordinateStringFrom(rpcResults.getKey(), "36;" + insuranceCompany.in()),
+            providerCoordinateStringFrom(
+                rpcResults.getKey(), insuranceCompany(insuranceCompany.in()).toString()),
             null));
   }
 
