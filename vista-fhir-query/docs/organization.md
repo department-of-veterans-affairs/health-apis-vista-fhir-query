@@ -24,8 +24,9 @@ ___
 }
 ```
 ___
-`GET   /Organization?type=pay`
-- Payer (#365.12) may be better for this query than file #36
+`GET   /Organization?type=[ins,pay]`
+- InsuranceCompany (#36)
+- Payer (#365.12)
 - RPC Request:
 ```
 "rpc":{

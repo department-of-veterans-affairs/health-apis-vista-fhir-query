@@ -1,9 +1,11 @@
 # General Assumptions
 
-#### Http Method to API Action
-- POST: write
-- PUT: update
-- GET: read
+#### Http Method to RPC Modes
+```
+POST: create
+GET:  read
+PUT:  update
+```
 
 ### Reading from Vista
 #### Read RPC Output Format:
@@ -37,19 +39,9 @@
 
 
 #### Proposed Write RPC Input Format:
-> Note: The ien field will only be used for updates to an existing record. When creating records, the ien field will
-> be null.
-```
-{
-  "${fileNumber}": [
-    {
-      "mode": "regexp=(CREATE|UPDATE)",
-      "ien": "${recordIen}",
-      "${fieldNumber}": "${internalValueRepresentation}"
-    }
-  ]
-}
-```
+- Array of values to create/update
+- Caret Separated Format: `${mode}^${fileNumber}^#${fieldNumber}^${index}^${value}`
+    - Index is the only non-required field (default `1`?)
 
 ## Resources/Mappings
 - [Coverage](coverage.md)

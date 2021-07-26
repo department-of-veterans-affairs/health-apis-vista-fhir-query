@@ -1,7 +1,46 @@
 # Coverage --> Insurance Type File (#2.312)
 `POST  /Coverage`
+```
+"rpc":{
+  "name":"LHS LIGHTHOUSE RPC GATEWAY",
+  "context":"LHS RPC CONTEXT",
+  "parameters":[
+     {
+        "array":[
+          "debugmode^1",
+          "api^crud^coverage",
+          "create^2.312^#.01^^4",
+          .
+          .
+          .
+        ]
+     }
+  ]
+}
+```
 ___
 `PUT   /Coverage/{id}`
+```
+"rpc":{
+  "name":"LHS LIGHTHOUSE RPC GATEWAY",
+  "context":"LHS RPC CONTEXT",
+  "parameters":[
+     {
+        "array":[
+          "debugmode^1",
+          "api^crud^coverage",
+          "update^2.312^dfn^${dfn}"
+          "update^2.312^#.01^^4",
+          .
+          .
+          .
+        ]
+     }
+  ]
+}
+```
+___
+`GET /Coverage/{id}`
 - RpcRequest:
 ```
 "rpc":{

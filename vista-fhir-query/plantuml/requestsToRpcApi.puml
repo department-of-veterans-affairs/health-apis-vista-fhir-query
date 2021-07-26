@@ -1,0 +1,100 @@
+@startuml
+
+actor "Wellhive" as consumer
+box "Lighthouse" #lightgreen
+    participant "Chimera" as agg
+    participant "vista-fhir-query" as vfq
+    participant "charon" as charon
+end box
+box "VistA" #lightblue
+    participant "LHS LIGHTHOUSE RPC GATEWAY" as gateway
+end box
+
+group #transparent GET
+    consumer -> agg : \
+GET /Coverage/{id}\n\
+GET /InsurancePlan/{id}\n\
+GET /Organization/{id}
+    agg -> vfq : \
+GET /Coverage?_id={id}\n\
+GET /InsurancePlan?_id={id}\n\
+GET /Organization?_id={id}
+    vfq -> charon
+    charon -> gateway : api^manifest^gets
+    gateway -> charon
+    charon -> vfq
+    vfq -> agg
+    agg -> consumer
+
+    consumer -> agg : GET /Coverage?patient={icn}
+    agg -> vfq : GET /Coverage?patient={icn}
+    vfq --> charon
+    charon  --> gateway : <<maybe>> api^function^getdfn
+    gateway --> charon : Return dfn
+    charon --> vfq
+    vfq -> charon
+    charon -> gateway : api^read^coverage
+    gateway -> charon
+    charon -> vfq
+    vfq -> agg
+    agg -> consumer
+
+    consumer -> agg : \
+GET /InsurancePlan?identifier={groupPlanNumber}\n\
+GET /Organization?type=[ins,pay]
+    agg -> vfq : \
+GET /InsurancePlan?identifier={groupPlanNumber}\n\
+GET /Organization?type=[ins,pay]
+    vfq -> charon
+    charon -> gateway : api^manifest^list
+    gateway -> charon
+    charon -> vfq
+    vfq -> agg
+    agg -> consumer
+
+    consumer -> agg : \
+GET /CoverageEligibilityResponse?patient={icn}\n\
+GET /CoverageEligibilityResponse?patient={icn}&created={date}&insurer={insurer}
+    agg -> vfq : \
+GET /CoverageEligibilityResponse?patient={icn}\n\
+GET /CoverageEligibilityResponse?patient={icn}&created={date}&insurer={insurer}
+    vfq --> charon
+    charon --> gateway : <<maybe>> api^function^getdfn
+    gateway --> charon : Return dfn
+    charon --> vfq
+    vfq -> charon
+    charon -> gateway : api^manifest^gets
+    gateway -> charon
+    charon -> vfq
+    vfq -> charon
+    charon -> gateway : api^manifest^list
+    gateway -> charon
+    charon -> vfq
+    vfq -> vfq : post-process
+    vfq -> agg
+    agg -> consumer
+end
+
+group #transparent POST
+    consumer -> agg : POST /Coverage\nPOST /CoverageEligibilityResponse\nPOST /InsurancePlan\nPOST /Organization
+    agg -> vfq : POST /Coverage\nPOST /CoverageEligibilityResponse\nPOST /InsurancePlan\nPOST /Organization
+    vfq -> charon
+    charon -> gateway :  api^create^coverage
+    gateway -> charon
+    charon -> vfq
+    vfq -> agg
+    agg -> consumer
+end
+
+group #transparent PUT
+    consumer -> agg : PUT /Coverage/{id}\nPUT /InsurancePlan/{id}\nPUT /Organization/{id}
+    agg -> vfq : PUT /Coverage/{id}\nPUT /InsurancePlan/{id}\nPUT /Organization/{id}
+    vfq -> charon
+    charon -> gateway : api^update^coverage
+    gateway -> charon
+    charon -> vfq
+    vfq -> agg
+    agg -> consumer
+end
+
+@enduml
