@@ -1,6 +1,7 @@
 package gov.va.api.health.vistafhirquery.service.controller.coverage;
 
 import static gov.va.api.health.vistafhirquery.service.controller.R4Controllers.verifyAndGetResult;
+import static gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGateway.allFieldsOfSubfile;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -14,8 +15,12 @@ import gov.va.api.health.vistafhirquery.service.controller.R4Transformation;
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
 import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.WitnessProtection;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.InsuranceType;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayGetsManifest;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayGetsManifest.Request;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.PatientType;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -59,18 +64,26 @@ public class R4CoverageController implements R4CoverageApi {
   @GetMapping(value = "/{publicId}")
   public Coverage coverageRead(@PathVariable(value = "publicId") String id) {
     PatientTypeCoordinates coordinates = witnessProtection.toPatientTypeCoordinates(id);
-    LhsLighthouseRpcGatewayGetsManifest.Request rpcRequest =
-        LhsLighthouseRpcGatewayGetsManifest.Request.builder()
-            .file("2.312")
+    Request rpcRequest =
+        Request.builder()
+            .file(InsuranceType.FILE_NUMBER)
             .iens(coordinates.recordId())
-            .fields(List.of(".01", ".18", ".2", "3", "3.04", "4.03", "4.06", "7.02", "8"))
+            .fields(
+                List.of(
+                    InsuranceType.INSURANCE_TYPE,
+                    InsuranceType.GROUP_PLAN,
+                    InsuranceType.COORDINATION_OF_BENEFITS,
+                    InsuranceType.INSURANCE_EXPIRATION_DATE,
+                    InsuranceType.STOP_POLICY_FROM_BILLING,
+                    InsuranceType.PT_RELATIONSHIP_HIPAA,
+                    InsuranceType.PHARMACY_PERSON_CODE,
+                    InsuranceType.SUBSCRIBER_ID,
+                    InsuranceType.EFFECTIVE_DATE_OF_POLICY))
             .flags(
                 List.of(
-                    LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags.OMIT_NULL_VALUES,
-                    LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags
-                        .RETURN_INTERNAL_VALUES,
-                    LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags
-                        .RETURN_EXTERNAL_VALUES))
+                    GetsManifestFlags.OMIT_NULL_VALUES,
+                    GetsManifestFlags.RETURN_INTERNAL_VALUES,
+                    GetsManifestFlags.RETURN_EXTERNAL_VALUES))
             .build();
     RpcResponse rpcResponse =
         vistalinkApiClient.requestForVistaSite(coordinates.siteId(), rpcRequest);
@@ -95,18 +108,16 @@ public class R4CoverageController implements R4CoverageApi {
       patient = CoverageHack.dfn();
     }
     // ToDo dfn macro on the iens field
-    LhsLighthouseRpcGatewayGetsManifest.Request rpcRequest =
-        LhsLighthouseRpcGatewayGetsManifest.Request.builder()
-            .file("2")
+    Request rpcRequest =
+        Request.builder()
+            .file(PatientType.FILE_NUMBER)
             .iens(patient)
-            .fields(List.of(".3121*"))
+            .fields(allFieldsOfSubfile(PatientType.INSURANCE_TYPE))
             .flags(
                 List.of(
-                    LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags.OMIT_NULL_VALUES,
-                    LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags
-                        .RETURN_INTERNAL_VALUES,
-                    LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags
-                        .RETURN_EXTERNAL_VALUES))
+                    GetsManifestFlags.OMIT_NULL_VALUES,
+                    GetsManifestFlags.RETURN_INTERNAL_VALUES,
+                    GetsManifestFlags.RETURN_EXTERNAL_VALUES))
             .build();
     RpcResponse rpcResponse = vistalinkApiClient.requestForPatient(patient, rpcRequest);
     Map<String, ZoneId> vistaZoneIds = collectTimezones(rpcResponse);
