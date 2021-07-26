@@ -11,14 +11,12 @@ import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.InsuranceComp
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
 import lombok.Builder;
 import lombok.NonNull;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.allBlank;
@@ -53,17 +51,6 @@ public class R4OrganizationTransformer {
         .state(state)
         .line(emptyToNull(List.of(streetAddressLine1, streetAddressLine2, streetAddressLine3)))
         .postalCode(zipCode)
-        .text(
-            Stream.of(
-                    streetAddressLine1,
-                    streetAddressLine2,
-                    streetAddressLine3,
-                    city,
-                    state,
-                    zipCode)
-                .map(StringUtils::trimToNull)
-                .filter(Objects::nonNull)
-                .collect(Collectors.joining(" ")))
         .build();
   }
 
@@ -210,13 +197,19 @@ public class R4OrganizationTransformer {
                 cityInternalValue,
                 stateInternalValue,
                 zipCodeInternalValue))
-        .purpose(asCodeableConcept(Coding.builder().code(purpose).display(purpose).build()))
+        .purpose(
+            asCodeableConcept(
+                Coding.builder()
+                    .code(purpose)
+                    .display(purpose)
+                    .system("http://terminology.hl7.org/CodeSystem/contactentity-type")
+                    .build()))
         .telecom(contactTelecom(phoneInternalValue, faxInternalValue))
-        .extension(contactExtension(companyNameInternalValue))
+        .extension(companyNameExtension(companyNameInternalValue))
         .build();
   }
 
-  private List<Extension> contactExtension(String companyName) {
+  private List<Extension> companyNameExtension(String companyName) {
     return List.of(
         Extension.builder()
             .valueReference(Reference.builder().display(companyName).build())
@@ -292,6 +285,18 @@ public class R4OrganizationTransformer {
                       .build())
               .build());
     }
+
+    var maybeFilingTimeFrame = fields.get(InsuranceCompany.FILING_TIME_FRAME);
+    if (isInternalValueNotBlank(maybeFilingTimeFrame)) {
+      extensions.add(
+          Extension.builder()
+              .url("http://va.gov/fhir/StructureDefinition/organization-filingTimeFrame")
+              .valueString(maybeFilingTimeFrame.in())
+              .build());
+    }
+
+    var maybeAnotherCoProcessIpClaims = fields.get(InsuranceCompany.ANOTHER_CO_PROCESS_IP_CLAIMS_);
+    if (isInternalValueNotBlank(maybeAnotherCoProcessIpClaims)) {}
 
     return extensions.isEmpty() ? null : extensions;
   }
