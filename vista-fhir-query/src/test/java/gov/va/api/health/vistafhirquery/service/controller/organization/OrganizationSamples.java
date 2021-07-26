@@ -3,13 +3,12 @@ package gov.va.api.health.vistafhirquery.service.controller.organization;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.health.r4.api.resources.Organization;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
-import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.experimental.UtilityClass;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class OrganizationSamples {
@@ -233,7 +232,7 @@ public class OrganizationSamples {
           .results(
               List.of(
                   LhsLighthouseRpcGatewayResponse.FilemanEntry.builder()
-                      .file("2.312")
+                      .file("36")
                       .ien(id)
                       .fields(fields())
                       .build()))
@@ -245,10 +244,10 @@ public class OrganizationSamples {
   public static class R4 {
 
     Organization organization() {
-      return organization("666", "1,8,", "1010101010V666666");
+      return organization("666", "1,8,");
     }
 
-    Organization organization(String station, String ien, String patient) {
+    Organization organization(String station, String ien) {
       return Organization.builder().build();
     }
   }
