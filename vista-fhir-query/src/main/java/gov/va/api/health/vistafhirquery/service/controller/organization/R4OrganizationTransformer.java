@@ -6,7 +6,8 @@ import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.providerCoordinateStringFrom;
 import static gov.va.api.health.vistafhirquery.service.controller.organization.OrganizationCoordinates.insuranceCompany;
-import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toList;
 
 import gov.va.api.health.r4.api.datatypes.Address;
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
@@ -28,7 +29,6 @@ import lombok.NonNull;
 
 @Builder
 public class R4OrganizationTransformer {
-
   /** The insurance company fields needed by the transformer. */
   public static List<String> REQUIRED_FIELDS =
       List.of(
@@ -118,7 +118,9 @@ public class R4OrganizationTransformer {
     return Address.builder()
         .city(city)
         .state(state)
-        .line(emptyToNull(asList(streetAddressLine1, streetAddressLine2, streetAddressLine3)))
+        .line(
+            emptyToNull(
+                Stream.of(streetAddressLine1, streetAddressLine2, streetAddressLine3).toList()))
         .postalCode(zipCode)
         .build();
   }
@@ -176,8 +178,8 @@ public class R4OrganizationTransformer {
         entry.internal(InsuranceCompany.CLAIMS_INPT_PROCESS_STATE).orElse(null),
         entry.internal(InsuranceCompany.CLAIMS_INPT_PROCESS_ZIP).orElse(null),
         "RXCLAIMS",
-        entry.internal(InsuranceCompany.CLAIMS_RX_PHONE_NUMBER).orElse(null),
-        entry.internal(InsuranceCompany.CLAIMS_RX_FAX).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_INPT_PHONE_NUMBER).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_INPT_FAX).orElse(null),
         entry.internal(InsuranceCompany.CLAIMS_INPT_COMPANY_NAME).orElse(null));
   }
 
@@ -222,6 +224,9 @@ public class R4OrganizationTransformer {
   }
 
   private List<Extension> companyNameExtension(String companyName) {
+    if (isBlank(companyName)) {
+      return emptyList();
+    }
     return List.of(
         Extension.builder()
             .valueReference(Reference.builder().display(companyName).build())
@@ -259,14 +264,8 @@ public class R4OrganizationTransformer {
             address(
                 streetAddressLine1, streetAddressLine2, streetAddressLine3, city, state, zipCode))
         .telecom(contactTelecom(phone, fax))
-        .extension(companyNameExtension(companyName))
-        .purpose(
-            asCodeableConcept(
-                Coding.builder()
-                    .code(purpose)
-                    .display(purpose)
-                    .system("http://terminology.hl7.org/CodeSystem/contactentity-type")
-                    .build()))
+        .extension(emptyToNull(companyNameExtension(companyName)))
+        .purpose(purposeOrNull(purpose))
         .build();
   }
 
@@ -287,15 +286,17 @@ public class R4OrganizationTransformer {
   }
 
   private List<Organization.Contact> contacts(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
-    return List.of(
-        appealsContact(entry),
-        billingContact(entry),
-        claimsDentalContact(entry),
-        claimsInptContact(entry),
-        claimsOptContact(entry),
-        claimsRxContact(entry),
-        inquiryContact(entry),
-        precertificationContact(entry));
+    return Stream.of(
+            appealsContact(entry),
+            billingContact(entry),
+            claimsDentalContact(entry),
+            claimsInptContact(entry),
+            claimsOptContact(entry),
+            claimsRxContact(entry),
+            inquiryContact(entry),
+            precertificationContact(entry))
+        .filter(Objects::nonNull)
+        .collect(toList());
   }
 
   private Organization.Contact inquiryContact(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
@@ -324,7 +325,7 @@ public class R4OrganizationTransformer {
 
   private List<ContactPoint> organizationTelecom(String phoneNumber) {
     if (isBlank(phoneNumber)) {
-      return Collections.emptyList();
+      return emptyList();
     }
     return Collections.singletonList(
         ContactPoint.builder()
@@ -346,6 +347,18 @@ public class R4OrganizationTransformer {
         entry.internal(InsuranceCompany.PRECERTIFICATION_PHONE_NUMBER).orElse(null),
         null,
         entry.internal(InsuranceCompany.PRECERT_COMPANY_NAME).orElse(null));
+  }
+
+  private CodeableConcept purposeOrNull(String purpose) {
+    if (isBlank(purpose)) {
+      return null;
+    }
+    return asCodeableConcept(
+        Coding.builder()
+            .code(purpose)
+            .display(purpose)
+            .system("http://terminology.hl7.org/CodeSystem/contactentity-type")
+            .build());
   }
 
   /** Transform an RPC response to fhir. */

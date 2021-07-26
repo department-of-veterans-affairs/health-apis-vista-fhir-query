@@ -13,7 +13,7 @@
   <properties>
     <charon.version>4.0.19</charon.version>
     <fhir-resources.version>8.0.5</fhir-resources.version>
-    <jacoco.coverage>0.87</jacoco.coverage>
+    <jacoco.coverage>0.94</jacoco.coverage>
     <mssql-jdbc.version>9.2.1.jre15</mssql-jdbc.version>
     <swagger-maven-plugin.version>2.1.9</swagger-maven-plugin.version>
     <talos.version>1.0.0</talos.version>
