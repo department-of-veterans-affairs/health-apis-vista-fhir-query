@@ -296,7 +296,23 @@ public class R4OrganizationTransformer {
     }
 
     var maybeAnotherCoProcessIpClaims = fields.get(InsuranceCompany.ANOTHER_CO_PROCESS_IP_CLAIMS_);
-    if (isInternalValueNotBlank(maybeAnotherCoProcessIpClaims)) {}
+    if (isInternalValueNotBlank(maybeAnotherCoProcessIpClaims)) {
+      extensions.add(
+          Extension.builder()
+              .valueBoolean(yesNoToBoolean(maybeAnotherCoProcessIpClaims.in()))
+              .url(
+                  "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesInpatClaims")
+              .build());
+    }
+
+    var maybeTypeOfCoverage = fields.get(InsuranceCompany.TYPE_OF_COVERAGE);
+    if (isInternalValueNotBlank(maybeTypeOfCoverage)) {
+      extensions.add(
+          Extension.builder()
+              .valueCodeableConcept()
+              .url("http://va.gov/fhir/StructureDefinition/organization-typeOfCoverage")
+              .build());
+    }
 
     return extensions.isEmpty() ? null : extensions;
   }
