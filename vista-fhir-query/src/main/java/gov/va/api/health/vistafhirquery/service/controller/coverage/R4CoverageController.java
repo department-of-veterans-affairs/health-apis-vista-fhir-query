@@ -1,5 +1,6 @@
 package gov.va.api.health.vistafhirquery.service.controller.coverage;
 
+import static gov.va.api.health.vistafhirquery.service.controller.R4Controllers.dieOnError;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Controllers.verifyAndGetResult;
 import static gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGateway.allFieldsOfSubfile;
 import static java.util.stream.Collectors.toList;
@@ -20,7 +21,7 @@ import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouse
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayGetsManifest.Request;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
-import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.PatientType;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.Patient;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -90,6 +91,8 @@ public class R4CoverageController implements R4CoverageApi {
     Map<String, ZoneId> vistaZoneIds = collectTimezones(rpcResponse);
     LhsLighthouseRpcGatewayResponse getsManifestResults =
         LhsLighthouseRpcGatewayGetsManifest.create().fromResults(rpcResponse.results());
+    dieOnError(getsManifestResults);
+
     List<Coverage> resources =
         transformation(vistaZoneIds, coordinates.icn()).toResource().apply(getsManifestResults);
     return verifyAndGetResult(resources, id);
@@ -110,9 +113,9 @@ public class R4CoverageController implements R4CoverageApi {
     // ToDo dfn macro on the iens field
     Request rpcRequest =
         Request.builder()
-            .file(PatientType.FILE_NUMBER)
+            .file(Patient.FILE_NUMBER)
             .iens(patient)
-            .fields(allFieldsOfSubfile(PatientType.INSURANCE_TYPE))
+            .fields(allFieldsOfSubfile(Patient.INSURANCE_TYPE))
             .flags(
                 List.of(
                     GetsManifestFlags.OMIT_NULL_VALUES,

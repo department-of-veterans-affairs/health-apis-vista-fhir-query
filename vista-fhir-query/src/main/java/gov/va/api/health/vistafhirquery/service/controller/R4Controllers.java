@@ -1,5 +1,6 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
 import java.util.List;
 
 public class R4Controllers {
@@ -15,5 +16,20 @@ public class R4Controllers {
     return resources.stream()
         .findFirst()
         .orElseThrow(() -> ResourceExceptions.NotFound.because(publicId));
+  }
+
+  public static void dieOnError(LhsLighthouseRpcGatewayResponse response) {
+    var errors = response.collectErrors();
+    if (errors.isEmpty()) {
+      return;
+    }
+    throw new FatalServerError(errors.toString());
+  }
+
+  /** Indicates a critical failure in server that the user cannot solve. */
+  public static class FatalServerError extends RuntimeException {
+    public FatalServerError(String message) {
+      super(message);
+    }
   }
 }

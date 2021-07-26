@@ -2,19 +2,26 @@ package gov.va.api.health.vistafhirquery.service.controller.witnessprotection;
 
 import gov.va.api.health.ids.client.IdEncoder;
 import gov.va.api.health.vistafhirquery.service.controller.PatientTypeCoordinates;
+import gov.va.api.health.vistafhirquery.service.controller.ProviderTypeCoordinates;
 import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions;
+import java.util.function.Function;
 
 /** Interface for translating publicId to a privateId. */
 public interface WitnessProtection {
   /** Try to parse patient type coordinates given a public id. */
   default PatientTypeCoordinates toPatientTypeCoordinates(String publicId) {
+    return decodePrivateId(publicId, PatientTypeCoordinates::fromString);
+  }
+
+  default ProviderTypeCoordinates toProviderTypeCoordinates(String publicId) {
+    return decodePrivateId(publicId, ProviderTypeCoordinates::fromString);
+  }
+
+  default <T> T decodePrivateId(String publicId, Function<String, T> decoder) {
     try {
-      var privateId = toPrivateId(publicId);
-      return PatientTypeCoordinates.fromString(privateId);
+      return decoder.apply(toPrivateId(publicId));
     } catch (IdEncoder.BadId | IllegalArgumentException e) {
-      throw ResourceExceptions.NotFound.because(
-          "Could not parse public id %s to %s.",
-          publicId, PatientTypeCoordinates.class.getSimpleName());
+      throw ResourceExceptions.NotFound.because("Unsupported id %s", publicId);
     }
   }
 
