@@ -59,8 +59,7 @@ public class R4CoverageController implements R4CoverageApi {
   @Override
   @GetMapping(value = "/{publicId}")
   public Coverage coverageRead(@PathVariable(value = "publicId") String id) {
-    PatientTypeCoordinates coordinates =
-        patientTypeCoordinatesOrDie(witnessProtection.toPrivateId(id));
+    PatientTypeCoordinates coordinates = patientTypeCoordinatesOrDie(witnessProtection, id);
     LhsLighthouseRpcGatewayGetsManifest.Request rpcRequest =
         LhsLighthouseRpcGatewayGetsManifest.Request.builder()
             .file("2.312")

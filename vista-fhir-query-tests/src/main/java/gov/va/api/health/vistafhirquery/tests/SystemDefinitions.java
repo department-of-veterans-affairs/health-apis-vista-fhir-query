@@ -76,9 +76,10 @@ public final class SystemDefinitions {
 
   private static TestIds localIds() {
     return TestIds.builder()
-        .patient("1011537977V693883")
-        .observationVitalSign("I3-nfcGFM5JEsuzapkk9xecju3QH0MrK6tqZKVY9rd7wSk")
+        .coverage("I3-4z05kjIPYEYQYLQmGck6nb")
         .observationLaboratory("I3-KqbQBRfPz2QzBYOB9MoX6iis0i7kCY2n5Zn5RQssOEMCd96dST7kj4")
+        .observationVitalSign("I3-nfcGFM5JEsuzapkk9xecju3QH0MrK6tqZKVY9rd7wSk")
+        .patient("1011537977V693883")
         .patientSites(icnAtSites())
         .build();
   }
@@ -95,9 +96,10 @@ public final class SystemDefinitions {
 
   private static TestIds productionIds() {
     return TestIds.builder()
-        .patient("1011537977V693883")
-        .observationVitalSign("TBD")
+        .coverage("TBD")
         .observationLaboratory("TBD")
+        .observationVitalSign("TBD")
+        .patient("1011537977V693883")
         .patientSites(icnAtSites())
         .build();
   }
@@ -146,9 +148,10 @@ public final class SystemDefinitions {
 
   private static TestIds syntheticIds() {
     return TestIds.builder()
-        .patient("1011537977V693883")
-        .observationVitalSign("I3-MzfzyZkSpl9HvWWWuN0JvxF6V2f0fwrUm4Cj381IfxH")
+        .coverage("TBD")
         .observationLaboratory("I3-IbkbEJ3pceqVRMjceHtk9zfkaWo5B2hFH018sws2KYPDg98RU2fFQC")
+        .observationVitalSign("I3-MzfzyZkSpl9HvWWWuN0JvxF6V2f0fwrUm4Cj381IfxH")
+        .patient("1011537977V693883")
         .patientSites(icnAtSites())
         .build();
   }

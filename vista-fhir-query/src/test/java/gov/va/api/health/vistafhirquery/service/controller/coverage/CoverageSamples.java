@@ -166,7 +166,7 @@ public class CoverageSamples {
     }
 
     private Period period() {
-      return Period.builder().start("1992-01-12T00:00Z").end("2025-01-01T00:00Z").build();
+      return Period.builder().start("1992-01-12T00:00:00Z").end("2025-01-01T00:00:00Z").build();
     }
 
     private CodeableConcept relationship() {

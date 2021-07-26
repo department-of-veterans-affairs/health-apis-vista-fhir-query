@@ -23,6 +23,7 @@ import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.InsuranceType
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -90,7 +91,10 @@ public class R4CoverageTransformer {
       return null;
     }
     // Reformat to UTC
-    return FilemanDate.from(filemanDate, vistaZoneId).instant().atZone(ZoneOffset.UTC).toString();
+    return FilemanDate.from(filemanDate, vistaZoneId)
+        .instant()
+        .atZone(ZoneOffset.UTC)
+        .format(DateTimeFormatter.ISO_DATE_TIME);
   }
 
   private Integer order(LhsLighthouseRpcGatewayResponse.Values coordinationOfBenefits) {
