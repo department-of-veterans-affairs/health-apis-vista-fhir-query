@@ -37,6 +37,16 @@ public class R4CoverageTransformer {
   /** Assumes UTC if zoneId is not provided. */
   @Builder.Default ZoneId vistaZoneId = ZoneOffset.UTC;
 
+  @SuppressWarnings("UnnecessaryParentheses")
+  static boolean stopPolicyFromBillingToBoolean(String value) {
+    return switch (value) {
+      case "0" -> false;
+      case "1" -> true;
+      default -> throw new UnexpectedVistaValue(
+          InsuranceType.STOP_POLICY_FROM_BILLING, value, "Expected 0 or 1");
+    };
+  }
+
   private List<Coverage.CoverageClass> classes(FilemanEntry entry) {
     return entry
         .internal(InsuranceType.GROUP_PLAN)
@@ -70,7 +80,9 @@ public class R4CoverageTransformer {
                     .build())
         .ifPresent(extensions::add);
     entry
-        .internal(InsuranceType.STOP_POLICY_FROM_BILLING, this::stopPolicyFromBillingToBoolean)
+        .internal(
+            InsuranceType.STOP_POLICY_FROM_BILLING,
+            R4CoverageTransformer::stopPolicyFromBillingToBoolean)
         .map(
             value ->
                 Extension.builder()
@@ -79,14 +91,6 @@ public class R4CoverageTransformer {
                     .build())
         .ifPresent(extensions::add);
     return extensions.isEmpty() ? null : extensions;
-  }
-
-  private boolean stopPolicyFromBillingToBoolean(String value) {
-    return switch (value) {
-      case "0" -> false;
-      case "1" -> true;
-      default -> throw new UnexpectedVistaValue(InsuranceType.STOP_POLICY_FROM_BILLING,value,"Expected 0 or 1");
-    };
   }
 
   private Integer order(FilemanEntry entry) {
