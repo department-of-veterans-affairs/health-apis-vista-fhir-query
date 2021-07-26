@@ -52,12 +52,12 @@ public class R4Bundler<
     bundle.link(toLinks());
     int page = HttpRequestParameters.integer(request, "page", 1);
     if (page <= 0) {
-      ResourceExceptions.BadSearchParameters.because("page value must be greater than 0");
+      throw ResourceExceptions.BadSearchParameters.because("page value must be greater than 0");
     }
     int count =
         HttpRequestParameters.integer(request, "_count", linkProperties.getDefaultPageSize());
     if (count < 0) {
-      ResourceExceptions.BadSearchParameters.because(
+      throw ResourceExceptions.BadSearchParameters.because(
           "count value must be greater than or equal to 0");
     }
     if (resources.size() > count) {

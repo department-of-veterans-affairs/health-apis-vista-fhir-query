@@ -198,7 +198,7 @@ public class DateSearchBoundaries {
   }
 
   private void invalidDateCombination() {
-    ResourceExceptions.BadSearchParameters.because(
+    throw ResourceExceptions.BadSearchParameters.because(
         "Bad date search combination : date=" + date1.toString() + "&" + date2.toString());
   }
 

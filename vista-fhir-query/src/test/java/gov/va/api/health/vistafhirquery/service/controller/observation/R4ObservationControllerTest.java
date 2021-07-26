@@ -93,24 +93,6 @@ public class R4ObservationControllerTest {
   }
 
   @Test
-  void readReturnsTooManyResultsFromVista() {
-    var vista = ObservationVitalSamples.Vista.create();
-    VprGetPatientData.Response.Results results = vista.resultsWithLab();
-    when(vlClient.requestForVistaSite(eq("123"), any(VprGetPatientData.Request.class)))
-        .thenReturn(rpcResponse(RpcResponse.Status.OK, "123", xml(results)));
-    when(wp.toPrivateId("public-sNp1+123+V456")).thenReturn("sNp1+123+V456");
-    assertThatExceptionOfType(ResourceExceptions.ExpectationFailed.class)
-        .isThrownBy(() -> controller().read("public-sNp1+123+V456"));
-  }
-
-  @Test
-  void readUnusableIdReturnsNotFound() {
-    when(wp.toPrivateId("garbage")).thenReturn("garbage");
-    assertThatExceptionOfType(ResourceExceptions.NotFound.class)
-        .isThrownBy(() -> controller().read("garbage"));
-  }
-
-  @Test
   void readVitals() {
     var vista = ObservationVitalSamples.Vista.create();
     VprGetPatientData.Response.Results results = vista.results();

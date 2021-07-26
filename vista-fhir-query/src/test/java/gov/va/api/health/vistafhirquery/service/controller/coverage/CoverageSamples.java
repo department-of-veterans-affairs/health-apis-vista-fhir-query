@@ -10,6 +10,8 @@ import gov.va.api.health.r4.api.datatypes.Period;
 import gov.va.api.health.r4.api.elements.Extension;
 import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Coverage;
+import gov.va.api.health.vistafhirquery.service.controller.PatientTypeCoordinates;
+import gov.va.api.health.vistafhirquery.service.controller.ProviderTypeCoordinates;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
 import java.util.Arrays;
 import java.util.Collection;
@@ -49,12 +51,16 @@ public class CoverageSamples {
     }
 
     LhsLighthouseRpcGatewayResponse.Results getsManifestResults() {
+      return getsManifestResults("1,8,");
+    }
+
+    LhsLighthouseRpcGatewayResponse.Results getsManifestResults(String id) {
       return LhsLighthouseRpcGatewayResponse.Results.builder()
           .results(
               List.of(
                   LhsLighthouseRpcGatewayResponse.FilemanEntry.builder()
                       .file("2.312")
-                      .ien("1,8,")
+                      .ien(id)
                       .fields(fields())
                       .build()))
           .build();
@@ -94,7 +100,12 @@ public class CoverageSamples {
     private List<Coverage.CoverageClass> classes(String station, String patient) {
       return List.of(
           Coverage.CoverageClass.builder()
-              .value(patient + "^" + station + "^87")
+              .value(
+                  ProviderTypeCoordinates.builder()
+                      .siteId(station)
+                      .recordId("87")
+                      .build()
+                      .toString())
               .type(
                   CodeableConcept.builder()
                       .coding(
@@ -108,12 +119,18 @@ public class CoverageSamples {
     }
 
     Coverage coverage() {
-      return coverage("666", "1010101010V666666");
+      return coverage("666", "1,8,", "1010101010V666666");
     }
 
-    Coverage coverage(String station, String patient) {
+    Coverage coverage(String station, String ien, String patient) {
       return Coverage.builder()
-          .id(patient + "^" + station + "^1,8,")
+          .id(
+              PatientTypeCoordinates.builder()
+                  .icn(patient)
+                  .siteId(station)
+                  .recordId(ien)
+                  .build()
+                  .toString())
           .extension(extensions())
           .status(Coverage.Status.active)
           .subscriberId("R50797108")
@@ -123,7 +140,13 @@ public class CoverageSamples {
           .payor(
               List.of(
                   Reference.builder()
-                      .reference("Organization/" + patient + "^" + station + "^36;4")
+                      .reference(
+                          "Organization/"
+                              + ProviderTypeCoordinates.builder()
+                                  .siteId(station)
+                                  .recordId("36;4")
+                                  .build()
+                                  .toString())
                       .build()))
           .coverageClass(classes(station, patient))
           .order(1)
@@ -143,7 +166,7 @@ public class CoverageSamples {
     }
 
     private Period period() {
-      return Period.builder().start("1992-01-12T00:00Z").end("2025-01-01T00:00Z").build();
+      return Period.builder().start("1992-01-12T00:00:00Z").end("2025-01-01T00:00:00Z").build();
     }
 
     private CodeableConcept relationship() {

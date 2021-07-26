@@ -1,19 +1,26 @@
 package gov.va.api.health.vistafhirquery.service.controller.coverage;
 
+import static gov.va.api.health.vistafhirquery.service.controller.R4Controllers.verifyAndGetResult;
+import static gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGateway.allFieldsOfSubfile;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 import gov.va.api.health.r4.api.resources.Coverage;
 import gov.va.api.health.vistafhirquery.service.api.R4CoverageApi;
+import gov.va.api.health.vistafhirquery.service.controller.PatientTypeCoordinates;
 import gov.va.api.health.vistafhirquery.service.controller.R4Bundler;
 import gov.va.api.health.vistafhirquery.service.controller.R4BundlerFactory;
 import gov.va.api.health.vistafhirquery.service.controller.R4Bundling;
 import gov.va.api.health.vistafhirquery.service.controller.R4Transformation;
-import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions;
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
+import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.WitnessProtection;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.InsuranceType;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayGetsManifest;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayGetsManifest.Request;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.PatientType;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -26,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,10 +51,48 @@ public class R4CoverageController implements R4CoverageApi {
 
   private final VistalinkApiClient vistalinkApiClient;
 
+  private final WitnessProtection witnessProtection;
+
+  /** Uses the metadata in the RpcResponse to map sites to timezones. */
+  private Map<String, ZoneId> collectTimezones(RpcResponse rpcResponse) {
+    return rpcResponse.results().stream()
+        .filter(r -> r.metadata() != null)
+        .collect(toMap(r -> r.vista(), r -> ZoneId.of(r.metadata().timezone())));
+  }
+
   @Override
-  public Coverage coverageRead(String id) {
-    // This will go away when read is implemented
-    throw new ResourceExceptions.NotFound("Not Found");
+  @GetMapping(value = "/{publicId}")
+  public Coverage coverageRead(@PathVariable(value = "publicId") String id) {
+    PatientTypeCoordinates coordinates = witnessProtection.toPatientTypeCoordinates(id);
+    Request rpcRequest =
+        Request.builder()
+            .file(InsuranceType.FILE_NUMBER)
+            .iens(coordinates.recordId())
+            .fields(
+                List.of(
+                    InsuranceType.INSURANCE_TYPE,
+                    InsuranceType.GROUP_PLAN,
+                    InsuranceType.COORDINATION_OF_BENEFITS,
+                    InsuranceType.INSURANCE_EXPIRATION_DATE,
+                    InsuranceType.STOP_POLICY_FROM_BILLING,
+                    InsuranceType.PT_RELATIONSHIP_HIPAA,
+                    InsuranceType.PHARMACY_PERSON_CODE,
+                    InsuranceType.SUBSCRIBER_ID,
+                    InsuranceType.EFFECTIVE_DATE_OF_POLICY))
+            .flags(
+                List.of(
+                    GetsManifestFlags.OMIT_NULL_VALUES,
+                    GetsManifestFlags.RETURN_INTERNAL_VALUES,
+                    GetsManifestFlags.RETURN_EXTERNAL_VALUES))
+            .build();
+    RpcResponse rpcResponse =
+        vistalinkApiClient.requestForVistaSite(coordinates.siteId(), rpcRequest);
+    Map<String, ZoneId> vistaZoneIds = collectTimezones(rpcResponse);
+    LhsLighthouseRpcGatewayResponse getsManifestResults =
+        LhsLighthouseRpcGatewayGetsManifest.create().fromResults(rpcResponse.results());
+    List<Coverage> resources =
+        transformation(vistaZoneIds, coordinates.icn()).toResource().apply(getsManifestResults);
+    return verifyAndGetResult(resources, id);
   }
 
   /** Search support. */
@@ -62,25 +108,19 @@ public class R4CoverageController implements R4CoverageApi {
       patient = CoverageHack.dfn();
     }
     // ToDo dfn macro on the iens field
-    LhsLighthouseRpcGatewayGetsManifest.Request rpcRequest =
-        LhsLighthouseRpcGatewayGetsManifest.Request.builder()
-            .file("2")
+    Request rpcRequest =
+        Request.builder()
+            .file(PatientType.FILE_NUMBER)
             .iens(patient)
-            .fields(List.of(".3121*"))
+            .fields(allFieldsOfSubfile(PatientType.INSURANCE_TYPE))
             .flags(
                 List.of(
-                    LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags.OMIT_NULL_VALUES,
-                    LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags
-                        .RETURN_INTERNAL_VALUES,
-                    LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags
-                        .RETURN_EXTERNAL_VALUES))
+                    GetsManifestFlags.OMIT_NULL_VALUES,
+                    GetsManifestFlags.RETURN_INTERNAL_VALUES,
+                    GetsManifestFlags.RETURN_EXTERNAL_VALUES))
             .build();
     RpcResponse rpcResponse = vistalinkApiClient.requestForPatient(patient, rpcRequest);
-    // Gather the time zones from the response for use during transformation
-    Map<String, ZoneId> vistaZoneIds =
-        rpcResponse.results().stream()
-            .filter(r -> r.metadata() != null)
-            .collect(toMap(r -> r.vista(), r -> ZoneId.of(r.metadata().timezone())));
+    Map<String, ZoneId> vistaZoneIds = collectTimezones(rpcResponse);
     LhsLighthouseRpcGatewayResponse getsManifestResults =
         LhsLighthouseRpcGatewayGetsManifest.create().fromResults(rpcResponse.results());
     return toBundle(request, vistaZoneIds).apply(getsManifestResults);
