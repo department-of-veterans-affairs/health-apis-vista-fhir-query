@@ -5,11 +5,6 @@ import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.patientCoordinateStringFrom;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.providerCoordinateStringFrom;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toReference;
-import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.internalValueAsIntegerOrDie;
-import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.isInternalValueBlank;
-import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.isInternalValueNotBlank;
-import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.yesNoToBoolean;
-import static gov.va.api.health.vistafhirquery.service.controller.organization.OrganizationCoordinates.insuranceCompany;
 
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
 import gov.va.api.health.r4.api.datatypes.Coding;
@@ -17,10 +12,12 @@ import gov.va.api.health.r4.api.datatypes.Period;
 import gov.va.api.health.r4.api.elements.Extension;
 import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Coverage;
-import gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.UnexpectedVistaValue;
+import gov.va.api.health.vistafhirquery.service.controller.organization.OrganizationCoordinates;
 import gov.va.api.lighthouse.charon.models.FilemanDate;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.InsuranceType;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse.FilemanEntry;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse.UnexpectedVistaValue;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -40,91 +37,84 @@ public class R4CoverageTransformer {
   /** Assumes UTC if zoneId is not provided. */
   @Builder.Default ZoneId vistaZoneId = ZoneOffset.UTC;
 
-  private List<Coverage.CoverageClass> classes(LhsLighthouseRpcGatewayResponse.Values groupPlan) {
-    if (isInternalValueBlank(groupPlan)) {
-      return null;
-    }
-    // Fhir InsurancePlan
-    return List.of(
-        Coverage.CoverageClass.builder()
-            .value(providerCoordinateStringFrom(rpcResults.getKey(), groupPlan.in()))
-            .type(
-                CodeableConcept.builder()
-                    .coding(
-                        List.of(
-                            Coding.builder()
-                                .system("http://terminology.hl7.org/CodeSystem/coverage-class")
-                                .code("group")
-                                .build()))
-                    .build())
-            .build());
+  @SuppressWarnings("UnnecessaryParentheses")
+  static boolean stopPolicyFromBillingToBoolean(String value) {
+    return switch (value) {
+      case "0" -> false;
+      case "1" -> true;
+      default -> throw new UnexpectedVistaValue(
+          InsuranceType.STOP_POLICY_FROM_BILLING, value, "Expected 0 or 1");
+    };
   }
 
-  private List<Extension> extensions(
-      LhsLighthouseRpcGatewayResponse.Values pharmacyPersonCode,
-      LhsLighthouseRpcGatewayResponse.Values stopPolicyFromBilling) {
+  private List<Coverage.CoverageClass> classes(FilemanEntry entry) {
+    return entry
+        .internal(InsuranceType.GROUP_PLAN)
+        .map(value -> providerCoordinateStringFrom(rpcResults.getKey(), value))
+        .map(coords -> Coverage.CoverageClass.builder().value(coords).type(coverageClass()).build())
+        .map(List::of)
+        .orElse(null);
+  }
+
+  private CodeableConcept coverageClass() {
+    return CodeableConcept.builder()
+        .coding(
+            List.of(
+                Coding.builder()
+                    .system("http://terminology.hl7.org/CodeSystem/coverage-class")
+                    .code("group")
+                    .build()))
+        .build();
+  }
+
+  private List<Extension> extensions(FilemanEntry entry) {
     // ToDo update urls (needs to substitute host/base-path per env) and use the correct host
-    List<Extension> extensions = new ArrayList<>();
-    if (isInternalValueNotBlank(pharmacyPersonCode)) {
-      extensions.add(
-          Extension.builder()
-              .url("http://va.gov/fhir/StructureDefinition/coverage-pharmacyPersonCode")
-              .valueInteger(internalValueAsIntegerOrDie(pharmacyPersonCode, "Pharmacy person code"))
-              .build());
-    }
-    if (isInternalValueNotBlank(stopPolicyFromBilling)) {
-      extensions.add(
-          Extension.builder()
-              .url("http://va.gov/fhir/StructureDefinition/coverage-stopPolicyFromBilling")
-              .valueBoolean(yesNoToBoolean(stopPolicyFromBilling.in()))
-              .build());
-    }
-    if (extensions.isEmpty()) {
-      return null;
-    }
-    return extensions;
+    List<Extension> extensions = new ArrayList<>(2);
+    entry
+        .internal(InsuranceType.PHARMACY_PERSON_CODE, Integer::valueOf)
+        .map(
+            value ->
+                Extension.builder()
+                    .url("http://va.gov/fhir/StructureDefinition/coverage-pharmacyPersonCode")
+                    .valueInteger(value)
+                    .build())
+        .ifPresent(extensions::add);
+    entry
+        .internal(
+            InsuranceType.STOP_POLICY_FROM_BILLING,
+            R4CoverageTransformer::stopPolicyFromBillingToBoolean)
+        .map(
+            value ->
+                Extension.builder()
+                    .url("http://va.gov/fhir/StructureDefinition/coverage-stopPolicyFromBilling")
+                    .valueBoolean(value)
+                    .build())
+        .ifPresent(extensions::add);
+    return extensions.isEmpty() ? null : extensions;
   }
 
-  private String fromFilemanDate(String filemanDate) {
-    if (filemanDate == null) {
-      return null;
-    }
-    // Reformat to UTC
-    return FilemanDate.from(filemanDate, vistaZoneId).instant().atZone(ZoneOffset.UTC).toString();
+  private Integer order(FilemanEntry entry) {
+    return entry.internal(InsuranceType.COORDINATION_OF_BENEFITS, Integer::valueOf).orElse(null);
   }
 
-  private Integer order(LhsLighthouseRpcGatewayResponse.Values coordinationOfBenefits) {
-    if (isInternalValueBlank(coordinationOfBenefits)) {
-      return null;
-    }
-    return internalValueAsIntegerOrDie(
-        coordinationOfBenefits, "Unable to determine coverage order");
+  private List<Reference> payors(FilemanEntry entry) {
+    return entry
+        .internal(InsuranceType.INSURANCE_TYPE)
+        .map(OrganizationCoordinates::insuranceCompany)
+        .map(ic -> providerCoordinateStringFrom(rpcResults.getKey(), ic.toString()))
+        .map(coords -> toReference("Organization", coords, null))
+        .map(List::of)
+        .orElse(null);
   }
 
-  private List<Reference> payors(LhsLighthouseRpcGatewayResponse.Values insuranceCompany) {
-    if (isInternalValueBlank(insuranceCompany)) {
-      return null;
-    }
-    /* The organization controller is likely to need to support Organization from both the
-     * InsuranceCompany file _and_ the payer file. */
-    return List.of(
-        toReference(
-            "Organization",
-            providerCoordinateStringFrom(
-                rpcResults.getKey(), insuranceCompany(insuranceCompany.in()).toString()),
-            null));
-  }
-
-  private Period period(
-      LhsLighthouseRpcGatewayResponse.Values effectiveDate,
-      LhsLighthouseRpcGatewayResponse.Values expirationDate) {
+  private Period period(FilemanEntry entry) {
     Period period = Period.builder().build();
-    if (isInternalValueNotBlank(effectiveDate)) {
-      period.start(fromFilemanDate(effectiveDate.in()));
-    }
-    if (isInternalValueNotBlank(expirationDate)) {
-      period.end(fromFilemanDate(expirationDate.in()));
-    }
+    entry
+        .internal(InsuranceType.EFFECTIVE_DATE_OF_POLICY, this::toFilemanDate)
+        .ifPresent(period::start);
+    entry
+        .internal(InsuranceType.INSURANCE_EXPIRATION_DATE, this::toFilemanDate)
+        .ifPresent(period::end);
     if (allBlank(period.start(), period.end())) {
       return null;
     }
@@ -132,30 +122,28 @@ public class R4CoverageTransformer {
   }
 
   @SuppressWarnings("UnnecessaryParentheses")
-  CodeableConcept relationship(LhsLighthouseRpcGatewayResponse.Values relationship) {
-    if (isInternalValueBlank(relationship)) {
-      return null;
-    }
-    var relationshipCoding =
-        Coding.builder().system("http://terminology.hl7.org/CodeSystem/subscriber-relationship");
-    switch (relationship.in()) {
-      case "01" -> relationshipCoding.code("spouse").display("Spouse");
-      case "18" -> relationshipCoding.code("self").display("Self");
-      case "19" -> relationshipCoding.code("child").display("Child");
-      case "32", "33" -> relationshipCoding.code("parent").display("Parent");
-      case "41" -> relationshipCoding.code("injured").display("Injured Party");
-      case "53" -> relationshipCoding.code("common").display("Common Law Spouse");
-      case "G8" -> relationshipCoding.code("other").display("Other");
-      default -> throw new UnexpectedVistaValue("Unknown Vista Relationship Code", relationship);
-    }
-    return CodeableConcept.builder().coding(List.of(relationshipCoding.build())).build();
+  CodeableConcept relationship(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
+    return entry
+        .internal(InsuranceType.PT_RELATIONSHIP_HIPAA, this::relationshipCoding)
+        .map(coding -> CodeableConcept.builder().coding(List.of(coding)).build())
+        .orElse(null);
   }
 
-  private String subscriberId(LhsLighthouseRpcGatewayResponse.Values subscriberId) {
-    if (isBlank(subscriberId) || isBlank(subscriberId.ext())) {
-      return null;
-    }
-    return subscriberId.ext();
+  @SuppressWarnings("UnnecessaryParentheses")
+  private Coding relationshipCoding(String internalValue) {
+    var coding =
+        Coding.builder().system("http://terminology.hl7.org/CodeSystem/subscriber-relationship");
+    return switch (internalValue) {
+      case "01" -> coding.code("spouse").display("Spouse").build();
+      case "18" -> coding.code("self").display("Self").build();
+      case "19" -> coding.code("child").display("Child").build();
+      case "32", "33" -> coding.code("parent").display("Parent").build();
+      case "41" -> coding.code("injured").display("Injured Party").build();
+      case "53" -> coding.code("common").display("Common Law Spouse").build();
+      case "G8" -> coding.code("other").display("Other").build();
+      default -> throw new UnexpectedVistaValue(
+          InsuranceType.PT_RELATIONSHIP_HIPAA, internalValue, "Unknown relation coding");
+    };
   }
 
   private Coverage toCoverage(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
@@ -164,21 +152,15 @@ public class R4CoverageTransformer {
     }
     return Coverage.builder()
         .id(patientCoordinateStringFrom(patientIcn, rpcResults.getKey(), entry.ien()))
-        .extension(
-            extensions(
-                entry.fields().get(InsuranceType.PHARMACY_PERSON_CODE),
-                entry.fields().get(InsuranceType.STOP_POLICY_FROM_BILLING)))
+        .extension(extensions(entry))
         .status(Coverage.Status.active)
-        .subscriberId(subscriberId(entry.fields().get(InsuranceType.SUBSCRIBER_ID)))
+        .subscriberId(entry.external(InsuranceType.SUBSCRIBER_ID).orElse(null))
         .beneficiary(toReference("Patient", patientIcn, null))
-        .relationship(relationship(entry.fields().get(InsuranceType.PT_RELATIONSHIP_HIPAA)))
-        .period(
-            period(
-                entry.fields().get(InsuranceType.EFFECTIVE_DATE_OF_POLICY),
-                entry.fields().get(InsuranceType.INSURANCE_EXPIRATION_DATE)))
-        .payor(payors(entry.fields().get(InsuranceType.INSURANCE_TYPE)))
-        .coverageClass(classes(entry.fields().get(InsuranceType.GROUP_PLAN)))
-        .order(order(entry.fields().get(InsuranceType.COORDINATION_OF_BENEFITS)))
+        .relationship(relationship(entry))
+        .period(period(entry))
+        .payor(payors(entry))
+        .coverageClass(classes(entry))
+        .order(order(entry))
         .build();
   }
 
@@ -189,5 +171,13 @@ public class R4CoverageTransformer {
         .filter(r -> InsuranceType.FILE_NUMBER.equals(r.file()))
         .map(this::toCoverage)
         .filter(Objects::nonNull);
+  }
+
+  private String toFilemanDate(String filemanDate) {
+    if (filemanDate == null) {
+      return null;
+    }
+    // Reformat to UTC
+    return FilemanDate.from(filemanDate, vistaZoneId).instant().atZone(ZoneOffset.UTC).toString();
   }
 }

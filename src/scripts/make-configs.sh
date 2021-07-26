@@ -189,7 +189,8 @@ populateRpcPrincipalFile() {
     "entries" : [
         {
             "rpcNames" : [
-                "VPR GET PATIENT DATA"
+                "VPR GET PATIENT DATA",
+                "LHS LIGHTHOUSE RPC GATEWAY"
             ],
             "applicationProxyUser" : "LHS,APPLICATION PROXY",
             "codes" : [
