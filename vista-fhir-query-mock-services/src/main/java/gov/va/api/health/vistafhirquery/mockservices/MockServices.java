@@ -21,7 +21,8 @@ public class MockServices {
 
   private final List<String> supportedQueries = new ArrayList<>();
 
-  private final List<MockService> supportedMocks = List.of(VistaObservationMocks.using(PORT));
+  private final List<MockService> supportedMocks =
+      List.of(LhsLighthouseRpcGatewayMocks.using(PORT), VprGetPatientDataMocks.using(PORT));
 
   private MockServer mockServer;
 
