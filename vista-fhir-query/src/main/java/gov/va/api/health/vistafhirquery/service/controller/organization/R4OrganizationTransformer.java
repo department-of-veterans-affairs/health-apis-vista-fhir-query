@@ -24,8 +24,6 @@ import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.emptyToNull;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.providerCoordinateStringFrom;
-import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.isInternalValueNotBlank;
-import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.yesNoToBoolean;
 import static gov.va.api.health.vistafhirquery.service.controller.organization.OrganizationCoordinates.insuranceCompany;
 
 @Builder
