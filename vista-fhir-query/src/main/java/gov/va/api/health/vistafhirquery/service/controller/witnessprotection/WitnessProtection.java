@@ -8,15 +8,10 @@ import java.util.function.Function;
 
 /** Interface for translating publicId to a privateId. */
 public interface WitnessProtection {
-  /** Try to parse patient type coordinates given a public id. */
-  default PatientTypeCoordinates toPatientTypeCoordinates(String publicId) {
-    return decodePrivateId(publicId, PatientTypeCoordinates::fromString);
-  }
-
-  default RecordCoordinates toRecordCoordinates(String publicId) {
-    return decodePrivateId(publicId, RecordCoordinates::fromString);
-  }
-
+  /**
+   * Attempt to decode a private ID using a given transformer. BadId and IllegalArgumentExceptions
+   * will result in a NotFound exception.
+   */
   default <T> T decodePrivateId(String publicId, Function<String, T> decoder) {
     try {
       return decoder.apply(toPrivateId(publicId));
@@ -25,5 +20,15 @@ public interface WitnessProtection {
     }
   }
 
+  /** Try to parse patient type coordinates given a public id. */
+  default PatientTypeCoordinates toPatientTypeCoordinates(String publicId) {
+    return decodePrivateId(publicId, PatientTypeCoordinates::fromString);
+  }
+
   String toPrivateId(String publicId);
+
+  /** Try to parse record coordinates given a public id. */
+  default RecordCoordinates toRecordCoordinates(String publicId) {
+    return decodePrivateId(publicId, RecordCoordinates::fromString);
+  }
 }

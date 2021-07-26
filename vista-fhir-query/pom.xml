@@ -4,7 +4,7 @@
   <parent>
     <groupId>gov.va.api.health</groupId>
     <artifactId>service-starter</artifactId>
-    <version>8.0.23</version>
+    <version>8.0.24</version>
     <relativePath/>
   </parent>
   <artifactId>vista-fhir-query</artifactId>

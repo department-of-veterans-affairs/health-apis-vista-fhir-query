@@ -39,25 +39,28 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor(onConstructor_ = {@Autowired, @NonNull})
 @Slf4j
 public class R4OrganizationController implements R4OrganizationApi {
-
   private final WitnessProtection witnessProtection;
+
   private final VistalinkApiClient vistalinkApiClient;
+
+  private void insuranceFileOrDie(String id, RecordCoordinates recordCoordinates) {
+    if (!InsuranceCompany.FILE_NUMBER.equals(recordCoordinates.file())) {
+      throw new NotFound(id);
+    }
+  }
 
   @Override
   @GetMapping(value = "/{publicId}")
   @SneakyThrows
   public Organization organizationRead(@PathVariable(value = "publicId") String id) {
-
     try {
       RecordCoordinates coordinates = witnessProtection.toRecordCoordinates(id);
       insuranceFileOrDie(id, coordinates);
-
       log.info(
           "Looking for record {} in file {} at site {}",
           coordinates.ien(),
           coordinates.file(),
           coordinates.site());
-
       Request rpcRequest =
           Request.builder()
               .file(InsuranceCompany.FILE_NUMBER)
@@ -71,26 +74,16 @@ public class R4OrganizationController implements R4OrganizationApi {
               .build();
       RpcResponse rpcResponse =
           vistalinkApiClient.requestForVistaSite(coordinates.site(), rpcRequest);
-
       LhsLighthouseRpcGatewayResponse getsManifestResults =
           LhsLighthouseRpcGatewayGetsManifest.create().fromResults(rpcResponse.results());
       dieOnError(getsManifestResults);
-
       log.info("{}", getsManifestResults);
-
       List<Organization> resources = transformation().toResource().apply(getsManifestResults);
-
       return verifyAndGetResult(resources, id);
     } catch (Exception e) {
       log.error("---- REMOVE THIS CATCH AND LOG -----");
       log.error("OOF {}", e.getMessage(), e);
       throw e;
-    }
-  }
-
-  private void insuranceFileOrDie(String id, RecordCoordinates recordCoordinates) {
-    if (!InsuranceCompany.FILE_NUMBER.equals(recordCoordinates.file())) {
-      throw new NotFound(id);
     }
   }
 

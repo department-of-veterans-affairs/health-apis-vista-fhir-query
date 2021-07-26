@@ -5,6 +5,7 @@ import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.emptyToNull;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
 import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 
 import gov.va.api.health.r4.api.datatypes.Address;
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
@@ -285,15 +286,17 @@ public class R4OrganizationTransformer {
   }
 
   private List<Organization.Contact> contacts(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
-    return List.of(
-        appealsContact(entry),
-        billingContact(entry),
-        claimsDentalContact(entry),
-        claimsInptContact(entry),
-        claimsOptContact(entry),
-        claimsRxContact(entry),
-        inquiryContact(entry),
-        precertificationContact(entry));
+    return Stream.of(
+            appealsContact(entry),
+            billingContact(entry),
+            claimsDentalContact(entry),
+            claimsInptContact(entry),
+            claimsOptContact(entry),
+            claimsRxContact(entry),
+            inquiryContact(entry),
+            precertificationContact(entry))
+        .filter(Objects::nonNull)
+        .collect(toList());
   }
 
   private Organization.Contact inquiryContact(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
@@ -370,7 +373,7 @@ public class R4OrganizationTransformer {
         .name(entry.internal(InsuranceCompany.NAME).orElse(null))
         .type(insuranceCompanyType())
         .address(collectAddress(entry))
-        // TODO .contact(contacts(entry))
+        .contact(contacts(entry))
         .telecom(organizationTelecom(entry.internal(InsuranceCompany.PHONE_NUMBER).orElse(null)))
         .build();
   }

@@ -52,8 +52,19 @@ public class R4CoverageTransformer {
   private List<Coverage.CoverageClass> classes(FilemanEntry entry) {
     return entry
         .internal(InsuranceType.GROUP_PLAN)
-        .map(value -> RecordCoordinates.builder().site(site()).file(GroupInsurancePlan.FILE_NUMBER).ien(value).build())
-        .map(coords -> Coverage.CoverageClass.builder().value(coords.toString()).type(coverageClass()).build())
+        .map(
+            value ->
+                RecordCoordinates.builder()
+                    .site(site())
+                    .file(GroupInsurancePlan.FILE_NUMBER)
+                    .ien(value)
+                    .build())
+        .map(
+            coords ->
+                Coverage.CoverageClass.builder()
+                    .value(coords.toString())
+                    .type(coverageClass())
+                    .build())
         .map(List::of)
         .orElse(null);
   }
@@ -102,14 +113,16 @@ public class R4CoverageTransformer {
   private List<Reference> payors(FilemanEntry entry) {
     return entry
         .internal(InsuranceType.INSURANCE_TYPE)
-        .map(value -> RecordCoordinates.builder().site(site()).file(InsuranceCompany.FILE_NUMBER).ien(value).build())
+        .map(
+            value ->
+                RecordCoordinates.builder()
+                    .site(site())
+                    .file(InsuranceCompany.FILE_NUMBER)
+                    .ien(value)
+                    .build())
         .map(coords -> toReference("Organization", coords))
         .map(List::of)
         .orElse(null);
-  }
-
-  private String site() {
-    return rpcResults.getKey();
   }
 
   private Period period(FilemanEntry entry) {
@@ -149,6 +162,10 @@ public class R4CoverageTransformer {
       default -> throw new UnexpectedVistaValue(
           InsuranceType.PT_RELATIONSHIP_HIPAA, internalValue, "Unknown relation coding");
     };
+  }
+
+  private String site() {
+    return rpcResults.getKey();
   }
 
   private Coverage toCoverage(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {

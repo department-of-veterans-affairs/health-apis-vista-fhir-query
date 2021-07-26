@@ -4,6 +4,15 @@ import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouse
 import java.util.List;
 
 public class R4Controllers {
+  /** If there are any errors that can be collected from the response, throw a fatal error. */
+  public static void dieOnError(LhsLighthouseRpcGatewayResponse response) {
+    var errors = response.collectErrors();
+    if (errors.isEmpty()) {
+      return;
+    }
+    throw new FatalServerError(response.toString());
+  }
+
   /** Verifies that a list of resources has only one result and returns that result. */
   public static <R> R verifyAndGetResult(List<R> resources, String publicId) {
     if (resources == null) {
@@ -16,15 +25,6 @@ public class R4Controllers {
     return resources.stream()
         .findFirst()
         .orElseThrow(() -> ResourceExceptions.NotFound.because(publicId));
-  }
-
-  public static void dieOnError(LhsLighthouseRpcGatewayResponse response) {
-    var errors = response.collectErrors();
-    if (errors.isEmpty()) {
-      return;
-    }
-
-    throw new FatalServerError(response.toString());
   }
 
   /** Indicates a critical failure in server that the user cannot solve. */
