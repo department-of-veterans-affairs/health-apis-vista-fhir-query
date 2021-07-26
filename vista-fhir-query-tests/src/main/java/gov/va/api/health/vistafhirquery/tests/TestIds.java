@@ -16,6 +16,8 @@ import org.apache.commons.lang3.StringUtils;
 @Value
 @Builder(toBuilder = true)
 public final class TestIds {
+  @NonNull String coverage;
+
   @NonNull String observationVitalSign;
 
   @NonNull String observationLaboratory;
