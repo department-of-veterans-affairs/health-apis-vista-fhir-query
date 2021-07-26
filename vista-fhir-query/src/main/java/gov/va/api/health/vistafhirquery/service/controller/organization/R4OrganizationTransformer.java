@@ -23,11 +23,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.NonNull;
-import org.apache.commons.lang3.StringUtils;
 
 @Builder
 public class R4OrganizationTransformer {
@@ -51,17 +49,6 @@ public class R4OrganizationTransformer {
         .state(state)
         .line(emptyToNull(List.of(streetAddressLine1, streetAddressLine2, streetAddressLine3)))
         .postalCode(zipCode)
-        .text(
-            Stream.of(
-                    streetAddressLine1,
-                    streetAddressLine2,
-                    streetAddressLine3,
-                    city,
-                    state,
-                    zipCode)
-                .map(StringUtils::trimToNull)
-                .filter(Objects::nonNull)
-                .collect(Collectors.joining(" ")))
         .build();
   }
 
@@ -163,6 +150,15 @@ public class R4OrganizationTransformer {
             entry.internal(InsuranceCompany.ZIP_CODE).orElse(null)));
   }
 
+  private List<Extension> companyNameExtension(String companyName) {
+    return List.of(
+        Extension.builder()
+            .valueReference(Reference.builder().display(companyName).build())
+            .url(
+                "http://hl7.org/fhir/us/davinci-pdex-plan-net/StructureDefinition/via-intermediary")
+            .build());
+  }
+
   private Organization.Contact contact(
       String streetAddressLine1,
       String streetAddressLine2,
@@ -191,19 +187,16 @@ public class R4OrganizationTransformer {
         .address(
             address(
                 streetAddressLine1, streetAddressLine2, streetAddressLine3, city, state, zipCode))
-        .purpose(asCodeableConcept(Coding.builder().code(purpose).display(purpose).build()))
         .telecom(contactTelecom(phone, fax))
-        .extension(contactExtension(companyName))
+        .extension(companyNameExtension(companyName))
+        .purpose(
+            asCodeableConcept(
+                Coding.builder()
+                    .code(purpose)
+                    .display(purpose)
+                    .system("http://terminology.hl7.org/CodeSystem/contactentity-type")
+                    .build()))
         .build();
-  }
-
-  private List<Extension> contactExtension(String companyName) {
-    return List.of(
-        Extension.builder()
-            .valueReference(Reference.builder().display(companyName).build())
-            .url(
-                "http://hl7.org/fhir/us/davinci-pdex-plan-net/StructureDefinition/via-intermediary")
-            .build());
   }
 
   private List<ContactPoint> contactTelecom(String phone, String fax) {
@@ -236,7 +229,6 @@ public class R4OrganizationTransformer {
 
   private List<Extension> extensions(Map<String, LhsLighthouseRpcGatewayResponse.Values> fields) {
     List<Extension> extensions = new ArrayList<>();
-
     var maybeBedsections = fields.get(InsuranceCompany.ALLOW_MULTIPLE_BEDSECTIONS);
     if (isInternalValueNotBlank(maybeBedsections)) {
       extensions.add(
@@ -245,7 +237,6 @@ public class R4OrganizationTransformer {
               .valueBoolean(yesNoToBoolean(maybeBedsections.in()))
               .build());
     }
-
     var maybeOneOptVisit = fields.get(InsuranceCompany.ONE_OPT_VISIT_ON_BILL_ONLY);
     if (isInternalValueNotBlank(maybeOneOptVisit)) {
       extensions.add(
@@ -254,7 +245,6 @@ public class R4OrganizationTransformer {
               .valueBoolean(yesNoToBoolean(maybeOneOptVisit.in()))
               .build());
     }
-
     var maybeAmbulatorySurgeryRevenueCode = fields.get(InsuranceCompany.AMBULATORY_SURG_REV_CODE);
     if (isInternalValueNotBlank(maybeAmbulatorySurgeryRevenueCode)) {
       extensions.add(
@@ -272,7 +262,16 @@ public class R4OrganizationTransformer {
                       .build())
               .build());
     }
-
+    var maybeFilingTimeFrame = fields.get(InsuranceCompany.FILING_TIME_FRAME);
+    if (isInternalValueNotBlank(maybeFilingTimeFrame)) {
+      extensions.add(
+          Extension.builder()
+              .url("http://va.gov/fhir/StructureDefinition/organization-filingTimeFrame")
+              .valueString(maybeFilingTimeFrame.in())
+              .build());
+    }
+    var maybeAnotherCoProcessIpClaims = fields.get(InsuranceCompany.ANOTHER_CO_PROCESS_IP_CLAIMS_);
+    if (isInternalValueNotBlank(maybeAnotherCoProcessIpClaims)) {}
     return extensions.isEmpty() ? null : extensions;
   }
 
@@ -344,7 +343,6 @@ public class R4OrganizationTransformer {
         .id(
             providerCoordinateStringFrom(
                 rpcResults.getKey(), insuranceCompany(entry.ien()).toString()))
-        // TODO: MORE EXTENSIONS
         .extension(extensions(fields))
         .name(entry.internal(InsuranceCompany.NAME).orElse(null))
         .type(insuranceCompanyType())
