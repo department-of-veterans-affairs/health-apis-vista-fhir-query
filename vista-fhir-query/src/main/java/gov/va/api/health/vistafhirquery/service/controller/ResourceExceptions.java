@@ -15,6 +15,11 @@ public class ResourceExceptions {
     public static NotFound because(String message) {
       return new NotFound(message);
     }
+
+    @FormatMethod
+    public static NotFound because(String message, Object... values) {
+      return because(String.format(message, values));
+    }
   }
 
   /** BadSearchParameters . */
