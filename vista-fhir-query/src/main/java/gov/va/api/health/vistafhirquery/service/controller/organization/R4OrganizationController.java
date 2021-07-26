@@ -8,10 +8,12 @@ import gov.va.api.health.r4.api.resources.Organization;
 import gov.va.api.health.vistafhirquery.service.api.R4OrganizationApi;
 import gov.va.api.health.vistafhirquery.service.controller.ProviderTypeCoordinates;
 import gov.va.api.health.vistafhirquery.service.controller.R4Transformation;
+import gov.va.api.health.vistafhirquery.service.controller.RecordCoordinates;
+import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions.NotFound;
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
 import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.WitnessProtection;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
-import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.InsuranceType;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.InsuranceCompany;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayGetsManifest;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayGetsManifest.Request;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags;
@@ -49,11 +51,19 @@ public class R4OrganizationController implements R4OrganizationApi {
 
     try {
       ProviderTypeCoordinates coordinates = witnessProtection.toProviderTypeCoordinates(id);
+      RecordCoordinates recordCoordinates = RecordCoordinates.fromString(coordinates.recordId());
+      checkInsuranceFile(id, recordCoordinates);
+
+      log.info(
+          "Looking for record {} in file {} at site {}",
+          recordCoordinates.ien(),
+          recordCoordinates.file(),
+          coordinates.siteId());
 
       Request rpcRequest =
           Request.builder()
-              .file(InsuranceType.FILE_NUMBER)
-              .iens(coordinates.recordId())
+              .file(InsuranceCompany.FILE_NUMBER)
+              .iens(recordCoordinates.ien())
               .fields(R4OrganizationTransformer.REQUIRED_FIELDS)
               .flags(
                   List.of(
@@ -68,6 +78,8 @@ public class R4OrganizationController implements R4OrganizationApi {
           LhsLighthouseRpcGatewayGetsManifest.create().fromResults(rpcResponse.results());
       dieOnError(getsManifestResults);
 
+      log.info("{}", getsManifestResults);
+
       List<Organization> resources = transformation().toResource().apply(getsManifestResults);
 
       return verifyAndGetResult(resources, id);
@@ -75,6 +87,12 @@ public class R4OrganizationController implements R4OrganizationApi {
       log.error("---- REMOVE THIS CATCH AND LOG -----");
       log.error("OOF {}", e.getMessage(), e);
       throw e;
+    }
+  }
+
+  private void checkInsuranceFile(String id, RecordCoordinates recordCoordinates) {
+    if (!InsuranceCompany.FILE_NUMBER.equals(recordCoordinates.file())) {
+      throw new NotFound(id);
     }
   }
 

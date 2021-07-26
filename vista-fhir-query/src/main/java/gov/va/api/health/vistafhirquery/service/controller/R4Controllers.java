@@ -23,7 +23,8 @@ public class R4Controllers {
     if (errors.isEmpty()) {
       return;
     }
-    throw new FatalServerError(errors.toString());
+
+    throw new FatalServerError(response.toString());
   }
 
   /** Indicates a critical failure in server that the user cannot solve. */

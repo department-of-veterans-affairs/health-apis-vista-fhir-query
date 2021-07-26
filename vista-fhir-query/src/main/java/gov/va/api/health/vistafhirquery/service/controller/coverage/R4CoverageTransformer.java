@@ -103,7 +103,8 @@ public class R4CoverageTransformer {
         .internal(InsuranceType.INSURANCE_TYPE)
         .map(OrganizationCoordinates::insuranceCompany)
         .map(ic -> providerCoordinateStringFrom(rpcResults.getKey(), ic.toString()))
-        .map(coords -> toReference("Organization", coords, null))
+        .map(coords -> toReference("Organization", coords, entry
+            .internal(InsuranceType.INSURANCE_TYPE).orElse("")))
         .map(List::of)
         .orElse(null);
   }
