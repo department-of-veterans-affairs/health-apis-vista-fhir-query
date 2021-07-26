@@ -1,5 +1,14 @@
 package gov.va.api.health.vistafhirquery.service.controller.organization;
 
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.allBlank;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.asCodeableConcept;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.emptyToNull;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.providerCoordinateStringFrom;
+import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.isInternalValueNotBlank;
+import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.yesNoToBoolean;
+import static gov.va.api.health.vistafhirquery.service.controller.organization.OrganizationCoordinates.insuranceCompany;
+
 import gov.va.api.health.r4.api.datatypes.Address;
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
 import gov.va.api.health.r4.api.datatypes.Coding;
@@ -9,10 +18,6 @@ import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Organization;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.InsuranceCompany;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
-import lombok.Builder;
-import lombok.NonNull;
-import org.apache.commons.lang3.StringUtils;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,16 +25,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.allBlank;
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.asCodeableConcept;
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.emptyToNull;
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.providerCoordinateStringFrom;
-import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.internalValueOf;
-import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.isInternalValueNotBlank;
-import static gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers.yesNoToBoolean;
-import static gov.va.api.health.vistafhirquery.service.controller.organization.OrganizationCoordinates.insuranceCompany;
+import lombok.Builder;
+import lombok.NonNull;
+import org.apache.commons.lang3.StringUtils;
 
 @Builder
 public class R4OrganizationTransformer {
@@ -67,23 +65,21 @@ public class R4OrganizationTransformer {
         .build();
   }
 
-  private Organization.Contact appealsContact(
-      Map<String, LhsLighthouseRpcGatewayResponse.Values> fields) {
+  private Organization.Contact appealsContact(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
     return contact(
-        fields.get(InsuranceCompany.APPEALS_ADDRESS_ST_LINE_1_),
-        fields.get(InsuranceCompany.APPEALS_ADDRESS_ST_LINE_2_),
-        fields.get(InsuranceCompany.APPEALS_ADDRESS_ST_LINE_3_),
-        fields.get(InsuranceCompany.APPEALS_ADDRESS_CITY),
-        fields.get(InsuranceCompany.APPEALS_ADDRESS_STATE),
-        fields.get(InsuranceCompany.APPEALS_ADDRESS_ZIP),
+        entry.internal(InsuranceCompany.APPEALS_ADDRESS_ST_LINE_1_).orElse(null),
+        entry.internal(InsuranceCompany.APPEALS_ADDRESS_ST_LINE_2_).orElse(null),
+        entry.internal(InsuranceCompany.APPEALS_ADDRESS_ST_LINE_3_).orElse(null),
+        entry.internal(InsuranceCompany.APPEALS_ADDRESS_CITY).orElse(null),
+        entry.internal(InsuranceCompany.APPEALS_ADDRESS_STATE).orElse(null),
+        entry.internal(InsuranceCompany.APPEALS_ADDRESS_ZIP).orElse(null),
         null,
-        fields.get(InsuranceCompany.APPEALS_PHONE_NUMBER),
-        fields.get(InsuranceCompany.APPEALS_FAX),
-        fields.get(InsuranceCompany.APPEALS_COMPANY_NAME));
+        entry.internal(InsuranceCompany.APPEALS_PHONE_NUMBER).orElse(null),
+        entry.internal(InsuranceCompany.APPEALS_FAX).orElse(null),
+        entry.internal(InsuranceCompany.APPEALS_COMPANY_NAME).orElse(null));
   }
 
-  private Organization.Contact billingContact(
-      Map<String, LhsLighthouseRpcGatewayResponse.Values> fields) {
+  private Organization.Contact billingContact(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
     return contact(
         null,
         null,
@@ -92,127 +88,112 @@ public class R4OrganizationTransformer {
         null,
         null,
         "BILL",
-        fields.get(InsuranceCompany.BILLING_PHONE_NUMBER),
+        entry.internal(InsuranceCompany.BILLING_PHONE_NUMBER).orElse(null),
         null,
-        fields.get(InsuranceCompany.BILLING_COMPANY_NAME));
+        entry.internal(InsuranceCompany.BILLING_COMPANY_NAME).orElse(null));
   }
 
   private Organization.Contact claimsDentalContact(
-      Map<String, LhsLighthouseRpcGatewayResponse.Values> fields) {
+      LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
     return contact(
-        fields.get(InsuranceCompany.CLAIMS_DENTAL_STREET_ADDR_1),
-        fields.get(InsuranceCompany.CLAIMS_DENTAL_STREET_ADDR_2),
+        entry.internal(InsuranceCompany.CLAIMS_DENTAL_STREET_ADDR_1).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_DENTAL_STREET_ADDR_2).orElse(null),
         null,
-        fields.get(InsuranceCompany.CLAIMS_DENTAL_PROCESS_CITY),
-        fields.get(InsuranceCompany.CLAIMS_DENTAL_PROCESS_STATE),
-        fields.get(InsuranceCompany.CLAIMS_DENTAL_PROCESS_ZIP),
+        entry.internal(InsuranceCompany.CLAIMS_DENTAL_PROCESS_CITY).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_DENTAL_PROCESS_STATE).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_DENTAL_PROCESS_ZIP).orElse(null),
         "DENTALCLAIM",
-        fields.get(InsuranceCompany.CLAIMS_DENTAL_PHONE_NUMBER),
-        fields.get(InsuranceCompany.CLAIMS_DENTAL_FAX),
-        fields.get(InsuranceCompany.CLAIMS_DENTAL_COMPANY_NAME));
+        entry.internal(InsuranceCompany.CLAIMS_DENTAL_PHONE_NUMBER).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_DENTAL_FAX).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_DENTAL_COMPANY_NAME).orElse(null));
   }
 
   private Organization.Contact claimsInptContact(
-      Map<String, LhsLighthouseRpcGatewayResponse.Values> fields) {
+      LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
     return contact(
-        fields.get(InsuranceCompany.CLAIMS_INPT_STREET_ADDRESS_1),
-        fields.get(InsuranceCompany.CLAIMS_INPT_STREET_ADDRESS_2),
-        fields.get(InsuranceCompany.CLAIMS_INPT_STREET_ADDRESS_3),
-        fields.get(InsuranceCompany.CLAIMS_INPT_PROCESS_CITY),
-        fields.get(InsuranceCompany.CLAIMS_INPT_PROCESS_STATE),
-        fields.get(InsuranceCompany.CLAIMS_INPT_PROCESS_ZIP),
+        entry.internal(InsuranceCompany.CLAIMS_INPT_STREET_ADDRESS_1).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_INPT_STREET_ADDRESS_2).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_INPT_STREET_ADDRESS_3).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_INPT_PROCESS_CITY).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_INPT_PROCESS_STATE).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_INPT_PROCESS_ZIP).orElse(null),
         "RXCLAIMS",
-        fields.get(InsuranceCompany.CLAIMS_RX_PHONE_NUMBER),
-        fields.get(InsuranceCompany.CLAIMS_RX_FAX),
-        fields.get(InsuranceCompany.CLAIMS_INPT_COMPANY_NAME));
+        entry.internal(InsuranceCompany.CLAIMS_RX_PHONE_NUMBER).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_RX_FAX).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_INPT_COMPANY_NAME).orElse(null));
   }
 
   private Organization.Contact claimsOptContact(
-      Map<String, LhsLighthouseRpcGatewayResponse.Values> fields) {
+      LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
     return contact(
-        fields.get(InsuranceCompany.CLAIMS_OPT_STREET_ADDRESS_1),
-        fields.get(InsuranceCompany.CLAIMS_OPT_STREET_ADDRESS_2),
-        fields.get(InsuranceCompany.CLAIMS_OPT_STREET_ADDRESS_3),
-        fields.get(InsuranceCompany.CLAIMS_OPT_PROCESS_CITY),
-        fields.get(InsuranceCompany.CLAIMS_OPT_PROCESS_STATE),
-        fields.get(InsuranceCompany.CLAIMS_OPT_PROCESS_ZIP),
+        entry.internal(InsuranceCompany.CLAIMS_OPT_STREET_ADDRESS_1).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_OPT_STREET_ADDRESS_2).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_OPT_STREET_ADDRESS_3).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_OPT_PROCESS_CITY).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_OPT_PROCESS_STATE).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_OPT_PROCESS_ZIP).orElse(null),
         "OUTPTCLAIMS",
-        fields.get(InsuranceCompany.CLAIMS_OPT_PHONE_NUMBER),
-        fields.get(InsuranceCompany.CLAIMS_OPT_FAX),
-        fields.get(InsuranceCompany.CLAIMS_OPT_COMPANY_NAME));
+        entry.internal(InsuranceCompany.CLAIMS_OPT_PHONE_NUMBER).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_OPT_FAX).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_OPT_COMPANY_NAME).orElse(null));
   }
 
-  private Organization.Contact claimsRxContact(
-      Map<String, LhsLighthouseRpcGatewayResponse.Values> fields) {
+  private Organization.Contact claimsRxContact(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
     return contact(
-        fields.get(InsuranceCompany.CLAIMS_RX_STREET_ADDRESS_1),
-        fields.get(InsuranceCompany.CLAIMS_RX_STREET_ADDRESS_2),
-        fields.get(InsuranceCompany.CLAIMS_RX_STREET_ADDRESS_3),
-        fields.get(InsuranceCompany.CLAIMS_RX_CITY),
-        fields.get(InsuranceCompany.CLAIMS_RX_STATE),
-        fields.get(InsuranceCompany.CLAIMS_RX_ZIP),
+        entry.internal(InsuranceCompany.CLAIMS_RX_STREET_ADDRESS_1).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_RX_STREET_ADDRESS_2).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_RX_STREET_ADDRESS_3).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_RX_CITY).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_RX_STATE).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_RX_ZIP).orElse(null),
         "RXCLAIMS",
-        fields.get(InsuranceCompany.CLAIMS_RX_PHONE_NUMBER),
-        fields.get(InsuranceCompany.CLAIMS_RX_FAX),
-        fields.get(InsuranceCompany.CLAIMS_RX_COMPANY_NAME));
+        entry.internal(InsuranceCompany.CLAIMS_RX_PHONE_NUMBER).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_RX_FAX).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_RX_COMPANY_NAME).orElse(null));
   }
 
   private List<Address> collectAddress(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
     return Collections.singletonList(
         address(
-            internalValueOf(entry.fields().get(InsuranceCompany.STREET_ADDRESS_LINE_1_)),
-            internalValueOf(entry.fields().get(InsuranceCompany.STREET_ADDRESS_LINE_2_)),
-            internalValueOf(entry.fields().get(InsuranceCompany.STREET_ADDRESS_LINE_3_)),
-            internalValueOf(entry.fields().get(InsuranceCompany.CITY)),
-            internalValueOf(entry.fields().get(InsuranceCompany.STATE)),
-            internalValueOf(entry.fields().get(InsuranceCompany.ZIP_CODE))));
+            entry.internal(InsuranceCompany.STREET_ADDRESS_LINE_1_).orElse(null),
+            entry.internal(InsuranceCompany.STREET_ADDRESS_LINE_2_).orElse(null),
+            entry.internal(InsuranceCompany.STREET_ADDRESS_LINE_3_).orElse(null),
+            entry.internal(InsuranceCompany.CITY).orElse(null),
+            entry.internal(InsuranceCompany.STATE).orElse(null),
+            entry.internal(InsuranceCompany.ZIP_CODE).orElse(null)));
   }
 
   private Organization.Contact contact(
-      LhsLighthouseRpcGatewayResponse.Values streetAddressLine1,
-      LhsLighthouseRpcGatewayResponse.Values streetAddressLine2,
-      LhsLighthouseRpcGatewayResponse.Values streetAddressLine3,
-      LhsLighthouseRpcGatewayResponse.Values city,
-      LhsLighthouseRpcGatewayResponse.Values state,
-      LhsLighthouseRpcGatewayResponse.Values zipCode,
+      String streetAddressLine1,
+      String streetAddressLine2,
+      String streetAddressLine3,
+      String city,
+      String state,
+      String zipCode,
       String purpose,
-      LhsLighthouseRpcGatewayResponse.Values phone,
-      LhsLighthouseRpcGatewayResponse.Values fax,
-      LhsLighthouseRpcGatewayResponse.Values companyName) {
-    String streetAddressLine1InternalValue = internalValueOf(streetAddressLine1);
-    String streetAddressLine2InternalValue = internalValueOf(streetAddressLine2);
-    String streetAddressLine3InternalValue = internalValueOf(streetAddressLine3);
-    String cityInternalValue = internalValueOf(city);
-    String stateInternalValue = internalValueOf(state);
-    String zipCodeInternalValue = internalValueOf(zipCode);
-    String phoneInternalValue = internalValueOf(phone);
-    String faxInternalValue = internalValueOf(fax);
-    String companyNameInternalValue = internalValueOf(companyName);
+      String phone,
+      String fax,
+      String companyName) {
     if (allBlank(
-        streetAddressLine1InternalValue,
-        streetAddressLine2InternalValue,
-        streetAddressLine3InternalValue,
-        cityInternalValue,
-        stateInternalValue,
-        zipCodeInternalValue,
+        streetAddressLine1,
+        streetAddressLine2,
+        streetAddressLine3,
+        city,
+        state,
+        zipCode,
         purpose,
-        phoneInternalValue,
-        faxInternalValue,
-        companyNameInternalValue)) {
+        phone,
+        fax,
+        companyName)) {
       return null;
     }
     return Organization.Contact.builder()
         .address(
             address(
-                streetAddressLine1InternalValue,
-                streetAddressLine2InternalValue,
-                streetAddressLine3InternalValue,
-                cityInternalValue,
-                stateInternalValue,
-                zipCodeInternalValue))
+                streetAddressLine1, streetAddressLine2, streetAddressLine3, city, state, zipCode))
         .purpose(asCodeableConcept(Coding.builder().code(purpose).display(purpose).build()))
-        .telecom(contactTelecom(phoneInternalValue, faxInternalValue))
-        .extension(contactExtension(companyNameInternalValue))
+        .telecom(contactTelecom(phone, fax))
+        .extension(contactExtension(companyName))
         .build();
   }
 
@@ -241,17 +222,16 @@ public class R4OrganizationTransformer {
     return telecoms;
   }
 
-  private List<Organization.Contact> contacts(
-      Map<String, LhsLighthouseRpcGatewayResponse.Values> fields) {
+  private List<Organization.Contact> contacts(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
     return List.of(
-        appealsContact(fields),
-        billingContact(fields),
-        claimsDentalContact(fields),
-        claimsInptContact(fields),
-        claimsOptContact(fields),
-        claimsRxContact(fields),
-        inquiryContact(fields),
-        precertificationContact(fields));
+        appealsContact(entry),
+        billingContact(entry),
+        claimsDentalContact(entry),
+        claimsInptContact(entry),
+        claimsOptContact(entry),
+        claimsRxContact(entry),
+        inquiryContact(entry),
+        precertificationContact(entry));
   }
 
   private List<Extension> extensions(Map<String, LhsLighthouseRpcGatewayResponse.Values> fields) {
@@ -296,19 +276,18 @@ public class R4OrganizationTransformer {
     return extensions.isEmpty() ? null : extensions;
   }
 
-  private Organization.Contact inquiryContact(
-      Map<String, LhsLighthouseRpcGatewayResponse.Values> fields) {
+  private Organization.Contact inquiryContact(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
     return contact(
-        fields.get(InsuranceCompany.INQUIRY_ADDRESS_ST_LINE_1_),
-        fields.get(InsuranceCompany.INQUIRY_ADDRESS_ST_LINE_2_),
-        fields.get(InsuranceCompany.INQUIRY_ADDRESS_ST_LINE_3_),
-        fields.get(InsuranceCompany.INQUIRY_ADDRESS_CITY),
-        fields.get(InsuranceCompany.INQUIRY_ADDRESS_STATE),
-        fields.get(InsuranceCompany.INQUIRY_ADDRESS_ZIP_CODE),
+        entry.internal(InsuranceCompany.INQUIRY_ADDRESS_ST_LINE_1_).orElse(null),
+        entry.internal(InsuranceCompany.INQUIRY_ADDRESS_ST_LINE_2_).orElse(null),
+        entry.internal(InsuranceCompany.INQUIRY_ADDRESS_ST_LINE_3_).orElse(null),
+        entry.internal(InsuranceCompany.INQUIRY_ADDRESS_CITY).orElse(null),
+        entry.internal(InsuranceCompany.INQUIRY_ADDRESS_STATE).orElse(null),
+        entry.internal(InsuranceCompany.INQUIRY_ADDRESS_ZIP_CODE).orElse(null),
         null,
-        fields.get(InsuranceCompany.INQUIRY_PHONE_NUMBER),
-        fields.get(InsuranceCompany.INQUIRY_FAX),
-        fields.get(InsuranceCompany.INQUIRY_COMPANY_NAME));
+        entry.internal(InsuranceCompany.INQUIRY_PHONE_NUMBER).orElse(null),
+        entry.internal(InsuranceCompany.INQUIRY_FAX).orElse(null),
+        entry.internal(InsuranceCompany.INQUIRY_COMPANY_NAME).orElse(null));
   }
 
   private List<CodeableConcept> insuranceCompanyType() {
@@ -333,7 +312,7 @@ public class R4OrganizationTransformer {
   }
 
   private Organization.Contact precertificationContact(
-      Map<String, LhsLighthouseRpcGatewayResponse.Values> fields) {
+      LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
     return contact(
         null,
         null,
@@ -342,9 +321,9 @@ public class R4OrganizationTransformer {
         null,
         null,
         "PRECERT",
-        fields.get(InsuranceCompany.PRECERTIFICATION_PHONE_NUMBER),
+        entry.internal(InsuranceCompany.PRECERTIFICATION_PHONE_NUMBER).orElse(null),
         null,
-        fields.get(InsuranceCompany.PRECERT_COMPANY_NAME));
+        entry.internal(InsuranceCompany.PRECERT_COMPANY_NAME).orElse(null));
   }
 
   /** Transform an RPC response to fhir. */
@@ -367,11 +346,11 @@ public class R4OrganizationTransformer {
                 rpcResults.getKey(), insuranceCompany(entry.ien()).toString()))
         // TODO: MORE EXTENSIONS
         .extension(extensions(fields))
-        .name(internalValueOf(fields.get(InsuranceCompany.NAME)))
+        .name(entry.internal(InsuranceCompany.NAME).orElse(null))
         .type(insuranceCompanyType())
         .address(collectAddress(entry))
-        .contact(contacts(fields))
-        .telecom(organizationTelecom(internalValueOf(fields.get(InsuranceCompany.PHONE_NUMBER))))
+        .contact(contacts(entry))
+        .telecom(organizationTelecom(entry.internal(InsuranceCompany.PHONE_NUMBER).orElse(null)))
         .build();
   }
 }
