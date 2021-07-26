@@ -9,23 +9,12 @@ import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions.No
 import org.junit.jupiter.api.Test;
 
 class WitnessProtectionTest {
-
-  static class FugaziWP implements WitnessProtection {
-
-    @Override
-    public String toPrivateId(String publicId) {
-      return publicId.replace("fugazi:", "");
-    }
-  }
-
   @Test
   void toPatientTypeCoordinates() {
     assertThat(new FugaziWP().toPatientTypeCoordinates("fugazi:123+456+789"))
         .isEqualTo(PatientTypeCoordinates.fromString("123+456+789"));
-
     assertThatExceptionOfType(NotFound.class)
         .isThrownBy(() -> new FugaziWP().toPatientTypeCoordinates("cannot-parse"));
-
     assertThatExceptionOfType(NotFound.class)
         .isThrownBy(
             () ->
@@ -35,5 +24,12 @@ class WitnessProtectionTest {
                     throw new BadId("fugazi");
                   }
                 }.toPatientTypeCoordinates("x"));
+  }
+
+  static class FugaziWP implements WitnessProtection {
+    @Override
+    public String toPrivateId(String publicId) {
+      return publicId.replace("fugazi:", "");
+    }
   }
 }
