@@ -4,8 +4,6 @@ import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.asCodeableConcept;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.emptyToNull;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.providerCoordinateStringFrom;
-import static gov.va.api.health.vistafhirquery.service.controller.organization.OrganizationCoordinates.insuranceCompany;
 import static java.util.Arrays.asList;
 
 import gov.va.api.health.r4.api.datatypes.Address;
@@ -15,6 +13,7 @@ import gov.va.api.health.r4.api.datatypes.ContactPoint;
 import gov.va.api.health.r4.api.elements.Extension;
 import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Organization;
+import gov.va.api.health.vistafhirquery.service.controller.RecordCoordinates;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.InsuranceCompany;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
 import java.util.ArrayList;
@@ -362,8 +361,12 @@ public class R4OrganizationTransformer {
     }
     return Organization.builder()
         .id(
-            providerCoordinateStringFrom(
-                rpcResults.getKey(), insuranceCompany(entry.ien()).toString()))
+            RecordCoordinates.builder()
+                .site(rpcResults.getKey())
+                .file(InsuranceCompany.FILE_NUMBER)
+                .ien(entry.ien())
+                .build()
+                .toString())
         .name(entry.internal(InsuranceCompany.NAME).orElse(null))
         .type(insuranceCompanyType())
         .address(collectAddress(entry))

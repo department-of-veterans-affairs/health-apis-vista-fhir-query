@@ -6,7 +6,6 @@ import static java.util.stream.Collectors.toList;
 
 import gov.va.api.health.r4.api.resources.Organization;
 import gov.va.api.health.vistafhirquery.service.api.R4OrganizationApi;
-import gov.va.api.health.vistafhirquery.service.controller.ProviderTypeCoordinates;
 import gov.va.api.health.vistafhirquery.service.controller.R4Transformation;
 import gov.va.api.health.vistafhirquery.service.controller.RecordCoordinates;
 import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions.NotFound;
@@ -50,20 +49,19 @@ public class R4OrganizationController implements R4OrganizationApi {
   public Organization organizationRead(@PathVariable(value = "publicId") String id) {
 
     try {
-      ProviderTypeCoordinates coordinates = witnessProtection.toProviderTypeCoordinates(id);
-      RecordCoordinates recordCoordinates = RecordCoordinates.fromString(coordinates.recordId());
-      checkInsuranceFile(id, recordCoordinates);
+      RecordCoordinates coordinates = witnessProtection.toRecordCoordinates(id);
+      insuranceFileOrDie(id, coordinates);
 
       log.info(
           "Looking for record {} in file {} at site {}",
-          recordCoordinates.ien(),
-          recordCoordinates.file(),
-          coordinates.siteId());
+          coordinates.ien(),
+          coordinates.file(),
+          coordinates.site());
 
       Request rpcRequest =
           Request.builder()
               .file(InsuranceCompany.FILE_NUMBER)
-              .iens(recordCoordinates.ien())
+              .iens(coordinates.ien())
               .fields(R4OrganizationTransformer.REQUIRED_FIELDS)
               .flags(
                   List.of(
@@ -72,7 +70,7 @@ public class R4OrganizationController implements R4OrganizationApi {
                       GetsManifestFlags.RETURN_EXTERNAL_VALUES))
               .build();
       RpcResponse rpcResponse =
-          vistalinkApiClient.requestForVistaSite(coordinates.siteId(), rpcRequest);
+          vistalinkApiClient.requestForVistaSite(coordinates.site(), rpcRequest);
 
       LhsLighthouseRpcGatewayResponse getsManifestResults =
           LhsLighthouseRpcGatewayGetsManifest.create().fromResults(rpcResponse.results());
@@ -90,7 +88,7 @@ public class R4OrganizationController implements R4OrganizationApi {
     }
   }
 
-  private void checkInsuranceFile(String id, RecordCoordinates recordCoordinates) {
+  private void insuranceFileOrDie(String id, RecordCoordinates recordCoordinates) {
     if (!InsuranceCompany.FILE_NUMBER.equals(recordCoordinates.file())) {
       throw new NotFound(id);
     }

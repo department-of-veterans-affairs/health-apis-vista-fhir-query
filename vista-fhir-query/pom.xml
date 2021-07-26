@@ -11,7 +11,7 @@
   <version>1.0.32-SNAPSHOT</version>
   <packaging>jar</packaging>
   <properties>
-    <charon.version>4.0.20-SNAPSHOT</charon.version>
+    <charon.version>4.0.20</charon.version>
     <fhir-resources.version>8.0.5</fhir-resources.version>
     <jacoco.coverage>0.87</jacoco.coverage>
     <mssql-jdbc.version>9.2.1.jre15</mssql-jdbc.version>

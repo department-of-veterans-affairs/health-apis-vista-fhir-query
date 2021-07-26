@@ -128,11 +128,6 @@ public class R4Transformers {
         .toString();
   }
 
-  /** Build an identifier from a site and vista record id. */
-  public static String providerCoordinateStringFrom(String siteId, String recordId) {
-    return ProviderTypeCoordinates.builder().siteId(siteId).recordId(recordId).build().toString();
-  }
-
   /** Creates a BigDecimal from a string if possible, otherwise returns null. */
   public static BigDecimal toBigDecimal(String string) {
     if (isBlank(string)) {
@@ -179,6 +174,11 @@ public class R4Transformers {
         .reference(ifPresent(maybeId, id -> resourceType + "/" + id))
         .display(maybeDisplay)
         .build();
+  }
+
+  public static Reference toReference(
+      @NonNull String resourceType, @NonNull RecordCoordinates coordinates) {
+    return toReference(resourceType, coordinates.toString(), null);
   }
 
   /** Build an Identifier Segment using patientId, siteId, and the recordId. */

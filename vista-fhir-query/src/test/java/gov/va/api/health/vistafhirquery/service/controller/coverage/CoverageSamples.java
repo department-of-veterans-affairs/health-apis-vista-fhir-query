@@ -11,7 +11,9 @@ import gov.va.api.health.r4.api.elements.Extension;
 import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Coverage;
 import gov.va.api.health.vistafhirquery.service.controller.PatientTypeCoordinates;
-import gov.va.api.health.vistafhirquery.service.controller.ProviderTypeCoordinates;
+import gov.va.api.health.vistafhirquery.service.controller.RecordCoordinates;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.GroupInsurancePlan;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.InsuranceCompany;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
 import java.util.Arrays;
 import java.util.Collection;
@@ -101,9 +103,10 @@ public class CoverageSamples {
       return List.of(
           Coverage.CoverageClass.builder()
               .value(
-                  ProviderTypeCoordinates.builder()
-                      .siteId(station)
-                      .recordId("87")
+                  RecordCoordinates.builder()
+                      .site(station)
+                      .file(GroupInsurancePlan.FILE_NUMBER)
+                      .ien("87")
                       .build()
                       .toString())
               .type(
@@ -142,9 +145,10 @@ public class CoverageSamples {
                   Reference.builder()
                       .reference(
                           "Organization/"
-                              + ProviderTypeCoordinates.builder()
-                                  .siteId(station)
-                                  .recordId("36;4")
+                              + RecordCoordinates.builder()
+                                  .site(station)
+                                  .file(InsuranceCompany.FILE_NUMBER)
+                                  .ien("4")
                                   .build()
                                   .toString())
                       .build()))

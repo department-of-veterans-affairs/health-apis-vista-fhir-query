@@ -2,7 +2,7 @@ package gov.va.api.health.vistafhirquery.service.controller.witnessprotection;
 
 import gov.va.api.health.ids.client.IdEncoder;
 import gov.va.api.health.vistafhirquery.service.controller.PatientTypeCoordinates;
-import gov.va.api.health.vistafhirquery.service.controller.ProviderTypeCoordinates;
+import gov.va.api.health.vistafhirquery.service.controller.RecordCoordinates;
 import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions;
 import java.util.function.Function;
 
@@ -13,8 +13,8 @@ public interface WitnessProtection {
     return decodePrivateId(publicId, PatientTypeCoordinates::fromString);
   }
 
-  default ProviderTypeCoordinates toProviderTypeCoordinates(String publicId) {
-    return decodePrivateId(publicId, ProviderTypeCoordinates::fromString);
+  default RecordCoordinates toRecordCoordinates(String publicId) {
+    return decodePrivateId(publicId, RecordCoordinates::fromString);
   }
 
   default <T> T decodePrivateId(String publicId, Function<String, T> decoder) {

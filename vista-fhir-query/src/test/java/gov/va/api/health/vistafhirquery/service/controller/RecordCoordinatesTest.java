@@ -10,13 +10,13 @@ import org.junit.jupiter.params.provider.ValueSource;
 public class RecordCoordinatesTest {
   @Test
   void identifierFromStringSuccess() {
-    var sample = "123;456";
-    var expected = RecordCoordinates.builder().file("123").ien("456").build();
+    var sample = "ABC;123;456";
+    var expected = RecordCoordinates.builder().site("ABC").file("123").ien("456").build();
     assertThat(RecordCoordinates.fromString(sample)).isEqualTo(expected);
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"123", "123;456;789"})
+  @ValueSource(strings = {"123", "123;456", "ABC;123;456;789"})
   void identifierFromStringThrowsIllegalArgumentForBadValues(String badId) {
     assertThatExceptionOfType(IllegalArgumentException.class)
         .isThrownBy(() -> RecordCoordinates.fromString(badId));
@@ -24,8 +24,8 @@ public class RecordCoordinatesTest {
 
   @Test
   void identifierToString() {
-    var sample = RecordCoordinates.builder().file("123").ien("456").build();
-    var expected = "123;456";
+    var sample = RecordCoordinates.builder().site("ABC").file("123").ien("456").build();
+    var expected = "ABC;123;456";
     assertThat(sample.toString()).isEqualTo(expected);
   }
 }

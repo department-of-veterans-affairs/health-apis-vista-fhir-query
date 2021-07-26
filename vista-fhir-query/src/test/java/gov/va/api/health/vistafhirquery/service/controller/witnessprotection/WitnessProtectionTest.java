@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import gov.va.api.health.ids.client.IdEncoder.BadId;
 import gov.va.api.health.vistafhirquery.service.controller.PatientTypeCoordinates;
-import gov.va.api.health.vistafhirquery.service.controller.ProviderTypeCoordinates;
+import gov.va.api.health.vistafhirquery.service.controller.RecordCoordinates;
 import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions.NotFound;
 import org.junit.jupiter.api.Test;
 
@@ -22,12 +22,12 @@ class WitnessProtectionTest {
 
   @Test
   void toProviderTypeCoordinates() {
-    assertThat(new FugaziWP().toProviderTypeCoordinates("fugazi:123+456"))
-        .isEqualTo(ProviderTypeCoordinates.fromString("123+456"));
+    assertThat(new FugaziWP().toRecordCoordinates("fugazi:ABC;123;456"))
+        .isEqualTo(RecordCoordinates.fromString("ABC;123;456"));
     assertThatExceptionOfType(NotFound.class)
-        .isThrownBy(() -> new FugaziWP().toProviderTypeCoordinates("cannot-parse"));
+        .isThrownBy(() -> new FugaziWP().toRecordCoordinates("cannot-parse"));
     assertThatExceptionOfType(NotFound.class)
-        .isThrownBy(() -> new BadIdWP().toProviderTypeCoordinates("x"));
+        .isThrownBy(() -> new BadIdWP().toRecordCoordinates("x"));
   }
 
   static class BadIdWP implements WitnessProtection {
