@@ -1,11 +1,15 @@
 package gov.va.api.health.vistafhirquery.service.controller.coverage;
 
+import static gov.va.api.health.vistafhirquery.service.controller.coverage.R4CoverageTransformer.stopPolicyFromBillingToBoolean;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.junit.jupiter.params.provider.Arguments.arguments;
 
-import gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.InsuranceType;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse.FilemanEntry;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse.UnexpectedVistaValue;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse.Values;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -29,11 +33,12 @@ public class R4CoverageTransformerTest {
 
   @Test
   void badRelationship() {
+    var entry =
+        FilemanEntry.builder()
+            .fields(Map.of(InsuranceType.PT_RELATIONSHIP_HIPAA, Values.of("ignored", "00")))
+            .build();
     assertThatExceptionOfType(IllegalArgumentException.class)
-        .isThrownBy(
-            () ->
-                tx().relationship(
-                        LhsLighthouseRpcGatewayResponse.Values.builder().in("00").build()));
+        .isThrownBy(() -> tx().relationship(entry));
   }
 
   @Test
@@ -71,12 +76,11 @@ public class R4CoverageTransformerTest {
   @ParameterizedTest
   @MethodSource
   void relationship(String vista, String fhir) {
-    assertThat(
-            tx().relationship(LhsLighthouseRpcGatewayResponse.Values.builder().in(vista).build())
-                .coding()
-                .get(0)
-                .code())
-        .isEqualTo(fhir);
+    var entry =
+        FilemanEntry.builder()
+            .fields(Map.of(InsuranceType.PT_RELATIONSHIP_HIPAA, Values.of("ignored", vista)))
+            .build();
+    assertThat(tx().relationship(entry).coding().get(0).code()).isEqualTo(fhir);
   }
 
   @Test
@@ -104,10 +108,12 @@ public class R4CoverageTransformerTest {
   }
 
   @Test
-  void yesNo() {
-    assertThat(RpcGatewayTransformers.yesNoToBoolean("0")).isFalse();
-    assertThat(RpcGatewayTransformers.yesNoToBoolean("1")).isTrue();
-    assertThatExceptionOfType(IllegalArgumentException.class)
-        .isThrownBy(() -> RpcGatewayTransformers.yesNoToBoolean("2"));
+  void yesNoToBooleanValues() {
+    assertThat(stopPolicyFromBillingToBoolean("0")).isFalse();
+    assertThat(stopPolicyFromBillingToBoolean("1")).isTrue();
+    assertThatExceptionOfType(UnexpectedVistaValue.class)
+        .isThrownBy(() -> stopPolicyFromBillingToBoolean("true"));
+    assertThatExceptionOfType(UnexpectedVistaValue.class)
+        .isThrownBy(() -> stopPolicyFromBillingToBoolean(""));
   }
 }
