@@ -114,7 +114,7 @@ public class R4CoverageController implements R4CoverageApi {
         Request.builder()
             .file(PatientType.FILE_NUMBER)
             .iens(patient)
-            .fields(allFieldsOfSubfile(PatientType.INSURANCE_TYPE_SUBFILE))
+            .fields(allFieldsOfSubfile(PatientType.INSURANCE_TYPE))
             .flags(
                 List.of(
                     GetsManifestFlags.OMIT_NULL_VALUES,

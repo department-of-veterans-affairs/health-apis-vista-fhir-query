@@ -12,7 +12,6 @@ import gov.va.api.health.r4.api.datatypes.Period;
 import gov.va.api.health.r4.api.elements.Extension;
 import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Coverage;
-import gov.va.api.health.vistafhirquery.service.controller.RpcGatewayTransformers;
 import gov.va.api.health.vistafhirquery.service.controller.organization.OrganizationCoordinates;
 import gov.va.api.lighthouse.charon.models.FilemanDate;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.InsuranceType;
@@ -70,9 +69,8 @@ public class R4CoverageTransformer {
                     .valueInteger(value)
                     .build())
         .ifPresent(extensions::add);
-
     entry
-        .internal(InsuranceType.STOP_POLICY_FROM_BILLING, RpcGatewayTransformers::yesNoToBoolean)
+        .internal(InsuranceType.STOP_POLICY_FROM_BILLING, this::stopPolicyFromBillingToBoolean)
         .map(
             value ->
                 Extension.builder()
@@ -81,6 +79,14 @@ public class R4CoverageTransformer {
                     .build())
         .ifPresent(extensions::add);
     return extensions.isEmpty() ? null : extensions;
+  }
+
+  private boolean stopPolicyFromBillingToBoolean(String value) {
+    return switch (value) {
+      case "0" -> false;
+      case "1" -> true;
+      default -> throw new UnexpectedVistaValue(InsuranceType.STOP_POLICY_FROM_BILLING,value,"Expected 0 or 1");
+    };
   }
 
   private Integer order(FilemanEntry entry) {
