@@ -82,6 +82,13 @@ class R4OrganizationControllerTest {
   }
 
   @Test
+  void readThrowsNotFoundForWrongFile() {
+    witnessProtection.add("wrong1", "s1;wrong;ien1");
+    assertThatExceptionOfType(NotFound.class)
+        .isThrownBy(() -> controller().organizationRead("wrong1"));
+  }
+
+  @Test
   void readThrowsNotFoundWhenNoResultsAreFound() {
     var results = LhsLighthouseRpcGatewayResponse.Results.builder().build();
     witnessProtection.add("pub1", "s1;36;ien1");
