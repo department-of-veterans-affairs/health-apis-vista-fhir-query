@@ -43,6 +43,21 @@ public class R4OrganizationController implements R4OrganizationApi {
 
   private final VistalinkApiClient vistalinkApiClient;
 
+  public static Request createRequest(RecordCoordinates coordinates) {
+    Request rpcRequest =
+        Request.builder()
+            .file(InsuranceCompany.FILE_NUMBER)
+            .iens(coordinates.ien())
+            .fields(R4OrganizationTransformer.REQUIRED_FIELDS)
+            .flags(
+                List.of(
+                    GetsManifestFlags.OMIT_NULL_VALUES,
+                    GetsManifestFlags.RETURN_INTERNAL_VALUES,
+                    GetsManifestFlags.RETURN_EXTERNAL_VALUES))
+            .build();
+    return rpcRequest;
+  }
+
   private void insuranceFileOrDie(String id, RecordCoordinates recordCoordinates) {
     if (!InsuranceCompany.FILE_NUMBER.equals(recordCoordinates.file())) {
       throw new NotFound(id);
@@ -60,17 +75,7 @@ public class R4OrganizationController implements R4OrganizationApi {
         coordinates.ien(),
         coordinates.file(),
         coordinates.site());
-    Request rpcRequest =
-        Request.builder()
-            .file(InsuranceCompany.FILE_NUMBER)
-            .iens(coordinates.ien())
-            .fields(R4OrganizationTransformer.REQUIRED_FIELDS)
-            .flags(
-                List.of(
-                    GetsManifestFlags.OMIT_NULL_VALUES,
-                    GetsManifestFlags.RETURN_INTERNAL_VALUES,
-                    GetsManifestFlags.RETURN_EXTERNAL_VALUES))
-            .build();
+    Request rpcRequest = createRequest(coordinates);
     RpcResponse rpcResponse =
         vistalinkApiClient.requestForVistaSite(coordinates.site(), rpcRequest);
     LhsLighthouseRpcGatewayResponse getsManifestResults =
