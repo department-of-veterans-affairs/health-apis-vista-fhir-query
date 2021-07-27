@@ -8,6 +8,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @UtilityClass
 public class MockRequests {
+  @SneakyThrows
+  public static String json(Object o) {
+    return JacksonConfig.createMapper().writerWithDefaultPrettyPrinter().writeValueAsString(o);
+  }
+
   public static MockHttpServletRequest requestFromUri(String uri) {
     var u = UriComponentsBuilder.fromUriString(uri).build();
     MockHttpServletRequest request = new MockHttpServletRequest();
@@ -19,10 +24,5 @@ public class MockRequests {
         .entrySet()
         .forEach(e -> request.addParameter(e.getKey(), e.getValue().toArray(new String[0])));
     return request;
-  }
-
-  @SneakyThrows
-  public static String json(Object o) {
-    return JacksonConfig.createMapper().writerWithDefaultPrettyPrinter().writeValueAsString(o);
   }
 }

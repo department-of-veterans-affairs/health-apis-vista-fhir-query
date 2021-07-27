@@ -29,8 +29,14 @@ import lombok.NonNull;
 @Builder
 public class R4OrganizationTransformer {
 
+  // The following list can be generated using:
+  //   grep InsuranceCompany R4OrganizationTransformer.java \
+  //     | sed 's/.*\(InsuranceCompany\.[A-Z0-9_]\+\).*/\1,/' \
+  //     | grep -vE '(import|FILE_NUMBER)' \
+  //     | sort -u
+
   /** The insurance company fields needed by the transformer. */
-  public static List<String> REQUIRED_FIELDS =
+  public static final List<String> REQUIRED_FIELDS =
       List.of(
           InsuranceCompany.ALLOW_MULTIPLE_BEDSECTIONS,
           InsuranceCompany.AMBULATORY_SURG_REV_CODE,
@@ -56,6 +62,8 @@ public class R4OrganizationTransformer {
           InsuranceCompany.CLAIMS_DENTAL_STREET_ADDR_1,
           InsuranceCompany.CLAIMS_DENTAL_STREET_ADDR_2,
           InsuranceCompany.CLAIMS_INPT_COMPANY_NAME,
+          InsuranceCompany.CLAIMS_INPT_FAX,
+          InsuranceCompany.CLAIMS_INPT_PHONE_NUMBER,
           InsuranceCompany.CLAIMS_INPT_PROCESS_CITY,
           InsuranceCompany.CLAIMS_INPT_PROCESS_STATE,
           InsuranceCompany.CLAIMS_INPT_PROCESS_ZIP,
@@ -80,6 +88,7 @@ public class R4OrganizationTransformer {
           InsuranceCompany.CLAIMS_RX_STREET_ADDRESS_2,
           InsuranceCompany.CLAIMS_RX_STREET_ADDRESS_3,
           InsuranceCompany.CLAIMS_RX_ZIP,
+          InsuranceCompany.FILE_NUMBER,
           InsuranceCompany.FILING_TIME_FRAME,
           InsuranceCompany.INQUIRY_ADDRESS_CITY,
           InsuranceCompany.INQUIRY_ADDRESS_STATE,
