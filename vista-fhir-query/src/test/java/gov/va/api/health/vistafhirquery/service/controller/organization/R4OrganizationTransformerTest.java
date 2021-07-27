@@ -19,6 +19,7 @@ public class R4OrganizationTransformerTest {
         .isEmpty();
   }
 
+  @Test
   void toFhir() {
     assertThat(
             R4OrganizationTransformer.builder()
