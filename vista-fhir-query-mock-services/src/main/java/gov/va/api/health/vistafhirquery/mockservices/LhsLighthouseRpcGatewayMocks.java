@@ -51,6 +51,7 @@ public class LhsLighthouseRpcGatewayMocks implements MockService {
           .filter(p -> p.startsWith("param^FILE^literal^"))
           .map(p -> p.replace("param^FILE^literal^", ""))
           .map(file -> switch (file) {
+            // File 2 only works here because the request is for fields of subfile .312
             case "2", "2.312" -> "/lhslighthouserpcgateway/response-coverage-search-by-patient.json";
             case "36" -> "/lhslighthouserpcgateway/response-organization-read.json";
             default -> null;
