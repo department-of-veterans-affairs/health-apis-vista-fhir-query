@@ -8,7 +8,7 @@ public class OrganizationCoordinates {
     return RecordCoordinates.builder().file("36").ien(ien).build();
   }
 
-  public static RecordCoordinates payor(String ien) {
+  public static RecordCoordinates payer(String ien) {
     return RecordCoordinates.builder().file("365.12").ien(ien).build();
   }
 }

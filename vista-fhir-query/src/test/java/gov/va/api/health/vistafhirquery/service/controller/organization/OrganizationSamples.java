@@ -3,13 +3,12 @@ package gov.va.api.health.vistafhirquery.service.controller.organization;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.health.r4.api.resources.Organization;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
-import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.experimental.UtilityClass;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class OrganizationSamples {
