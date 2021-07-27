@@ -88,7 +88,6 @@ public class R4OrganizationTransformer {
           InsuranceCompany.CLAIMS_RX_STREET_ADDRESS_2,
           InsuranceCompany.CLAIMS_RX_STREET_ADDRESS_3,
           InsuranceCompany.CLAIMS_RX_ZIP,
-          InsuranceCompany.FILE_NUMBER,
           InsuranceCompany.FILING_TIME_FRAME,
           InsuranceCompany.INQUIRY_ADDRESS_CITY,
           InsuranceCompany.INQUIRY_ADDRESS_STATE,
