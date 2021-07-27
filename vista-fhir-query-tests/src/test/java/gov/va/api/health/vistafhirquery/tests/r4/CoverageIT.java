@@ -8,7 +8,6 @@ import gov.va.api.health.r4.api.resources.OperationOutcome;
 import gov.va.api.health.sentinel.Environment;
 import gov.va.api.health.vistafhirquery.tests.TestIds;
 import gov.va.api.health.vistafhirquery.tests.VistaFhirQueryResourceVerifier;
-import java.util.function.Predicate;
 import lombok.experimental.Delegate;
 import org.junit.jupiter.api.Test;
 
@@ -16,10 +15,6 @@ public class CoverageIT {
   private final TestIds testIds = VistaFhirQueryResourceVerifier.ids();
 
   @Delegate private final ResourceVerifier verifier = VistaFhirQueryResourceVerifier.r4();
-
-  private Predicate<Coverage.Bundle> bundleHasResults() {
-    return b -> !b.entry().isEmpty();
-  }
 
   @Test
   void read() {
@@ -39,7 +34,7 @@ public class CoverageIT {
         test(
             200,
             Coverage.Bundle.class,
-            bundleHasResults(),
+            R4TestSupport::atLeastOneEntry,
             "Coverage?patient={icn}",
             testIds.patient()));
   }
