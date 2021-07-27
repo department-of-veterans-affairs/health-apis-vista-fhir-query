@@ -1,6 +1,6 @@
 package gov.va.api.health.vistafhirquery.service.controller.organization;
 
-import static gov.va.api.health.vistafhirquery.service.controller.coverage.CoverageSamples.json;
+import static gov.va.api.health.vistafhirquery.service.controller.MockRequests.json;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
@@ -11,6 +11,7 @@ import gov.va.api.health.vistafhirquery.service.controller.MockWitnessProtection
 import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions.ExpectationFailed;
 import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions.NotFound;
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
+import gov.va.api.health.vistafhirquery.service.controller.organization.OrganizationSamples.VistaLhsLighthouseRpcGateway;
 import gov.va.api.lighthouse.charon.api.RpcInvocationResult;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayGetsManifest;
@@ -36,32 +37,28 @@ class R4OrganizationControllerTest {
 
   @Test
   void readReturnsKnownResource() {
-    // OrganizationSamples.VistaLhsLighthouseRpcGateway.create();
-    var samples = "x";
-    // samples.getsManifestResults("ip1");
-    var results = "y";
+    var samples = OrganizationSamples.VistaLhsLighthouseRpcGateway.create();
+    var results = samples.getsManifestResults("ien1");
     when(vlClient.requestForVistaSite(
-            eq("123"), any(LhsLighthouseRpcGatewayGetsManifest.Request.class)))
+            eq("s1"), any(LhsLighthouseRpcGatewayGetsManifest.Request.class)))
         .thenReturn(
             RpcResponse.builder()
                 .status(RpcResponse.Status.OK)
                 .results(
                     List.of(
-                        RpcInvocationResult.builder().vista("123").response(json(results)).build()))
+                        RpcInvocationResult.builder().vista("s1").response(json(results)).build()))
                 .build());
     witnessProtection.add("pub1", "s1;36;ien1");
     var actual = controller().organizationRead("pub1");
-    // OrganizationSamples.R4.create().coverage("123", "ip1", "p1");
-    var expected = "z";
+    var expected = OrganizationSamples.R4.create().organization("s1", "ien1");
     assertThat(json(actual)).isEqualTo(json(expected));
   }
 
   @Test
   void readThrowsExpectationFailedWhenTooManyResultsAreFound() {
-    // samples.getsManifestResults("ip1");
-    var result1 = "y";
-    // samples.getsManifestResults("ip1");
-    var result2 = "y";
+    var samples = VistaLhsLighthouseRpcGateway.create();
+    var result1 = samples.getsManifestResults("ien1");
+    var result2 = samples.getsManifestResults("ien2");
     witnessProtection.add("pub1", "s1;36;ien1");
     when(vlClient.requestForVistaSite(
             eq("s1"), any(LhsLighthouseRpcGatewayGetsManifest.Request.class)))
@@ -71,7 +68,7 @@ class R4OrganizationControllerTest {
                 .results(
                     List.of(
                         RpcInvocationResult.builder().vista("s1").response(json(result1)).build(),
-                        RpcInvocationResult.builder().vista("s1").response(json(result2)).build()))
+                        RpcInvocationResult.builder().vista("s2").response(json(result2)).build()))
                 .build());
     assertThatExceptionOfType(ExpectationFailed.class)
         .isThrownBy(() -> controller().organizationRead("pub1"));

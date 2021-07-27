@@ -1,8 +1,8 @@
 package gov.va.api.health.vistafhirquery.service.controller.coverage;
 
+import static gov.va.api.health.vistafhirquery.service.controller.MockRequests.json;
 import static gov.va.api.health.vistafhirquery.service.controller.MockRequests.requestFromUri;
 import static gov.va.api.health.vistafhirquery.service.controller.coverage.CoverageSamples.R4.link;
-import static gov.va.api.health.vistafhirquery.service.controller.coverage.CoverageSamples.json;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;

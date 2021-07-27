@@ -1,6 +1,5 @@
 package gov.va.api.health.vistafhirquery.service.controller.coverage;
 
-import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.health.r4.api.bundle.AbstractBundle;
 import gov.va.api.health.r4.api.bundle.AbstractEntry;
 import gov.va.api.health.r4.api.bundle.BundleLink;
@@ -22,16 +21,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class CoverageSamples {
-
-  @SneakyThrows
-  public static String json(Object o) {
-    return JacksonConfig.createMapper().writeValueAsString(o);
-  }
 
   @NoArgsConstructor(staticName = "create")
   public static class VistaLhsLighthouseRpcGateway {

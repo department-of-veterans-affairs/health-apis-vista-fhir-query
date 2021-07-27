@@ -1,5 +1,7 @@
 package gov.va.api.health.vistafhirquery.service.controller;
 
+import gov.va.api.health.autoconfig.configuration.JacksonConfig;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -17,5 +19,10 @@ public class MockRequests {
         .entrySet()
         .forEach(e -> request.addParameter(e.getKey(), e.getValue().toArray(new String[0])));
     return request;
+  }
+
+  @SneakyThrows
+  public static String json(Object o) {
+    return JacksonConfig.createMapper().writerWithDefaultPrettyPrinter().writeValueAsString(o);
   }
 }
