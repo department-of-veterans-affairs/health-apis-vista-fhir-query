@@ -7,10 +7,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
+import gov.va.api.health.vistafhirquery.service.controller.MockWitnessProtection;
 import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions.ExpectationFailed;
 import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions.NotFound;
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
-import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.WitnessProtection;
 import gov.va.api.lighthouse.charon.api.RpcInvocationResult;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayGetsManifest;
@@ -25,7 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class R4OrganizationControllerTest {
   @Mock VistalinkApiClient vlClient;
 
-  @Mock WitnessProtection witnessProtection;
+  MockWitnessProtection witnessProtection = new MockWitnessProtection();
 
   private R4OrganizationController controller() {
     return R4OrganizationController.builder()
@@ -49,7 +49,7 @@ class R4OrganizationControllerTest {
                     List.of(
                         RpcInvocationResult.builder().vista("123").response(json(results)).build()))
                 .build());
-    when(witnessProtection.toPrivateId("pub1")).thenReturn("p1+123+ip1");
+    witnessProtection.add("pub1", "s1;36;ien1");
     var actual = controller().organizationRead("pub1");
     // OrganizationSamples.R4.create().coverage("123", "ip1", "p1");
     var expected = "z";
@@ -62,16 +62,16 @@ class R4OrganizationControllerTest {
     var result1 = "y";
     // samples.getsManifestResults("ip1");
     var result2 = "y";
-    when(witnessProtection.toPrivateId("pub1")).thenReturn("p1+123+ip1");
+    witnessProtection.add("pub1", "s1;36;ien1");
     when(vlClient.requestForVistaSite(
-            eq("123"), any(LhsLighthouseRpcGatewayGetsManifest.Request.class)))
+            eq("s1"), any(LhsLighthouseRpcGatewayGetsManifest.Request.class)))
         .thenReturn(
             RpcResponse.builder()
                 .status(RpcResponse.Status.OK)
                 .results(
                     List.of(
-                        RpcInvocationResult.builder().vista("123").response(json(result1)).build(),
-                        RpcInvocationResult.builder().vista("123").response(json(result2)).build()))
+                        RpcInvocationResult.builder().vista("s1").response(json(result1)).build(),
+                        RpcInvocationResult.builder().vista("s1").response(json(result2)).build()))
                 .build());
     assertThatExceptionOfType(ExpectationFailed.class)
         .isThrownBy(() -> controller().organizationRead("pub1"));
@@ -79,7 +79,7 @@ class R4OrganizationControllerTest {
 
   @Test
   void readThrowsNotFoundForBadId() {
-    when(witnessProtection.toPrivateId("nope1")).thenReturn("nope1");
+    witnessProtection.add("nope1", "nope1");
     assertThatExceptionOfType(NotFound.class)
         .isThrownBy(() -> controller().organizationRead("nope1"));
   }
@@ -87,15 +87,15 @@ class R4OrganizationControllerTest {
   @Test
   void readThrowsNotFoundWhenNoResultsAreFound() {
     var results = LhsLighthouseRpcGatewayResponse.Results.builder().build();
-    when(witnessProtection.toPrivateId("pub1")).thenReturn("p1+123+ip1");
+    witnessProtection.add("pub1", "s1;36;ien1");
     when(vlClient.requestForVistaSite(
-            eq("123"), any(LhsLighthouseRpcGatewayGetsManifest.Request.class)))
+            eq("s1"), any(LhsLighthouseRpcGatewayGetsManifest.Request.class)))
         .thenReturn(
             RpcResponse.builder()
                 .status(RpcResponse.Status.OK)
                 .results(
                     List.of(
-                        RpcInvocationResult.builder().vista("123").response(json(results)).build()))
+                        RpcInvocationResult.builder().vista("s1").response(json(results)).build()))
                 .build());
     assertThatExceptionOfType(NotFound.class)
         .isThrownBy(() -> controller().organizationRead("pub1"));
