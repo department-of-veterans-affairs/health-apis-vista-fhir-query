@@ -650,7 +650,7 @@ public class R4OrganizationTransformer {
                 Identifier.builder()
                     .type(
                         CodeableConcept.builder()
-                            .coding(List.of(Coding.builder().code("PROFEDI").build()))
+                            .coding(List.of(Coding.builder().id(value).code("PROFEDI").build()))
                             .build())
                     .build())
         .ifPresent(identifiers::add);
@@ -662,7 +662,19 @@ public class R4OrganizationTransformer {
                 Identifier.builder()
                     .type(
                         CodeableConcept.builder()
-                            .coding(List.of(Coding.builder().code("INSTEDI").build()))
+                            .coding(List.of(Coding.builder().id(value).code("INSTEDI").build()))
+                            .build())
+                    .build())
+        .ifPresent(identifiers::add);
+
+    entry
+        .internal(InsuranceCompany.BIN_NUMBER)
+        .map(
+            value ->
+                Identifier.builder()
+                    .type(
+                        CodeableConcept.builder()
+                            .coding(List.of(Coding.builder().id(value).code("BIN").build()))
                             .build())
                     .build())
         .ifPresent(identifiers::add);
