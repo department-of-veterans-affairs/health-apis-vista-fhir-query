@@ -4,6 +4,7 @@ import static gov.va.api.health.sentinel.EnvironmentAssumptions.assumeEnvironmen
 
 import gov.va.api.health.fhir.testsupport.ResourceVerifier;
 import gov.va.api.health.r4.api.resources.OperationOutcome;
+import gov.va.api.health.r4.api.resources.Organization;
 import gov.va.api.health.sentinel.Environment;
 import gov.va.api.health.vistafhirquery.tests.TestIds;
 import gov.va.api.health.vistafhirquery.tests.VistaFhirQueryResourceVerifier;
@@ -21,7 +22,7 @@ public class OrganizationIT {
     assumeEnvironmentNotIn(Environment.STAGING, Environment.PROD);
     var path = "Organization/{id}";
     verifyAll(
-        test(200, OrganizationIT.class, path, testIds.organization()),
+        test(200, Organization.class, path, testIds.organization()),
         test(404, OperationOutcome.class, path, "I2-404"));
   }
 }

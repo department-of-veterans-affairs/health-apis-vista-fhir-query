@@ -1,7 +1,6 @@
 package gov.va.api.health.vistafhirquery.mockservices;
 
 import static org.mockserver.model.HttpRequest.request;
-import static org.mockserver.model.JsonBody.json;
 
 import com.google.common.io.Resources;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
@@ -71,7 +70,7 @@ public class MockServiceRequests {
   }
 
   @SneakyThrows
-  private String fileContent(String resource) {
+  public static String fileContent(String resource) {
     return Resources.toString(
         MockServiceRequests.class.getResource(resource), StandardCharsets.UTF_8);
   }
