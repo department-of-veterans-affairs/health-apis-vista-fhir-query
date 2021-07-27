@@ -53,38 +53,32 @@ public class R4OrganizationController implements R4OrganizationApi {
   @GetMapping(value = "/{publicId}")
   @SneakyThrows
   public Organization organizationRead(@PathVariable(value = "publicId") String id) {
-    try {
-      RecordCoordinates coordinates = witnessProtection.toRecordCoordinates(id);
-      insuranceFileOrDie(id, coordinates);
-      log.info(
-          "Looking for record {} in file {} at site {}",
-          coordinates.ien(),
-          coordinates.file(),
-          coordinates.site());
-      Request rpcRequest =
-          Request.builder()
-              .file(InsuranceCompany.FILE_NUMBER)
-              .iens(coordinates.ien())
-              .fields(R4OrganizationTransformer.REQUIRED_FIELDS)
-              .flags(
-                  List.of(
-                      GetsManifestFlags.OMIT_NULL_VALUES,
-                      GetsManifestFlags.RETURN_INTERNAL_VALUES,
-                      GetsManifestFlags.RETURN_EXTERNAL_VALUES))
-              .build();
-      RpcResponse rpcResponse =
-          vistalinkApiClient.requestForVistaSite(coordinates.site(), rpcRequest);
-      LhsLighthouseRpcGatewayResponse getsManifestResults =
-          LhsLighthouseRpcGatewayGetsManifest.create().fromResults(rpcResponse.results());
-      dieOnError(getsManifestResults);
-      log.info("{}", getsManifestResults);
-      List<Organization> resources = transformation().toResource().apply(getsManifestResults);
-      return verifyAndGetResult(resources, id);
-    } catch (Exception e) {
-      log.error("---- REMOVE THIS CATCH AND LOG -----");
-      log.error("OOF {}", e.getMessage(), e);
-      throw e;
-    }
+    RecordCoordinates coordinates = witnessProtection.toRecordCoordinates(id);
+    insuranceFileOrDie(id, coordinates);
+    log.info(
+        "Looking for record {} in file {} at site {}",
+        coordinates.ien(),
+        coordinates.file(),
+        coordinates.site());
+    Request rpcRequest =
+        Request.builder()
+            .file(InsuranceCompany.FILE_NUMBER)
+            .iens(coordinates.ien())
+            .fields(R4OrganizationTransformer.REQUIRED_FIELDS)
+            .flags(
+                List.of(
+                    GetsManifestFlags.OMIT_NULL_VALUES,
+                    GetsManifestFlags.RETURN_INTERNAL_VALUES,
+                    GetsManifestFlags.RETURN_EXTERNAL_VALUES))
+            .build();
+    RpcResponse rpcResponse =
+        vistalinkApiClient.requestForVistaSite(coordinates.site(), rpcRequest);
+    LhsLighthouseRpcGatewayResponse getsManifestResults =
+        LhsLighthouseRpcGatewayGetsManifest.create().fromResults(rpcResponse.results());
+    dieOnError(getsManifestResults);
+    log.info("{}", getsManifestResults);
+    List<Organization> resources = transformation().toResource().apply(getsManifestResults);
+    return verifyAndGetResult(resources, id);
   }
 
   private R4Transformation<LhsLighthouseRpcGatewayResponse, Organization> transformation() {
