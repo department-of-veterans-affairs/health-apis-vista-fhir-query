@@ -15,9 +15,10 @@ import static java.util.Collections.singletonList;
 @AllArgsConstructor(staticName = "of")
 class ExtensionFactory {
   LhsLighthouseRpcGatewayResponse.FilemanEntry entry;
+  Map<String, Boolean> yesNo;
 
-  public Extension ofBoolean(String fieldNumber, Map<String, Boolean> map, String url) {
-    var value = entry.internal(fieldNumber, map);
+  public Extension ofBoolean(String fieldNumber, String url) {
+    var value = entry.internal(fieldNumber, yesNo);
     if (value.isEmpty()) {
       return null;
     }

@@ -304,16 +304,14 @@ public class R4OrganizationTransformer {
 
   private List<Extension> extensions(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
 
-    ExtensionFactory extensions = ExtensionFactory.of(entry);
+    ExtensionFactory extensions = ExtensionFactory.of(entry, YES_NO);
 
     return Stream.of(
             extensions.ofBoolean(
                 InsuranceCompany.ALLOW_MULTIPLE_BEDSECTIONS,
-                YES_NO,
                 "http://va.gov/fhir/StructureDefinition/organization-allowMultipleBedsections"),
             extensions.ofBoolean(
                 InsuranceCompany.ONE_OPT_VISIT_ON_BILL_ONLY,
-                YES_NO,
                 "http://va.gov/fhir/StructureDefinition/organization-oneOutpatVisitOnBillOnly"),
             extensions.ofCodeableConcept(
                 InsuranceCompany.AMBULATORY_SURG_REV_CODE,
@@ -324,7 +322,6 @@ public class R4OrganizationTransformer {
                 "http://va.gov/fhir/StructureDefinition/organization-filingTimeFrame"),
             extensions.ofBoolean(
                 InsuranceCompany.ANOTHER_CO_PROCESS_IP_CLAIMS_,
-                YES_NO,
                 "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesInpatClaims"),
             extensions.ofCodeableConcept(
                 InsuranceCompany.TYPE_OF_COVERAGE,
@@ -332,7 +329,6 @@ public class R4OrganizationTransformer {
                 "http://va.gov/fhir/StructureDefinition/organization-typeOfCoverage"),
             extensions.ofBoolean(
                 InsuranceCompany.ANOTHER_CO_PROCESS_APPEALS_,
-                YES_NO,
                 "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesAppeals"),
             extensions.ofCodeableConcept(
                 InsuranceCompany.PRESCRIPTION_REFILL_REV_CODE,
@@ -340,23 +336,18 @@ public class R4OrganizationTransformer {
                 "http://va.gov/fhir/StructureDefinition/organization-prescriptionRevenueCode"),
             extensions.ofBoolean(
                 InsuranceCompany.ANOTHER_CO_PROCESS_INQUIRIES_,
-                YES_NO,
                 "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesInquiries"),
             extensions.ofBoolean(
                 InsuranceCompany.ANOTHER_CO_PROCESS_OP_CLAIMS_,
-                YES_NO,
                 "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesOutpatClaims"),
             extensions.ofBoolean(
                 InsuranceCompany.ANOTHER_CO_PROCESS_PRECERTS_,
-                YES_NO,
                 "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesPrecert"),
             extensions.ofBoolean(
                 InsuranceCompany.ANOTHER_CO_PROCESS_RX_CLAIMS_,
-                YES_NO,
                 "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesRxClaims"),
             extensions.ofBoolean(
                 InsuranceCompany.ANOTHER_CO_PROC_DENT_CLAIMS_,
-                YES_NO,
                 "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesDentalClaims"),
             extensions.ofQuantity(InsuranceCompany.STANDARD_FTF_VALUE, "??", "??"),
             extensions.ofCodeableConcept(
@@ -365,7 +356,6 @@ public class R4OrganizationTransformer {
                 "http://va.gov/fhir/StructureDefinition/organization-willReimburseForCare"),
             extensions.ofBoolean(
                 InsuranceCompany.SIGNATURE_REQUIRED_ON_BILL_,
-                YES_NO,
                 "http://va.gov/fhir/StructureDefinition/organization-signatureRequiredOnBill"),
             extensions.ofCodeableConcept(
                 InsuranceCompany.TRANSMIT_ELECTRONICALLY,
@@ -394,19 +384,15 @@ public class R4OrganizationTransformer {
                 "http://va.gov/fhir/StructureDefinition/organization-referrngProviderSecondIDTypeUB04"),
             extensions.ofBoolean(
                 InsuranceCompany.ATT_REND_ID_BILL_SEC_ID_PROF,
-                YES_NO,
                 "http://va.gov/fhir/StructureDefinition/organization-attendingRenderingProviderSecondaryIDProfesionalRequired"),
             extensions.ofBoolean(
                 InsuranceCompany.ATT_REND_ID_BILL_SEC_ID_INST,
-                YES_NO,
                 "http://va.gov/fhir/StructureDefinition/organization-attendingRenderingProviderSecondaryIDInstitutionalRequired"),
             extensions.ofBoolean(
                 InsuranceCompany.PRINT_SEC_TERT_AUTO_CLAIMS_,
-                YES_NO,
                 "http://va.gov/fhir/StructureDefinition/organization-printSecTertAutoClaimsLocally"),
             extensions.ofBoolean(
                 InsuranceCompany.PRINT_SEC_MED_CLAIMS_W_O_MRA_,
-                YES_NO,
                 "http://va.gov/fhir/StructureDefinition/organization-printSecMedClaimsWOMRALocally"))
         .collect(Collectors.toList());
   }
