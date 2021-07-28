@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 
 import gov.va.api.health.r4.api.bundle.BundleLink;
 import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
+import gov.va.api.health.vistafhirquery.service.controller.PatientTypeCoordinates;
 import gov.va.api.health.vistafhirquery.service.controller.R4BundlerFactory;
 import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
 import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.AlternatePatientIds;
@@ -62,7 +63,9 @@ public class R4CoverageControllerTest {
                     List.of(
                         RpcInvocationResult.builder().vista("123").response(json(results)).build()))
                 .build());
-    when(witnessProtection.toPrivateId("pubCover1")).thenReturn("p1+123+ip1");
+    when(witnessProtection.toPatientTypeCoordinates("pubCover1"))
+        .thenReturn(
+            PatientTypeCoordinates.builder().icn("p1").siteId("123").recordId("ip1").build());
     var actual = controller().coverageRead("pubCover1");
     var expected = CoverageSamples.R4.create().coverage("123", "ip1", "p1");
     assertThat(json(actual)).isEqualTo(json(expected));

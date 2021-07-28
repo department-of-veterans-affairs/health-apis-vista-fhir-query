@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.allBlank;
@@ -28,11 +30,14 @@ import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.providerCoordinateStringFrom;
 import static gov.va.api.health.vistafhirquery.service.controller.organization.OrganizationCoordinates.insuranceCompany;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 @Builder
 public class R4OrganizationTransformer {
 
-  static final Map<String, Boolean> YES_NO_BOOLEAN_MAP = Map.of("1", true, "0", false);
+  static final Map<String, Boolean> YES_NO = Map.of("1", true, "0", false);
+
   /** The insurance company fields needed by the transformer. */
   public static List<String> REQUIRED_FIELDS =
       List.of(
@@ -107,7 +112,6 @@ public class R4OrganizationTransformer {
           InsuranceCompany.ZIP_CODE);
 
   @NonNull Map.Entry<String, LhsLighthouseRpcGatewayResponse.Results> rpcResults;
-  @NonNull String patientIcn;
 
   private Address address(
       String streetAddressLine1,
@@ -123,7 +127,9 @@ public class R4OrganizationTransformer {
     return Address.builder()
         .city(city)
         .state(state)
-        .line(emptyToNull(List.of(streetAddressLine1, streetAddressLine2, streetAddressLine3)))
+        .line(
+            emptyToNull(
+                Stream.of(streetAddressLine1, streetAddressLine2, streetAddressLine3).toList()))
         .postalCode(zipCode)
         .build();
   }
@@ -180,9 +186,9 @@ public class R4OrganizationTransformer {
         entry.internal(InsuranceCompany.CLAIMS_INPT_PROCESS_CITY).orElse(null),
         entry.internal(InsuranceCompany.CLAIMS_INPT_PROCESS_STATE).orElse(null),
         entry.internal(InsuranceCompany.CLAIMS_INPT_PROCESS_ZIP).orElse(null),
-        "RXCLAIMS",
-        entry.internal(InsuranceCompany.CLAIMS_RX_PHONE_NUMBER).orElse(null),
-        entry.internal(InsuranceCompany.CLAIMS_RX_FAX).orElse(null),
+        "INPTCLAIMS",
+        entry.internal(InsuranceCompany.CLAIMS_INPT_PHONE_NUMBER).orElse(null),
+        entry.internal(InsuranceCompany.CLAIMS_INPT_FAX).orElse(null),
         entry.internal(InsuranceCompany.CLAIMS_INPT_COMPANY_NAME).orElse(null));
   }
 
@@ -227,6 +233,9 @@ public class R4OrganizationTransformer {
   }
 
   private List<Extension> companyNameExtension(String companyName) {
+    if (isBlank(companyName)) {
+      return emptyList();
+    }
     return List.of(
         Extension.builder()
             .valueReference(Reference.builder().display(companyName).build())
@@ -265,13 +274,7 @@ public class R4OrganizationTransformer {
                 streetAddressLine1, streetAddressLine2, streetAddressLine3, city, state, zipCode))
         .telecom(contactTelecom(phone, fax))
         .extension(companyNameExtension(companyName))
-        .purpose(
-            asCodeableConcept(
-                Coding.builder()
-                    .code(purpose)
-                    .display(purpose)
-                    .system("http://terminology.hl7.org/CodeSystem/contactentity-type")
-                    .build()))
+        .purpose(purposeOrNull(purpose))
         .build();
   }
 
@@ -303,383 +306,170 @@ public class R4OrganizationTransformer {
         precertificationContact(entry));
   }
 
+  private Extension booleanExtension(Optional<Boolean> value, String url) {
+    if (value.isEmpty()) {
+      return null;
+    }
+    return Extension.builder().valueBoolean(value.get()).url(url).build();
+  }
+
+  private Extension codeableConceptExtension(Optional<String> value, String system, String url) {
+    if (value.isEmpty()) {
+      return null;
+    }
+    return Extension.builder()
+        .valueCodeableConcept(
+            CodeableConcept.builder()
+                .coding(singletonList(Coding.builder().code(value.get()).system(system).build()))
+                .build())
+        .url(url)
+        .build();
+  }
+
+  private Extension stringExtension(Optional<String> value, String url) {
+    if (value.isEmpty()) {
+      return null;
+    }
+
+    return Extension.builder().url(url).valueString(value.get()).build();
+  }
+
+  private Extension quantityExtension(Optional<BigDecimal> value, String unit, String system) {
+    if (value.isEmpty()) {
+      return null;
+    }
+
+    return Extension.builder()
+        .valueQuantity(Quantity.builder().value(value.get()).unit(unit).system(system).build())
+        .build();
+  }
+
+  private Extension payerExtension(Optional<String> value) {
+    if (value.isEmpty()) {
+      return null;
+    }
+
+    return Extension.builder()
+        .url("http://hl7.org/fhir/us/davinci-pdex-plan-net/StructureDefinition/via-intermediary")
+        .valueReference(
+            Reference.builder()
+                .reference("Organization/" + OrganizationCoordinates.payer(value.get()).toString())
+                .build())
+        .build();
+  }
+
   private List<Extension> extensions(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
-    List<Extension> extensions = new ArrayList<>();
 
-    entry
-        .internal(InsuranceCompany.ALLOW_MULTIPLE_BEDSECTIONS, YES_NO_BOOLEAN_MAP)
-        .map(
-            value ->
-                Extension.builder()
-                    .url(
-                        "http://va.gov/fhir/StructureDefinition/organization-allowMultipleBedsections")
-                    .valueBoolean(value)
-                    .build())
-        .ifPresent(extensions::add);
+    return Stream.of(
+            booleanExtension(
+                entry.internal(InsuranceCompany.ALLOW_MULTIPLE_BEDSECTIONS, YES_NO),
+                "http://va.gov/fhir/StructureDefinition/organization-allowMultipleBedsections"),
+            booleanExtension(
+                entry.internal(InsuranceCompany.ONE_OPT_VISIT_ON_BILL_ONLY, YES_NO),
+                "http://va.gov/fhir/StructureDefinition/organization-oneOutpatVisitOnBillOnly"),
+            codeableConceptExtension(
+                entry.internal(InsuranceCompany.AMBULATORY_SURG_REV_CODE),
+                "http://terminology.hl7.org/ValueSet/v2-0456",
+                "http://va.gov/fhir/StructureDefinition/organization-ambulatorySurgeryRevenueCode"),
+            stringExtension(
+                entry.internal(InsuranceCompany.FILING_TIME_FRAME),
+                "http://va.gov/fhir/StructureDefinition/organization-filingTimeFrame"),
+            booleanExtension(
+                entry.internal(InsuranceCompany.ANOTHER_CO_PROCESS_IP_CLAIMS_, YES_NO),
+                "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesInpatClaims"),
+            codeableConceptExtension(
+                entry.internal(InsuranceCompany.TYPE_OF_COVERAGE),
+                "???",
+                "http://va.gov/fhir/StructureDefinition/organization-typeOfCoverage"),
+            booleanExtension(
+                entry.internal(InsuranceCompany.ANOTHER_CO_PROCESS_APPEALS_, YES_NO),
+                "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesAppeals"),
+            codeableConceptExtension(
+                entry.internal(InsuranceCompany.PRESCRIPTION_REFILL_REV_CODE),
+                "???",
+                "http://va.gov/fhir/StructureDefinition/organization-prescriptionRevenueCode"),
+            booleanExtension(
+                entry.internal(InsuranceCompany.ANOTHER_CO_PROCESS_INQUIRIES_, YES_NO),
+                "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesInquiries"),
+            booleanExtension(
+                entry.internal(InsuranceCompany.ANOTHER_CO_PROCESS_OP_CLAIMS_, YES_NO),
+                "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesOutpatClaims"),
+            booleanExtension(
+                entry.internal(InsuranceCompany.ANOTHER_CO_PROCESS_PRECERTS_, YES_NO),
+                "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesPrecert"),
+            booleanExtension(
+                entry.internal(InsuranceCompany.ANOTHER_CO_PROCESS_RX_CLAIMS_, YES_NO),
+                "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesRxClaims"),
+            booleanExtension(
+                entry.internal(InsuranceCompany.ANOTHER_CO_PROC_DENT_CLAIMS_, YES_NO),
+                "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesDentalClaims"),
+            quantityExtension(
+                entry.internal(InsuranceCompany.STANDARD_FTF_VALUE, BigDecimal::new), "??", "??"),
+            codeableConceptExtension(
+                entry.internal(InsuranceCompany.REIMBURSE_),
+                "???",
+                "http://va.gov/fhir/StructureDefinition/organization-willReimburseForCare"),
+            booleanExtension(
+                entry.internal(InsuranceCompany.SIGNATURE_REQUIRED_ON_BILL_, YES_NO),
+                "http://va.gov/fhir/StructureDefinition/organization-signatureRequiredOnBill"),
+            codeableConceptExtension(
+                entry.internal(InsuranceCompany.TRANSMIT_ELECTRONICALLY),
+                "???",
+                "http://va.gov/fhir/StructureDefinition/organization-electronicTransmissionMode"),
+            codeableConceptExtension(
+                entry.internal(InsuranceCompany.ELECTRONIC_INSURANCE_TYPE),
+                "???",
+                "http://va.gov/fhir/StructureDefinition/organization-electronicInsuranceType"),
+            payerExtension(entry.internal(InsuranceCompany.PAYER)),
+            codeableConceptExtension(
+                entry.internal(InsuranceCompany.PERF_PROV_SECOND_ID_TYPE_1500),
+                "???",
+                "http://va.gov/fhir/StructureDefinition/organization-performingProviderSecondIDTypeCMS1500"),
+            codeableConceptExtension(
+                entry.internal(InsuranceCompany.PERF_PROV_SECOND_ID_TYPE_UB),
+                "???",
+                "http://va.gov/fhir/StructureDefinition/organization-performingProviderSecondIDTypeUB04"),
+            codeableConceptExtension(
+                entry.internal(InsuranceCompany.REF_PROV_SEC_ID_DEF_CMS_1500),
+                "???",
+                "http://va.gov/fhir/StructureDefinition/organization-referrngProviderSecondIDTypeCMS1500"),
+            codeableConceptExtension(
+                entry.internal(InsuranceCompany.REF_PROV_SEC_ID_REQ_ON_CLAIMS),
+                "???",
+                "http://va.gov/fhir/StructureDefinition/organization-referrngProviderSecondIDTypeUB04"),
+            booleanExtension(
+                entry.internal(InsuranceCompany.ATT_REND_ID_BILL_SEC_ID_PROF, YES_NO),
+                "http://va.gov/fhir/StructureDefinition/organization-attendingRenderingProviderSecondaryIDProfesionalRequired"),
+            booleanExtension(
+                entry.internal(InsuranceCompany.ATT_REND_ID_BILL_SEC_ID_INST, YES_NO),
+                "http://va.gov/fhir/StructureDefinition/organization-attendingRenderingProviderSecondaryIDInstitutionalRequired"),
+            booleanExtension(
+                entry.internal(InsuranceCompany.PRINT_SEC_TERT_AUTO_CLAIMS_, YES_NO),
+                "http://va.gov/fhir/StructureDefinition/organization-printSecTertAutoClaimsLocally"),
+            booleanExtension(
+                entry.internal(InsuranceCompany.PRINT_SEC_MED_CLAIMS_W_O_MRA_, YES_NO),
+                "http://va.gov/fhir/StructureDefinition/organization-printSecMedClaimsWOMRALocally"))
+        .collect(Collectors.toList());
+  }
 
-    entry
-        .internal(InsuranceCompany.ONE_OPT_VISIT_ON_BILL_ONLY, YES_NO_BOOLEAN_MAP)
-        .map(
-            value ->
-                Extension.builder()
-                    .url(
-                        "http://va.gov/fhir/StructureDefinition/organization-oneOutpatVisitOnBillOnly")
-                    .valueBoolean(value)
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.AMBULATORY_SURG_REV_CODE)
-        .map(
-            value ->
-                Extension.builder()
-                    .url(
-                        "http://va.gov/fhir/StructureDefinition/organization-ambulatorySurgeryRevenueCode")
-                    .valueCodeableConcept(
-                        CodeableConcept.builder()
-                            .coding(
-                                List.of(
-                                    Coding.builder()
-                                        .code(value)
-                                        .system("http://terminology.hl7.org/ValueSet/v2-0456")
-                                        .build()))
-                            .build())
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.FILING_TIME_FRAME)
-        .map(
-            value ->
-                Extension.builder()
-                    .url("http://va.gov/fhir/StructureDefinition/organization-filingTimeFrame")
-                    .valueString(value)
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.ANOTHER_CO_PROCESS_IP_CLAIMS_, YES_NO_BOOLEAN_MAP)
-        .map(
-            value ->
-                Extension.builder()
-                    .url(
-                        "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesInpatClaims")
-                    .valueBoolean(value)
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.TYPE_OF_COVERAGE)
-        .map(
-            value ->
-                Extension.builder()
-                    .url("http://va.gov/fhir/StructureDefinition/organization-typeOfCoverage")
-                    .valueCodeableConcept(
-                        CodeableConcept.builder()
-                            .coding(List.of(Coding.builder().code(value).system("???").build()))
-                            .build())
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.ANOTHER_CO_PROCESS_APPEALS_, YES_NO_BOOLEAN_MAP)
-        .map(
-            value ->
-                Extension.builder()
-                    .url(
-                        "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesAppeals")
-                    .valueBoolean(value)
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.PRESCRIPTION_REFILL_REV_CODE)
-        .map(
-            value ->
-                Extension.builder()
-                    .url(
-                        "http://va.gov/fhir/StructureDefinition/organization-prescriptionRevenueCode")
-                    .valueCodeableConcept(
-                        CodeableConcept.builder()
-                            .coding(List.of(Coding.builder().code(value).system("???").build()))
-                            .build())
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.ANOTHER_CO_PROCESS_INQUIRIES_, YES_NO_BOOLEAN_MAP)
-        .map(
-            value ->
-                Extension.builder()
-                    .url(
-                        "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesInquiries")
-                    .valueBoolean(value)
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.ANOTHER_CO_PROCESS_OP_CLAIMS_, YES_NO_BOOLEAN_MAP)
-        .map(
-            value ->
-                Extension.builder()
-                    .url(
-                        "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesOutpatClaims")
-                    .valueBoolean(value)
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.ANOTHER_CO_PROCESS_PRECERTS_, YES_NO_BOOLEAN_MAP)
-        .map(
-            value ->
-                Extension.builder()
-                    .url(
-                        "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesPrecert")
-                    .valueBoolean(value)
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.ANOTHER_CO_PROCESS_RX_CLAIMS_, YES_NO_BOOLEAN_MAP)
-        .map(
-            value ->
-                Extension.builder()
-                    .url(
-                        "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesRxClaims")
-                    .valueBoolean(value)
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.ANOTHER_CO_PROC_DENT_CLAIMS_, YES_NO_BOOLEAN_MAP)
-        .map(
-            value ->
-                Extension.builder()
-                    .url(
-                        "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesDentalClaims")
-                    .valueBoolean(value)
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.STANDARD_FTF_VALUE, BigDecimal::new)
-        .map(
-            value ->
-                Extension.builder()
-                    .valueQuantity(Quantity.builder().value(value).unit("??").system("??").build())
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.REIMBURSE_)
-        .map(
-            value ->
-                Extension.builder()
-                    .url("http://va.gov/fhir/StructureDefinition/organization-willReimburseForCare")
-                    .valueCodeableConcept(
-                        CodeableConcept.builder()
-                            .coding(List.of(Coding.builder().code(value).system("???").build()))
-                            .build())
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.SIGNATURE_REQUIRED_ON_BILL_, YES_NO_BOOLEAN_MAP)
-        .map(
-            value ->
-                Extension.builder()
-                    .url(
-                        "http://va.gov/fhir/StructureDefinition/organization-signatureRequiredOnBill")
-                    .valueBoolean(value)
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.TRANSMIT_ELECTRONICALLY)
-        .map(
-            value ->
-                Extension.builder()
-                    .url(
-                        "http://va.gov/fhir/StructureDefinition/organization-electronicTransmissionMode")
-                    .valueCodeableConcept(
-                        CodeableConcept.builder()
-                            .coding(List.of(Coding.builder().code(value).system("???").build()))
-                            .build())
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.ELECTRONIC_INSURANCE_TYPE)
-        .map(
-            value ->
-                Extension.builder()
-                    .url(
-                        "http://va.gov/fhir/StructureDefinition/organization-electronicInsuranceType")
-                    .valueCodeableConcept(
-                        CodeableConcept.builder()
-                            .coding(List.of(Coding.builder().code(value).system("???").build()))
-                            .build())
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.PAYER)
-        .map(
-            value ->
-                Extension.builder()
-                    .url(
-                        "http://hl7.org/fhir/us/davinci-pdex-plan-net/StructureDefinition/via-intermediary")
-                    .valueReference(
-                        Reference.builder()
-                            .reference(
-                                "Organization/" + OrganizationCoordinates.payer(value).toString())
-                            .build())
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.PERF_PROV_SECOND_ID_TYPE_1500)
-        .map(
-            value ->
-                Extension.builder()
-                    .url(
-                        "http://va.gov/fhir/StructureDefinition/organization-performingProviderSecondIDTypeCMS1500")
-                    .valueCodeableConcept(
-                        CodeableConcept.builder()
-                            .coding(List.of(Coding.builder().code(value).system("???").build()))
-                            .build())
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.PERF_PROV_SECOND_ID_TYPE_UB)
-        .map(
-            value ->
-                Extension.builder()
-                    .url(
-                        "http://va.gov/fhir/StructureDefinition/organization-performingProviderSecondIDTypeUB04")
-                    .valueCodeableConcept(
-                        CodeableConcept.builder()
-                            .coding(List.of(Coding.builder().code(value).system("???").build()))
-                            .build())
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.REF_PROV_SEC_ID_DEF_CMS_1500)
-        .map(
-            value ->
-                Extension.builder()
-                    .url(
-                        "http://va.gov/fhir/StructureDefinition/organization-referrngProviderSecondIDTypeCMS1500")
-                    .valueCodeableConcept(
-                        CodeableConcept.builder()
-                            .coding(List.of(Coding.builder().code(value).system("???").build()))
-                            .build())
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.REF_PROV_SEC_ID_REQ_ON_CLAIMS)
-        .map(
-            value ->
-                Extension.builder()
-                    .url(
-                        "http://va.gov/fhir/StructureDefinition/organization-referrngProviderSecondIDTypeUB04")
-                    .valueCodeableConcept(
-                        CodeableConcept.builder()
-                            .coding(List.of(Coding.builder().code(value).system("???").build()))
-                            .build())
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.ATT_REND_ID_BILL_SEC_ID_PROF, YES_NO_BOOLEAN_MAP)
-        .map(
-            value ->
-                Extension.builder()
-                    .url(
-                        "http://va.gov/fhir/StructureDefinition/organization-attendingRenderingProviderSecondaryIDProfesionalRequired")
-                    .valueBoolean(value)
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.ATT_REND_ID_BILL_SEC_ID_INST, YES_NO_BOOLEAN_MAP)
-        .map(
-            value ->
-                Extension.builder()
-                    .url(
-                        "http://va.gov/fhir/StructureDefinition/organization-attendingRenderingProviderSecondaryIDInstitutionalRequired")
-                    .valueBoolean(value)
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.PRINT_SEC_TERT_AUTO_CLAIMS_, YES_NO_BOOLEAN_MAP)
-        .map(
-            value ->
-                Extension.builder()
-                    .url(
-                        "http://va.gov/fhir/StructureDefinition/organization-printSecTertAutoClaimsLocally")
-                    .valueBoolean(value)
-                    .build())
-        .ifPresent(extensions::add);
-
-    entry
-        .internal(InsuranceCompany.PRINT_SEC_MED_CLAIMS_W_O_MRA_, YES_NO_BOOLEAN_MAP)
-        .map(
-            value ->
-                Extension.builder()
-                    .url(
-                        "http://va.gov/fhir/StructureDefinition/organization-printSecMedClaimsWOMRALocally")
-                    .valueBoolean(value)
-                    .build())
-        .ifPresent(extensions::add);
-
-    return extensions.isEmpty() ? null : extensions;
+  private Identifier identifier(Optional<String> value, String code) {
+    if (value.isEmpty()) {
+      return null;
+    }
+    return Identifier.builder()
+        .type(
+            CodeableConcept.builder()
+                .coding(List.of(Coding.builder().id(value.get()).code(code).build()))
+                .build())
+        .build();
   }
 
   private List<Identifier> identifiers(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
-    ArrayList<Identifier> identifiers = new ArrayList<>();
-
-    entry
-        .internal(InsuranceCompany.EDI_ID_NUMBER_PROF)
-        .map(
-            value ->
-                Identifier.builder()
-                    .type(
-                        CodeableConcept.builder()
-                            .coding(List.of(Coding.builder().id(value).code("PROFEDI").build()))
-                            .build())
-                    .build())
-        .ifPresent(identifiers::add);
-
-    entry
-        .internal(InsuranceCompany.EDI_ID_NUMBER_INST)
-        .map(
-            value ->
-                Identifier.builder()
-                    .type(
-                        CodeableConcept.builder()
-                            .coding(List.of(Coding.builder().id(value).code("INSTEDI").build()))
-                            .build())
-                    .build())
-        .ifPresent(identifiers::add);
-
-    entry
-        .internal(InsuranceCompany.BIN_NUMBER)
-        .map(
-            value ->
-                Identifier.builder()
-                    .type(
-                        CodeableConcept.builder()
-                            .coding(List.of(Coding.builder().id(value).code("BIN").build()))
-                            .build())
-                    .build())
-        .ifPresent(identifiers::add);
-
-    return identifiers;
+    return Stream.of(
+            identifier(entry.internal(InsuranceCompany.EDI_ID_NUMBER_PROF), "PROFEDI"),
+            identifier(entry.internal(InsuranceCompany.EDI_ID_NUMBER_INST), "INSTEDI"),
+            identifier(entry.internal(InsuranceCompany.BIN_NUMBER), "BIN"))
+        .collect(Collectors.toList());
   }
 
   private Organization.Contact inquiryContact(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
@@ -708,7 +498,7 @@ public class R4OrganizationTransformer {
 
   private List<ContactPoint> organizationTelecom(String phoneNumber) {
     if (isBlank(phoneNumber)) {
-      return Collections.emptyList();
+      return emptyList();
     }
     return Collections.singletonList(
         ContactPoint.builder()
@@ -730,6 +520,18 @@ public class R4OrganizationTransformer {
         entry.internal(InsuranceCompany.PRECERTIFICATION_PHONE_NUMBER).orElse(null),
         null,
         entry.internal(InsuranceCompany.PRECERT_COMPANY_NAME).orElse(null));
+  }
+
+  private CodeableConcept purposeOrNull(String purpose) {
+    if (isBlank(purpose)) {
+      return null;
+    }
+    return asCodeableConcept(
+        Coding.builder()
+            .code(purpose)
+            .display(purpose)
+            .system("http://terminology.hl7.org/CodeSystem/contactentity-type")
+            .build());
   }
 
   /** Transform an RPC response to fhir. */

@@ -1,6 +1,5 @@
 package gov.va.api.health.vistafhirquery.service.controller.coverage;
 
-import static gov.va.api.health.vistafhirquery.service.controller.R4Controllers.patientTypeCoordinatesOrDie;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Controllers.verifyAndGetResult;
 import static gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGateway.allFieldsOfSubfile;
 import static java.util.stream.Collectors.toList;
@@ -64,8 +63,7 @@ public class R4CoverageController implements R4CoverageApi {
   @Override
   @GetMapping(value = "/{publicId}")
   public Coverage coverageRead(@PathVariable(value = "publicId") String id) {
-    PatientTypeCoordinates coordinates =
-        patientTypeCoordinatesOrDie(witnessProtection.toPrivateId(id));
+    PatientTypeCoordinates coordinates = witnessProtection.toPatientTypeCoordinates(id);
     Request rpcRequest =
         Request.builder()
             .file(InsuranceType.FILE_NUMBER)
