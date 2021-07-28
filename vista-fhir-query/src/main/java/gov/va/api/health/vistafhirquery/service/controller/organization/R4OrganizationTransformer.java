@@ -35,7 +35,6 @@ import static java.util.Collections.singletonList;
 
 @Builder
 public class R4OrganizationTransformer {
-
   static final Map<String, Boolean> YES_NO = Map.of("1", true, "0", false);
 
   /** The insurance company fields needed by the transformer. */
@@ -162,6 +161,13 @@ public class R4OrganizationTransformer {
         entry.internal(InsuranceCompany.BILLING_COMPANY_NAME).orElse(null));
   }
 
+  private Extension booleanExtension(Optional<Boolean> value, String url) {
+    if (value.isEmpty()) {
+      return null;
+    }
+    return Extension.builder().valueBoolean(value.get()).url(url).build();
+  }
+
   private Organization.Contact claimsDentalContact(
       LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
     return contact(
@@ -219,6 +225,19 @@ public class R4OrganizationTransformer {
         entry.internal(InsuranceCompany.CLAIMS_RX_PHONE_NUMBER).orElse(null),
         entry.internal(InsuranceCompany.CLAIMS_RX_FAX).orElse(null),
         entry.internal(InsuranceCompany.CLAIMS_RX_COMPANY_NAME).orElse(null));
+  }
+
+  private Extension codeableConceptExtension(Optional<String> value, String system, String url) {
+    if (value.isEmpty()) {
+      return null;
+    }
+    return Extension.builder()
+        .valueCodeableConcept(
+            CodeableConcept.builder()
+                .coding(singletonList(Coding.builder().code(value.get()).system(system).build()))
+                .build())
+        .url(url)
+        .build();
   }
 
   private List<Address> collectAddress(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
@@ -306,60 +325,7 @@ public class R4OrganizationTransformer {
         precertificationContact(entry));
   }
 
-  private Extension booleanExtension(Optional<Boolean> value, String url) {
-    if (value.isEmpty()) {
-      return null;
-    }
-    return Extension.builder().valueBoolean(value.get()).url(url).build();
-  }
-
-  private Extension codeableConceptExtension(Optional<String> value, String system, String url) {
-    if (value.isEmpty()) {
-      return null;
-    }
-    return Extension.builder()
-        .valueCodeableConcept(
-            CodeableConcept.builder()
-                .coding(singletonList(Coding.builder().code(value.get()).system(system).build()))
-                .build())
-        .url(url)
-        .build();
-  }
-
-  private Extension stringExtension(Optional<String> value, String url) {
-    if (value.isEmpty()) {
-      return null;
-    }
-
-    return Extension.builder().url(url).valueString(value.get()).build();
-  }
-
-  private Extension quantityExtension(Optional<BigDecimal> value, String unit, String system) {
-    if (value.isEmpty()) {
-      return null;
-    }
-
-    return Extension.builder()
-        .valueQuantity(Quantity.builder().value(value.get()).unit(unit).system(system).build())
-        .build();
-  }
-
-  private Extension payerExtension(Optional<String> value) {
-    if (value.isEmpty()) {
-      return null;
-    }
-
-    return Extension.builder()
-        .url("http://hl7.org/fhir/us/davinci-pdex-plan-net/StructureDefinition/via-intermediary")
-        .valueReference(
-            Reference.builder()
-                .reference("Organization/" + OrganizationCoordinates.payer(value.get()).toString())
-                .build())
-        .build();
-  }
-
   private List<Extension> extensions(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
-
     return Stream.of(
             booleanExtension(
                 entry.internal(InsuranceCompany.ALLOW_MULTIPLE_BEDSECTIONS, YES_NO),
@@ -507,6 +473,19 @@ public class R4OrganizationTransformer {
             .build());
   }
 
+  private Extension payerExtension(Optional<String> value) {
+    if (value.isEmpty()) {
+      return null;
+    }
+    return Extension.builder()
+        .url("http://hl7.org/fhir/us/davinci-pdex-plan-net/StructureDefinition/via-intermediary")
+        .valueReference(
+            Reference.builder()
+                .reference("Organization/" + OrganizationCoordinates.payer(value.get()).toString())
+                .build())
+        .build();
+  }
+
   private Organization.Contact precertificationContact(
       LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
     return contact(
@@ -532,6 +511,22 @@ public class R4OrganizationTransformer {
             .display(purpose)
             .system("http://terminology.hl7.org/CodeSystem/contactentity-type")
             .build());
+  }
+
+  private Extension quantityExtension(Optional<BigDecimal> value, String unit, String system) {
+    if (value.isEmpty()) {
+      return null;
+    }
+    return Extension.builder()
+        .valueQuantity(Quantity.builder().value(value.get()).unit(unit).system(system).build())
+        .build();
+  }
+
+  private Extension stringExtension(Optional<String> value, String url) {
+    if (value.isEmpty()) {
+      return null;
+    }
+    return Extension.builder().url(url).valueString(value.get()).build();
   }
 
   /** Transform an RPC response to fhir. */
