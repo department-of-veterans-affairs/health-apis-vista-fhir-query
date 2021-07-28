@@ -502,13 +502,6 @@ public class R4OrganizationTransformer {
         .filter(Objects::nonNull);
   }
 
-  private Boolean active(Optional<String> active) {
-    if (active.isEmpty()) {
-      return null;
-    }
-    return Boolean.valueOf(active.get());
-  }
-
   private Organization toOrganization(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
     if (entry == null || isBlank(entry.fields())) {
       return null;
@@ -519,7 +512,8 @@ public class R4OrganizationTransformer {
                 rpcResults.getKey(), insuranceCompany(entry.ien()).toString()))
         .extension(extensions(entry))
         .identifier(identifiers(entry))
-        .active(active(entry.internal(InsuranceCompany.INACTIVE)))
+        .active(
+            entry.internal(InsuranceCompany.INACTIVE, Map.of("0", false, "1", true)).orElse(null))
         .name(entry.internal(InsuranceCompany.NAME).orElse(null))
         .type(insuranceCompanyType())
         .address(collectAddress(entry))
