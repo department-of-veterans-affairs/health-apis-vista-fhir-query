@@ -87,6 +87,7 @@ public class R4OrganizationTransformer {
           InsuranceCompany.CLAIMS_RX_ZIP,
           InsuranceCompany.FILE_NUMBER,
           InsuranceCompany.FILING_TIME_FRAME,
+          InsuranceCompany.INACTIVE,
           InsuranceCompany.INQUIRY_ADDRESS_CITY,
           InsuranceCompany.INQUIRY_ADDRESS_STATE,
           InsuranceCompany.INQUIRY_ADDRESS_ST_LINE_1_,
@@ -501,6 +502,13 @@ public class R4OrganizationTransformer {
         .filter(Objects::nonNull);
   }
 
+  private Boolean active(Optional<String> active) {
+    if (active.isEmpty()) {
+      return null;
+    }
+    return Boolean.valueOf(active.get());
+  }
+
   private Organization toOrganization(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
     if (entry == null || isBlank(entry.fields())) {
       return null;
@@ -511,7 +519,7 @@ public class R4OrganizationTransformer {
                 rpcResults.getKey(), insuranceCompany(entry.ien()).toString()))
         .extension(extensions(entry))
         .identifier(identifiers(entry))
-        .active(true)
+        .active(active(entry.internal(InsuranceCompany.INACTIVE)))
         .name(entry.internal(InsuranceCompany.NAME).orElse(null))
         .type(insuranceCompanyType())
         .address(collectAddress(entry))
