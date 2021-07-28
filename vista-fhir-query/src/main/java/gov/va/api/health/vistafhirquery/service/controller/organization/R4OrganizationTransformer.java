@@ -525,6 +525,7 @@ public class R4OrganizationTransformer {
                 rpcResults.getKey(), insuranceCompany(entry.ien()).toString()))
         .extension(extensions(entry))
         .identifier(identifiers(entry))
+        .active(true)
         .name(entry.internal(InsuranceCompany.NAME).orElse(null))
         .type(insuranceCompanyType())
         .address(collectAddress(entry))
