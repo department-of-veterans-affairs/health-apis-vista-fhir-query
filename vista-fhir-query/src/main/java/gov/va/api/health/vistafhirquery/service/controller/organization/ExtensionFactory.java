@@ -13,7 +13,7 @@ import java.util.Map;
 import static java.util.Collections.singletonList;
 
 @AllArgsConstructor(staticName = "of")
-public class ExtensionFactory {
+class ExtensionFactory {
   LhsLighthouseRpcGatewayResponse.FilemanEntry entry;
 
   public Extension ofBoolean(String fieldNumber, Map<String, Boolean> map, String url) {
