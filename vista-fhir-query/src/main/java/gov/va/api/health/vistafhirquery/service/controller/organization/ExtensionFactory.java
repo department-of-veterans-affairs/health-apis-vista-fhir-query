@@ -1,15 +1,17 @@
 package gov.va.api.health.vistafhirquery.service.controller.organization;
 
-import static java.util.Collections.singletonList;
-
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
 import gov.va.api.health.r4.api.datatypes.Coding;
 import gov.va.api.health.r4.api.datatypes.Quantity;
 import gov.va.api.health.r4.api.elements.Extension;
+import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
+import lombok.AllArgsConstructor;
+
 import java.math.BigDecimal;
 import java.util.Map;
-import lombok.AllArgsConstructor;
+
+import static java.util.Collections.singletonList;
 
 @AllArgsConstructor(staticName = "of")
 class ExtensionFactory {
@@ -17,7 +19,7 @@ class ExtensionFactory {
 
   Map<String, Boolean> yesNo;
 
-  public Extension ofBoolean(String fieldNumber, String url) {
+  public Extension ofYesNoBoolean(String fieldNumber, String url) {
     var value = entry.internal(fieldNumber, yesNo);
     if (value.isEmpty()) {
       return null;
@@ -48,7 +50,7 @@ class ExtensionFactory {
     try {
       quantity = new BigDecimal(value.get());
     } catch (NumberFormatException e) {
-      return null;
+      throw new LhsLighthouseRpcGatewayResponse.UnexpectedVistaValue(fieldNumber, value, e);
     }
     return Extension.builder()
         .valueQuantity(Quantity.builder().value(quantity).unit(unit).system(system).build())
@@ -61,5 +63,19 @@ class ExtensionFactory {
       return null;
     }
     return Extension.builder().url(url).valueString(value.get()).build();
+  }
+
+  public Extension ofReference(String fieldNumber, String resource, String url) {
+    var value = entry.internal(fieldNumber);
+    if (value.isEmpty()) {
+      return null;
+    }
+    return Extension.builder()
+        .url(url)
+        .valueReference(
+            Reference.builder()
+                .reference(resource + "/" + OrganizationCoordinates.payer(value.get()).toString())
+                .build())
+        .build();
   }
 }
