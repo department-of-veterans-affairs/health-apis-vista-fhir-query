@@ -1,5 +1,13 @@
 package gov.va.api.health.vistafhirquery.service.controller.organization;
 
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.allBlank;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.asCodeableConcept;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.emptyToNull;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.providerCoordinateStringFrom;
+import static gov.va.api.health.vistafhirquery.service.controller.organization.OrganizationCoordinates.insuranceCompany;
+import static java.util.Collections.emptyList;
+
 import gov.va.api.health.r4.api.datatypes.Address;
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
 import gov.va.api.health.r4.api.datatypes.Coding;
@@ -10,9 +18,6 @@ import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Organization;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.InsuranceCompany;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
-import lombok.Builder;
-import lombok.NonNull;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -21,14 +26,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.allBlank;
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.asCodeableConcept;
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.emptyToNull;
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.providerCoordinateStringFrom;
-import static gov.va.api.health.vistafhirquery.service.controller.organization.OrganizationCoordinates.insuranceCompany;
-import static java.util.Collections.emptyList;
+import lombok.Builder;
+import lombok.NonNull;
 
 @Builder
 public class R4OrganizationTransformer {
@@ -126,7 +125,9 @@ public class R4OrganizationTransformer {
         .state(state)
         .line(
             emptyToNull(
-                Stream.of(streetAddressLine1, streetAddressLine2, streetAddressLine3).toList()))
+                Stream.of(streetAddressLine1, streetAddressLine2, streetAddressLine3)
+                    .filter(Objects::nonNull)
+                    .toList()))
         .postalCode(zipCode)
         .build();
   }
@@ -316,7 +317,7 @@ public class R4OrganizationTransformer {
                 "http://va.gov/fhir/StructureDefinition/organization-oneOutpatVisitOnBillOnly"),
             extensions.ofCodeableConcept(
                 InsuranceCompany.AMBULATORY_SURG_REV_CODE,
-                "http://terminology.hl7.org/ValueSet/v2-0456",
+                "urn:oid:2.16.840.1.113883.6.301.3",
                 "http://va.gov/fhir/StructureDefinition/organization-ambulatorySurgeryRevenueCode"),
             extensions.ofString(
                 InsuranceCompany.FILING_TIME_FRAME,
@@ -326,14 +327,14 @@ public class R4OrganizationTransformer {
                 "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesInpatClaims"),
             extensions.ofCodeableConcept(
                 InsuranceCompany.TYPE_OF_COVERAGE,
-                "???",
+                "urn:oid:2.16.840.1.113883.3.8901.3.36.8013",
                 "http://va.gov/fhir/StructureDefinition/organization-typeOfCoverage"),
             extensions.ofBoolean(
                 InsuranceCompany.ANOTHER_CO_PROCESS_APPEALS_,
                 "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesAppeals"),
             extensions.ofCodeableConcept(
                 InsuranceCompany.PRESCRIPTION_REFILL_REV_CODE,
-                "???",
+                "urn:oid:2.16.840.1.113883.6.301.3",
                 "http://va.gov/fhir/StructureDefinition/organization-prescriptionRevenueCode"),
             extensions.ofBoolean(
                 InsuranceCompany.ANOTHER_CO_PROCESS_INQUIRIES_,
@@ -350,38 +351,41 @@ public class R4OrganizationTransformer {
             extensions.ofBoolean(
                 InsuranceCompany.ANOTHER_CO_PROC_DENT_CLAIMS_,
                 "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesDentalClaims"),
-            extensions.ofQuantity(InsuranceCompany.STANDARD_FTF_VALUE, "??", "??"),
+            extensions.ofQuantity(
+                InsuranceCompany.STANDARD_FTF_VALUE,
+                "d",
+                "urn:oid:2.16.840.1.113883.3.8901.3.3558013"),
             extensions.ofCodeableConcept(
                 InsuranceCompany.REIMBURSE_,
-                "???",
+                "urn:oid:2.16.840.1.113883.3.8901.3.36.1",
                 "http://va.gov/fhir/StructureDefinition/organization-willReimburseForCare"),
             extensions.ofBoolean(
                 InsuranceCompany.SIGNATURE_REQUIRED_ON_BILL_,
                 "http://va.gov/fhir/StructureDefinition/organization-signatureRequiredOnBill"),
             extensions.ofCodeableConcept(
                 InsuranceCompany.TRANSMIT_ELECTRONICALLY,
-                "???",
+                "urn:oid:2.16.840.1.113883.3.8901.3.36.38001",
                 "http://va.gov/fhir/StructureDefinition/organization-electronicTransmissionMode"),
             extensions.ofCodeableConcept(
                 InsuranceCompany.ELECTRONIC_INSURANCE_TYPE,
-                "???",
+                "urn:oid:2.16.840.1.113883.3.8901.3.36.38009",
                 "http://va.gov/fhir/StructureDefinition/organization-electronicInsuranceType"),
             payerExtension(entry.internal(InsuranceCompany.PAYER)),
             extensions.ofCodeableConcept(
                 InsuranceCompany.PERF_PROV_SECOND_ID_TYPE_1500,
-                "???",
+                "urn:oid:2.16.840.1.113883.3.8901.3.3558097.8001",
                 "http://va.gov/fhir/StructureDefinition/organization-performingProviderSecondIDTypeCMS1500"),
             extensions.ofCodeableConcept(
                 InsuranceCompany.PERF_PROV_SECOND_ID_TYPE_UB,
-                "???",
+                "urn:oid:2.16.840.1.113883.3.8901.3.3558097.8001",
                 "http://va.gov/fhir/StructureDefinition/organization-performingProviderSecondIDTypeUB04"),
             extensions.ofCodeableConcept(
                 InsuranceCompany.REF_PROV_SEC_ID_DEF_CMS_1500,
-                "???",
+                "urn:oid:2.16.840.1.113883.3.8901.3.3558097.8001",
                 "http://va.gov/fhir/StructureDefinition/organization-referrngProviderSecondIDTypeCMS1500"),
             extensions.ofCodeableConcept(
                 InsuranceCompany.REF_PROV_SEC_ID_REQ_ON_CLAIMS,
-                "???",
+                "urn:oid:2.16.840.1.113883.3.8901.3.3558097.8001",
                 "http://va.gov/fhir/StructureDefinition/organization-referrngProviderSecondIDTypeUB04"),
             extensions.ofBoolean(
                 InsuranceCompany.ATT_REND_ID_BILL_SEC_ID_PROF,
@@ -395,6 +399,7 @@ public class R4OrganizationTransformer {
             extensions.ofBoolean(
                 InsuranceCompany.PRINT_SEC_MED_CLAIMS_W_O_MRA_,
                 "http://va.gov/fhir/StructureDefinition/organization-printSecMedClaimsWOMRALocally"))
+        .filter(Objects::nonNull)
         .collect(Collectors.toList());
   }
 
@@ -415,6 +420,7 @@ public class R4OrganizationTransformer {
             identifier(entry.internal(InsuranceCompany.EDI_ID_NUMBER_PROF), "PROFEDI"),
             identifier(entry.internal(InsuranceCompany.EDI_ID_NUMBER_INST), "INSTEDI"),
             identifier(entry.internal(InsuranceCompany.BIN_NUMBER), "BIN"))
+        .filter(Objects::nonNull)
         .collect(Collectors.toList());
   }
 

@@ -1,11 +1,10 @@
 package gov.va.api.health.vistafhirquery.service.controller.organization;
 
-import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
-import org.junit.jupiter.api.Test;
-
-import java.util.Map;
-
 import static org.assertj.core.api.Assertions.assertThat;
+
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
 
 public class R4OrganizationTransformerTest {
 
