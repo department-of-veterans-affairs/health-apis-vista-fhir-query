@@ -1,12 +1,15 @@
 package gov.va.api.health.vistafhirquery.service.controller.organization;
 
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.asCodeableConcept;
+import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toBigDecimal;
 
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.health.r4.api.datatypes.Address;
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
 import gov.va.api.health.r4.api.datatypes.Coding;
 import gov.va.api.health.r4.api.datatypes.ContactPoint;
+import gov.va.api.health.r4.api.datatypes.Identifier;
+import gov.va.api.health.r4.api.datatypes.Quantity;
 import gov.va.api.health.r4.api.elements.Extension;
 import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Organization;
@@ -263,32 +266,31 @@ public class OrganizationSamples {
       // Extension
       fields.put("#.06", LhsLighthouseRpcGatewayResponse.Values.of("TRUE", "1"));
       fields.put("#.08", LhsLighthouseRpcGatewayResponse.Values.of("TRUE", "1"));
-      fields.put("#.09", LhsLighthouseRpcGatewayResponse.Values.of("TV/Radio", "994"));
+      fields.put("#.09", LhsLighthouseRpcGatewayResponse.Values.of("TV/RADIO", "994"));
       fields.put(
-          "#.12", LhsLighthouseRpcGatewayResponse.Values.of("SHANKTOTIME: EX", "SHANKTOTIME: IN"));
+          "#.12",
+          LhsLighthouseRpcGatewayResponse.Values.of(
+              "FILING SHANKTOTIME FRAME: EX", "FILING SHANKTOTIME FRAME: IN"));
       fields.put("#.128", LhsLighthouseRpcGatewayResponse.Values.of("TRUE", "1"));
       fields.put(
           "#.13",
           LhsLighthouseRpcGatewayResponse.Values.of(
               "SHANK HEALTH INSURANCE: EXT", "SHANK HEALTH INSURANCE: IN"));
-      fields.put(
-          "#.148",
-          LhsLighthouseRpcGatewayResponse.Values.of(
-              "SHANK HEALTH INSURANCE: EXT", "SHANK HEALTH INSURANCE: IN"));
+      fields.put("#.148", LhsLighthouseRpcGatewayResponse.Values.of("TRUE", "1"));
       fields.put(
           "#.15",
-          LhsLighthouseRpcGatewayResponse.Values.of("SHANK REV CODE: EXT", "SHANK REV CODE: IN"));
+          LhsLighthouseRpcGatewayResponse.Values.of(
+              "SHANK PRESCRIPTION REV CODE: EXT", "SHANK PRESCRIPTION REV CODE: IN"));
       fields.put("#.158", LhsLighthouseRpcGatewayResponse.Values.of("TRUE", "1"));
       fields.put("#.168", LhsLighthouseRpcGatewayResponse.Values.of("TRUE", "1"));
       fields.put("#.178", LhsLighthouseRpcGatewayResponse.Values.of("TRUE", "1"));
       fields.put("#.188", LhsLighthouseRpcGatewayResponse.Values.of("TRUE", "1"));
       fields.put("#.198", LhsLighthouseRpcGatewayResponse.Values.of("TRUE", "1"));
+      fields.put("#.19", LhsLighthouseRpcGatewayResponse.Values.of("SHANK FTF: EXT", "8675309"));
       fields.put(
-          "#.19", LhsLighthouseRpcGatewayResponse.Values.of("SHANK FTF: EXT", "SHANK FTF: IN"));
-      fields.put(
-          "#.1",
+          "#1",
           LhsLighthouseRpcGatewayResponse.Values.of("SHANK REIMBURSE: EXT", "SHANK REIMBURSE: IN"));
-      fields.put("#.2", LhsLighthouseRpcGatewayResponse.Values.of("TRUE", "1"));
+      fields.put("#2", LhsLighthouseRpcGatewayResponse.Values.of("TRUE", "1"));
       fields.put(
           "#3.01",
           LhsLighthouseRpcGatewayResponse.Values.of(
@@ -316,6 +318,13 @@ public class OrganizationSamples {
       fields.put("#4.08", LhsLighthouseRpcGatewayResponse.Values.of("TRUE", "1"));
       fields.put("#6.09", LhsLighthouseRpcGatewayResponse.Values.of("TRUE", "1"));
       fields.put("#6.1", LhsLighthouseRpcGatewayResponse.Values.of("TRUE", "1"));
+      // Identifiers
+      fields.put(
+          "#3.02", LhsLighthouseRpcGatewayResponse.Values.of("SHANKFEDI: EXT", "SHANKFEDI: IN"));
+      fields.put(
+          "#3.03", LhsLighthouseRpcGatewayResponse.Values.of("SHANKBIN: EXT", "SHANKBIN: IN"));
+      fields.put(
+          "#3.04", LhsLighthouseRpcGatewayResponse.Values.of("SHANKTEDI: EXT", "SHANKTEDI: IN"));
       return Map.copyOf(fields);
     }
 
@@ -486,8 +495,8 @@ public class OrganizationSamples {
                       Collections.singletonList(
                           Coding.builder()
                               .system("http://terminology.hl7.org/CodeSystem/contactentity-type")
-                              .code("RXCLAIMS")
-                              .display("RXCLAIMS")
+                              .code("INPTCLAIMS")
+                              .display("INPTCLAIMS")
                               .build()))
                   .build())
           .build();
@@ -587,7 +596,249 @@ public class OrganizationSamples {
     }
 
     private List<Extension> extensions() {
-      return List.of(Extension.builder().build());
+      return List.of(
+          Extension.builder()
+              .valueBoolean(Boolean.TRUE)
+              .url("http://va.gov/fhir/StructureDefinition/organization-allowMultipleBedsections")
+              .build(),
+          Extension.builder()
+              .url("http://va.gov/fhir/StructureDefinition/organization-oneOutpatVisitOnBillOnly")
+              .valueBoolean(Boolean.TRUE)
+              .build(),
+          Extension.builder()
+              .valueCodeableConcept(
+                  CodeableConcept.builder()
+                      .coding(
+                          Collections.singletonList(
+                              Coding.builder()
+                                  .code("994")
+                                  .system("urn:oid:2.16.840.1.113883.6.301.3")
+                                  .build()))
+                      .build())
+              .url(
+                  "http://va.gov/fhir/StructureDefinition/organization-ambulatorySurgeryRevenueCode")
+              .build(),
+          Extension.builder()
+              .valueString("FILING SHANKTOTIME FRAME: IN")
+              .url("http://va.gov/fhir/StructureDefinition/organization-filingTimeFrame")
+              .build(),
+          Extension.builder()
+              .valueBoolean(Boolean.TRUE)
+              .url(
+                  "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesInpatClaims")
+              .build(),
+          Extension.builder()
+              .valueCodeableConcept(
+                  CodeableConcept.builder()
+                      .coding(
+                          Collections.singletonList(
+                              Coding.builder()
+                                  .code("SHANK HEALTH INSURANCE: IN")
+                                  .system("urn:oid:2.16.840.1.113883.3.8901.3.36.8013")
+                                  .build()))
+                      .build())
+              .url("http://va.gov/fhir/StructureDefinition/organization-typeOfCoverage")
+              .build(),
+          Extension.builder()
+              .valueBoolean(Boolean.TRUE)
+              .url(
+                  "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesAppeals")
+              .build(),
+          Extension.builder()
+              .url("http://va.gov/fhir/StructureDefinition/organization-prescriptionRevenueCode")
+              .valueCodeableConcept(
+                  CodeableConcept.builder()
+                      .coding(
+                          Collections.singletonList(
+                              Coding.builder()
+                                  .system("urn:oid:2.16.840.1.113883.6.301.3")
+                                  .code("SHANK PRESCRIPTION REV CODE: IN")
+                                  .build()))
+                      .build())
+              .build(),
+          Extension.builder()
+              .valueBoolean(Boolean.TRUE)
+              .url(
+                  "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesInquiries")
+              .build(),
+          Extension.builder()
+              .url(
+                  "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesOutpatClaims")
+              .valueBoolean(Boolean.TRUE)
+              .build(),
+          Extension.builder()
+              .url(
+                  "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesPrecert")
+              .valueBoolean(Boolean.TRUE)
+              .build(),
+          Extension.builder()
+              .url(
+                  "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesRxClaims")
+              .valueBoolean(Boolean.TRUE)
+              .build(),
+          Extension.builder()
+              .url(
+                  "http://va.gov/fhir/StructureDefinition/organization-anotherCompanyProcessesDentalClaims")
+              .valueBoolean(Boolean.TRUE)
+              .build(),
+          Extension.builder()
+              .valueQuantity(
+                  Quantity.builder()
+                      .value(toBigDecimal("8675309"))
+                      .unit("d")
+                      .system("urn:oid:2.16.840.1.113883.3.8901.3.3558013")
+                      .build())
+              .build(),
+          Extension.builder()
+              .url("http://va.gov/fhir/StructureDefinition/organization-willReimburseForCare")
+              .valueCodeableConcept(
+                  CodeableConcept.builder()
+                      .coding(
+                          Collections.singletonList(
+                              Coding.builder()
+                                  .code("SHANK REIMBURSE: IN")
+                                  .system("urn:oid:2.16.840.1.113883.3.8901.3.36.1")
+                                  .build()))
+                      .build())
+              .build(),
+          Extension.builder()
+              .url("http://va.gov/fhir/StructureDefinition/organization-signatureRequiredOnBill")
+              .valueBoolean(Boolean.TRUE)
+              .build(),
+          Extension.builder()
+              .url("http://va.gov/fhir/StructureDefinition/organization-electronicTransmissionMode")
+              .valueCodeableConcept(
+                  CodeableConcept.builder()
+                      .coding(
+                          Collections.singletonList(
+                              Coding.builder()
+                                  .system("urn:oid:2.16.840.1.113883.3.8901.3.36.38001")
+                                  .code("SHANKED ELECTRONICALLY: IN")
+                                  .build()))
+                      .build())
+              .build(),
+          Extension.builder()
+              .url("http://va.gov/fhir/StructureDefinition/organization-electronicInsuranceType")
+              .valueCodeableConcept(
+                  CodeableConcept.builder()
+                      .coding(
+                          Collections.singletonList(
+                              Coding.builder()
+                                  .code("ELECTRONIC INSHANKANCE TYPE: IN")
+                                  .system("urn:oid:2.16.840.1.113883.3.8901.3.36.38009")
+                                  .build()))
+                      .build())
+              .build(),
+          Extension.builder()
+              .url(
+                  "http://hl7.org/fhir/us/davinci-pdex-plan-net/StructureDefinition/via-intermediary")
+              .valueReference(
+                  Reference.builder()
+                      .reference(
+                          "Organization/"
+                              + OrganizationCoordinates.payer("SHANK PAYER: IN").toString())
+                      .build())
+              .build(),
+          Extension.builder()
+              .url(
+                  "http://va.gov/fhir/StructureDefinition/organization-performingProviderSecondIDTypeCMS1500")
+              .valueCodeableConcept(
+                  CodeableConcept.builder()
+                      .coding(
+                          Collections.singletonList(
+                              Coding.builder()
+                                  .system("urn:oid:2.16.840.1.113883.3.8901.3.3558097.8001")
+                                  .code("SHANK 1500: IN")
+                                  .build()))
+                      .build())
+              .build(),
+          Extension.builder()
+              .url(
+                  "http://va.gov/fhir/StructureDefinition/organization-performingProviderSecondIDTypeUB04")
+              .valueCodeableConcept(
+                  CodeableConcept.builder()
+                      .coding(
+                          Collections.singletonList(
+                              Coding.builder()
+                                  .code("PERF SHANK UB: IN")
+                                  .system("urn:oid:2.16.840.1.113883.3.8901.3.3558097.8001")
+                                  .build()))
+                      .build())
+              .build(),
+          Extension.builder()
+              .url(
+                  "http://va.gov/fhir/StructureDefinition/organization-referrngProviderSecondIDTypeCMS1500")
+              .valueCodeableConcept(
+                  CodeableConcept.builder()
+                      .coding(
+                          Collections.singletonList(
+                              Coding.builder()
+                                  .code("REF SHANK 1500: IN")
+                                  .system("urn:oid:2.16.840.1.113883.3.8901.3.3558097.8001")
+                                  .build()))
+                      .build())
+              .build(),
+          Extension.builder()
+              .url(
+                  "http://va.gov/fhir/StructureDefinition/organization-referrngProviderSecondIDTypeUB04")
+              .valueCodeableConcept(
+                  CodeableConcept.builder()
+                      .coding(
+                          Collections.singletonList(
+                              Coding.builder()
+                                  .code("REF SHANK CLAIMS: IN")
+                                  .system("urn:oid:2.16.840.1.113883.3.8901.3.3558097.8001")
+                                  .build()))
+                      .build())
+              .build(),
+          Extension.builder()
+              .url(
+                  "http://va.gov/fhir/StructureDefinition/organization-attendingRenderingProviderSecondaryIDProfesionalRequired")
+              .valueBoolean(Boolean.TRUE)
+              .build(),
+          Extension.builder()
+              .url(
+                  "http://va.gov/fhir/StructureDefinition/organization-attendingRenderingProviderSecondaryIDInstitutionalRequired")
+              .valueBoolean(Boolean.TRUE)
+              .build(),
+          Extension.builder()
+              .url(
+                  "http://va.gov/fhir/StructureDefinition/organization-printSecTertAutoClaimsLocally")
+              .valueBoolean(Boolean.TRUE)
+              .build(),
+          Extension.builder()
+              .url(
+                  "http://va.gov/fhir/StructureDefinition/organization-printSecMedClaimsWOMRALocally")
+              .valueBoolean(Boolean.TRUE)
+              .build());
+    }
+
+    List<Identifier> identifiers() {
+      return List.of(
+          Identifier.builder()
+              .type(
+                  CodeableConcept.builder()
+                      .coding(
+                          Collections.singletonList(
+                              Coding.builder().id("SHANKFEDI: IN").code("PROFEDI").build()))
+                      .build())
+              .build(),
+          Identifier.builder()
+              .type(
+                  CodeableConcept.builder()
+                      .coding(
+                          Collections.singletonList(
+                              Coding.builder().id("SHANKTEDI: IN").code("INSTEDI").build()))
+                      .build())
+              .build(),
+          Identifier.builder()
+              .type(
+                  CodeableConcept.builder()
+                      .coding(
+                          Collections.singletonList(
+                              Coding.builder().id("SHANKBIN: IN").code("BIN").build()))
+                      .build())
+              .build());
     }
 
     private Organization.Contact inquiryContact() {
@@ -635,6 +886,7 @@ public class OrganizationSamples {
                   .recordId(OrganizationCoordinates.insuranceCompany(ien).toString())
                   .build()
                   .toString())
+          .identifier(identifiers())
           .type(type())
           .name("SHANKS OF FL: IN")
           .address(address())
