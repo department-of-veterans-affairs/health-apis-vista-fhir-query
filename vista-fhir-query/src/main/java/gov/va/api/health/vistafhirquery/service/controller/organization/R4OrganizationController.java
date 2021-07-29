@@ -81,7 +81,6 @@ public class R4OrganizationController implements R4OrganizationApi {
     LhsLighthouseRpcGatewayResponse getsManifestResults =
         LhsLighthouseRpcGatewayGetsManifest.create().fromResults(rpcResponse.results());
     dieOnError(getsManifestResults);
-    log.info("{}", getsManifestResults);
     List<Organization> resources = transformation().toResource().apply(getsManifestResults);
     return verifyAndGetResult(resources, id);
   }
