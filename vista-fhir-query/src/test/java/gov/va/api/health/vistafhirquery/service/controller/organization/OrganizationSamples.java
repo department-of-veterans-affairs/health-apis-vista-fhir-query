@@ -612,7 +612,7 @@ public class OrganizationSamples {
                           Collections.singletonList(
                               Coding.builder()
                                   .code("994")
-                                  .system("http://terminology.hl7.org/ValueSet/v2-0456")
+                                  .system("urn:oid:2.16.840.1.113883.6.301.3")
                                   .build()))
                       .build())
               .url(
@@ -634,7 +634,7 @@ public class OrganizationSamples {
                           Collections.singletonList(
                               Coding.builder()
                                   .code("SHANK HEALTH INSURANCE: IN")
-                                  .system("???")
+                                  .system("urn:oid:2.16.840.1.113883.3.8901.3.36.8013")
                                   .build()))
                       .build())
               .url("http://va.gov/fhir/StructureDefinition/organization-typeOfCoverage")
@@ -651,7 +651,7 @@ public class OrganizationSamples {
                       .coding(
                           Collections.singletonList(
                               Coding.builder()
-                                  .system("???")
+                                  .system("urn:oid:2.16.840.1.113883.6.301.3")
                                   .code("SHANK PRESCRIPTION REV CODE: IN")
                                   .build()))
                       .build())
@@ -683,7 +683,11 @@ public class OrganizationSamples {
               .build(),
           Extension.builder()
               .valueQuantity(
-                  Quantity.builder().value(toBigDecimal("8675309")).unit("??").system("??").build())
+                  Quantity.builder()
+                      .value(toBigDecimal("8675309"))
+                      .unit("d")
+                      .system("urn:oid:2.16.840.1.113883.3.8901.3.3558013")
+                      .build())
               .build(),
           Extension.builder()
               .url("http://va.gov/fhir/StructureDefinition/organization-willReimburseForCare")
@@ -691,7 +695,10 @@ public class OrganizationSamples {
                   CodeableConcept.builder()
                       .coding(
                           Collections.singletonList(
-                              Coding.builder().code("SHANK REIMBURSE: IN").system("???").build()))
+                              Coding.builder()
+                                  .code("SHANK REIMBURSE: IN")
+                                  .system("urn:oid:2.16.840.1.113883.3.8901.3.36.1")
+                                  .build()))
                       .build())
               .build(),
           Extension.builder()
@@ -705,7 +712,7 @@ public class OrganizationSamples {
                       .coding(
                           Collections.singletonList(
                               Coding.builder()
-                                  .system("???")
+                                  .system("urn:oid:2.16.840.1.113883.3.8901.3.36.38001")
                                   .code("SHANKED ELECTRONICALLY: IN")
                                   .build()))
                       .build())
@@ -718,7 +725,7 @@ public class OrganizationSamples {
                           Collections.singletonList(
                               Coding.builder()
                                   .code("ELECTRONIC INSHANKANCE TYPE: IN")
-                                  .system("???")
+                                  .system("urn:oid:2.16.840.1.113883.3.8901.3.36.38009")
                                   .build()))
                       .build())
               .build(),
@@ -740,9 +747,8 @@ public class OrganizationSamples {
                       .coding(
                           Collections.singletonList(
                               Coding.builder()
-                                  .system("???")
+                                  .system("urn:oid:2.16.840.1.113883.3.8901.3.3558097.8001")
                                   .code("SHANK 1500: IN")
-                                  .system("???")
                                   .build()))
                       .build())
               .build(),
@@ -753,7 +759,10 @@ public class OrganizationSamples {
                   CodeableConcept.builder()
                       .coding(
                           Collections.singletonList(
-                              Coding.builder().code("PERF SHANK UB: IN").system("???").build()))
+                              Coding.builder()
+                                  .code("PERF SHANK UB: IN")
+                                  .system("urn:oid:2.16.840.1.113883.3.8901.3.3558097.8001")
+                                  .build()))
                       .build())
               .build(),
           Extension.builder()
@@ -763,7 +772,10 @@ public class OrganizationSamples {
                   CodeableConcept.builder()
                       .coding(
                           Collections.singletonList(
-                              Coding.builder().code("REF SHANK 1500: IN").system("???").build()))
+                              Coding.builder()
+                                  .code("REF SHANK 1500: IN")
+                                  .system("urn:oid:2.16.840.1.113883.3.8901.3.3558097.8001")
+                                  .build()))
                       .build())
               .build(),
           Extension.builder()
@@ -773,7 +785,10 @@ public class OrganizationSamples {
                   CodeableConcept.builder()
                       .coding(
                           Collections.singletonList(
-                              Coding.builder().code("REF SHANK CLAIMS: IN").system("???").build()))
+                              Coding.builder()
+                                  .code("REF SHANK CLAIMS: IN")
+                                  .system("urn:oid:2.16.840.1.113883.3.8901.3.3558097.8001")
+                                  .build()))
                       .build())
               .build(),
           Extension.builder()
