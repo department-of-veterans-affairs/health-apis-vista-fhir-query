@@ -19,7 +19,8 @@ public class OrganizationIT {
 
   @Test
   void read() {
-    assumeEnvironmentNotIn(Environment.STAGING, Environment.PROD);
+    assumeEnvironmentNotIn(
+        Environment.STAGING_LAB, Environment.STAGING, Environment.LAB, Environment.PROD);
     var path = "Organization/{id}";
     verifyAll(
         test(200, Organization.class, path, testIds.organization()),
