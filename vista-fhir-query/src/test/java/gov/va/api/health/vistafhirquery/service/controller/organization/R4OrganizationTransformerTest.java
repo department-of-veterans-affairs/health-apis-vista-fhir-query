@@ -1,5 +1,6 @@
 package gov.va.api.health.vistafhirquery.service.controller.organization;
 
+import static gov.va.api.health.vistafhirquery.service.controller.organization.OrganizationSamples.json;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
@@ -22,16 +23,17 @@ public class R4OrganizationTransformerTest {
   @Test
   void toFhir() {
     assertThat(
-            R4OrganizationTransformer.builder()
-                .rpcResults(
-                    Map.entry(
-                        "666",
-                        OrganizationSamples.VistaLhsLighthouseRpcGateway.create()
-                            .getsManifestResults()))
-                .build()
-                .toFhir()
-                .findFirst()
-                .get())
-        .isEqualTo(OrganizationSamples.R4.create().organization());
+            json(
+                R4OrganizationTransformer.builder()
+                    .rpcResults(
+                        Map.entry(
+                            "666",
+                            OrganizationSamples.VistaLhsLighthouseRpcGateway.create()
+                                .getsManifestResults()))
+                    .build()
+                    .toFhir()
+                    .findFirst()
+                    .get()))
+        .isEqualTo(json(OrganizationSamples.R4.create().organization()));
   }
 }

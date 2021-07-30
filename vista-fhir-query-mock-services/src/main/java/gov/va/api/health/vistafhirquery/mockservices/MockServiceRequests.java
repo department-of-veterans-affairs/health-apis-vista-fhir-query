@@ -28,6 +28,12 @@ public class MockServiceRequests {
   }
 
   @SneakyThrows
+  public static String fileContent(String resource) {
+    return Resources.toString(
+        MockServiceRequests.class.getResource(resource), StandardCharsets.UTF_8);
+  }
+
+  @SneakyThrows
   public static String json(Object o) {
     return JacksonConfig.createMapper().writeValueAsString(o);
   }
@@ -67,11 +73,5 @@ public class MockServiceRequests {
                             .build())));
     log.info("Respond with: {}", response);
     return response;
-  }
-
-  @SneakyThrows
-  public static String fileContent(String resource) {
-    return Resources.toString(
-        MockServiceRequests.class.getResource(resource), StandardCharsets.UTF_8);
   }
 }

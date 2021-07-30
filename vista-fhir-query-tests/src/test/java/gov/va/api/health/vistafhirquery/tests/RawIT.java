@@ -31,7 +31,7 @@ public class RawIT {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"/internal/raw/Organization", "/internal/raw/Coverage"})
+  @ValueSource(strings = {"/internal/raw/Coverage"})
   void goodRequest(String path) {
     assumeEnvironmentIn(Environment.LOCAL);
     var requestUrl = path + "?icn=9999998&site=673";
