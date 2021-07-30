@@ -31,6 +31,13 @@ import lombok.NonNull;
 
 @Builder
 public class R4OrganizationTransformer {
+
+  // The following list can be generated using:
+  // grep InsuranceCompany R4OrganizationTransformer.java \
+  // | sed 's/.*\(InsuranceCompany\.[A-Z0-9_]\+\).*/\1,/' \
+  // | grep -vE '(import|FILE_NUMBER)' \
+  // | sort -u
+
   /** The insurance company fields needed by the transformer. */
   public static final List<String> REQUIRED_FIELDS =
       List.of(
@@ -106,11 +113,6 @@ public class R4OrganizationTransformer {
           InsuranceCompany.STREET_ADDRESS_LINE_3_,
           InsuranceCompany.ZIP_CODE);
 
-  // The following list can be generated using:
-  // grep InsuranceCompany R4OrganizationTransformer.java \
-  // | sed 's/.*\(InsuranceCompany\.[A-Z0-9_]\+\).*/\1,/' \
-  // | grep -vE '(import|FILE_NUMBER)' \
-  // | sort -u
   static final Map<String, Boolean> YES_NO = Map.of("1", true, "0", false);
 
   @NonNull Map.Entry<String, LhsLighthouseRpcGatewayResponse.Results> rpcResults;
