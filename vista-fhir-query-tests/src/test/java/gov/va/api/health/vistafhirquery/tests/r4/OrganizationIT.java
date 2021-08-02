@@ -1,7 +1,5 @@
 package gov.va.api.health.vistafhirquery.tests.r4;
 
-import static gov.va.api.health.sentinel.EnvironmentAssumptions.assumeEnvironmentIn;
-
 import gov.va.api.health.fhir.testsupport.ResourceVerifier;
 import gov.va.api.health.r4.api.resources.OperationOutcome;
 import gov.va.api.health.r4.api.resources.Organization;
@@ -12,6 +10,8 @@ import lombok.experimental.Delegate;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
+import static gov.va.api.health.sentinel.EnvironmentAssumptions.assumeEnvironmentIn;
+
 @Slf4j
 public class OrganizationIT {
   private final TestIds testIds = VistaFhirQueryResourceVerifier.ids();
@@ -19,7 +19,7 @@ public class OrganizationIT {
 
   @Test
   void read() {
-    assumeEnvironmentIn(Environment.LOCAL, Environment.QA);
+    assumeEnvironmentIn(Environment.LOCAL);
     var path = "Organization/{id}";
     verifyAll(
         test(200, Organization.class, path, testIds.organization()),
