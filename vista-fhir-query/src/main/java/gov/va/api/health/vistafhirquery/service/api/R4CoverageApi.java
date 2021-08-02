@@ -80,7 +80,6 @@ public interface R4CoverageApi {
               schema = @Schema(implementation = OperationOutcome.class)))
   Coverage.Bundle coverageSearch(
       @Parameter(hidden = true) HttpServletRequest request,
-      @Parameter(hidden = true) String coverageHack,
       @Parameter(
               in = ParameterIn.QUERY,
               name = "patient",

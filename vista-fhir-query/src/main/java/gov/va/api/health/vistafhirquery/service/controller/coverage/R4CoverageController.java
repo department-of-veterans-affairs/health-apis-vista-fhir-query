@@ -2,7 +2,6 @@ package gov.va.api.health.vistafhirquery.service.controller.coverage;
 
 import static gov.va.api.health.vistafhirquery.service.controller.R4Controllers.dieOnError;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Controllers.verifyAndGetResult;
-import static gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGateway.allFieldsOfSubfile;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -17,11 +16,11 @@ import gov.va.api.health.vistafhirquery.service.controller.VistalinkApiClient;
 import gov.va.api.health.vistafhirquery.service.controller.witnessprotection.WitnessProtection;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.InsuranceType;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayCoverageSearch;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayGetsManifest;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayGetsManifest.Request;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
-import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.Patient;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -30,12 +29,10 @@ import javax.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NonNull;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -103,30 +100,19 @@ public class R4CoverageController implements R4CoverageApi {
   @GetMapping
   public Coverage.Bundle coverageSearch(
       HttpServletRequest request,
-      @RequestHeader(value = "coverageHack", required = false, defaultValue = "false")
-          String coverageHack,
       @RequestParam(value = "patient") String patient,
       @RequestParam(value = "_count", required = false) Integer count) {
-    if (CoverageHack.isEnabled(coverageHack)) {
-      patient = CoverageHack.dfn();
-    }
     // ToDo dfn macro on the iens field
-    Request rpcRequest =
-        Request.builder()
-            .file(Patient.FILE_NUMBER)
-            .iens(patient)
-            .fields(allFieldsOfSubfile(Patient.INSURANCE_TYPE))
-            .flags(
-                List.of(
-                    GetsManifestFlags.OMIT_NULL_VALUES,
-                    GetsManifestFlags.RETURN_INTERNAL_VALUES,
-                    GetsManifestFlags.RETURN_EXTERNAL_VALUES))
+    LhsLighthouseRpcGatewayCoverageSearch.Request rpcRequest =
+        LhsLighthouseRpcGatewayCoverageSearch.Request.builder()
+            .debugMode("1")
+            .id(LhsLighthouseRpcGatewayCoverageSearch.Request.PatientId.forIcn(patient))
             .build();
     RpcResponse rpcResponse = vistalinkApiClient.requestForPatient(patient, rpcRequest);
     Map<String, ZoneId> vistaZoneIds = collectTimezones(rpcResponse);
-    LhsLighthouseRpcGatewayResponse getsManifestResults =
-        LhsLighthouseRpcGatewayGetsManifest.create().fromResults(rpcResponse.results());
-    return toBundle(request, vistaZoneIds).apply(getsManifestResults);
+    LhsLighthouseRpcGatewayResponse searchResults =
+        LhsLighthouseRpcGatewayCoverageSearch.create().fromResults(rpcResponse.results());
+    return toBundle(request, vistaZoneIds).apply(searchResults);
   }
 
   private R4Bundler<LhsLighthouseRpcGatewayResponse, Coverage, Coverage.Entry, Coverage.Bundle>
@@ -156,15 +142,5 @@ public class R4CoverageController implements R4CoverageApi {
                                 .toFhir())
                     .collect(toList()))
         .build();
-  }
-
-  static class CoverageHack {
-    static String dfn() {
-      return "69";
-    }
-
-    static boolean isEnabled(String header) {
-      return StringUtils.equals(header, "true");
-    }
   }
 }
