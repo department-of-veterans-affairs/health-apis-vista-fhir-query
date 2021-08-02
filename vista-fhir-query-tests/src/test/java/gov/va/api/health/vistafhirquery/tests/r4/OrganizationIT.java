@@ -1,6 +1,6 @@
 package gov.va.api.health.vistafhirquery.tests.r4;
 
-import static gov.va.api.health.sentinel.EnvironmentAssumptions.assumeEnvironmentNotIn;
+import static gov.va.api.health.sentinel.EnvironmentAssumptions.assumeEnvironmentIn;
 
 import gov.va.api.health.fhir.testsupport.ResourceVerifier;
 import gov.va.api.health.r4.api.resources.OperationOutcome;
@@ -19,8 +19,7 @@ public class OrganizationIT {
 
   @Test
   void read() {
-    assumeEnvironmentNotIn(
-        Environment.STAGING_LAB, Environment.STAGING, Environment.LAB, Environment.PROD);
+    assumeEnvironmentIn(Environment.LOCAL, Environment.QA);
     var path = "Organization/{id}";
     verifyAll(
         test(200, Organization.class, path, testIds.organization()),
