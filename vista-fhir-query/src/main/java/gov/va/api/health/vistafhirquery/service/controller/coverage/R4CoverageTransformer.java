@@ -3,7 +3,6 @@ package gov.va.api.health.vistafhirquery.service.controller.coverage;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.allBlank;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.isBlank;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.patientCoordinateStringFrom;
-import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.providerCoordinateStringFrom;
 import static gov.va.api.health.vistafhirquery.service.controller.R4Transformers.toReference;
 
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
@@ -12,8 +11,10 @@ import gov.va.api.health.r4.api.datatypes.Period;
 import gov.va.api.health.r4.api.elements.Extension;
 import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Coverage;
-import gov.va.api.health.vistafhirquery.service.controller.organization.OrganizationCoordinates;
+import gov.va.api.health.vistafhirquery.service.controller.RecordCoordinates;
 import gov.va.api.lighthouse.charon.models.FilemanDate;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.GroupInsurancePlan;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.InsuranceCompany;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.InsuranceType;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse.FilemanEntry;
@@ -51,8 +52,19 @@ public class R4CoverageTransformer {
   private List<Coverage.CoverageClass> classes(FilemanEntry entry) {
     return entry
         .internal(InsuranceType.GROUP_PLAN)
-        .map(value -> providerCoordinateStringFrom(rpcResults.getKey(), value))
-        .map(coords -> Coverage.CoverageClass.builder().value(coords).type(coverageClass()).build())
+        .map(
+            value ->
+                RecordCoordinates.builder()
+                    .site(site())
+                    .file(GroupInsurancePlan.FILE_NUMBER)
+                    .ien(value)
+                    .build())
+        .map(
+            coords ->
+                Coverage.CoverageClass.builder()
+                    .value(coords.toString())
+                    .type(coverageClass())
+                    .build())
         .map(List::of)
         .orElse(null);
   }
@@ -101,9 +113,14 @@ public class R4CoverageTransformer {
   private List<Reference> payors(FilemanEntry entry) {
     return entry
         .internal(InsuranceType.INSURANCE_TYPE)
-        .map(OrganizationCoordinates::insuranceCompany)
-        .map(ic -> providerCoordinateStringFrom(rpcResults.getKey(), ic.toString()))
-        .map(coords -> toReference("Organization", coords, null))
+        .map(
+            value ->
+                RecordCoordinates.builder()
+                    .site(site())
+                    .file(InsuranceCompany.FILE_NUMBER)
+                    .ien(value)
+                    .build())
+        .map(coords -> toReference("Organization", coords))
         .map(List::of)
         .orElse(null);
   }
@@ -147,12 +164,16 @@ public class R4CoverageTransformer {
     };
   }
 
+  private String site() {
+    return rpcResults.getKey();
+  }
+
   private Coverage toCoverage(LhsLighthouseRpcGatewayResponse.FilemanEntry entry) {
     if (isBlank(entry.fields())) {
       return null;
     }
     return Coverage.builder()
-        .id(patientCoordinateStringFrom(patientIcn, rpcResults.getKey(), entry.ien()))
+        .id(patientCoordinateStringFrom(patientIcn, site(), entry.ien()))
         .extension(extensions(entry))
         .status(Coverage.Status.active)
         .subscriberId(entry.external(InsuranceType.SUBSCRIBER_ID).orElse(null))

@@ -4,15 +4,15 @@
   <parent>
     <groupId>gov.va.api.health</groupId>
     <artifactId>service-starter</artifactId>
-    <version>8.0.23</version>
+    <version>8.0.24</version>
     <relativePath/>
   </parent>
   <artifactId>vista-fhir-query-mock-services</artifactId>
-  <version>1.0.32-SNAPSHOT</version>
+  <version>1.0.39-SNAPSHOT</version>
   <packaging>jar</packaging>
   <properties>
     <mockserver.version>5.11.2</mockserver.version>
-    <charon.version>4.0.19</charon.version>
+    <charon.version>4.0.25</charon.version>
   </properties>
   <dependencies>
     <dependency>

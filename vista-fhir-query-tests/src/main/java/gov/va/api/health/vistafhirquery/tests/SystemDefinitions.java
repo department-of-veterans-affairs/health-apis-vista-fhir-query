@@ -28,12 +28,45 @@ public final class SystemDefinitions {
     return Optional.ofNullable(System.getProperty("client-key"));
   }
 
+  private static TestIds idsForLocalEnvironment() {
+    return TestIds.builder()
+        .coverage("I3-4z05kjIPYEYQYLQmGck6nb")
+        .organization("I3-450NAk1LKUAaaGqyCDA9S9")
+        .observationLaboratory("I3-KqbQBRfPz2QzBYOB9MoX6iis0i7kCY2n5Zn5RQssOEMCd96dST7kj4")
+        .observationVitalSign("I3-nfcGFM5JEsuzapkk9xecju3QH0MrK6tqZKVY9rd7wSk")
+        .patient("1011537977V693883")
+        .patientSites(icnAtSites())
+        .build();
+  }
+
+  private static TestIds idsForProductionEnvironment() {
+    return TestIds.builder()
+        .coverage("TODO https://vajira.max.gov/browse/API-8891")
+        .organization("TODO https://vajira.max.gov/browse/API-8891")
+        .observationLaboratory("TODO https://vajira.max.gov/browse/API-8891")
+        .observationVitalSign("TODO https://vajira.max.gov/browse/API-8891")
+        .patient("1011537977V693883")
+        .patientSites(icnAtSites())
+        .build();
+  }
+
+  private static TestIds idsForSyntheticEnvironment() {
+    return TestIds.builder()
+        .coverage("TODO https://vajira.max.gov/browse/API-8891")
+        .organization("TODO https://vajira.max.gov/browse/API-8891")
+        .observationLaboratory("I3-IbkbEJ3pceqVRMjceHtk9zfkaWo5B2hFH018sws2KYPDg98RU2fFQC")
+        .observationVitalSign("I3-MzfzyZkSpl9HvWWWuN0JvxF6V2f0fwrUm4Cj381IfxH")
+        .patient("1011537977V693883")
+        .patientSites(icnAtSites())
+        .build();
+  }
+
   private static SystemDefinition lab() {
     String url = "https://blue.lab.lighthouse.va.gov";
     return SystemDefinition.builder()
         .internal(serviceDefinition("internal", url, 443, null, "/vista-fhir-query/"))
         .r4(serviceDefinition("r4", url, 443, magicAccessToken(), "/vista-fhir-query/r4"))
-        .publicIds(syntheticIds())
+        .publicIds(idsForSyntheticEnvironment())
         .clientKey(clientKey())
         .build();
   }
@@ -69,18 +102,8 @@ public final class SystemDefinitions {
     return SystemDefinition.builder()
         .internal(serviceDefinition("internal", url, 8095, null, "/"))
         .r4(serviceDefinition("r4", url, 8095, null, "/r4"))
-        .publicIds(localIds())
+        .publicIds(idsForLocalEnvironment())
         .clientKey(Optional.of(System.getProperty("client-key", "~shanktopus~")))
-        .build();
-  }
-
-  private static TestIds localIds() {
-    return TestIds.builder()
-        .coverage("I3-4z05kjIPYEYQYLQmGck6nb")
-        .observationLaboratory("I3-KqbQBRfPz2QzBYOB9MoX6iis0i7kCY2n5Zn5RQssOEMCd96dST7kj4")
-        .observationVitalSign("I3-nfcGFM5JEsuzapkk9xecju3QH0MrK6tqZKVY9rd7wSk")
-        .patient("1011537977V693883")
-        .patientSites(icnAtSites())
         .build();
   }
 
@@ -89,18 +112,8 @@ public final class SystemDefinitions {
     return SystemDefinition.builder()
         .internal(serviceDefinition("internal", url, 443, null, "/vista-fhir-query/"))
         .r4(serviceDefinition("r4", url, 443, magicAccessToken(), "/vista-fhir-query/r4"))
-        .publicIds(productionIds())
+        .publicIds(idsForProductionEnvironment())
         .clientKey(clientKey())
-        .build();
-  }
-
-  private static TestIds productionIds() {
-    return TestIds.builder()
-        .coverage("TBD")
-        .observationLaboratory("TBD")
-        .observationVitalSign("TBD")
-        .patient("1011537977V693883")
-        .patientSites(icnAtSites())
         .build();
   }
 
@@ -109,7 +122,7 @@ public final class SystemDefinitions {
     return SystemDefinition.builder()
         .internal(serviceDefinition("internal", url, 443, null, "/vista-fhir-query/"))
         .r4(serviceDefinition("r4", url, 443, magicAccessToken(), "/vista-fhir-query/r4"))
-        .publicIds(syntheticIds())
+        .publicIds(idsForSyntheticEnvironment())
         .clientKey(clientKey())
         .build();
   }
@@ -131,7 +144,7 @@ public final class SystemDefinitions {
     return SystemDefinition.builder()
         .internal(serviceDefinition("internal", url, 443, null, "/vista-fhir-query/"))
         .r4(serviceDefinition("r4", url, 443, magicAccessToken(), "/vista-fhir-query/r4"))
-        .publicIds(productionIds())
+        .publicIds(idsForProductionEnvironment())
         .clientKey(clientKey())
         .build();
   }
@@ -141,18 +154,8 @@ public final class SystemDefinitions {
     return SystemDefinition.builder()
         .internal(serviceDefinition("internal", url, 443, null, "/vista-fhir-query/"))
         .r4(serviceDefinition("r4", url, 443, magicAccessToken(), "/vista-fhir-query/r4"))
-        .publicIds(syntheticIds())
+        .publicIds(idsForSyntheticEnvironment())
         .clientKey(clientKey())
-        .build();
-  }
-
-  private static TestIds syntheticIds() {
-    return TestIds.builder()
-        .coverage("TBD")
-        .observationLaboratory("I3-IbkbEJ3pceqVRMjceHtk9zfkaWo5B2hFH018sws2KYPDg98RU2fFQC")
-        .observationVitalSign("I3-MzfzyZkSpl9HvWWWuN0JvxF6V2f0fwrUm4Cj381IfxH")
-        .patient("1011537977V693883")
-        .patientSites(icnAtSites())
         .build();
   }
 

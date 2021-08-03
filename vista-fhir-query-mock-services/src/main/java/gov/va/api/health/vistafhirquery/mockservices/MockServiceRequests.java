@@ -1,7 +1,6 @@
 package gov.va.api.health.vistafhirquery.mockservices;
 
 import static org.mockserver.model.HttpRequest.request;
-import static org.mockserver.model.JsonBody.json;
 
 import com.google.common.io.Resources;
 import gov.va.api.health.autoconfig.configuration.JacksonConfig;
@@ -26,6 +25,12 @@ import org.mockserver.model.JsonBody;
 public class MockServiceRequests {
   public static Header contentTypeApplicationJson() {
     return new Header("Content-Type", "application/json");
+  }
+
+  @SneakyThrows
+  public static String fileContent(String resource) {
+    return Resources.toString(
+        MockServiceRequests.class.getResource(resource), StandardCharsets.UTF_8);
   }
 
   @SneakyThrows
@@ -68,11 +73,5 @@ public class MockServiceRequests {
                             .build())));
     log.info("Respond with: {}", response);
     return response;
-  }
-
-  @SneakyThrows
-  private String fileContent(String resource) {
-    return Resources.toString(
-        MockServiceRequests.class.getResource(resource), StandardCharsets.UTF_8);
   }
 }

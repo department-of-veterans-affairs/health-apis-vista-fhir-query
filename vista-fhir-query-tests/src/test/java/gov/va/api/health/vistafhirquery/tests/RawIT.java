@@ -6,13 +6,22 @@ import static org.assertj.core.api.Assertions.assertThat;
 import gov.va.api.health.sentinel.Environment;
 import io.restassured.RestAssured;
 import io.restassured.http.Method;
+import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 @Slf4j
 public class RawIT {
+
+  private static List<String> goodRequest() {
+    TestIds testIds = VistaFhirQueryResourceVerifier.ids();
+    return List.of(
+        "/internal/raw/Coverage?icn=9999998&site=673",
+        "/internal/raw/Organization?id=" + testIds.organization());
+  }
 
   @ParameterizedTest
   @ValueSource(strings = {"/internal/raw/Organization", "/internal/raw/Coverage"})
@@ -31,11 +40,10 @@ public class RawIT {
   }
 
   @ParameterizedTest
-  @ValueSource(strings = {"/internal/raw/Organization", "/internal/raw/Coverage"})
-  void goodRequest(String path) {
+  @MethodSource
+  void goodRequest(String requestUrl) {
     assumeEnvironmentIn(Environment.LOCAL);
-    var requestUrl = path + "?icn=9999998&site=673";
-    log.info("Verify raw response for {} is [200]", requestUrl);
+    log.info("Verify raw response for {} is [200]");
     var response =
         RestAssured.given()
             .baseUri("http://localhost")

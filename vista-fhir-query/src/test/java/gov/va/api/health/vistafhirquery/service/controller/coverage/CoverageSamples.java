@@ -1,6 +1,5 @@
 package gov.va.api.health.vistafhirquery.service.controller.coverage;
 
-import gov.va.api.health.autoconfig.configuration.JacksonConfig;
 import gov.va.api.health.r4.api.bundle.AbstractBundle;
 import gov.va.api.health.r4.api.bundle.AbstractEntry;
 import gov.va.api.health.r4.api.bundle.BundleLink;
@@ -11,7 +10,9 @@ import gov.va.api.health.r4.api.elements.Extension;
 import gov.va.api.health.r4.api.elements.Reference;
 import gov.va.api.health.r4.api.resources.Coverage;
 import gov.va.api.health.vistafhirquery.service.controller.PatientTypeCoordinates;
-import gov.va.api.health.vistafhirquery.service.controller.ProviderTypeCoordinates;
+import gov.va.api.health.vistafhirquery.service.controller.RecordCoordinates;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.GroupInsurancePlan;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.InsuranceCompany;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
 import java.util.Arrays;
 import java.util.Collection;
@@ -20,16 +21,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class CoverageSamples {
-
-  @SneakyThrows
-  public static String json(Object o) {
-    return JacksonConfig.createMapper().writeValueAsString(o);
-  }
 
   @NoArgsConstructor(staticName = "create")
   public static class VistaLhsLighthouseRpcGateway {
@@ -101,9 +96,10 @@ public class CoverageSamples {
       return List.of(
           Coverage.CoverageClass.builder()
               .value(
-                  ProviderTypeCoordinates.builder()
-                      .siteId(station)
-                      .recordId("87")
+                  RecordCoordinates.builder()
+                      .site(station)
+                      .file(GroupInsurancePlan.FILE_NUMBER)
+                      .ien("87")
                       .build()
                       .toString())
               .type(
@@ -142,9 +138,10 @@ public class CoverageSamples {
                   Reference.builder()
                       .reference(
                           "Organization/"
-                              + ProviderTypeCoordinates.builder()
-                                  .siteId(station)
-                                  .recordId("36;4")
+                              + RecordCoordinates.builder()
+                                  .site(station)
+                                  .file(InsuranceCompany.FILE_NUMBER)
+                                  .ien("4")
                                   .build()
                                   .toString())
                       .build()))

@@ -10,6 +10,8 @@ import lombok.Value;
 @Value
 @Builder
 public class RecordCoordinates {
+  @NonNull String site;
+
   @NonNull String file;
 
   @NonNull String ien;
@@ -17,17 +19,17 @@ public class RecordCoordinates {
   /** Try to parse a string value to an identifier. */
   public static RecordCoordinates fromString(String identifier) {
     String[] parts = identifier.split(";", -1);
-    if (parts.length != 2) {
+    if (parts.length != 3) {
       throw new IllegalArgumentException(
           format(
-              "Expected %s (%s) to have 2 ';' separated parts, but found %d.",
+              "Expected %s (%s) to have three ';' separated parts, but found %d.",
               RecordCoordinates.class.getSimpleName(), identifier, parts.length));
     }
-    return RecordCoordinates.builder().file(parts[0]).ien(parts[1]).build();
+    return RecordCoordinates.builder().site(parts[0]).file(parts[1]).ien(parts[2]).build();
   }
 
   @Override
   public String toString() {
-    return join(";", file(), ien());
+    return join(";", site(), file(), ien());
   }
 }
