@@ -47,9 +47,11 @@ public class LhsLighthouseRpcGatewayMocks implements MockService {
     log.info("PROCESSING RPC REQUEST: {}", rpcRequest);
     Parameter ap = rpcRequest.rpc().parameters().get(0);
     // Looking for param^FILE^literal^2.312
+    boolean isSearch = ap.array().stream().anyMatch(p -> p.startsWith("api^search^coverage"));
     var response =
         ap.array().stream()
-            .filter(p -> p.startsWith("param^FILE^literal^") || p.startsWith("lhsdfn^"))
+            .filter(
+                p -> p.startsWith("param^FILE^literal^") || (p.startsWith("lhsdfn^") && isSearch))
             .map(p -> p.replace("param^FILE^literal^", ""))
             .map(p -> p.replace("lhsdfn^:", ""))
             // File 2 only works here because the request is for fields of subfile .312
