@@ -101,6 +101,7 @@ public class R4CoverageController implements R4CoverageApi {
   public Coverage.Bundle coverageSearch(
       HttpServletRequest request,
       @RequestParam(value = "patient") String patient,
+      @RequestParam(value = "page", required = false) Integer page,
       @RequestParam(value = "_count", required = false) Integer count) {
     // ToDo dfn macro on the iens field
     LhsLighthouseRpcGatewayCoverageSearch.Request rpcRequest =

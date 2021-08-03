@@ -10,6 +10,7 @@ import gov.va.api.lighthouse.charon.api.RpcPrincipal;
 import gov.va.api.lighthouse.charon.api.RpcRequest;
 import gov.va.api.lighthouse.charon.api.RpcResponse;
 import gov.va.api.lighthouse.charon.api.RpcVistaTargets;
+import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayCoverageSearch;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayGetsManifest;
 import gov.va.api.lighthouse.charon.models.lhslighthouserpcgateway.LhsLighthouseRpcGatewayResponse;
 import java.util.List;
@@ -45,21 +46,15 @@ public class RawController {
       @Redact @RequestParam(name = "accessCode", required = false) String accessCode,
       @Redact @RequestParam(name = "verifyCode", required = false) String verifyCode,
       @Redact @RequestParam(name = "apu", required = false) String apu) {
-    LhsLighthouseRpcGatewayGetsManifest.Request lhsGetsManifestRequest =
-        LhsLighthouseRpcGatewayGetsManifest.Request.builder()
-            .file("2")
-            .iens(icn)
-            .fields(List.of(".3121*"))
-            .flags(
-                List.of(
-                    LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags.OMIT_NULL_VALUES,
-                    LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags
-                        .RETURN_INTERNAL_VALUES,
-                    LhsLighthouseRpcGatewayGetsManifest.Request.GetsManifestFlags
-                        .RETURN_EXTERNAL_VALUES))
+
+    LhsLighthouseRpcGatewayCoverageSearch.Request rpcRequest =
+        LhsLighthouseRpcGatewayCoverageSearch.Request.builder()
+            .debugMode("1")
+            .id(LhsLighthouseRpcGatewayCoverageSearch.Request.PatientId.forIcn(icn))
             .build();
+
     if (isBlank(accessCode) || isBlank(verifyCode) || isBlank(apu)) {
-      return vistalinkApiClient.requestForVistaSite(site, lhsGetsManifestRequest);
+      return vistalinkApiClient.requestForVistaSite(site, rpcRequest);
     }
     return vistalinkApiClient.makeRequest(
         RpcRequest.builder()
@@ -70,7 +65,7 @@ public class RawController {
                     .applicationProxyUser(apu)
                     .build())
             .target(RpcVistaTargets.builder().include(List.of(site)).build())
-            .rpc(lhsGetsManifestRequest.asDetails())
+            .rpc(rpcRequest.asDetails())
             .build());
   }
 

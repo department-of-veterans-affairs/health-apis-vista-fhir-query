@@ -74,7 +74,7 @@ public class R4CoverageControllerTest {
 
   @Test
   void searchByPatientWithResults() {
-    var request = requestFromUri("?_count=10&patient=p1");
+    var request = requestFromUri("?page=1&_count=10&patient=p1");
     var results = CoverageSamples.VistaLhsLighthouseRpcGateway.create().getsManifestResults();
     when(vlClient.requestForPatient(
             eq("p1"), any(LhsLighthouseRpcGatewayCoverageSearch.Request.class)))
@@ -89,7 +89,7 @@ public class R4CoverageControllerTest {
                             .error(Optional.of("I'm a failed response who'll get ignored."))
                             .build()))
                 .build());
-    var actual = controller().coverageSearch(request, "p1", 10);
+    var actual = controller().coverageSearch(request, "p1", 1, 10);
     var expected =
         CoverageSamples.R4.asBundle(
             "http://fugazi.com/r4",
@@ -98,13 +98,13 @@ public class R4CoverageControllerTest {
             link(
                 BundleLink.LinkRelation.self,
                 "http://fugazi.com/r4/Coverage",
-                "_count=10&patient=p1"));
+                "page=1&_count=10&patient=p1"));
     assertThat(json(actual)).isEqualTo(json(expected));
   }
 
   @Test
   void searchByPatientWithoutResults() {
-    var request = requestFromUri("?_count=10&patient=p1");
+    var request = requestFromUri("?page=1&_count=10&patient=p1");
     var results = LhsLighthouseRpcGatewayResponse.Results.builder().build();
     when(vlClient.requestForPatient(
             eq("p1"), any(LhsLighthouseRpcGatewayCoverageSearch.Request.class)))
@@ -115,7 +115,7 @@ public class R4CoverageControllerTest {
                     List.of(
                         RpcInvocationResult.builder().vista("888").response(json(results)).build()))
                 .build());
-    var actual = controller().coverageSearch(request, "p1", 10);
+    var actual = controller().coverageSearch(request, "p1", 1, 10);
     var expected =
         CoverageSamples.R4.asBundle(
             "http://fugazi.com/r4",
@@ -124,7 +124,7 @@ public class R4CoverageControllerTest {
             link(
                 BundleLink.LinkRelation.self,
                 "http://fugazi.com/r4/Coverage",
-                "_count=10&patient=p1"));
+                "page=1&_count=10&patient=p1"));
     assertThat(json(actual)).isEqualTo(json(expected));
   }
 }

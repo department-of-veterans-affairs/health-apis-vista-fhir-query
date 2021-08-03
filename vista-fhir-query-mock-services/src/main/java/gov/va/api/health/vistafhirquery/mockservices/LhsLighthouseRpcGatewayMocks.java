@@ -49,13 +49,14 @@ public class LhsLighthouseRpcGatewayMocks implements MockService {
     // Looking for param^FILE^literal^2.312
     var response =
         ap.array().stream()
-            .filter(p -> p.startsWith("param^FILE^literal^"))
+            .filter(p -> p.startsWith("param^FILE^literal^") || p.startsWith("lhsdfn^"))
             .map(p -> p.replace("param^FILE^literal^", ""))
+            .map(p -> p.replace("lhsdfn^:", ""))
             // File 2 only works here because the request is for fields of subfile .312
             .map(
-                file ->
-                    switch (file) {
-                      case "2", "2.312" -> "/lhslighthouserpcgateway/"
+                matcher ->
+                    switch (matcher) {
+                      case "2.312", "1011537977V693883" -> "/lhslighthouserpcgateway/"
                           + "response-coverage-search-by-patient.json";
                       case "36" -> "/lhslighthouserpcgateway/response-organization-read.json";
                       default -> null;
