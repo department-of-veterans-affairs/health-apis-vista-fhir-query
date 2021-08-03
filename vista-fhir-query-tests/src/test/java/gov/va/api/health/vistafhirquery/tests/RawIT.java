@@ -1,18 +1,17 @@
 package gov.va.api.health.vistafhirquery.tests;
 
+import static gov.va.api.health.sentinel.EnvironmentAssumptions.assumeEnvironmentIn;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import gov.va.api.health.sentinel.Environment;
 import io.restassured.RestAssured;
 import io.restassured.http.Method;
+import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import java.util.List;
-import java.util.Map;
-
-import static gov.va.api.health.sentinel.EnvironmentAssumptions.assumeEnvironmentIn;
-import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 public class RawIT {
