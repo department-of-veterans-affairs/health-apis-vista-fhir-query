@@ -105,7 +105,6 @@ public class R4CoverageController implements R4CoverageApi {
       @RequestParam(value = "_count", required = false) Integer count) {
     LhsLighthouseRpcGatewayCoverageSearch.Request rpcRequest =
         LhsLighthouseRpcGatewayCoverageSearch.Request.builder()
-            .debugMode("1")
             .id(LhsLighthouseRpcGatewayCoverageSearch.Request.PatientId.forIcn(patient))
             .build();
     RpcResponse rpcResponse = vistalinkApiClient.requestForPatient(patient, rpcRequest);

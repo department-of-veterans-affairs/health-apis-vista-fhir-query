@@ -90,7 +90,7 @@ public interface R4CoverageApi {
       @Parameter(
               in = ParameterIn.QUERY,
               name = "page",
-              description = "The number of pages returned.")
+              description = "The page number to be returned.")
           Integer page,
       @Parameter(
               in = ParameterIn.QUERY,

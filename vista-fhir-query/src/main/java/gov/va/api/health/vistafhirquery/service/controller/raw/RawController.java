@@ -49,7 +49,6 @@ public class RawController {
 
     LhsLighthouseRpcGatewayCoverageSearch.Request rpcRequest =
         LhsLighthouseRpcGatewayCoverageSearch.Request.builder()
-            .debugMode("1")
             .id(LhsLighthouseRpcGatewayCoverageSearch.Request.PatientId.forIcn(icn))
             .build();
 

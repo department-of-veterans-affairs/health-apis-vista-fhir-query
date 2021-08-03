@@ -74,7 +74,7 @@ public class R4CoverageControllerTest {
 
   @Test
   void searchByPatientWithResults() {
-    var request = requestFromUri("?page=1&_count=10&patient=p1");
+    var request = requestFromUri("?_count=10&patient=p1");
     var results = CoverageSamples.VistaLhsLighthouseRpcGateway.create().getsManifestResults();
     when(vlClient.requestForPatient(
             eq("p1"), any(LhsLighthouseRpcGatewayCoverageSearch.Request.class)))
@@ -98,7 +98,7 @@ public class R4CoverageControllerTest {
             link(
                 BundleLink.LinkRelation.self,
                 "http://fugazi.com/r4/Coverage",
-                "page=1&_count=10&patient=p1"));
+                "_count=10&patient=p1"));
     assertThat(json(actual)).isEqualTo(json(expected));
   }
 
