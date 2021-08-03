@@ -89,6 +89,12 @@ public interface R4CoverageApi {
           String icn,
       @Parameter(
               in = ParameterIn.QUERY,
+              name = "page",
+              description = "The page number of the search result.")
+          @DefaultValue("1")
+          int page,
+      @Parameter(
+              in = ParameterIn.QUERY,
               name = "_count",
               description =
                   "The number of resources that should be returned in a single page. "

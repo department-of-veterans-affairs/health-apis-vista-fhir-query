@@ -89,7 +89,7 @@ public class R4CoverageControllerTest {
                             .error(Optional.of("I'm a failed response who'll get ignored."))
                             .build()))
                 .build());
-    var actual = controller().coverageSearch(request, "p1", 10);
+    var actual = controller().coverageSearch(request, "p1", 1, 10);
     var expected =
         CoverageSamples.R4.asBundle(
             "http://fugazi.com/r4",
@@ -115,7 +115,7 @@ public class R4CoverageControllerTest {
                     List.of(
                         RpcInvocationResult.builder().vista("888").response(json(results)).build()))
                 .build());
-    var actual = controller().coverageSearch(request, "p1", 10);
+    var actual = controller().coverageSearch(request, "p1", 1, 10);
     var expected =
         CoverageSamples.R4.asBundle(
             "http://fugazi.com/r4",
