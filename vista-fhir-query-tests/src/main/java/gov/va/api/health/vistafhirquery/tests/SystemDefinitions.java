@@ -52,8 +52,8 @@ public final class SystemDefinitions {
 
   private static TestIds idsForSyntheticEnvironment() {
     return TestIds.builder()
-        .coverage("TODO https://vajira.max.gov/browse/API-8891")
-        .organization("TODO https://vajira.max.gov/browse/API-8891")
+        .coverage("I3-onSd2F0QCJnTLBUa2wtl7ghktwQt7TS4TXKJMwHzDo9")
+        .organization("I3-27zyn3hOzdy6gvpo8Unwby")
         .observationLaboratory("I3-IbkbEJ3pceqVRMjceHtk9zfkaWo5B2hFH018sws2KYPDg98RU2fFQC")
         .observationVitalSign("I3-MzfzyZkSpl9HvWWWuN0JvxF6V2f0fwrUm4Cj381IfxH")
         .patient("1011537977V693883")

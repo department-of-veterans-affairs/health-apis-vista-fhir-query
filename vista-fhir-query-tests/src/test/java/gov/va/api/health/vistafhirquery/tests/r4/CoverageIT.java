@@ -1,6 +1,6 @@
 package gov.va.api.health.vistafhirquery.tests.r4;
 
-import static gov.va.api.health.sentinel.EnvironmentAssumptions.assumeEnvironmentIn;
+import static gov.va.api.health.sentinel.EnvironmentAssumptions.assumeEnvironmentNotIn;
 
 import gov.va.api.health.fhir.testsupport.ResourceVerifier;
 import gov.va.api.health.r4.api.resources.Coverage;
@@ -18,8 +18,7 @@ public class CoverageIT {
 
   @Test
   void read() {
-    // ToDo we need static patients doppelganger to have coverages outside the local env
-    assumeEnvironmentIn(Environment.LOCAL);
+    assumeEnvironmentNotIn(Environment.STAGING, Environment.PROD);
     var path = "Coverage/{coverage}";
     verifyAll(
         test(200, Coverage.class, path, testIds.coverage()),
@@ -28,8 +27,7 @@ public class CoverageIT {
 
   @Test
   void search() {
-    // ToDo we need static patients doppelganger to have coverages outside the local env
-    assumeEnvironmentIn(Environment.LOCAL);
+    assumeEnvironmentNotIn(Environment.STAGING, Environment.PROD);
     verifyAll(
         test(
             200,
