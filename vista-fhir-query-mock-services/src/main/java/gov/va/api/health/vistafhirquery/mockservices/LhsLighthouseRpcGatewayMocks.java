@@ -47,18 +47,16 @@ public class LhsLighthouseRpcGatewayMocks implements MockService {
     log.info("PROCESSING RPC REQUEST: {}", rpcRequest);
     Parameter ap = rpcRequest.rpc().parameters().get(0);
     // Looking for param^FILE^literal^2.312
-    boolean isSearch = ap.array().stream().anyMatch(p -> p.startsWith("api^search^coverage"));
     var response =
         ap.array().stream()
-            .filter(
-                p -> p.startsWith("param^FILE^literal^") || (p.startsWith("lhsdfn^") && isSearch))
+            .filter(p -> p.startsWith("param^FILE^literal^") || "api^search^coverage".equals(p))
             .map(p -> p.replace("param^FILE^literal^", ""))
-            .map(p -> p.replace("lhsdfn^:", ""))
+            .map(p -> p.replace("api^search^", ""))
             // File 2 only works here because the request is for fields of subfile .312
             .map(
                 matcher ->
                     switch (matcher) {
-                      case "2.312", "1011537977V693883" -> "/lhslighthouserpcgateway/"
+                      case "2.312", "coverage" -> "/lhslighthouserpcgateway/"
                           + "response-coverage-search-by-patient.json";
                       case "36" -> "/lhslighthouserpcgateway/response-organization-read.json";
                       default -> null;
