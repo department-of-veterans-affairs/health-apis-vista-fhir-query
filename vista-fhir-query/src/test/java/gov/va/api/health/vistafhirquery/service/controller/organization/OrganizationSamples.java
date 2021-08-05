@@ -36,7 +36,7 @@ public class OrganizationSamples {
     private Map<String, LhsLighthouseRpcGatewayResponse.Values> fields() {
       Map<String, LhsLighthouseRpcGatewayResponse.Values> fields = new HashMap<>();
       // Active
-      fields.put("#.05", LhsLighthouseRpcGatewayResponse.Values.of("FALSE", "0"));
+      fields.put("#.05", LhsLighthouseRpcGatewayResponse.Values.of(null, null));
       // Address
       fields.put(
           "#.01",
