@@ -533,7 +533,7 @@ public class R4OrganizationTransformer {
                 .toString())
         .extension(extensions(entry))
         .identifier(emptyToNull(identifiers(entry)))
-        .active(entry.internal(InsuranceCompany.INACTIVE, YES_NO).map(value -> !value).orElse(null))
+        .active(entry.internal(InsuranceCompany.INACTIVE, YES_NO).map(value -> !value).orElse(true))
         .name(entry.internal(InsuranceCompany.NAME).orElse(null))
         .type(insuranceCompanyType())
         .address(collectAddress(entry))
