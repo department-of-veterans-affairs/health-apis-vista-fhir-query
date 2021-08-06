@@ -49,7 +49,7 @@ public class InsecureRestTemplateProvider {
     log.info("Creating RestTemplate using: {}", getClass().getSimpleName());
     if (connectionTimeout != null) {
       log.info("Setting connection timeout to {} seconds.", connectionTimeout);
-      restTemplateBuilder = restTemplateBuilder.setReadTimeout(connectionTimeout);
+      restTemplateBuilder = restTemplateBuilder.setConnectTimeout(connectionTimeout);
     }
     if (readTimeout != null) {
       log.info("Setting read timeout to {} seconds.", readTimeout);
