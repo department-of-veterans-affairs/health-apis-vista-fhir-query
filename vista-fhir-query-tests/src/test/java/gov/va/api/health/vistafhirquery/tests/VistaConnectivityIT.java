@@ -56,8 +56,7 @@ public class VistaConnectivityIT {
         .map(Arguments::of);
   }
 
-  //@ParameterizedTest
-  //@MethodSource
+  // ToDo https://vajira.max.gov/browse/API-9276
   void connected(IcnAtSites icnAtSites) {
     assumeEnvironmentNotIn(Environment.STAGING, Environment.PROD);
     var sd = SystemDefinitions.systemDefinition().r4();
