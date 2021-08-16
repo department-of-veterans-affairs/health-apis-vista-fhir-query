@@ -56,8 +56,8 @@ public class VistaConnectivityIT {
         .map(Arguments::of);
   }
 
-  @ParameterizedTest
-  @MethodSource
+  //@ParameterizedTest
+  //@MethodSource
   void connected(IcnAtSites icnAtSites) {
     assumeEnvironmentNotIn(Environment.STAGING, Environment.PROD);
     var sd = SystemDefinitions.systemDefinition().r4();
