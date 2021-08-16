@@ -29,7 +29,7 @@ public class R4CoverageWitnessProtectionAgent implements WitnessProtectionAgent<
                     c ->
                         ProtectedReference.builder()
                             .type("InsurancePlan")
-                            .id(c.value())
+                            .id(c.value().substring("InsurancePlan/".length()))
                             .onUpdate(c::value)
                             .build()));
     return Stream.concat(

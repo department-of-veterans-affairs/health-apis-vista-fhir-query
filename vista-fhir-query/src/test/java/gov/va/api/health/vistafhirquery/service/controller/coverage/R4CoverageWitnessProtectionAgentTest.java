@@ -31,8 +31,8 @@ public class R4CoverageWitnessProtectionAgentTest {
                     Reference.builder().reference("Organization/o2").build()))
             .coverageClass(
                 List.of(
-                    Coverage.CoverageClass.builder().value("gp1").build(),
-                    Coverage.CoverageClass.builder().value("gp2").build()))
+                    Coverage.CoverageClass.builder().value("InsurancePlan/gp1").build(),
+                    Coverage.CoverageClass.builder().value("InsurancePlan/gp2").build()))
             .build();
     var wpa = new R4CoverageWitnessProtectionAgent(new ProtectedReferenceFactory(linkProperties));
     // By transforming to resource identity, we can test the advice gets all the references correct

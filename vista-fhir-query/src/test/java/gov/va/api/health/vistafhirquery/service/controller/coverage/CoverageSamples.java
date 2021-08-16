@@ -96,12 +96,13 @@ public class CoverageSamples {
       return List.of(
           Coverage.CoverageClass.builder()
               .value(
-                  RecordCoordinates.builder()
-                      .site(station)
-                      .file(GroupInsurancePlan.FILE_NUMBER)
-                      .ien("87")
-                      .build()
-                      .toString())
+                  "InsurancePlan/"
+                      + RecordCoordinates.builder()
+                          .site(station)
+                          .file(GroupInsurancePlan.FILE_NUMBER)
+                          .ien("87")
+                          .build()
+                          .toString())
               .type(
                   CodeableConcept.builder()
                       .coding(
