@@ -18,9 +18,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
 @Slf4j
 public class VistaConnectivityIT {
@@ -56,8 +54,7 @@ public class VistaConnectivityIT {
         .map(Arguments::of);
   }
 
-  @ParameterizedTest
-  @MethodSource
+  // ToDo https://vajira.max.gov/browse/API-9276
   void connected(IcnAtSites icnAtSites) {
     assumeEnvironmentNotIn(Environment.STAGING, Environment.PROD);
     var sd = SystemDefinitions.systemDefinition().r4();
