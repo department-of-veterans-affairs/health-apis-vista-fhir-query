@@ -62,7 +62,7 @@ public class R4CoverageTransformer {
         .map(
             coords ->
                 Coverage.CoverageClass.builder()
-                    .value("InsurancePlan/" + coords)
+                    .value("InsurancePlan/" + coords.toString())
                     .type(coverageClass())
                     .build())
         .map(List::of)
