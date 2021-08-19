@@ -28,6 +28,9 @@ public class R4CoverageWitnessProtectionAgent implements WitnessProtectionAgent<
                 .map(
                     c -> {
                       int indexOfId = c.value().lastIndexOf('/') + 1;
+                      if (c.value().length() <= indexOfId) {
+                        throw new IllegalArgumentException("Id is malformed");
+                      }
                       return ProtectedReference.builder()
                           .type("InsurancePlan")
                           .id(c.value().substring(indexOfId))
