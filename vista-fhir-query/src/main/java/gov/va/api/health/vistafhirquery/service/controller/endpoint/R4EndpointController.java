@@ -6,6 +6,7 @@ import gov.va.api.health.r4.api.bundle.AbstractBundle;
 import gov.va.api.health.r4.api.bundle.AbstractEntry;
 import gov.va.api.health.r4.api.bundle.BundleLink;
 import gov.va.api.health.r4.api.resources.Endpoint;
+import gov.va.api.health.vistafhirquery.service.api.R4EndpointsApi;
 import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
 import gov.va.api.lighthouse.charon.api.RpcPrincipalLookup;
 import java.util.List;
@@ -15,6 +16,7 @@ import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -22,14 +24,17 @@ import org.springframework.web.bind.annotation.RestController;
     value = {"/r4/Endpoint"},
     produces = {"application/json", "application/fhir+json"})
 @AllArgsConstructor(onConstructor_ = {@Autowired, @NonNull})
-public class R4EndpointController {
+public class R4EndpointController implements R4EndpointsApi {
   private final LinkProperties linkProperties;
 
   private RpcPrincipalLookup rpcPrincipalLookup;
 
   /** Return a bundle of all endpoints. */
+  @Override
   @GetMapping
-  public Endpoint.Bundle getAllEndpoints() {
+  public Endpoint.Bundle endpointSearch(
+      @RequestParam(value = "status", required = false) String status,
+      @RequestParam(value = "_count", required = false) Integer count) {
     Set<String> stations = stations("LHS LIGHTHOUSE RPC GATEWAY");
     List<Endpoint.Entry> endpoints =
         stations.stream()
