@@ -1,16 +1,15 @@
 package gov.va.api.health.vistafhirquery.service.controller.endpoint;
 
+import static java.util.stream.Collectors.toList;
+
 import gov.va.api.health.r4.api.bundle.AbstractBundle;
 import gov.va.api.health.r4.api.bundle.AbstractEntry;
 import gov.va.api.health.r4.api.bundle.BundleLink;
-import gov.va.api.health.r4.api.datatypes.CodeableConcept;
-import gov.va.api.health.r4.api.datatypes.Coding;
 import gov.va.api.health.r4.api.resources.Endpoint;
 import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
 import gov.va.api.lighthouse.charon.api.RpcPrincipalLookup;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,35 +27,6 @@ public class R4EndpointController {
 
   private RpcPrincipalLookup rpcPrincipalLookup;
 
-  private Endpoint buildEndpoint(String site) {
-    return Endpoint.builder()
-        .id(site)
-        .name(site)
-        .status(Endpoint.EndpointStatus.active)
-        .connectionType(
-            Coding.builder()
-                .code("hl7-fhir-rest")
-                .display("hl7-fhir-rest")
-                .system("http://terminology.hl7.org/CodeSystem/endpoint-connection-type")
-                .build())
-        .payloadType(
-            List.of(
-                CodeableConcept.builder()
-                    .coding(
-                        List.of(
-                            Coding.builder()
-                                .code("any")
-                                .display("Any")
-                                .system(
-                                    "http://terminology.hl7.org/CodeSystem/endpoint-payload-type")
-                                .build()))
-                    .text("Any")
-                    .build()))
-        .payloadMimeType(List.of("application/json", "application/fhir+json"))
-        .address(linkProperties.getPublicUrl() + "/" + site + "/r4")
-        .build();
-  }
-
   /** Return a bundle of all endpoints. */
   @GetMapping
   public Endpoint.Bundle getAllEndpoints() {
@@ -68,13 +38,18 @@ public class R4EndpointController {
                 site ->
                     Endpoint.Entry.builder()
                         .fullUrl(linkProperties.getPublicUrl() + "/" + site + "/r4")
-                        .resource(buildEndpoint(site))
+                        .resource(
+                            R4EndpointTransformer.builder()
+                                .site(site)
+                                .linkProperties(linkProperties)
+                                .build()
+                                .toEndpoint())
                         .search(
                             AbstractEntry.Search.builder()
                                 .mode(AbstractEntry.SearchMode.match)
                                 .build())
                         .build())
-            .collect(Collectors.toList());
+            .collect(toList());
     return toBundle(endpoints);
   }
 
