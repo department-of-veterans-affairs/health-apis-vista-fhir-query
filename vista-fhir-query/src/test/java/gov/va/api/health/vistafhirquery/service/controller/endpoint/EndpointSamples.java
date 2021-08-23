@@ -4,6 +4,7 @@ import gov.va.api.health.r4.api.bundle.AbstractBundle;
 import gov.va.api.health.r4.api.bundle.AbstractEntry;
 import gov.va.api.health.r4.api.bundle.BundleLink;
 import gov.va.api.health.r4.api.resources.Endpoint;
+import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
 import gov.va.api.lighthouse.charon.api.RpcPrincipalLookup;
 import gov.va.api.lighthouse.charon.api.RpcPrincipals;
 import java.util.Arrays;
@@ -15,6 +16,16 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class EndpointSamples {
+
+  public static LinkProperties linkProperties() {
+    return LinkProperties.builder()
+        .publicUrl("http://fake.com")
+        .publicR4BasePath("r4")
+        .defaultPageSize(10)
+        .maxPageSize(100)
+        .build();
+  }
+
   RpcPrincipalLookup rpcPrincipalLookup() {
     return RpcPrincipalLookup.builder()
         .rpcPrincipals(

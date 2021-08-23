@@ -5,7 +5,6 @@ import static gov.va.api.health.vistafhirquery.service.controller.endpoint.Endpo
 import static org.assertj.core.api.Assertions.assertThat;
 
 import gov.va.api.health.r4.api.bundle.BundleLink;
-import gov.va.api.health.vistafhirquery.service.controller.metadata.MetadataSamples;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +12,7 @@ public class R4EndpointControllerTest {
 
   private R4EndpointController controller() {
     return new R4EndpointController(
-        MetadataSamples.linkProperties(), EndpointSamples.rpcPrincipalLookup());
+        EndpointSamples.linkProperties(), EndpointSamples.rpcPrincipalLookup());
   }
 
   @Test
