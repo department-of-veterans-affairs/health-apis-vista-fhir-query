@@ -39,6 +39,7 @@ public class R4EndpointController {
     Set<String> stations = stations("LHS LIGHTHOUSE RPC GATEWAY");
     List<Endpoint.Entry> endpoints =
         stations.stream()
+            .sorted()
             .map(
                 site ->
                     Endpoint.Entry.builder()
