@@ -3,6 +3,8 @@ package gov.va.api.health.vistafhirquery.service.controller.endpoint;
 import gov.va.api.health.r4.api.bundle.AbstractBundle;
 import gov.va.api.health.r4.api.bundle.AbstractEntry;
 import gov.va.api.health.r4.api.bundle.BundleLink;
+import gov.va.api.health.r4.api.datatypes.CodeableConcept;
+import gov.va.api.health.r4.api.datatypes.Coding;
 import gov.va.api.health.r4.api.resources.Endpoint;
 import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
 import gov.va.api.lighthouse.charon.api.RpcPrincipalLookup;
@@ -36,9 +38,9 @@ public class EndpointSamples {
                             .codes(
                                 List.of(
                                     RpcPrincipals.Codes.builder()
+                                        .sites(List.of("101"))
                                         .verifyCode("1")
                                         .accessCode("2")
-                                        .sites(List.of("101"))
                                         .build()))
                             .rpcNames(List.of("LHS LIGHTHOUSE RPC GATEWAY"))
                             .build(),
@@ -99,6 +101,28 @@ public class EndpointSamples {
       return Endpoint.builder()
           .resourceType("Endpoint")
           .id(site)
+          .name(site)
+          .status(Endpoint.EndpointStatus.active)
+          .connectionType(
+              Coding.builder()
+                  .code("hl7-fhir-rest")
+                  .display("hl7-fhir-rest")
+                  .system("http://terminology.hl7.org/CodeSystem/endpoint-connection-type")
+                  .build())
+          .payloadType(
+              List.of(
+                  CodeableConcept.builder()
+                      .coding(
+                          List.of(
+                              Coding.builder()
+                                  .code("any")
+                                  .display("Any")
+                                  .system(
+                                      "http://terminology.hl7.org/CodeSystem/endpoint-payload-type")
+                                  .build()))
+                      .text("Any")
+                      .build()))
+          .payloadMimeType(List.of("application/json", "application/fhir+json"))
           .address("http://fake.com/" + site + "/r4")
           .build();
     }
