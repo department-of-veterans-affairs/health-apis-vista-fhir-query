@@ -10,6 +10,7 @@ import gov.va.api.health.vistafhirquery.service.api.R4EndpointsApi;
 import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
 import gov.va.api.lighthouse.charon.api.RpcPrincipalLookup;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -25,6 +26,21 @@ import org.springframework.web.bind.annotation.RestController;
     produces = {"application/json", "application/fhir+json"})
 @AllArgsConstructor(onConstructor_ = {@Autowired, @NonNull})
 public class R4EndpointController implements R4EndpointsApi {
+  private static final Map<String, Endpoint.EndpointStatus> statusMap =
+      Map.of(
+          "active",
+          Endpoint.EndpointStatus.active,
+          "suspended",
+          Endpoint.EndpointStatus.suspended,
+          "error",
+          Endpoint.EndpointStatus.error,
+          "off",
+          Endpoint.EndpointStatus.off,
+          "entered_in_error",
+          Endpoint.EndpointStatus.entered_in_error,
+          "test",
+          Endpoint.EndpointStatus.test);
+
   private final LinkProperties linkProperties;
 
   private RpcPrincipalLookup rpcPrincipalLookup;
@@ -45,6 +61,7 @@ public class R4EndpointController implements R4EndpointsApi {
                         .resource(
                             R4EndpointTransformer.builder()
                                 .site(site)
+                                .status(Endpoint.EndpointStatus.active)
                                 .linkProperties(linkProperties)
                                 .build()
                                 .toFhir())
@@ -53,6 +70,7 @@ public class R4EndpointController implements R4EndpointsApi {
                                 .mode(AbstractEntry.SearchMode.match)
                                 .build())
                         .build())
+            .filter(e -> status == null || statusMap.get(status).equals(e.resource().status()))
             .collect(toList());
     return toBundle(endpoints);
   }

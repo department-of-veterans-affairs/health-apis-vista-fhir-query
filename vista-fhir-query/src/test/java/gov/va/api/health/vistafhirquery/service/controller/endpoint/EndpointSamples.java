@@ -97,12 +97,12 @@ public class EndpointSamples {
       return BundleLink.builder().relation(rel).url(base).build();
     }
 
-    Endpoint endpoint(String site) {
+    Endpoint endpoint(String site, Endpoint.EndpointStatus status) {
       return Endpoint.builder()
           .resourceType("Endpoint")
           .id(site)
           .name(site)
-          .status(Endpoint.EndpointStatus.active)
+          .status(status)
           .connectionType(
               Coding.builder()
                   .code("hl7-fhir-rest")
