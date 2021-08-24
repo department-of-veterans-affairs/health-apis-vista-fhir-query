@@ -27,19 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor(onConstructor_ = {@Autowired, @NonNull})
 public class R4EndpointController implements R4EndpointsApi {
   private static final Map<String, Endpoint.EndpointStatus> statusMap =
-      Map.of(
-          "active",
-          Endpoint.EndpointStatus.active,
-          "suspended",
-          Endpoint.EndpointStatus.suspended,
-          "error",
-          Endpoint.EndpointStatus.error,
-          "off",
-          Endpoint.EndpointStatus.off,
-          "entered_in_error",
-          Endpoint.EndpointStatus.entered_in_error,
-          "test",
-          Endpoint.EndpointStatus.test);
+      Map.of("active", Endpoint.EndpointStatus.active);
 
   private final LinkProperties linkProperties;
 
@@ -61,7 +49,6 @@ public class R4EndpointController implements R4EndpointsApi {
                         .resource(
                             R4EndpointTransformer.builder()
                                 .site(site)
-                                .status(Endpoint.EndpointStatus.active)
                                 .linkProperties(linkProperties)
                                 .build()
                                 .toFhir())

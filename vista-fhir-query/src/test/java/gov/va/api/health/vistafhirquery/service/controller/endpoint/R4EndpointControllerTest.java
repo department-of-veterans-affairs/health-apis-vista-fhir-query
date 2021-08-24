@@ -5,7 +5,6 @@ import static gov.va.api.health.vistafhirquery.service.controller.endpoint.Endpo
 import static org.assertj.core.api.Assertions.assertThat;
 
 import gov.va.api.health.r4.api.bundle.BundleLink;
-import gov.va.api.health.r4.api.resources.Endpoint;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -23,9 +22,25 @@ public class R4EndpointControllerTest {
         EndpointSamples.R4.asBundle(
             "http://fake.com",
             List.of(
-                EndpointSamples.R4.create().endpoint("101", Endpoint.EndpointStatus.active),
-                EndpointSamples.R4.create().endpoint("103", Endpoint.EndpointStatus.active)),
-            2,
+                EndpointSamples.R4.create().endpoint("101"),
+                EndpointSamples.R4.create().endpoint("103"),
+                EndpointSamples.R4.create().endpoint("104")),
+            3,
+            link(BundleLink.LinkRelation.self, "http://fake.com/r4/Endpoint"));
+    assertThat(json(actual)).isEqualTo(json(expected));
+  }
+
+  @Test
+  void endpointSearchWithStatus() {
+    var actual = controller().endpointSearch("active");
+    var expected =
+        EndpointSamples.R4.asBundle(
+            "http://fake.com",
+            List.of(
+                EndpointSamples.R4.create().endpoint("101"),
+                EndpointSamples.R4.create().endpoint("103"),
+                EndpointSamples.R4.create().endpoint("104")),
+            3,
             link(BundleLink.LinkRelation.self, "http://fake.com/r4/Endpoint"));
     assertThat(json(actual)).isEqualTo(json(expected));
   }

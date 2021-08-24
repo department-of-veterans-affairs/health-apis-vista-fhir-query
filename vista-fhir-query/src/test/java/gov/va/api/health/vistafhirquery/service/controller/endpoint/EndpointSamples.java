@@ -41,6 +41,11 @@ public class EndpointSamples {
                                         .sites(List.of("101"))
                                         .verifyCode("1")
                                         .accessCode("2")
+                                        .build(),
+                                    RpcPrincipals.Codes.builder()
+                                        .sites(List.of("104"))
+                                        .verifyCode("1")
+                                        .accessCode("2")
                                         .build()))
                             .rpcNames(List.of("LHS LIGHTHOUSE RPC GATEWAY"))
                             .build(),
@@ -97,12 +102,12 @@ public class EndpointSamples {
       return BundleLink.builder().relation(rel).url(base).build();
     }
 
-    Endpoint endpoint(String site, Endpoint.EndpointStatus status) {
+    Endpoint endpoint(String site) {
       return Endpoint.builder()
           .resourceType("Endpoint")
           .id(site)
           .name(site)
-          .status(status)
+          .status(Endpoint.EndpointStatus.active)
           .connectionType(
               Coding.builder()
                   .code("hl7-fhir-rest")

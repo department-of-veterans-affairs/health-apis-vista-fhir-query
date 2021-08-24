@@ -13,15 +13,13 @@ public class R4EndpointTransformer {
 
   @NonNull String site;
 
-  @NonNull Endpoint.EndpointStatus status;
-
   @NonNull LinkProperties linkProperties;
 
   Endpoint toFhir() {
     return Endpoint.builder()
         .id(site)
         .name(site)
-        .status(status)
+        .status(Endpoint.EndpointStatus.active)
         .connectionType(
             Coding.builder()
                 .code("hl7-fhir-rest")
