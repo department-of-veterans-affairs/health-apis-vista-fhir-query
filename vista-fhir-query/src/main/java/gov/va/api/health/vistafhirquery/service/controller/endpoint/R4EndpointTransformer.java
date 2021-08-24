@@ -15,7 +15,7 @@ public class R4EndpointTransformer {
 
   @NonNull LinkProperties linkProperties;
 
-  Endpoint toEndpoint() {
+  Endpoint toFhir() {
     return Endpoint.builder()
         .id(site)
         .name(site)

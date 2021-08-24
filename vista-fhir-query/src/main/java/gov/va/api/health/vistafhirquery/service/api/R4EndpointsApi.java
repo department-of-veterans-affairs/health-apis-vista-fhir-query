@@ -9,14 +9,13 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
 public interface R4EndpointsApi {
   @Operation(
       summary = "Endpoint Search",
-      description = "http://hl7.org/fhir/us/core/StructureDefinition/endpoint",
+      description = "http://hl7.org/fhir/us/odh/StructureDefinition/obf-Endpoint",
       tags = {"Endpoint"})
   @GET
   @Path("Endpoint")
@@ -76,14 +75,5 @@ public interface R4EndpointsApi {
               name = "status",
               description = "The status of the endpoint.",
               example = "active")
-          String status,
-      @Parameter(
-              in = ParameterIn.QUERY,
-              name = "_count",
-              description =
-                  "The number of resources that should be returned in a single page. "
-                      + "The maximum count size is 100.",
-              example = "30")
-          @DefaultValue("30")
-          Integer count);
+          String status);
 }

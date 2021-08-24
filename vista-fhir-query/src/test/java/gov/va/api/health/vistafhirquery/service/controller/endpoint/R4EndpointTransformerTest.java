@@ -7,13 +7,13 @@ import org.junit.jupiter.api.Test;
 public class R4EndpointTransformerTest {
 
   @Test
-  void toEndpoint() {
+  void toFhir() {
     assertThat(
             R4EndpointTransformer.builder()
                 .linkProperties(EndpointSamples.linkProperties())
                 .site("101")
                 .build()
-                .toEndpoint())
+                .toFhir())
         .isEqualTo(EndpointSamples.R4.create().endpoint("101"));
   }
 }

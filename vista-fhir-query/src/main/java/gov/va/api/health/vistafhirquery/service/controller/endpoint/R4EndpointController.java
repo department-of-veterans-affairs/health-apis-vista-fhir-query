@@ -33,8 +33,7 @@ public class R4EndpointController implements R4EndpointsApi {
   @Override
   @GetMapping
   public Endpoint.Bundle endpointSearch(
-      @RequestParam(value = "status", required = false) String status,
-      @RequestParam(value = "_count", required = false) Integer count) {
+      @RequestParam(value = "status", required = false) String status) {
     Set<String> stations = stations("LHS LIGHTHOUSE RPC GATEWAY");
     List<Endpoint.Entry> endpoints =
         stations.stream()
@@ -48,7 +47,7 @@ public class R4EndpointController implements R4EndpointsApi {
                                 .site(site)
                                 .linkProperties(linkProperties)
                                 .build()
-                                .toEndpoint())
+                                .toFhir())
                         .search(
                             AbstractEntry.Search.builder()
                                 .mode(AbstractEntry.SearchMode.match)

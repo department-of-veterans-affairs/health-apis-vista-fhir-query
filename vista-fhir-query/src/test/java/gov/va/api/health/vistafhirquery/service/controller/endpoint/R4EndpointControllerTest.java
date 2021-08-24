@@ -17,7 +17,7 @@ public class R4EndpointControllerTest {
 
   @Test
   void endpointSearch() {
-    var actual = controller().endpointSearch(null, null);
+    var actual = controller().endpointSearch(null);
     var expected =
         EndpointSamples.R4.asBundle(
             "http://fake.com",
