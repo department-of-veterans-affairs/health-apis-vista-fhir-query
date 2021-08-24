@@ -9,7 +9,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 
 public class R4EndpointControllerTest {
-
   private R4EndpointController controller() {
     return new R4EndpointController(
         EndpointSamples.linkProperties(), EndpointSamples.rpcPrincipalLookup());
@@ -31,7 +30,19 @@ public class R4EndpointControllerTest {
   }
 
   @Test
-  void endpointSearchWithStatus() {
+  void endpointSearchWithBadStatus() {
+    var actual = controller().endpointSearch("NONE");
+    var expected =
+        EndpointSamples.R4.asBundle(
+            "http://fake.com",
+            List.of(),
+            0,
+            link(BundleLink.LinkRelation.self, "http://fake.com/r4/Endpoint"));
+    assertThat(json(actual)).isEqualTo(json(expected));
+  }
+
+  @Test
+  void endpointSearchWithValidStatus() {
     var actual = controller().endpointSearch("active");
     var expected =
         EndpointSamples.R4.asBundle(

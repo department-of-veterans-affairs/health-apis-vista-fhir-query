@@ -57,7 +57,7 @@ public class R4EndpointController implements R4EndpointsApi {
                                 .mode(AbstractEntry.SearchMode.match)
                                 .build())
                         .build())
-            .filter(e -> status == null || statusMap.get(status).equals(e.resource().status()))
+            .filter(e -> status == null || e.resource().status().equals(statusMap.get(status)))
             .collect(toList());
     return toBundle(endpoints);
   }
