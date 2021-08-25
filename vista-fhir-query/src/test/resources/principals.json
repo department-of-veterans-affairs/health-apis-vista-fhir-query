@@ -66,6 +66,21 @@
                     "verifyCode" : "IS_AMAZING"
                 }
             ]
+        },
+        {
+            "rpcNames" : [
+                "LHS LIGHTHOUSE RPC GATEWAY"
+            ],
+            "applicationProxyUser" : "LHS USER",
+            "codes" : [
+                {
+                    "sites" : [
+                        "111"
+                    ],
+                    "accessCode" : "LHS_ACCESS",
+                    "verifyCode" : "LHS_VERIFY"
+                }
+            ]
         }
     ]
 }
