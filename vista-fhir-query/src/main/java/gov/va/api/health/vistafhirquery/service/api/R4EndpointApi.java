@@ -15,7 +15,7 @@ import javax.ws.rs.Path;
 public interface R4EndpointApi {
   @Operation(
       summary = "Endpoint Search",
-      description = "http://www.fhir.org/guides/argonaut/pd/StructureDefinition-argo-endpoint.html",
+      description = "https://hl7.org/fhir/R4/endpoint.html",
       tags = {"Endpoint"})
   @GET
   @Path("Endpoint")
