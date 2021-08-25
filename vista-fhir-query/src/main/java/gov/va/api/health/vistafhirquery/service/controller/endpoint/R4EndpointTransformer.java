@@ -3,6 +3,7 @@ package gov.va.api.health.vistafhirquery.service.controller.endpoint;
 import gov.va.api.health.r4.api.datatypes.CodeableConcept;
 import gov.va.api.health.r4.api.datatypes.Coding;
 import gov.va.api.health.r4.api.resources.Endpoint;
+import gov.va.api.health.r4.api.resources.Endpoint.EndpointStatus;
 import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
 import java.util.List;
 import lombok.Builder;
@@ -19,7 +20,7 @@ public class R4EndpointTransformer {
     return Endpoint.builder()
         .id(site)
         .name(site)
-        .status(Endpoint.EndpointStatus.active)
+        .status(EndpointStatus.active)
         .connectionType(
             Coding.builder()
                 .code("hl7-fhir-rest")

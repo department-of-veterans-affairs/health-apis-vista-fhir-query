@@ -7,6 +7,7 @@ import gov.va.api.health.r4.api.bundle.AbstractBundle;
 import gov.va.api.health.r4.api.bundle.AbstractEntry;
 import gov.va.api.health.r4.api.bundle.BundleLink;
 import gov.va.api.health.r4.api.resources.Endpoint;
+import gov.va.api.health.r4.api.resources.Endpoint.EndpointStatus;
 import gov.va.api.health.vistafhirquery.service.api.R4EndpointApi;
 import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
 import gov.va.api.lighthouse.charon.api.RpcPrincipalLookup;
@@ -63,7 +64,7 @@ public class R4EndpointController implements R4EndpointApi {
   }
 
   private boolean isNotSupportedStatus(String status) {
-    return status != null && !Endpoint.EndpointStatus.active.toString().equals(status);
+    return status != null && !EndpointStatus.active.toString().equals(status);
   }
 
   private Set<String> stations(String rpcName) {
