@@ -11,7 +11,6 @@ import gov.va.api.health.vistafhirquery.service.api.R4EndpointApi;
 import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
 import gov.va.api.lighthouse.charon.api.RpcPrincipalLookup;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
@@ -27,8 +26,6 @@ import org.springframework.web.bind.annotation.RestController;
     produces = {"application/json", "application/fhir+json"})
 @AllArgsConstructor(onConstructor_ = {@Autowired, @NonNull})
 public class R4EndpointController implements R4EndpointApi {
-  private static final Map<String, Endpoint.EndpointStatus> statusLookup =
-      Map.of("active", Endpoint.EndpointStatus.active);
 
   private final LinkProperties linkProperties;
 
@@ -66,7 +63,7 @@ public class R4EndpointController implements R4EndpointApi {
   }
 
   private boolean isNotSupportedStatus(String status) {
-    return status != null && !statusLookup.containsKey(status);
+    return status != null && !Endpoint.EndpointStatus.active.toString().equals(status);
   }
 
   private Set<String> stations(String rpcName) {
