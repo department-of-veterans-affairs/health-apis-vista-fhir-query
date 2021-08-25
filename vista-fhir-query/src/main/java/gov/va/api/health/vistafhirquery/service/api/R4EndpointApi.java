@@ -12,10 +12,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-public interface R4EndpointsApi {
+public interface R4EndpointApi {
   @Operation(
       summary = "Endpoint Search",
-      description = "http://hl7.org/fhir/us/odh/StructureDefinition/obf-Endpoint",
+      description = "http://www.fhir.org/guides/argonaut/pd/StructureDefinition-argo-endpoint.html",
       tags = {"Endpoint"})
   @GET
   @Path("Endpoint")
