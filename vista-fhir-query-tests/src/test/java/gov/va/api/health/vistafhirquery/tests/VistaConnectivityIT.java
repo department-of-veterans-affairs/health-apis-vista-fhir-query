@@ -33,6 +33,13 @@ public class VistaConnectivityIT {
     var client = tryToBuildSsoiClient();
     assumeThat(client).as(client.getClass().getSimpleName() + " cannot be created.").isPresent();
     var tokenResponse = client.get().requestToken();
+    assertThat(tokenResponse.isError())
+        .as(
+            "Failed to get access token: "
+                + tokenResponse.error()
+                + " -- "
+                + tokenResponse.errorDescription())
+        .isFalse();
     token = tokenResponse.accessToken();
     log.info("Acquired authorization token.");
   }
