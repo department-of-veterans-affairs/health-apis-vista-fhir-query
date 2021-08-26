@@ -46,7 +46,6 @@
       <groupId>gov.va.api.lighthouse</groupId>
       <artifactId>test-clients</artifactId>
       <version>${oauth-java.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>gov.va.api.health</groupId>
