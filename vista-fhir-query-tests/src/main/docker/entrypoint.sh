@@ -45,7 +45,7 @@ addToSystemProperties() {
 }
 
 populateSsoiSystemProperties() {
-  addToSystemProperties "webdriver.chrome.driver" "${WEBDRIVER_LOCATION:-/usr/local/bin/chromedriver}"
+  addToSystemProperties "webdriver.chrome.driver" "${WEBDRIVER_LOCATION:-/usr/bin/chromedriver}"
   if [ -n "${SSOI_CLIENT_ID:-}" ]; then addToSystemProperties "oauth.ssoi.client-id" "${SSOI_CLIENT_ID}"; fi
   if [ -n "${SSOI_CLIENT_SECRET:-}" ]; then addToSystemProperties "oauth.ssoi.client-secret" "${SSOI_CLIENT_SECRET}"; fi
   if [ -n "${SSOI_SCOPES:-}" ]; then addToSystemProperties "oauth.ssoi.scopes" "${SSOI_SCOPES}"; fi
