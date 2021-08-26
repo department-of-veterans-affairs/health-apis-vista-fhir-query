@@ -18,6 +18,7 @@ public class EndpointIT {
   @ParameterizedTest
   @ValueSource(strings = {"Endpoint", "Endpoint?status=active"})
   void search(String query) {
+    log.info("Verify /r4/{} is Bundle (200)", query);
     var bundle =
         TestClients.r4().get(urlWithPath + query).expect(200).expectValid(Endpoint.Bundle.class);
     assertThat(bundle.total()).isGreaterThan(0);
@@ -25,6 +26,7 @@ public class EndpointIT {
 
   @Test
   void searchWithBadStatus() {
+    log.info("Verify /r4/Endpoint?status=INVALID is Bundle (200)");
     var bundle =
         TestClients.r4()
             .get(urlWithPath + "Endpoint?status=INVALID")
