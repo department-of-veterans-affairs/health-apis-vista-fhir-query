@@ -8,7 +8,7 @@
     <relativePath/>
   </parent>
   <artifactId>vista-fhir-query-tests</artifactId>
-  <version>1.0.48-SNAPSHOT</version>
+  <version>1.0.50-SNAPSHOT</version>
   <packaging>jar</packaging>
   <properties>
     <fhir-resources.version>8.0.11</fhir-resources.version>
@@ -46,7 +46,6 @@
       <groupId>gov.va.api.lighthouse</groupId>
       <artifactId>test-clients</artifactId>
       <version>${oauth-java.version}</version>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>gov.va.api.health</groupId>
