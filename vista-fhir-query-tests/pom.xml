@@ -12,6 +12,7 @@
   <packaging>jar</packaging>
   <properties>
     <fhir-resources.version>8.0.11</fhir-resources.version>
+    <oauth-java.version>0.0.5</oauth-java.version>
     <sentinel.skipLaunch>false</sentinel.skipLaunch>
   </properties>
   <dependencies>
@@ -40,6 +41,12 @@
       <groupId>gov.va.api.health</groupId>
       <artifactId>test-support</artifactId>
       <version>${fhir-resources.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>gov.va.api.lighthouse</groupId>
+      <artifactId>test-clients</artifactId>
+      <version>${oauth-java.version}</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>gov.va.api.health</groupId>

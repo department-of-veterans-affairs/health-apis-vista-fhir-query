@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-
 set -euo pipefail
+# ==================================================
 
 test -n "${K8S_ENVIRONMENT}"
 test -n "${K8S_LOAD_BALANCER}"
@@ -8,7 +8,7 @@ test -n "${K8S_LOAD_BALANCER}"
 if [ -z "${SENTINEL_BASE_DIR:-}" ]; then SENTINEL_BASE_DIR=/sentinel; fi
 cd $SENTINEL_BASE_DIR
 
-# =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
+# ==================================================
 
 main() {
   if [ -z "${SENTINEL_ENV:-}" ]; then SENTINEL_ENV="${K8S_ENVIRONMENT}"; fi
@@ -24,11 +24,9 @@ main() {
   if [ -n "${VFQ_R4_PORT:-}" ]; then addToSystemProperties "sentinel.r4.port" "${VFQ_R4_PORT}"; fi
   if [ -n "${MAGIC_ACCESS_TOKEN:-}" ]; then addToSystemProperties "access-token" "${MAGIC_ACCESS_TOKEN}"; fi
   if [ -n "${VFQ_CLIENT_KEY:-}" ]; then addToSystemProperties "client-key" "${VFQ_CLIENT_KEY}"; fi
-  if [ -n "${SYSTEM_OAUTH_ROBOT_AUD:-}" ]; then addToSystemProperties "system-oauth-robot.aud" "${SYSTEM_OAUTH_ROBOT_AUD}"; fi
-  if [ -n "${SYSTEM_OAUTH_ROBOT_TOKEN_URL:-}" ]; then addToSystemProperties "system-oauth-robot.token-url" "${SYSTEM_OAUTH_ROBOT_TOKEN_URL}"; fi
-  if [ -n "${SYSTEM_OAUTH_ROBOT_CLIENT_ID:-}" ]; then addToSystemProperties "system-oauth-robot.client-id" "${SYSTEM_OAUTH_ROBOT_CLIENT_ID}"; fi
-  if [ -n "${SYSTEM_OAUTH_ROBOT_CLIENT_SECRET:-}" ]; then addToSystemProperties "system-oauth-robot.client-secret" "${SYSTEM_OAUTH_ROBOT_CLIENT_SECRET}"; fi
   if [ -n "${VISTA_CONNECTIVITY_ICN_AT_SITES:-}" ]; then addToSystemProperties "vista-connectivity.icn-at-sites" "${VISTA_CONNECTIVITY_ICN_AT_SITES}"; fi
+
+  populateSsoiSystemProperties
 
   java-tests \
     --module-name "vista-fhir-query-tests" \
@@ -40,12 +38,26 @@ main() {
   exit $?
 }
 
-# =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
+# ==================================================
 
 addToSystemProperties() {
   SYSTEM_PROPERTIES+=" -D$1=$2"
 }
 
-# =~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=~=
+populateSsoiSystemProperties() {
+  addToSystemProperties "webdriver.chrome.driver" "${WEBDRIVER_LOCATION:-/usr/local/bin/chromedriver}"
+  if [ -n "${SSOI_CLIENT_ID:-}" ]; then addToSystemProperties "oauth.ssoi.client-id" "${SSOI_CLIENT_ID}"; fi
+  if [ -n "${SSOI_CLIENT_SECRET:-}" ]; then addToSystemProperties "oauth.ssoi.client-secret" "${SSOI_CLIENT_SECRET}"; fi
+  if [ -n "${SSOI_SCOPES:-}" ]; then addToSystemProperties "oauth.ssoi.scopes" "${SSOI_SCOPES}"; fi
+  if [ -n "${SSOI_REDIRECT_URI:-}" ]; then addToSystemProperties "oauth.ssoi.redirect-uri" "${SSOI_REDIRECT_URI}"; fi
+  if [ -n "${SSOI_USERNAME:-}" ]; then addToSystemProperties "oauth.ssoi.username" "${SSOI_USERNAME}"; fi
+  if [ -n "${SSOI_OAUTH_URL:-}" ]; then addToSystemProperties "oauth.ssoi.oauth-url" "${SSOI_OAUTH_URL}"; fi
+  if [ -n "${SSOI_TPM_URL:-}" ]; then addToSystemProperties "oauth.ssoi.tpm-url" "${SSOI_TPM_URL}"; fi
+  if [ -n "${SSOI_IDP:-}" ]; then addToSystemProperties "oauth.ssoi.idp" "${SSOI_IDP}"; fi
+  if [ -n "${SSOI_LAUNCH_PATIENT:-}" ]; then addToSystemProperties "oauth.ssoi.launch.patient" "${SSOI_LAUNCH_PATIENT}"; fi
+  if [ -n "${SSOI_LAUNCH_STATION_ID:-}" ]; then addToSystemProperties "oauth.ssoi.launch.sta3n" "${SSOI_LAUNCH_STATION_ID}"; fi
+}
+
+# ==================================================
 
 main $@
