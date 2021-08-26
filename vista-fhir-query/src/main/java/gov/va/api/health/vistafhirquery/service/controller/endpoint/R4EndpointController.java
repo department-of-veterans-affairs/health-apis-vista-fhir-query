@@ -37,7 +37,7 @@ public class R4EndpointController implements R4EndpointApi {
   @GetMapping
   public Endpoint.Bundle endpointSearch(
       @RequestParam(value = "status", required = false) String status) {
-    if (isNotSupportedStatus(status)) {
+    if (!isSupportedStatus(status)) {
       return toBundle(emptyList());
     }
     Set<String> stations = stations("LHS LIGHTHOUSE RPC GATEWAY");
@@ -63,8 +63,8 @@ public class R4EndpointController implements R4EndpointApi {
     return toBundle(endpoints);
   }
 
-  private boolean isNotSupportedStatus(String status) {
-    return status != null && !EndpointStatus.active.toString().equals(status);
+  private boolean isSupportedStatus(String status) {
+    return status == null || EndpointStatus.active.toString().equals(status);
   }
 
   private Set<String> stations(String rpcName) {
