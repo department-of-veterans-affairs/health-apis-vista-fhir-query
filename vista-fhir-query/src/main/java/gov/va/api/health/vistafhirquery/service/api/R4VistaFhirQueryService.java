@@ -18,10 +18,20 @@ import javax.ws.rs.Path;
     security = {
       @SecurityRequirement(
           name = "OauthFlowSandbox",
-          scopes = {"patient/Observation.read", "offline_access", "launch/patient"}),
+          scopes = {
+            "system/Endpoint.read",
+            "patient/Observation.read",
+            "offline_access",
+            "launch/patient"
+          }),
       @SecurityRequirement(
           name = "OauthFlowProduction",
-          scopes = {"patient/Observation.read", "offline_access", "launch/patient"})
+          scopes = {
+            "system/Endpoint.read",
+            "patient/Observation.read",
+            "offline_access",
+            "launch/patient"
+          })
     },
     info =
         @Info(
@@ -61,6 +71,7 @@ import javax.ws.rs.Path;
                       authorizationUrl = "https://sandbox-api.va.gov/oauth2/authorization",
                       tokenUrl = "https://sandbox-api.va.gov/services/clinical-fhir/v0/r4/token",
                       scopes = {
+                        @OAuthScope(name = "system/Endpoint.read", description = "read endpoints"),
                         @OAuthScope(
                             name = "patient/Observation.read",
                             description = "read observations"),
@@ -77,6 +88,7 @@ import javax.ws.rs.Path;
                       authorizationUrl = "https://api.va.gov/oauth2/authorization",
                       tokenUrl = "https://api.va.gov/services/clinical-fhir/v0/r4/token",
                       scopes = {
+                        @OAuthScope(name = "system/Endpoint.read", description = "read endpoints"),
                         @OAuthScope(
                             name = "patient/Observation.read",
                             description = "read observations"),
@@ -86,4 +98,4 @@ import javax.ws.rs.Path;
 })
 @Path("/")
 public interface R4VistaFhirQueryService
-    extends R4CoverageApi, R4ObservationApi, R4OrganizationApi {}
+    extends R4EndpointApi, R4CoverageApi, R4ObservationApi, R4OrganizationApi {}
