@@ -11,6 +11,7 @@ import gov.va.api.health.ids.api.ResourceIdentity;
 import gov.va.api.health.r4.api.bundle.AbstractBundle;
 import gov.va.api.health.r4.api.bundle.AbstractEntry;
 import gov.va.api.health.r4.api.resources.Resource;
+import gov.va.api.health.vistafhirquery.service.config.LinkProperties;
 import gov.va.api.health.vistafhirquery.service.controller.ResourceExceptions.NotFound;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -95,6 +96,7 @@ public class WitnessProtectionAdvice extends IdentitySubstitution<ProtectedRefer
     } else if (body instanceof Resource) {
       protectResource((Resource) body);
     }
+    LinkProperties.HACK_PUBLIC_URL.remove();
     return body;
   }
 

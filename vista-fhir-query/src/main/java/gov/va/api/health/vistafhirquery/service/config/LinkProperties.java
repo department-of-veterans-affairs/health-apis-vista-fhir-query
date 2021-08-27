@@ -27,6 +27,8 @@ import org.springframework.context.annotation.Configuration;
 @Slf4j
 public class LinkProperties {
 
+  public static final ThreadLocal<String> HACK_PUBLIC_URL = new ThreadLocal<>();
+
   private String publicUrl;
   private String publicR4BasePath;
 
@@ -61,9 +63,20 @@ public class LinkProperties {
     @Getter private final String baseUrl;
     private final Map<String, String> urlForResource;
 
+    private final String publicBasePath;
+
     Links(String publicUrl, String publicBasePath, @NonNull Map<String, String> publicR4Link) {
-      baseUrl = publicUrl + "/" + publicBasePath;
+      baseUrl = publicUrl;
+      this.publicBasePath = publicBasePath;
       urlForResource = publicR4Link;
+    }
+
+    public String baseUrl() {
+      var hack = HACK_PUBLIC_URL.get();
+      if (hack != null) {
+        return baseUrl + "/" + hack + "/" + publicBasePath;
+      }
+      return baseUrl + "/" + publicBasePath;
     }
 
     public String readUrl(Resource resource) {

@@ -32,7 +32,9 @@ public class AlternatePatientIdConfig {
      * any paths rewritten, e.g. `/vista-fhir-query/r4`. This filter will be applied before path
      * rewrite.
      */
-    registration.addUrlPatterns("/r4/*", PathRewriteConfig.leadingPath() + "r4/*");
+    registration.addUrlPatterns(
+        "/r4/*", PathRewriteConfig.leadingPath() + "r4/*",
+        "/site/*", PathRewriteConfig.leadingPath() + "site/*");
     return registration;
   }
 
