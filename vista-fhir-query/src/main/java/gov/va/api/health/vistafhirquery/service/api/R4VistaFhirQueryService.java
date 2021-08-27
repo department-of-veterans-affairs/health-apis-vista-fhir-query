@@ -98,4 +98,4 @@ import javax.ws.rs.Path;
 })
 @Path("/")
 public interface R4VistaFhirQueryService
-    extends R4EndpointApi, R4CoverageApi, R4ObservationApi, R4OrganizationApi {}
+    extends R4CoverageApi, R4EndpointApi, R4ObservationApi, R4OrganizationApi {}
